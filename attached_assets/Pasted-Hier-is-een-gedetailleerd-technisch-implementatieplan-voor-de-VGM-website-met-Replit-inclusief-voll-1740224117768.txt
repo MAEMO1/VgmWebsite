@@ -1,0 +1,433 @@
+Hier is een gedetailleerd technisch implementatieplan voor de VGM-website met Replit, inclusief volledige codevoorbeelden en architectuur:
+
+---
+
+### **Architectuur Overzicht**
+```mermaid
+graph TD
+    A[Frontend - Next.js] --> B[API Routes]
+    B --> C[Node.js Backend]
+    C --> D[SQLite Database]
+    C --> E[Google Maps API]
+    C --> F[Twilio SMS]
+    C --> G[AWS S3 voor Media]
+```
+
+---
+
+### **Stap 1: Backend Opzetten (Node.js/Express)**
+
+#### 1.1 Basis Express Server
+```javascript
+// server.js
+const express = require('express');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const { Sequelize, DataTypes } = require('sequelize');
+
+const app = express();
+app.use(express.json());
+app.use(helmet());
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minuten
+  max: 100 // maximaal 100 requests per windowMs
+});
+app.use(limiter);
+
+// Database configuratie
+const sequelize = new Sequelize({
+  dialect: 'sqlite',
+  storage: './vgm.db',
+  logging: false
+});
+
+// Model Definities
+const User = sequelize.define('User', {
+  email: { type: DataTypes.STRING, unique: true },
+  password: DataTypes.STRING,
+  role: { type: DataTypes.ENUM('bezoeker', 'moskee', 'admin'), defaultValue: 'bezoeker' },
+  mosqueId: DataTypes.INTEGER,
+  verified: { type: DataTypes.BOOLEAN, defaultValue: false }
+});
+
+const Mosque = sequelize.define('Mosque', {
+  name: DataTypes.STRING,
+  address: DataTypes.JSON,
+  prayerTimes: DataTypes.JSON,
+  history: DataTypes.TEXT,
+  photos: DataTypes.JSON
+});
+
+const Event = sequelize.define('Event', {
+  title: DataTypes.STRING,
+  date: DataTypes.DATE,
+  mosqueId: DataTypes.INTEGER,
+  description: DataTypes.TEXT,
+  capacity: DataTypes.INTEGER,
+  type: DataTypes.ENUM('vrijdaggebed', 'les', 'bijeenkomst')
+});
+
+const Obituary = sequelize.define('Obituary', {
+  name: DataTypes.STRING,
+  birthDate: DataTypes.DATE,
+  deathDate: DataTypes.DATE,
+  prayerTime: DataTypes.DATE,
+  burialPlace: DataTypes.STRING,
+  mosqueId: DataTypes.INTEGER,
+  approved: { type: DataTypes.BOOLEAN, defaultValue: false }
+});
+
+// Relaties
+User.belongsTo(Mosque);
+Mosque.hasMany(User);
+Mosque.hasMany(Event);
+Mosque.hasMany(Obituary);
+
+// Database initialisatie
+(async () => {
+  await sequelize.sync({ alter: true });
+  console.log('Database gesynchroniseerd');
+})();
+```
+
+---
+
+### **Stap 2: Authenticatiesysteem**
+
+#### 2.1 JWT Middleware
+```javascript
+// auth.js
+const jwtSecret = process.env.JWT_SECRET || 'vgm_geheim_123';
+
+const authenticate = (roles) => (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'Geen token aanwezig' });
+
+  jwt.verify(token, jwtSecret, (err, decoded) => {
+    if (err) return res.status(403).json({ error: 'Ongeldige token' });
+    if (!roles.includes(decoded.role)) return res.status(403).json({ error: 'Ontoegankelijk' });
+    req.user = decoded;
+    next();
+  });
+};
+
+// Gebruik in routes:
+app.get('/admin', authenticate(['admin']), (req, res) => {
+  // Beveiligde route
+});
+```
+
+#### 2.2 Registratie Endpoint voor Moskeeën
+```javascript
+app.post('/api/register/mosque', async (req, res) => {
+  const { email, password, mosqueDetails } = req.body;
+  
+  const hashedPassword = await bcrypt.hash(password, 12);
+  const mosque = await Mosque.create(mosqueDetails);
+  
+  await User.create({
+    email,
+    password: hashedPassword,
+    role: 'moskee',
+    mosqueId: mosque.id
+  });
+
+  // SMS verificatie met Twilio
+  const twilioClient = require('twilio')(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
+  await twilioClient.messages.create({
+    body: `Uw moskeeregistratie is ontvangen. Bevestigingscode: ${Math.floor(100000 + Math.random() * 900000)}`,
+    to: req.body.phone,
+    from: '+32460203040'
+  });
+
+  res.status(201).json({ message: 'Registratie in behandeling' });
+});
+```
+
+---
+
+### **Stap 3: Google Maps Integratie**
+
+#### 3.1 Maps Component
+```javascript
+// components/MosqueMap.js
+import { LoadScript, GoogleMap, Marker } from '@react-google-maps/api';
+
+const mapContainerStyle = { width: '100%', height: '500px' };
+const center = { lat: 51.05, lng: 3.73 }; // Gent coördinaten
+
+export default function MosqueMap({ mosques }) {
+  return (
+    
+      
+        {mosques.map(mosque => (
+          
+        ))}
+      
+    
+  );
+}
+```
+
+#### 3.2 GeoJSON Schema voor Moskeeën
+```json
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [3.710, 51.050] },
+      "properties": {
+        "name": "Sultan Ahmet Moskee",
+        "vrijdaggebed": "13:30",
+        "capaciteit": 500
+      }
+    }
+  ]
+}
+```
+
+---
+
+### **Stap 4: Gebeurtenissenkalender**
+
+#### 4.1 FullCalendar Implementatie
+```javascript
+// components/EventCalendar.js
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
+
+export default function EventCalendar({ events }) {
+  const handleEventClick = (info) => {
+    // Toon modal met details
+  };
+
+  return (
+    
+  );
+}
+```
+
+---
+
+### **Stap 5: Obituarium Beheer**
+
+#### 5.1 Admin Dashboard Component
+```javascript
+// components/ObituaryAdmin.js
+import { useState } from 'react';
+import { useTable, usePagination } from 'react-table';
+
+export default function ObituaryAdmin({ initialData }) {
+  const [data, setData] = useState(initialData);
+  
+  const columns = React.useMemo(() => [
+    { Header: 'Naam', accessor: 'name' },
+    { Header: 'Sterfdatum', accessor: 'deathDate' },
+    { Header: 'Moskee', accessor: 'mosque.name' },
+    { Header: 'Acties', Cell: ({ row }) => (
+       handleApprove(row.original.id)}
+        className="bg-green-500 text-white p-2 rounded"
+      >
+        Goedkeuren
+      
+    )}
+  ], []);
+
+  const handleApprove = async (id) => {
+    await fetch(`/api/obituaries/${id}`, { method: 'PATCH' });
+    setData(data.filter(item => item.id !== id));
+  };
+
+  const { getTableProps, headerGroups, page, prepareRow } = useTable(
+    { columns, data, initialState: { pageIndex: 0 } },
+    usePagination
+  );
+
+  return (
+    
+      
+        {headerGroups.map(headerGroup => (
+          
+            {headerGroup.headers.map(column => (
+              
+                {column.render('Header')}
+              
+            ))}
+          
+        ))}
+      
+      
+        {page.map(row => {
+          prepareRow(row);
+          return (
+            
+              {row.cells.map(cell => (
+                
+                  {cell.render('Cell')}
+                
+              ))}
+            
+          );
+        })}
+      
+    
+  );
+}
+```
+
+---
+
+### **Stap 6: Implementatie Beveiliging**
+
+#### 6.1 Geavanceerde Beveiligingsheaders
+```javascript
+// next.config.js
+module.exports = {
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'Content-Security-Policy', 
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline' maps.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: maps.gstatic.com" },
+          { key: 'X-Content-Type-Options', value: 'nosniff' }
+        ]
+      }
+    ];
+  }
+};
+```
+
+---
+
+### **Stap 7: Deployment op Replit**
+
+#### 7.1 Nixpack Configuratie
+```nix
+# replit.nix
+{ pkgs }: {
+  deps = [
+    pkgs.nodejs-18_x
+    pkgs.yarn
+    pkgs.ffmpeg
+    pkgs.libwebp
+    pkgs.python3
+  ];
+  
+  env = {
+    LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
+      pkgs.stdenv.cc.cc.lib
+      pkgs.zlib
+    ];
+  };
+}
+```
+
+#### 7.2 Startcommando
+```bash
+# .replit
+run = "npm run start"
+```
+
+---
+
+### **Stap 8: Migratie van WordPress**
+
+#### 8.1 Data Export Script
+```python
+# wordpress_export.py
+import xml.etree.ElementTree as ET
+import requests
+
+WP_URL = 'https://oude-site.be'
+SITEMAP = requests.get(f'{WP_URL}/sitemap.xml').content
+
+def parse_post(url):
+    response = requests.get(url)
+    # Custom parsing logica hier
+    return {
+        'title': ET.fromstring(response.content).find('title').text,
+        'content': ET.fromstring(response.content).find('content').text
+    }
+
+root = ET.fromstring(SITEMAP)
+for url in root.findall('{http://www.sitemaps.org/schemas/sitemap/0.9}url'):
+    post = parse_post(url.find('loc').text)
+    # Opslaan in SQLite
+```
+
+---
+
+### **Benodigde Dependencies**
+```json
+// package.json
+{
+  "dependencies": {
+    "next": "^14.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "sequelize": "^6.37.0",
+    "sqlite3": "^5.1.7",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "twilio": "^4.12.0",
+    "@react-google-maps/api": "^2.18.1",
+    "@fullcalendar/react": "^6.1.9",
+    "react-table": "^7.8.0"
+  }
+}
+```
+
+---
+
+### **Teststrategie**
+1. **Unit Tests**: Jest voor API endpoints
+2. **E2E Testing**: Cypress voor gebruikersworkflows
+3. **Security Scans**: OWASP ZAP integration
+4. **Load Testing**: Artillery.io configuratie voor 500+ gebruikers
+
+```bash
+# Testcommando's
+npm run test:unit
+npm run test:e2e
+npx zaproxy --scan https://vgmgent.be
+artillery run load-test.yml
+```
+
+---
+
+### **Onderhoudsplan**
+1. **Automatische Backups**: Dagelijkse SQLite dump naar S3
+2. **Monitoring**: Prometheus + Grafana dashboard
+3. **CI/CD**: GitHub Actions voor automatische deployments
+4. **Security Updates**: Dependabot configuratie
+
+```yaml
+# .github/workflows/deploy.yml
+name: Deploy to Replit
+on: [push]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: replit/action-deploy@v1
+        with:
+          replit-token: ${{ secrets.REPLIT_TOKEN }}
+          project-id: ${{ secrets.REPLIT_PROJECT_ID }}
+```
+
+---
+
+Dit plan omvat de volledige technische implementatie van frontend tot backend, inclusief security-maatregelen en deployment strategie. Elk component is modulair ontworpen voor eenvoudig onderhoud en schaalbaarheid.
+
+Citations:
+[1] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/54801095/23f454a7-d4aa-4676-b4a0-54373b5a28a0/paste.txt
+[2] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/54801095/dcb7c2ef-b12a-49e0-9746-81ff037fd5a6/paste-2.txt
