@@ -27,6 +27,7 @@ def submit_obituary():
             date_of_death=datetime.strptime(request.form['date_of_death'], '%Y-%m-%d'),
             funeral_date=datetime.strptime(request.form['funeral_date'], '%Y-%m-%dT%H:%M') if request.form['funeral_date'] else None,
             prayer_time=datetime.strptime(request.form['prayer_time'], '%Y-%m-%dT%H:%M') if request.form['prayer_time'] else None,
+            death_prayer_location=request.form['death_prayer_location'],
             burial_location=request.form['burial_location'],
             family_contact=request.form['family_contact'],
             details=request.form['details'],

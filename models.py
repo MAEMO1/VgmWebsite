@@ -85,6 +85,7 @@ class Obituary(db.Model):
     burial_location = db.Column(db.String(200))
     family_contact = db.Column(db.String(200))
     prayer_time = db.Column(db.DateTime)
+    death_prayer_location = db.Column(db.String(200))  # New field for place of death prayer
     cause_of_death = db.Column(db.String(200))
     additional_notes = db.Column(db.Text)
 

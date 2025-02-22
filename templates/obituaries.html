@@ -38,6 +38,12 @@
                                 {{ obituary.prayer_time.strftime('%d %B %Y at %H:%M') }}
                             </p>
                         {% endif %}
+                        {% if obituary.death_prayer_location %}
+                            <p>
+                                <strong>Place of Death Prayer:</strong>
+                                {{ obituary.death_prayer_location }}
+                            </p>
+                        {% endif %}
                         {% if obituary.burial_location %}
                             <p><strong>Burial Location:</strong> {{ obituary.burial_location }}</p>
                         {% endif %}
@@ -94,6 +100,10 @@
                         <div class="mb-3">
                             <label for="prayer_time" class="form-label">Prayer Time</label>
                             <input type="datetime-local" class="form-control" id="prayer_time" name="prayer_time">
+                        </div>
+                        <div class="mb-3">
+                            <label for="death_prayer_location" class="form-label">Place of Death Prayer</label>
+                            <input type="text" class="form-control" id="death_prayer_location" name="death_prayer_location" placeholder="Enter the location where the death prayer will be held">
                         </div>
                         <div class="mb-3">
                             <label for="burial_location" class="form-label">Burial Location</label>
