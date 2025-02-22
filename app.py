@@ -37,13 +37,15 @@ def create_app():
         # Import routes after app context is created
         from routes import routes as main_routes
         from routes.event_routes import events
+        from routes.obituary_routes import obituaries
 
         # Register blueprints
         app.register_blueprint(main_routes)
         app.register_blueprint(events, url_prefix='/events')
+        app.register_blueprint(obituaries, url_prefix='/obituaries')
 
         # Import models to ensure they're registered with SQLAlchemy
-        from models import User, Event, EventRegistration, EventNotification, PrayerTime, Obituary
+        from models import User, Event, EventRegistration, EventNotification, PrayerTime, Obituary, ObituaryNotification
         db.create_all()
         logging.info("Database tables created successfully")
 

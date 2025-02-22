@@ -20,11 +20,13 @@ class User(UserMixin, db.Model):
     notify_new_events = db.Column(db.Boolean, default=True)
     notify_event_changes = db.Column(db.Boolean, default=True)
     notify_event_reminders = db.Column(db.Boolean, default=True)
+    notify_obituaries = db.Column(db.Boolean, default=True)  # New field for obituary notifications
 
     # Relationships
     notifications = db.relationship('EventNotification', backref='user', lazy='dynamic')
     event_registrations = db.relationship('EventRegistration', backref='user', lazy='dynamic')
     managed_events = db.relationship('Event', backref='organizer', lazy='dynamic')
+    obituaries = db.relationship('Obituary', backref='mosque', lazy='dynamic')
 
 class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -75,3 +77,30 @@ class Obituary(db.Model):
     is_approved = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Link to mosque user for verification
+
+    # New fields for extended features
+    age = db.Column(db.Integer)
+    birth_place = db.Column(db.String(200))
+    death_place = db.Column(db.String(200))
+    burial_location = db.Column(db.String(200))
+    family_contact = db.Column(db.String(200))
+    prayer_time = db.Column(db.DateTime)
+    cause_of_death = db.Column(db.String(200))
+    additional_notes = db.Column(db.Text)
+
+    # Notification tracking
+    notifications_sent = db.Column(db.Boolean, default=False)
+    reminder_sent = db.Column(db.Boolean, default=False)
+
+class ObituaryNotification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    obituary_id = db.Column(db.Integer, db.ForeignKey('obituary.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    notification_type = db.Column(db.String(50))  # 'new', 'update', 'reminder'
+    message = db.Column(db.Text)
+    sent_at = db.Column(db.DateTime, default=datetime.utcnow)
+    read = db.Column(db.Boolean, default=False)
+
+    # Relationships
+    obituary = db.relationship('Obituary', backref='notifications')
+    user = db.relationship('User', backref='obituary_notifications')
