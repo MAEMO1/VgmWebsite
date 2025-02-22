@@ -1,12 +1,13 @@
-from flask import render_template, redirect, url_for
+from flask import render_template, redirect, url_for, request, flash
+from flask_login import login_user, logout_user, login_required
+from werkzeug.security import check_password_hash
 from app import db
-from models import Event, PrayerTime, Obituary
+from models import User, Event, PrayerTime, Obituary
 from datetime import datetime
 
 # Import the blueprint instance
 from . import routes
 
-# Register routes on the blueprint instead of app
 @routes.route('/')
 def index():
     try:
@@ -38,6 +39,26 @@ def obituaries():
     obituaries = Obituary.query.filter_by(is_approved=True).order_by(Obituary.date_of_death.desc()).all()
     return render_template('obituaries.html', obituaries=obituaries)
 
-@routes.route('/login')
+@routes.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        user = User.query.filter_by(email=email).first()
+
+        if user and check_password_hash(user.password_hash, password):
+            login_user(user)
+            flash('Logged in successfully.', 'success')
+            return redirect(url_for('main.index'))
+        else:
+            flash('Invalid email or password.', 'error')
+
     return render_template('login.html')
+
+@routes.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('Logged out successfully.', 'success')
+    return redirect(url_for('main.index'))
