@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Notification Settings - Mosque Management{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>Notification Settings</h2>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="notify_new_events" 
+                       name="notify_new_events" {% if current_user.notify_new_events %}checked{% endif %}>
+                <label class="form-check-label" for="notify_new_events">
+                    Notify me about new events
+                </label>
+            </div>
+            
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="notify_event_changes" 
+                       name="notify_event_changes" {% if current_user.notify_event_changes %}checked{% endif %}>
+                <label class="form-check-label" for="notify_event_changes">
+                    Notify me about changes to events I'm registered for
+                </label>
+            </div>
+            
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="notify_event_reminders" 
+                       name="notify_event_reminders" {% if current_user.notify_event_reminders %}checked{% endif %}>
+                <label class="form-check-label" for="notify_event_reminders">
+                    Send me event reminders
+                </label>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Save Settings</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

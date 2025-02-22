@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}{{ event.title }} - Mosque Management{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>{{ event.title }}</h2>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-8">
+                <p class="lead">{{ event.description }}</p>
+                <div class="event-details mt-4">
+                    <p>
+                        <i class="fas fa-calendar"></i>
+                        <strong>Date:</strong> {{ event.date.strftime('%d %B %Y at %H:%M') }}
+                    </p>
+                    <p>
+                        <i class="fas fa-map-marker-alt"></i>
+                        <strong>Location:</strong> {{ event.location }}
+                    </p>
+                    {% if event.max_participants %}
+                    <p>
+                        <i class="fas fa-users"></i>
+                        <strong>Maximum Participants:</strong> {{ event.max_participants }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-4">
+                {% if event.registration_required %}
+                    {% if current_user.is_authenticated %}
+                        {% if is_registered %}
+                            <form method="POST" action="{{ url_for('events.cancel_registration', event_id=event.id) }}">
+                                <button type="submit" class="btn btn-danger btn-block">
+                                    <i class="fas fa-times"></i> Cancel Registration
+                                </button>
+                            </form>
+                        {% else %}
+                            <form method="POST" action="{{ url_for('events.register_event', event_id=event.id) }}">
+                                <button type="submit" class="btn btn-success btn-block">
+                                    <i class="fas fa-check"></i> Register for Event
+                                </button>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-info">
+                            Please <a href="{{ url_for('login') }}">login</a> to register for this event.
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

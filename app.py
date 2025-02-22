@@ -38,10 +38,16 @@ def load_user(user_id):
     from models import User
     return User.query.get(int(user_id))
 
-# Import routes after app initialization to avoid circular imports
-from routes import *  # noqa: F403
-
 # Create database tables
 with app.app_context():
+    # Import models to ensure they're registered with SQLAlchemy
+    from models import User, Event, EventRegistration, EventNotification
     db.create_all()
     logging.info("Database tables created successfully")
+
+# Import and register blueprints
+from routes.event_routes import events
+app.register_blueprint(events)
+
+# Import routes after app initialization to avoid circular imports
+import routes  # noqa: F401
