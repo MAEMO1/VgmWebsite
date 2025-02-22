@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Mosques in Ghent') }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <h2 class="text-center">{{ _('Mosques in Ghent') }}</h2>
+            <p class="text-center">{{ _('Find mosques in the Ghent area') }}</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Google Maps Container -->
+        <div class="col-md-8 mb-4">
+            <div id="mosque-map" style="height: 500px; width: 100%;"></div>
+        </div>
+        
+        <!-- Mosque List -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3>{{ _('Mosque List') }}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mosque-list">
+                        {% for mosque in mosques %}
+                        <div class="mosque-item mb-3" data-lat="{{ mosque.latitude|default('51.0543') }}" data-lng="{{ mosque.longitude|default('3.7174') }}">
+                            <h4>{{ mosque.mosque_name }}</h4>
+                            <p><i class="fas fa-map-marker-alt"></i> {{ mosque.mosque_address }}</p>
+                            <p><i class="fas fa-phone"></i> {{ mosque.mosque_phone }}</p>
+                        </div>
+                        {% else %}
+                        <p>{{ _('No mosques found') }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap" async defer></script>
+<script>
+let map;
+let markers = [];
+
+function initMap() {
+    // Center on Ghent
+    const ghent = { lat: 51.0543, lng: 3.7174 };
+    
+    map = new google.maps.Map(document.getElementById("mosque-map"), {
+        zoom: 12,
+        center: ghent,
+    });
+
+    // Add markers for each mosque
+    document.querySelectorAll('.mosque-item').forEach(item => {
+        const lat = parseFloat(item.dataset.lat);
+        const lng = parseFloat(item.dataset.lng);
+        const title = item.querySelector('h4').textContent;
+
+        const marker = new google.maps.Marker({
+            position: { lat, lng },
+            map: map,
+            title: title
+        });
+
+        markers.push(marker);
+
+        // Add click event to center map on mosque when list item is clicked
+        item.addEventListener('click', () => {
+            map.setCenter({ lat, lng });
+            map.setZoom(15);
+        });
+    });
+}
+</script>
+{% endblock %}

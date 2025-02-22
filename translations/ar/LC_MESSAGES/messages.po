@@ -74,3 +74,18 @@ msgstr "ليس لديك حساب؟"
 
 msgid "Register here"
 msgstr "سجل هنا"
+
+msgid "Mosques in Ghent"
+msgstr "مساجد مدينة خنت"
+
+msgid "Find mosques in the Ghent area"
+msgstr "ابحث عن المساجد في منطقة خنت"
+
+msgid "Mosque List"
+msgstr "قائمة المساجد"
+
+msgid "No mosques found"
+msgstr "لم يتم العثور على مساجد"
+
+msgid "Find a Mosque"
+msgstr "ابحث عن مسجد"

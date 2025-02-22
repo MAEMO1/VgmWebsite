@@ -6,6 +6,7 @@ from models import User, Event, PrayerTime, Obituary
 from datetime import datetime
 from flask_babel import _
 from . import routes
+import os
 
 @routes.route('/')
 def index():
@@ -159,3 +160,11 @@ def set_language(language):
 
     session['language'] = language
     return redirect(request.referrer or url_for('main.index'))
+
+@routes.route('/mosques')
+def mosques():
+    # Get all verified mosque users
+    mosque_users = User.query.filter_by(user_type='mosque', is_verified=True).all()
+    return render_template('mosques.html', 
+                         mosques=mosque_users,
+                         google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'))

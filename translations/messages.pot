@@ -76,3 +76,18 @@ msgstr ""
 
 msgid "Register here"
 msgstr ""
+
+msgid "Mosques in Ghent"
+msgstr ""
+
+msgid "Find mosques in the Ghent area"
+msgstr ""
+
+msgid "Mosque List"
+msgstr ""
+
+msgid "No mosques found"
+msgstr ""
+
+msgid "Find a Mosque"
+msgstr ""

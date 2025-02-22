@@ -74,3 +74,18 @@ msgstr "Nog geen account?"
 
 msgid "Register here"
 msgstr "Registreer hier"
+
+msgid "Mosques in Ghent"
+msgstr "Moskeeën in Gent"
+
+msgid "Find mosques in the Ghent area"
+msgstr "Vind moskeeën in de regio Gent"
+
+msgid "Mosque List"
+msgstr "Lijst van Moskeeën"
+
+msgid "No mosques found"
+msgstr "Geen moskeeën gevonden"
+
+msgid "Find a Mosque"
+msgstr "Zoek een Moskee"
