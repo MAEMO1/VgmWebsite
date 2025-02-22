@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Obituaries - Mosque Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h2>Recent Obituaries</h2>
+            </div>
+            <div class="card-body">
+                {% for obituary in obituaries %}
+                <div class="obituary-card p-3 mb-3">
+                    <h4>{{ obituary.name }}</h4>
+                    <p class="text-muted">
+                        Date of Death: {{ obituary.date_of_death.strftime('%d %B %Y') }}
+                    </p>
+                    {% if obituary.funeral_date %}
+                    <p>
+                        <strong>Funeral Service:</strong> 
+                        {{ obituary.funeral_date.strftime('%d %B %Y at %H:%M') }}
+                    </p>
+                    {% endif %}
+                    <p>{{ obituary.details }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h3>Submit an Obituary</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('submit_obituary') }}">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name of Deceased</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="date_of_death" class="form-label">Date of Death</label>
+                        <input type="date" class="form-control" id="date_of_death" name="date_of_death" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="funeral_date" class="form-label">Funeral Date & Time</label>
+                        <input type="datetime-local" class="form-control" id="funeral_date" name="funeral_date">
+                    </div>
+                    <div class="mb-3">
+                        <label for="details" class="form-label">Additional Details</label>
+                        <textarea class="form-control" id="details" name="details" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit for Approval</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

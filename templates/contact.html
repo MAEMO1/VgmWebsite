@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us - Mosque Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h2>Contact Information</h2>
+            </div>
+            <div class="card-body">
+                <h4>Address</h4>
+                <p>123 Mosque Street<br>City, Country<br>Postal Code</p>
+                
+                <h4>Phone Numbers</h4>
+                <p>Main Office: (123) 456-7890<br>
+                   Imam's Office: (123) 456-7891</p>
+                
+                <h4>Email</h4>
+                <p>General Inquiries: info@mosque.com<br>
+                   Administration: admin@mosque.com</p>
+                
+                <h4>Office Hours</h4>
+                <p>Monday - Friday: 9:00 AM - 5:00 PM<br>
+                   Saturday - Sunday: 10:00 AM - 2:00 PM</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h2>Location</h2>
+            </div>
+            <div class="card-body">
+                <div id="mosque-map" style="height: 400px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+<script src="{{ url_for('static', filename='js/maps.js') }}"></script>
+{% endblock %}

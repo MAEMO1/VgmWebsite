@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Events - Mosque Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h2>Events Calendar</h2>
+            </div>
+            <div class="card-body">
+                <div id="calendar"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h3>Upcoming Events</h3>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    {% for event in events %}
+                    <div class="list-group-item">
+                        <h5 class="mb-1">{{ event.title }}</h5>
+                        <p class="mb-1">
+                            <small class="text-muted">
+                                <i class="fas fa-calendar"></i> 
+                                {{ event.date.strftime('%d %B %Y at %H:%M') }}
+                            </small>
+                        </p>
+                        <p>{{ event.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/calendar.js') }}"></script>
+{% endblock %}
