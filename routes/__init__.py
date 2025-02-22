@@ -1,4 +1,7 @@
 from flask import Blueprint
 
-# Import all route modules here
-# This makes the routes package a proper Python package
+# Create main routes blueprint
+routes = Blueprint('main', __name__)
+
+# Import all routes here
+from routes import routes  # noqa: F401

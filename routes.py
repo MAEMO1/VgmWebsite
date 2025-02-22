@@ -1,17 +1,25 @@
-from flask import render_template
-from app import app
-from models import Event, PrayerTime
+from flask import render_template, redirect, url_for
+from app import app, db
+from models import Event, PrayerTime, Obituary
 from datetime import datetime
-
-# The main routes are registered directly on the app
-# While feature-specific routes are in their respective blueprints
 
 @app.route('/')
 def index():
-    # Get upcoming events for the homepage
-    events = Event.query.order_by(Event.date).limit(3).all()
-    prayer_times = PrayerTime.query.filter_by(date=datetime.today().date()).all()
-    return render_template('index.html', events=events, prayer_times=prayer_times)
+    try:
+        # Get upcoming events for the homepage
+        events = Event.query.filter(
+            Event.date >= datetime.utcnow()
+        ).order_by(Event.date).limit(3).all()
+
+        # Get today's prayer times
+        today = datetime.today().date()
+        prayer_times = PrayerTime.query.filter_by(date=today).all()
+
+        return render_template('index.html', events=events, prayer_times=prayer_times)
+    except Exception as e:
+        app.logger.error(f"Error in index route: {str(e)}")
+        # Create an empty list if database is not yet populated
+        return render_template('index.html', events=[], prayer_times=[])
 
 @app.route('/prayer-times')
 def prayer_times():
@@ -22,5 +30,12 @@ def prayer_times():
 def contact():
     return render_template('contact.html')
 
-# Event routes are handled by the events blueprint in routes/event_routes.py
-# Obituary routes will be moved to a separate blueprint when implemented
+@app.route('/obituaries')
+def obituaries():
+    obituaries = Obituary.query.filter_by(is_approved=True).order_by(Obituary.date_of_death.desc()).all()
+    return render_template('obituaries.html', obituaries=obituaries)
+
+# Add login routes
+@app.route('/login')
+def login():
+    return render_template('login.html')

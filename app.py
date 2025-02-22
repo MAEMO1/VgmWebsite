@@ -15,39 +15,45 @@ class Base(DeclarativeBase):
 db = SQLAlchemy(model_class=Base)
 login_manager = LoginManager()
 
-# Create Flask app
-app = Flask(__name__)
-app.secret_key = os.environ.get("SESSION_SECRET", "dev_key_123")  # Default for development
+def create_app():
+    # Create Flask app
+    app = Flask(__name__)
+    app.secret_key = os.environ.get("SESSION_SECRET", "dev_key_123")  # Default for development
 
-# Configure PostgreSQL database
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
-app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-    "pool_recycle": 300,
-    "pool_pre_ping": True,
-}
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    # Configure PostgreSQL database
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+        "pool_recycle": 300,
+        "pool_pre_ping": True,
+    }
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-# Initialize extensions
-db.init_app(app)
-login_manager.init_app(app)
-login_manager.login_view = 'login'
+    # Initialize extensions
+    db.init_app(app)
+    login_manager.init_app(app)
+    login_manager.login_view = 'login'
 
-# User loader callback for Flask-Login
-@login_manager.user_loader
-def load_user(user_id):
-    from models import User
-    return User.query.get(int(user_id))
+    # Import routes first to avoid circular imports
+    from routes import routes as main_routes
+    from routes.event_routes import events
 
-# Create database tables
-with app.app_context():
-    # Import models to ensure they're registered with SQLAlchemy
-    from models import User, Event, EventRegistration, EventNotification
-    db.create_all()
-    logging.info("Database tables created successfully")
+    # Register blueprints
+    app.register_blueprint(main_routes)
+    app.register_blueprint(events, url_prefix='/events')
 
-# Import and register blueprints
-from routes.event_routes import events
-app.register_blueprint(events)
+    # User loader callback for Flask-Login
+    @login_manager.user_loader
+    def load_user(user_id):
+        from models import User
+        return User.query.get(int(user_id))
 
-# Import routes after app initialization to avoid circular imports
-import routes  # noqa: F401
+    with app.app_context():
+        # Import models to ensure they're registered with SQLAlchemy
+        from models import User, Event, EventRegistration, EventNotification, PrayerTime, Obituary
+        db.create_all()
+        logging.info("Database tables created successfully")
+
+        return app
+
+# Create the application instance
+app = create_app()
