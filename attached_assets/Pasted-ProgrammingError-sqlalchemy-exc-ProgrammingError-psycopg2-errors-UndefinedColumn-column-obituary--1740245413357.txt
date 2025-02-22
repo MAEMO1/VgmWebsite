@@ -1,0 +1,90 @@
+ProgrammingError
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column obituary.death_prayer_location does not exist
+LINE 1: ...ct, obituary.prayer_time AS obituary_prayer_time, obituary.d...
+                                                             ^
+
+[SQL: SELECT obituary.id AS obituary_id, obituary.name AS obituary_name, obituary.date_of_death AS obituary_date_of_death, obituary.funeral_date AS obituary_funeral_date, obituary.details AS obituary_details, obituary.is_approved AS obituary_is_approved, obituary.created_at AS obituary_created_at, obituary.mosque_id AS obituary_mosque_id, obituary.age AS obituary_age, obituary.birth_place AS obituary_birth_place, obituary.death_place AS obituary_death_place, obituary.burial_location AS obituary_burial_location, obituary.family_contact AS obituary_family_contact, obituary.prayer_time AS obituary_prayer_time, obituary.death_prayer_location AS obituary_death_prayer_location, obituary.cause_of_death AS obituary_cause_of_death, obituary.additional_notes AS obituary_additional_notes, obituary.notifications_sent AS obituary_notifications_sent, obituary.reminder_sent AS obituary_reminder_sent 
+FROM obituary 
+WHERE obituary.is_approved = true ORDER BY obituary.date_of_death DESC]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+
+Traceback (most recent call last)
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+self.dialect.do_execute(
+^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+cursor.execute(statement, parameters)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The above exception was the direct cause of the following exception:
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1536, in __call__
+return self.wsgi_app(environ, start_response)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1514, in wsgi_app
+response = self.handle_exception(e)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1511, in wsgi_app
+response = self.full_dispatch_request()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 919, in full_dispatch_request
+rv = self.handle_user_exception(e)
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+rv = self.dispatch_request()
+     ^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/routes/routes.py", line 39, in obituaries
+obituaries = Obituary.query.filter_by(is_approved=True).order_by(Obituary.date_of_death.desc()).all()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2699, in all
+return self._iter().all()  # type: ignore
+       ^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2853, in _iter
+result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                              
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2365, in execute
+return self._execute_internal(
+       
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2251, in _execute_internal
+result: Result[Any] = compile_state_cls.orm_execute_statement(
+                      
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/context.py", line 305, in orm_execute_statement
+result = conn.execute(
+         
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+return meth(
+       
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 516, in _execute_on_connection
+return connection._execute_clauseelement(
+       
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1638, in _execute_clauseelement
+ret = self._execute_context(
+      
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1843, in _execute_context
+return self._exec_single_context(
+       
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1983, in _exec_single_context
+self._handle_dbapi_exception(
+^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2352, in _handle_dbapi_exception
+raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+self.dialect.do_execute(
+^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+cursor.execute(statement, parameters)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column obituary.death_prayer_location does not exist
+LINE 1: ...ct, obituary.prayer_time AS obituary_prayer_time, obituary.d...
+^
+
+[SQL: SELECT obituary.id AS obituary_id, obituary.name AS obituary_name, obituary.date_of_death AS obituary_date_of_death, obituary.funeral_date AS obituary_funeral_date, obituary.details AS obituary_details, obituary.is_approved AS obituary_is_approved, obituary.created_at AS obituary_created_at, obituary.mosque_id AS obituary_mosque_id, obituary.age AS obituary_age, obituary.birth_place AS obituary_birth_place, obituary.death_place AS obituary_death_place, obituary.burial_location AS obituary_burial_location, obituary.family_contact AS obituary_family_contact, obituary.prayer_time AS obituary_prayer_time, obituary.death_prayer_location AS obituary_death_prayer_location, obituary.cause_of_death AS obituary_cause_of_death, obituary.additional_notes AS obituary_additional_notes, obituary.notifications_sent AS obituary_notifications_sent, obituary.reminder_sent AS obituary_reminder_sent
+FROM obituary
+WHERE obituary.is_approved = true ORDER BY obituary.date_of_death DESC]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+The debugger caught an exception in your WSGI application. You can now look at the traceback which led to the error.
+To switch between the interactive traceback and the plaintext one, you can click on the "Traceback" headline. From the text traceback you can also create a paste of it.
+
+Brought to you by DON'T PANIC, your friendly Werkzeug powered traceback interpreter.
