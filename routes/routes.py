@@ -1,28 +1,24 @@
-from flask import render_template, redirect, url_for, request, flash
+from flask import render_template, redirect, url_for, request, flash, session
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from app import db
 from models import User, Event, PrayerTime, Obituary
 from datetime import datetime
-
-# Import the blueprint instance
+from flask_babel import _
 from . import routes
 
 @routes.route('/')
 def index():
     try:
-        # Get upcoming events for the homepage
         events = Event.query.filter(
             Event.date >= datetime.utcnow()
         ).order_by(Event.date).limit(3).all()
 
-        # Get today's prayer times
         today = datetime.today().date()
         prayer_times = PrayerTime.query.filter_by(date=today).all()
 
         return render_template('index.html', events=events, prayer_times=prayer_times)
     except Exception as e:
-        # Create an empty list if database is not yet populated
         return render_template('index.html', events=[], prayer_times=[])
 
 @routes.route('/prayer-times')
@@ -108,14 +104,14 @@ def register_mosque():
             return redirect(url_for('main.register_mosque'))
 
         user = User(
-            username=mosque_name,  # Use mosque name as username
+            username=mosque_name,
             email=email,
             password_hash=generate_password_hash(password),
             user_type='mosque',
             mosque_name=mosque_name,
             mosque_address=mosque_address,
             mosque_phone=mosque_phone,
-            is_verified=False  # Requires admin verification
+            is_verified=False
         )
         db.session.add(user)
         db.session.commit()
@@ -155,3 +151,11 @@ def logout():
     logout_user()
     flash('Logged out successfully.', 'success')
     return redirect(url_for('main.index'))
+
+@routes.route('/language/<language>')
+def set_language(language):
+    if language not in ['en', 'nl', 'ar']:
+        return redirect(url_for('main.index'))
+
+    session['language'] = language
+    return redirect(request.referrer or url_for('main.index'))

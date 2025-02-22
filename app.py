@@ -1,8 +1,9 @@
 import os
 import logging
-from flask import Flask
+from flask import Flask, request, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_babel import Babel
 from sqlalchemy.orm import DeclarativeBase
 
 # Configure logging
@@ -14,6 +15,14 @@ class Base(DeclarativeBase):
 
 db = SQLAlchemy(model_class=Base)
 login_manager = LoginManager()
+babel = Babel()
+
+def get_locale():
+    # Try to get language from the session
+    if 'language' in session:
+        return session['language']
+    # Otherwise try to guess the language from the user accept header
+    return request.accept_languages.best_match(['en', 'nl', 'ar'])
 
 def create_app():
     # Create Flask app
@@ -28,9 +37,15 @@ def create_app():
     }
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+    # Configure Babel
+    app.config['BABEL_DEFAULT_LOCALE'] = 'en'
+    app.config['BABEL_SUPPORTED_LOCALES'] = ['en', 'nl', 'ar']
+    app.config['BABEL_DEFAULT_TIMEZONE'] = 'UTC'
+
     # Initialize extensions
     db.init_app(app)
     login_manager.init_app(app)
+    babel.init_app(app, locale_selector=get_locale)
     login_manager.login_view = 'login'
 
     with app.app_context():

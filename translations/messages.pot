@@ -1,0 +1,45 @@
+# Translations template for VGM Mosque Management.
+# Copyright (C) 2024 VGM
+# This file is distributed under the same license as the VGM project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2024-02-22 17:40+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.12.1\n"
+
+msgid "Home"
+msgstr ""
+
+msgid "Prayer Times"
+msgstr ""
+
+msgid "Events"
+msgstr ""
+
+msgid "Obituaries"
+msgstr ""
+
+msgid "Contact"
+msgstr ""
+
+msgid "Login"
+msgstr ""
+
+msgid "Logout"
+msgstr ""
+
+msgid "Register"
+msgstr ""
+
+msgid "© 2024 Vereniging van Gentse Moskeeën. All rights reserved."
+msgstr ""
