@@ -1,78 +1,76 @@
-# Translations template for VGM Mosque Management.
+# Dutch translations for VGM Mosque Management.
 # Copyright (C) 2024 VGM
 # This file is distributed under the same license as the VGM project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
-#
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2024-02-22 17:40+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2024-02-22 17:40+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: nl\n"
+"Language-Team: nl <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.12.1\n"
 
 msgid "Home"
-msgstr ""
+msgstr "Home"
 
 msgid "Prayer Times"
-msgstr ""
+msgstr "Gebedstijden"
 
 msgid "Events"
-msgstr ""
+msgstr "Evenementen"
 
 msgid "Obituaries"
-msgstr ""
+msgstr "Overlijdensberichten"
 
 msgid "Contact"
-msgstr ""
+msgstr "Contact"
 
 msgid "Login"
-msgstr ""
+msgstr "Inloggen"
 
 msgid "Logout"
-msgstr ""
+msgstr "Uitloggen"
 
 msgid "Register"
-msgstr ""
+msgstr "Registreren"
 
 msgid "© 2024 Vereniging van Gentse Moskeeën. All rights reserved."
-msgstr ""
+msgstr "© 2024 Vereniging van Gentse Moskeeën. Alle rechten voorbehouden."
 
 msgid "Register - Mosque Management"
-msgstr ""
+msgstr "Registreren - Moskee Beheer"
 
 msgid "Choose Registration Type:"
-msgstr ""
+msgstr "Kies Registratietype:"
 
 msgid "Register as Visitor"
-msgstr ""
+msgstr "Registreer als Bezoeker"
 
 msgid "Register as Mosque"
-msgstr ""
+msgstr "Registreer als Moskee"
 
 msgid "Already have an account?"
-msgstr ""
+msgstr "Heeft u al een account?"
 
 msgid "Login here"
-msgstr ""
+msgstr "Log hier in"
 
 msgid "Login - Mosque Management"
-msgstr ""
+msgstr "Inloggen - Moskee Beheer"
 
 msgid "Email"
-msgstr ""
+msgstr "E-mailadres"
 
 msgid "Password"
-msgstr ""
+msgstr "Wachtwoord"
 
 msgid "Don't have an account?"
-msgstr ""
+msgstr "Nog geen account?"
 
 msgid "Register here"
-msgstr ""
+msgstr "Registreer hier"

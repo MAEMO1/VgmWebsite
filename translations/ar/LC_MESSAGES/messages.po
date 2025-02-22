@@ -1,0 +1,76 @@
+# Arabic translations for VGM Mosque Management.
+# Copyright (C) 2024 VGM
+# This file is distributed under the same license as the VGM project.
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2024-02-22 17:40+0000\n"
+"PO-Revision-Date: 2024-02-22 17:40+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ar\n"
+"Language-Team: ar <LL@li.org>\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Home"
+msgstr "الرئيسية"
+
+msgid "Prayer Times"
+msgstr "أوقات الصلاة"
+
+msgid "Events"
+msgstr "الفعاليات"
+
+msgid "Obituaries"
+msgstr "الوفيات"
+
+msgid "Contact"
+msgstr "اتصل بنا"
+
+msgid "Login"
+msgstr "تسجيل الدخول"
+
+msgid "Logout"
+msgstr "تسجيل الخروج"
+
+msgid "Register"
+msgstr "التسجيل"
+
+msgid "© 2024 Vereniging van Gentse Moskeeën. All rights reserved."
+msgstr "© 2024 جمعية مساجد خنت. جميع الحقوق محفوظة."
+
+msgid "Register - Mosque Management"
+msgstr "التسجيل - إدارة المسجد"
+
+msgid "Choose Registration Type:"
+msgstr "اختر نوع التسجيل:"
+
+msgid "Register as Visitor"
+msgstr "التسجيل كزائر"
+
+msgid "Register as Mosque"
+msgstr "التسجيل كمسجد"
+
+msgid "Already have an account?"
+msgstr "هل لديك حساب بالفعل؟"
+
+msgid "Login here"
+msgstr "تسجيل الدخول هنا"
+
+msgid "Login - Mosque Management"
+msgstr "تسجيل الدخول - إدارة المسجد"
+
+msgid "Email"
+msgstr "البريد الإلكتروني"
+
+msgid "Password"
+msgstr "كلمة المرور"
+
+msgid "Don't have an account?"
+msgstr "ليس لديك حساب؟"
+
+msgid "Register here"
+msgstr "سجل هنا"
