@@ -33,21 +33,15 @@ def create_app():
     login_manager.init_app(app)
     login_manager.login_view = 'login'
 
-    # Import routes first to avoid circular imports
-    from routes import routes as main_routes
-    from routes.event_routes import events
-
-    # Register blueprints
-    app.register_blueprint(main_routes)
-    app.register_blueprint(events, url_prefix='/events')
-
-    # User loader callback for Flask-Login
-    @login_manager.user_loader
-    def load_user(user_id):
-        from models import User
-        return User.query.get(int(user_id))
-
     with app.app_context():
+        # Import routes after app context is created
+        from routes import routes as main_routes
+        from routes.event_routes import events
+
+        # Register blueprints
+        app.register_blueprint(main_routes)
+        app.register_blueprint(events, url_prefix='/events')
+
         # Import models to ensure they're registered with SQLAlchemy
         from models import User, Event, EventRegistration, EventNotification, PrayerTime, Obituary
         db.create_all()
@@ -57,3 +51,9 @@ def create_app():
 
 # Create the application instance
 app = create_app()
+
+# User loader callback for Flask-Login
+@login_manager.user_loader
+def load_user(user_id):
+    from models import User
+    return User.query.get(int(user_id))

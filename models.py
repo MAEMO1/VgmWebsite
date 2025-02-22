@@ -21,7 +21,7 @@ class Event(db.Model):
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
     date = db.Column(db.DateTime, nullable=False)
-    location = db.Column(db.String(200))
+    location = db.Column(db.String(200))  # Added location column
     max_participants = db.Column(db.Integer)
     registration_required = db.Column(db.Boolean, default=False)
     reminder_before = db.Column(db.Integer)  # Minutes before event to send reminder
