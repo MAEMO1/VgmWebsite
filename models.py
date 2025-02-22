@@ -8,25 +8,37 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256))
     is_admin = db.Column(db.Boolean, default=False)
+    user_type = db.Column(db.String(20), nullable=False)  # 'visitor' or 'mosque'
+
+    # Mosque-specific fields
+    mosque_name = db.Column(db.String(200))
+    mosque_address = db.Column(db.String(300))
+    mosque_phone = db.Column(db.String(20))
+    is_verified = db.Column(db.Boolean, default=False)  # For mosque accounts
+
     # Notification preferences
     notify_new_events = db.Column(db.Boolean, default=True)
     notify_event_changes = db.Column(db.Boolean, default=True)
     notify_event_reminders = db.Column(db.Boolean, default=True)
+
     # Relationships
     notifications = db.relationship('EventNotification', backref='user', lazy='dynamic')
     event_registrations = db.relationship('EventRegistration', backref='user', lazy='dynamic')
+    managed_events = db.relationship('Event', backref='organizer', lazy='dynamic')
 
 class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
     date = db.Column(db.DateTime, nullable=False)
-    location = db.Column(db.String(200))  # Added location column
+    location = db.Column(db.String(200))
     max_participants = db.Column(db.Integer)
     registration_required = db.Column(db.Boolean, default=False)
     reminder_before = db.Column(db.Integer)  # Minutes before event to send reminder
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    organizer_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Link to mosque user
+
     # Relationships
     registrations = db.relationship('EventRegistration', backref='event', lazy='dynamic')
     notifications = db.relationship('EventNotification', backref='event', lazy='dynamic')
@@ -52,6 +64,7 @@ class PrayerTime(db.Model):
     prayer_name = db.Column(db.String(20), nullable=False)
     time = db.Column(db.Time, nullable=False)
     date = db.Column(db.Date, nullable=False)
+    mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Link to mosque user
 
 class Obituary(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -61,3 +74,4 @@ class Obituary(db.Model):
     details = db.Column(db.Text)
     is_approved = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Link to mosque user for verification
