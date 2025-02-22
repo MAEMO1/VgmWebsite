@@ -1,6 +1,6 @@
 :root {
-    --primary-color: #4CAF50;
-    --secondary-color: #2E7D32;
+    --primary-color: #40A7AC;  /* Turquoise from logo */
+    --secondary-color: #F4A460; /* Gold from logo */
     --accent-color: #81C784;
     --text-color: #333;
     --light-bg: #F5F5F5;
@@ -16,23 +16,29 @@ body {
 
 /* Navigation */
 .navbar {
-    background-color: var(--primary-color);
+    background-color: var(--white);
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .navbar-brand {
-    color: var(--white) !important;
+    color: var(--primary-color) !important;
     font-weight: 500;
 }
 
+.navbar-brand img {
+    height: 40px;
+    margin-right: 10px;
+}
+
 .nav-link {
-    color: var(--white) !important;
+    color: var(--primary-color) !important;
     opacity: 0.9;
     transition: opacity 0.3s;
 }
 
 .nav-link:hover {
     opacity: 1;
+    color: var(--secondary-color) !important;
 }
 
 /* Main Content */
