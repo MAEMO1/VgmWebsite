@@ -66,7 +66,7 @@
                     <h3>Submit an Obituary</h3>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ url_for('main.submit_obituary') }}">
+                    <form method="POST" action="{{ url_for('obituaries.submit_obituary') }}">
                         <div class="mb-3">
                             <label for="name" class="form-label">Name of Deceased</label>
                             <input type="text" class="form-control" id="name" name="name" required>
@@ -122,7 +122,7 @@
                     <h3>Notification Preferences</h3>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ url_for('main.update_obituary_preferences') }}">
+                    <form method="POST" action="{{ url_for('obituaries.update_preferences') }}">
                         <div class="form-check mb-3">
                             <input type="checkbox" class="form-check-input" id="notify_obituaries" 
                                    name="notify_obituaries" {% if current_user.notify_obituaries %}checked{% endif %}>
