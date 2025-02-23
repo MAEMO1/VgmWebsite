@@ -1,46 +1,113 @@
 {% extends "base.html" %}
 
-{% block title %}Contact Us - Mosque Management{% endblock %}
+{% block title %}{{ _('Contact Us - VGM') }}{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-6">
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
         <div class="card">
             <div class="card-header">
-                <h2>Contact Information</h2>
+                <h2>{{ _('Contact Us') }}</h2>
             </div>
             <div class="card-body">
-                <h4>Address</h4>
-                <p>123 Mosque Street<br>City, Country<br>Postal Code</p>
-                
-                <h4>Phone Numbers</h4>
-                <p>Main Office: (123) 456-7890<br>
-                   Imam's Office: (123) 456-7891</p>
-                
-                <h4>Email</h4>
-                <p>General Inquiries: info@mosque.com<br>
-                   Administration: admin@mosque.com</p>
-                
-                <h4>Office Hours</h4>
-                <p>Monday - Friday: 9:00 AM - 5:00 PM<br>
-                   Saturday - Sunday: 10:00 AM - 2:00 PM</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h2>Location</h2>
-            </div>
-            <div class="card-body">
-                <div id="mosque-map" style="height: 400px;"></div>
+                <form method="POST" action="{{ url_for('main.contact') }}">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">{{ _('Name') }}</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">{{ _('Email') }}</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="subject" class="form-label">{{ _('Subject') }}</label>
+                        <input type="text" class="form-control" id="subject" name="subject" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="message" class="form-label">{{ _('Message') }}</label>
+                        <textarea class="form-control" id="message" name="message" rows="6" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">{{ _('Send Message') }}</button>
+                </form>
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
 
-{% block scripts %}
-<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
-<script src="{{ url_for('static', filename='js/maps.js') }}"></script>
+{% block styles %}
+<style>
+.card {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    background: white;
+    overflow: hidden;
+}
+
+.card-header {
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+    padding: 1.25rem 1.5rem;
+}
+
+.card-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.form-label {
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(0, 102, 255, 0.1);
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 102, 255, 0.15);
+}
+
+@media (max-width: 768px) {
+    .card-header {
+        padding: 1rem 1.25rem;
+    }
+
+    .card-body {
+        padding: 1.25rem;
+    }
+}
+</style>
 {% endblock %}

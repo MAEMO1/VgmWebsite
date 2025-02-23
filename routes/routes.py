@@ -153,10 +153,20 @@ def set_language(language):
     session['language'] = language
     return redirect(request.referrer or url_for('main.index'))
 
-@routes.route('/contact')
+@routes.route('/contact', methods=['GET', 'POST'])
 def contact():
-    return render_template('contact.html', 
-                         google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'))
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        subject = request.form.get('subject')
+        message = request.form.get('message')
+
+        # Here you would typically send the email or store the contact message
+        # For now, just show a success message
+        flash(_('Thank you for your message. We will get back to you soon.'), 'success')
+        return redirect(url_for('main.contact'))
+
+    return render_template('contact.html')
 
 @routes.route('/mosque/<int:mosque_id>')
 def mosque_detail(mosque_id):
