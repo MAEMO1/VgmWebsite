@@ -4,7 +4,6 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from app import db
 from models import User, Event, PrayerTime, Obituary, MosqueImage, MosqueVideo
 from datetime import datetime
-from sqlalchemy import func
 import os
 
 routes = Blueprint('main', __name__)
@@ -472,3 +471,7 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 from werkzeug.utils import secure_filename
+
+@routes.route('/memorandum')
+def memorandum():
+    return render_template('memorandum.html')

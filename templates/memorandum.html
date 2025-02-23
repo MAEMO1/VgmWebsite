@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}VGM Memorandum 2025-2030{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4">Memorandum 2025-2030</h1>
+            <p class="lead">Vereniging van Gentse Moskeeën (VGM)</p>
+            <hr>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <p class="mb-0">
+                    <strong>{{ _('About VGM') }}:</strong> {{ _('The Association of Ghent Mosques (VGM) is the umbrella organization of Ghent mosques (21), established in 2016.') }}
+                </p>
+                <a href="{{ url_for('static', filename='MemorandumVGM.pdf') }}" class="btn btn-primary">
+                    <i class="fas fa-download me-2"></i>{{ _('Download Complete Memorandum') }}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Religious Identity -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-primary mb-3">
+                        <i class="fas fa-pray fa-2x"></i>
+                    </div>
+                    <h3 class="card-title">{{ _('Religious Identity') }}</h3>
+                    <p class="card-text">
+                        {{ _('Focus on accommodating religious identity in public spaces, including prayer rooms and Mecca-oriented burial grounds. Promoting acceptance of religious expressions in society.') }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Education -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-primary mb-3">
+                        <i class="fas fa-graduation-cap fa-2x"></i>
+                    </div>
+                    <h3 class="card-title">{{ _('Education') }}</h3>
+                    <p class="card-text">
+                        {{ _('Emphasis on equal educational opportunities, functional use of mother tongue, combating racism, and respecting religious practices in schools.') }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Poverty -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-primary mb-3">
+                        <i class="fas fa-hands-helping fa-2x"></i>
+                    </div>
+                    <h3 class="card-title">{{ _('Poverty') }}</h3>
+                    <p class="card-text">
+                        {{ _('Collaboration with local organizations and continued investment in neighborhood operations to combat poverty and provide support.') }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Housing -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-primary mb-3">
+                        <i class="fas fa-home fa-2x"></i>
+                    </div>
+                    <h3 class="card-title">{{ _('Housing') }}</h3>
+                    <p class="card-text">
+                        {{ _('Addressing discrimination in the housing market, expanding affordable housing options, and implementing effective anti-discrimination policies.') }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Work -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-primary mb-3">
+                        <i class="fas fa-briefcase fa-2x"></i>
+                    </div>
+                    <h3 class="card-title">{{ _('Work') }}</h3>
+                    <p class="card-text">
+                        {{ _('City of Ghent as an example of workplace inclusion, focusing on diversity in higher positions and employee well-being.') }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Police -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-primary mb-3">
+                        <i class="fas fa-shield-alt fa-2x"></i>
+                    </div>
+                    <h3 class="card-title">{{ _('Police') }}</h3>
+                    <p class="card-text">
+                        {{ _('Building trust through community engagement, promoting diversity in the police force, and maintaining high standards of conduct.') }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    transition: transform 0.2s;
+}
+.card:hover {
+    transform: translateY(-5px);
+}
+.text-primary {
+    opacity: 0.9;
+}
+</style>
+{% endblock %}
