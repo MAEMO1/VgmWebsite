@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}{{ mosque.mosque_name }} - {{ _('Mosque Details') }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <!-- Mosque Header -->
+        <div class="col-12 mb-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('main.mosques') }}">{{ _('Mosques') }}</a></li>
+                    <li class="breadcrumb-item active">{{ mosque.mosque_name }}</li>
+                </ol>
+            </nav>
+            
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h1 class="display-4">{{ mosque.mosque_name }}</h1>
+                            <p class="lead">
+                                <i class="fas fa-map-marker-alt"></i> {{ mosque.get_full_address() }}
+                            </p>
+                            {% if mosque.mosque_phone %}
+                            <p><i class="fas fa-phone"></i> {{ mosque.mosque_phone }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 text-end">
+                            {% if current_user.is_authenticated and (current_user.is_admin or current_user.id == mosque.id) %}
+                            <a href="{{ url_for('main.edit_mosque', mosque_id=mosque.id) }}" class="btn btn-primary">
+                                <i class="fas fa-edit"></i> {{ _('Edit Mosque Information') }}
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-8">
+            <!-- About Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>{{ _('About') }}</h3>
+                </div>
+                <div class="card-body">
+                    {% if mosque.history %}
+                    <h4>{{ _('History') }}</h4>
+                    <p>{{ mosque.history }}</p>
+                    {% endif %}
+                    
+                    {% if mosque.establishment_year %}
+                    <h4>{{ _('Establishment') }}</h4>
+                    <p>{{ _('Established in') }} {{ mosque.establishment_year }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Prayer Times Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>{{ _('Prayer Times') }}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="prayer-times">
+                        {% if prayer_times %}
+                        {% for prayer in prayer_times %}
+                        <div class="prayer-time">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>{{ prayer.prayer_name }}</span>
+                                <span>{{ prayer.time.strftime('%H:%M') }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <p>{{ _('Prayer times not available') }}</p>
+                        {% endif %}
+                    </div>
+
+                    {% if mosque.friday_prayer_time %}
+                    <div class="mt-4">
+                        <h4>{{ _('Friday Prayer') }}</h4>
+                        <p>{{ _('Friday prayer is held at') }} {{ mosque.friday_prayer_time.strftime('%H:%M') }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Events Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>{{ _('Upcoming Events') }}</h3>
+                </div>
+                <div class="card-body">
+                    {% if events %}
+                    <div class="list-group">
+                        {% for event in events %}
+                        <div class="list-group-item">
+                            <h5>{{ event.title }}</h5>
+                            <p class="mb-1">{{ event.description }}</p>
+                            <small class="text-muted">
+                                <i class="fas fa-calendar"></i> {{ event.date.strftime('%d %B %Y at %H:%M') }}
+                            </small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p>{{ _('No upcoming events') }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <!-- Map Card -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div id="mosque-map" style="height: 300px;"></div>
+                </div>
+            </div>
+
+            <!-- Media Gallery -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>{{ _('Gallery') }}</h3>
+                </div>
+                <div class="card-body">
+                    {% if mosque.images %}
+                    <div class="row g-2">
+                        {% for image in mosque.images %}
+                        <div class="col-6">
+                            <img src="{{ image.url }}" alt="{{ image.description }}" class="img-fluid rounded">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p>{{ _('No images available') }}</p>
+                    {% endif %}
+
+                    {% if mosque.videos %}
+                    <div class="mt-4">
+                        <h4>{{ _('Videos') }}</h4>
+                        {% for video in mosque.videos %}
+                        <div class="ratio ratio-16x9 mb-3">
+                            <iframe src="{{ video.url }}" title="{{ video.title }}" allowfullscreen></iframe>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/maps.js') }}"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap" async defer></script>
+{% endblock %}

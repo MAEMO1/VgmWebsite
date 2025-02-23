@@ -32,24 +32,26 @@
                 <div class="card-body">
                     <div class="mosque-list">
                         {% for mosque in mosques %}
-                        <div class="mosque-item mb-3" data-lat="{{ mosque.latitude }}" data-lng="{{ mosque.longitude }}">
-                            <div class="d-flex align-items-start">
-                                {% if mosque.mosque_image %}
-                                <img src="{{ mosque.mosque_image }}" alt="{{ mosque.mosque_name }}" class="mosque-thumbnail me-3" style="width: 80px; height: 80px; object-fit: cover;">
-                                {% else %}
-                                <div class="mosque-icon me-3">
-                                    <i class="fas fa-mosque fa-3x"></i>
-                                </div>
-                                {% endif %}
-                                <div>
-                                    <h4>{{ mosque.mosque_name }}</h4>
-                                    <p class="mb-1"><i class="fas fa-map-marker-alt"></i> {{ mosque.get_full_address() }}</p>
-                                    {% if mosque.mosque_phone %}
-                                    <p class="mb-0"><i class="fas fa-phone"></i> {{ mosque.mosque_phone }}</p>
+                        <a href="{{ url_for('main.mosque_detail', mosque_id=mosque.id) }}" class="text-decoration-none">
+                            <div class="mosque-item mb-3" data-lat="{{ mosque.latitude }}" data-lng="{{ mosque.longitude }}">
+                                <div class="d-flex align-items-start">
+                                    {% if mosque.mosque_image %}
+                                    <img src="{{ mosque.mosque_image }}" alt="{{ mosque.mosque_name }}" class="mosque-thumbnail me-2" style="width: 50px; height: 50px; object-fit: cover;">
+                                    {% else %}
+                                    <div class="mosque-icon me-2">
+                                        <i class="fas fa-mosque fa-2x"></i>
+                                    </div>
                                     {% endif %}
+                                    <div>
+                                        <h5 class="mb-1">{{ mosque.mosque_name }}</h5>
+                                        <p class="mb-1 small"><i class="fas fa-map-marker-alt"></i> {{ mosque.get_full_address() }}</p>
+                                        {% if mosque.mosque_phone %}
+                                        <p class="mb-0 small"><i class="fas fa-phone"></i> {{ mosque.mosque_phone }}</p>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                         {% else %}
                         <p>{{ _('No mosques found') }}</p>
                         {% endfor %}
@@ -64,7 +66,6 @@
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/maps.js') }}"></script>
 <script>
-    // Handle Google Maps script loading errors
     function handleMapsError() {
         document.getElementById('mosque-map').innerHTML = 
             '<div class="alert alert-danger">Failed to load Google Maps. Please try again later.</div>';

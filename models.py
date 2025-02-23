@@ -22,11 +22,37 @@ class User(UserMixin, db.Model):
     longitude = db.Column(db.Float)            # Geographical coordinates
     is_verified = db.Column(db.Boolean, default=False)
 
+    # New mosque fields
+    history = db.Column(db.Text)                   # Mosque history text
+    establishment_year = db.Column(db.Integer)     # Year of establishment
+    friday_prayer_time = db.Column(db.Time)        # Regular Friday prayer time
+
+    # Relationships
+    images = db.relationship('MosqueImage', backref='mosque', lazy='dynamic')
+    videos = db.relationship('MosqueVideo', backref='mosque', lazy='dynamic')
+    prayer_times = db.relationship('PrayerTime', backref='mosque', lazy='dynamic')
+    events = db.relationship('Event', backref='mosque', lazy='dynamic')
+
     def get_full_address(self):
         """Return the full formatted address for the mosque"""
         if self.user_type == 'mosque':
             return f"{self.mosque_street} {self.mosque_number}, {self.mosque_postal} {self.mosque_city}"
         return None
+
+class MosqueImage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    url = db.Column(db.String(500), nullable=False)
+    description = db.Column(db.String(200))
+    upload_date = db.Column(db.DateTime, default=datetime.utcnow)
+
+class MosqueVideo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    url = db.Column(db.String(500), nullable=False)
+    title = db.Column(db.String(200))
+    description = db.Column(db.Text)
+    upload_date = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)

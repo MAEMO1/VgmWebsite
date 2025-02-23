@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash,
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from app import db
-from models import User, Event, PrayerTime, Obituary
+from models import User, Event, PrayerTime, Obituary, MosqueImage, MosqueVideo # Assuming these models exist
 from datetime import datetime
 import os
 
@@ -149,6 +149,81 @@ def set_language(language):
 def contact():
     return render_template('contact.html', 
                          google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'))
+
+@routes.route('/mosque/<int:mosque_id>')
+def mosque_detail(mosque_id):
+    mosque = User.query.filter_by(id=mosque_id, user_type='mosque', is_verified=True).first_or_404()
+
+    # Get today's prayer times
+    today = datetime.today().date()
+    prayer_times = mosque.prayer_times.filter_by(date=today).all()
+
+    # Get upcoming events
+    events = mosque.events.filter(Event.date >= datetime.utcnow()).order_by(Event.date).limit(5).all()
+
+    return render_template('mosque_detail.html',
+                         mosque=mosque,
+                         prayer_times=prayer_times,
+                         events=events,
+                         google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'))
+
+@routes.route('/mosque/<int:mosque_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_mosque(mosque_id):
+    mosque = User.query.get_or_404(mosque_id)
+
+    # Check if user has permission to edit
+    if not (current_user.is_admin or current_user.id == mosque.id):
+        flash('Je hebt geen toestemming om deze moskee te bewerken.', 'error')
+        return redirect(url_for('main.mosque_detail', mosque_id=mosque_id))
+
+    if request.method == 'POST':
+        try:
+            mosque.history = request.form.get('history')
+            mosque.establishment_year = int(request.form.get('establishment_year')) if request.form.get('establishment_year') else None
+
+            # Parse and set Friday prayer time
+            friday_time = request.form.get('friday_prayer_time')
+            if friday_time:
+                mosque.friday_prayer_time = datetime.strptime(friday_time, '%H:%M').time()
+
+            # Handle image uploads
+            if 'images' in request.files:
+                for image in request.files.getlist('images'):
+                    if image and allowed_file(image.filename):
+                        filename = secure_filename(image.filename)
+                        image_path = os.path.join('static', 'uploads', filename)
+                        image.save(image_path)
+
+                        mosque_image = MosqueImage(
+                            mosque_id=mosque.id,
+                            url=url_for('static', filename=f'uploads/{filename}'),
+                            description=request.form.get('image_description')
+                        )
+                        db.session.add(mosque_image)
+
+            # Handle video URLs
+            video_urls = request.form.getlist('video_urls')
+            video_titles = request.form.getlist('video_titles')
+            for url, title in zip(video_urls, video_titles):
+                if url and title:
+                    mosque_video = MosqueVideo(
+                        mosque_id=mosque.id,
+                        url=url,
+                        title=title
+                    )
+                    db.session.add(mosque_video)
+
+            db.session.commit()
+            flash('Moskee informatie succesvol bijgewerkt.', 'success')
+            return redirect(url_for('main.mosque_detail', mosque_id=mosque_id))
+
+        except Exception as e:
+            db.session.rollback()
+            flash('Er is een fout opgetreden bij het bijwerken van de moskee informatie.', 'error')
+            print(f"Error updating mosque: {e}")
+
+    return render_template('edit_mosque.html', mosque=mosque)
 
 def initialize_mosques():
     """Initialize the mosques in the database with their coordinates"""
@@ -369,3 +444,10 @@ def initialize_mosques():
     except Exception as e:
         db.session.rollback()
         print(f"Error initializing mosques: {e}")
+
+
+def allowed_file(filename):
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+from werkzeug.utils import secure_filename
