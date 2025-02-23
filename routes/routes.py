@@ -535,3 +535,43 @@ def about():
         }
     ]
     return render_template('about.html', board_members=board_members)
+
+@routes.route('/upload_board_photo', methods=['POST'])
+@login_required
+def upload_board_photo():
+    if not current_user.is_admin:
+        flash('Alleen beheerders kunnen bestuurderfoto\'s uploaden.', 'error')
+        return redirect(url_for('main.about'))
+
+    try:
+        if 'photo' not in request.files:
+            flash('Geen foto geselecteerd.', 'error')
+            return redirect(url_for('main.about'))
+
+        photo = request.files['photo']
+        member_id = request.form.get('member_id')
+
+        if photo.filename == '':
+            flash('Geen foto geselecteerd.', 'error')
+            return redirect(url_for('main.about'))
+
+        if not allowed_file(photo.filename):
+            flash('Ongeldig bestandstype. Gebruik .jpg, .jpeg, .png of .gif bestanden.', 'error')
+            return redirect(url_for('main.about'))
+
+        # Create the board directory if it doesn't exist
+        board_dir = os.path.join('static', 'images', 'board')
+        os.makedirs(board_dir, exist_ok=True)
+
+        # Save the file with the correct name based on member_id
+        filename = f"{member_id}.jpg"
+        filepath = os.path.join(board_dir, filename)
+        photo.save(filepath)
+
+        flash('Foto succesvol geüpload.', 'success')
+        return redirect(url_for('main.about'))
+
+    except Exception as e:
+        print(f"Error uploading photo: {e}")
+        flash('Er is een fout opgetreden bij het uploaden van de foto.', 'error')
+        return redirect(url_for('main.about'))
