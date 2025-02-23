@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from app import db
-from models import User, BoardMember # Added BoardMember import
+from models import User, BoardMember, Event, PrayerTime, BlogPost, MosqueImage, MosqueVideo
 from datetime import datetime, date
 import os
 
