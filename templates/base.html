@@ -15,7 +15,6 @@
     <style>
         :root {
             --primary-color: #41B7AC;     /* VGM Logo turquoise */
-            --accent-color: #D4AA37;      /* VGM Logo gold */
             --text-color: #333333;
             --light-bg: #F8F9FA;
             --border-color: #E9ECEF;
@@ -39,56 +38,43 @@
             width: 140px;
             height: 140px;
             position: relative;
-        }
-
-        .logo-octagon {
-            width: 100%;
-            height: 100%;
-            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             background: white;
-            clip-path: polygon(
-                30% 0%, 70% 0%, 
-                100% 30%, 100% 70%, 
-                70% 100%, 30% 100%, 
-                0% 70%, 0% 30%
-            );
-            border: 2px solid var(--accent-color);
-        }
-
-        .logo-octagon::before {
-            content: '';
-            position: absolute;
-            inset: 4px;
-            background: white;
-            clip-path: polygon(
-                30% 0%, 70% 0%, 
-                100% 30%, 100% 70%, 
-                70% 100%, 30% 100%, 
-                0% 70%, 0% 30%
-            );
-            border: 2px solid var(--accent-color);
         }
 
         .logo-dome {
+            width: 80%;
+            height: 60%;
+            background: var(--primary-color);
+            position: relative;
+            border-radius: 100% 100% 0 0;
+            margin-top: 20%;
+        }
+
+        .logo-dome::before {
+            content: '';
             position: absolute;
-            top: 20%;
+            bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 60%;
-            height: 30%;
+            width: 120%;
+            height: 20%;
             background: var(--primary-color);
-            border-radius: 100% 100% 0 0;
+            border-radius: 5px;
         }
 
         .logo-crescent {
             position: absolute;
-            top: 10%;
+            top: 5%;
             left: 50%;
-            transform: translateX(-50%) rotate(-15deg);
-            width: 20%;
-            height: 20%;
+            transform: translateX(-50%);
+            width: 30%;
+            height: 30%;
             background: var(--primary-color);
             border-radius: 50%;
+            clip-path: path('M 0,15 A 15,15 0 1,1 30,15 A 12,12 0 1,0 0,15');
         }
 
         .logo-text {
@@ -122,21 +108,7 @@
             }
         }
 
-        /* Rest of your existing styles... */
-        .navbar {
-            background: white;
-            padding: 0.5rem 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .navbar-brand {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.5rem 0;
-        }
-
+        /* Rest of the existing styles... */
         .nav-link {
             color: var(--text-color);
             font-weight: 500;
@@ -164,15 +136,21 @@
         .nav-link:hover::after {
             width: 80%;
         }
-
-        @media (max-width: 992px) {
-            .logo-container {
-                width: 100px;
-                height: 100px;
-            }
+        .navbar {
+            background: white;
+            padding: 0.5rem 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
-        /* Dropdown enhancements */
+        .navbar-brand {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 0;
+        }
+
+        /* Your existing styles continue... */
         .dropdown-menu {
             border: 1px solid var(--border-color);
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -353,10 +331,8 @@
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('main.index') }}" aria-label="VGM Home">
                 <div class="logo-container">
-                    <div class="logo-octagon">
-                        <div class="logo-dome"></div>
-                        <div class="logo-crescent"></div>
-                    </div>
+                    <div class="logo-dome"></div>
+                    <div class="logo-crescent"></div>
                     <div class="logo-text">VGM</div>
                     <div class="logo-subtext">Vereniging van Gentse Moskeeën</div>
                 </div>
