@@ -203,3 +203,115 @@ body {
         padding: 1.25rem;
     }
 }
+
+/* Calendar Styles */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--white);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.calendar-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
+
+.calendar-header button {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    color: var(--primary-color);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.calendar-header button:hover {
+    background: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background: var(--border-color);
+    padding: 1px;
+    margin-top: 1rem;
+}
+
+.weekday {
+    background: var(--light-bg);
+    padding: 0.75rem;
+    text-align: center;
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 0.9rem;
+}
+
+.day {
+    background: var(--white);
+    padding: 0.75rem;
+    min-height: 80px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.day:not(.empty):hover {
+    background: var(--light-bg);
+}
+
+.day.today {
+    background: rgba(65, 183, 172, 0.1);
+}
+
+.day.has-events {
+    font-weight: 600;
+}
+
+.day.has-events::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    background: var(--primary-color);
+    border-radius: 50%;
+}
+
+.day.empty {
+    background: var(--light-bg);
+}
+
+/* Events list styling */
+.list-group-item {
+    border: none;
+    border-radius: 8px !important;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.list-group-item:hover {
+    transform: translateX(5px);
+    background: var(--light-bg);
+}
+
+.list-group-item h5 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.list-group-item .text-muted {
+    font-size: 0.9rem;
+}

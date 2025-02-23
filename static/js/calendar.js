@@ -11,15 +11,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const lastDay = new Date(currentYear, currentMonth + 1, 0);
         const startingDay = firstDay.getDay();
         const monthLength = lastDay.getDate();
+        const today = new Date();
 
         const monthNames = ["January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"];
 
         let html = `
             <div class="calendar-header">
-                <button onclick="previousMonth()">&lt;</button>
+                <button onclick="previousMonth()"><i class="fas fa-chevron-left"></i></button>
                 <h2>${monthNames[currentMonth]} ${currentYear}</h2>
-                <button onclick="nextMonth()">&gt;</button>
+                <button onclick="nextMonth()"><i class="fas fa-chevron-right"></i></button>
             </div>
             <div class="calendar-grid">
                 <div class="weekday">Sun</div>
@@ -39,7 +40,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else if (day > monthLength) {
                     html += '<div class="day empty"></div>';
                 } else {
-                    html += `<div class="day" data-date="${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}">${day}</div>`;
+                    const isToday = day === today.getDate() && 
+                                  currentMonth === today.getMonth() && 
+                                  currentYear === today.getFullYear();
+                    const hasEvents = false; // TODO: Implement event checking
+                    const classes = ['day'];
+                    if (isToday) classes.push('today');
+                    if (hasEvents) classes.push('has-events');
+
+                    html += `
+                        <div class="${classes.join(' ')}" 
+                             data-date="${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}">
+                            ${day}
+                        </div>`;
                     day++;
                 }
             }
@@ -47,6 +60,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         html += '</div>';
         calendar.innerHTML = html;
+
+        // Add click event listeners to days
+        document.querySelectorAll('.day:not(.empty)').forEach(dayElement => {
+            dayElement.addEventListener('click', function() {
+                const date = this.dataset.date;
+                // TODO: Implement day click handling
+                console.log('Selected date:', date);
+            });
+        });
     }
 
     window.previousMonth = function() {
