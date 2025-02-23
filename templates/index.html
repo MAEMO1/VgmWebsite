@@ -194,10 +194,12 @@ function updateRamadanCountdown() {
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-    document.querySelector('.countdown-timer .days .number').textContent = String(days).padStart(2, '0');
-    document.querySelector('.countdown-timer .hours .number').textContent = String(hours).padStart(2, '0');
-    document.querySelector('.countdown-timer .minutes .number').textContent = String(minutes).padStart(2, '0');
-    document.querySelector('.countdown-timer .seconds .number').textContent = String(seconds).padStart(2, '0');
+    const numberElements = document.querySelectorAll('.countdown-timer .timer-block .number');
+    const values = [days, hours, minutes, seconds];
+
+    numberElements.forEach((element, index) => {
+        element.textContent = String(values[index]).padStart(2, '0');
+    });
 }
 
 // Update countdown every second
