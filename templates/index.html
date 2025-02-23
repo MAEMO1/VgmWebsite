@@ -5,47 +5,196 @@
 {% block styles %}
 <style>
 .hero-section {
-    background-color: var(--primary-color);
-    border-radius: 12px;
-    padding: 2.5rem 2rem;
-    margin-bottom: 2.5rem;
-    color: white;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
     position: relative;
-    border: none !important;
-    box-shadow: 0 8px 24px rgba(0, 102, 255, 0.15);
+    overflow: hidden;
+    margin: -2rem -1rem 3rem;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("{{ url_for('static', filename='images/pattern.svg') }}") center/cover;
+    opacity: 0.1;
+    animation: patternMove 20s linear infinite;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 800px;
 }
 
 .hero-section h1 {
-    font-size: 2.5rem;
+    font-size: 3.5rem;
     font-weight: 700;
+    color: white;
     margin-bottom: 1.5rem;
     letter-spacing: -0.02em;
+    line-height: 1.2;
 }
 
+.hero-section p {
+    font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.hero-btn {
+    padding: 1rem 2rem;
+    font-weight: 600;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-btn:hover {
+    transform: translateY(-2px);
+}
+
+.hero-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+}
+
+.hero-btn:active::after {
+    width: 200px;
+    height: 200px;
+}
+
+.hero-btn-primary {
+    background: white;
+    color: var(--primary-color);
+}
+
+.hero-btn-secondary {
+    background: var(--accent-color);
+    color: white;
+}
+
+/* Featured Section Styles */
+.featured-section {
+    padding: 4rem 0;
+}
+
+.section-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.feature-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.feature-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 1.5rem;
+    color: var(--primary-color);
+}
+
+.feature-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.feature-description {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+@keyframes patternMove {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 100% 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        min-height: 50vh;
+        padding: 3rem 1rem;
+    }
+
+    .hero-section h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero-section p {
+        font-size: 1.1rem;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+    }
+
+    .hero-btn {
+        width: 100%;
+    }
+}
 .hero-section .btn {
     padding: 0.75rem 1.5rem;
     font-weight: 600;
     border-radius: 8px;
     transition: all 0.2s ease;
 }
-
 .hero-section .btn-primary {
     background-color: white;
     color: var(--primary-color);
     border: none;
 }
-
 .hero-section .btn-success {
     background-color: var(--success-color);
     border: none;
     color: white;
 }
-
 .hero-section .btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-
 .card {
     border: 1px solid var(--border-color);
     border-radius: 12px;
@@ -53,24 +202,20 @@
     background: white;
     overflow: hidden;
 }
-
 .card-header {
     background: white;
     border-bottom: 1px solid var(--border-color);
     padding: 1.25rem 1.5rem;
 }
-
 .card-header h3 {
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--text-primary);
     margin: 0;
 }
-
 .card-body {
     padding: 1.5rem;
 }
-
 .countdown-timer {
     display: flex;
     justify-content: center;
@@ -78,7 +223,6 @@
     gap: 1rem;
     margin: 1.5rem 0;
 }
-
 .timer-block {
     background: var(--background-light);
     border-radius: 8px;
@@ -86,7 +230,6 @@
     text-align: center;
     min-width: 90px;
 }
-
 .timer-block .number {
     font-size: 2rem;
     font-weight: 700;
@@ -94,61 +237,51 @@
     line-height: 1;
     margin-bottom: 0.5rem;
 }
-
 .timer-block .label {
     font-size: 0.875rem;
     color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
-
 .news-card {
     border: 1px solid var(--border-color);
     border-radius: 8px;
     transition: all 0.2s ease;
     height: 100%;
 }
-
 .news-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
-
 .news-image {
     width: 100%;
     height: 180px;
     object-fit: cover;
 }
-
 .news-content {
     padding: 1.25rem;
 }
-
 .news-title {
     font-size: 1.1rem;
     font-weight: 600;
     margin-bottom: 0.75rem;
     color: var(--text-primary);
 }
-
 .news-meta {
     font-size: 0.875rem;
     color: var(--text-secondary);
     margin-bottom: 1rem;
 }
-
 .news-excerpt {
     color: var(--text-primary);
     margin-bottom: 1.25rem;
     line-height: 1.6;
 }
-
 .prayer-times {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
 }
-
 .prayer-time {
     display: flex;
     justify-content: space-between;
@@ -158,11 +291,9 @@
     border-radius: 8px;
     transition: background-color 0.2s ease;
 }
-
 .prayer-time:hover {
     background: #EDF0F3;
 }
-
 .prayer-name {
     font-weight: 500;
     color: var(--text-primary);
@@ -170,7 +301,6 @@
     align-items: center;
     gap: 0.5rem;
 }
-
 .prayer-time-badge {
     background: var(--primary-color);
     color: white;
@@ -184,7 +314,6 @@
     .hero-section {
         padding: 2rem 1.5rem;
     }
-
     .hero-section h1 {
         font-size: 2rem;
     }
@@ -194,15 +323,12 @@
     .hero-section {
         padding: 1.5rem;
     }
-
     .hero-section h1 {
         font-size: 1.75rem;
     }
-
     .countdown-timer {
         flex-wrap: wrap;
     }
-
     .timer-block {
         min-width: 80px;
     }
@@ -211,23 +337,60 @@
 {% endblock %}
 
 {% block content %}
+<section class="hero-section">
+    <div class="hero-content">
+        <h1>{{ _('Welcome to VGM') }}</h1>
+        <p>{{ _('Vereniging van Gentse Moskeeën - Uniting and serving the Muslim community in Ghent') }}</p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('main.mosques') }}" class="hero-btn hero-btn-primary">
+                <i class="fas fa-mosque me-2"></i>{{ _('Find a Mosque') }}
+            </a>
+            <a href="{{ url_for('main.donate_vgm') }}" class="hero-btn hero-btn-secondary">
+                <i class="fas fa-hand-holding-heart me-2"></i>{{ _('Support VGM') }}
+            </a>
+        </div>
+    </div>
+</section>
+
 <div class="container">
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="hero-section text-center">
-                <h1 class="mb-4">{{ _('Welcome to VGM') }}</h1>
-                <div class="d-flex justify-content-center gap-3">
-                    <a href="{{ url_for('main.mosques') }}" class="btn btn-primary btn-lg">
-                        <i class="fas fa-mosque me-2"></i>{{ _('Find a Mosque') }}
-                    </a>
-                    <a href="{{ url_for('main.donate_vgm') }}" class="btn btn-success btn-lg">
-                        <i class="fas fa-hand-holding-heart me-2"></i>{{ _('Support VGM') }}
-                    </a>
+    <section class="featured-section">
+        <h2 class="section-title">{{ _('Our Services') }}</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mosque fa-3x"></i>
+                    </div>
+                    <h3 class="feature-title">{{ _('Mosque Directory') }}</h3>
+                    <p class="feature-description">
+                        {{ _('Find detailed information about mosques in Ghent, including prayer times and facilities.') }}
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-alt fa-3x"></i>
+                    </div>
+                    <h3 class="feature-title">{{ _('Events') }}</h3>
+                    <p class="feature-description">
+                        {{ _('Stay updated with community events, lectures, and special occasions.') }}
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-hands-helping fa-3x"></i>
+                    </div>
+                    <h3 class="feature-title">{{ _('Community Support') }}</h3>
+                    <p class="feature-description">
+                        {{ _('Access community resources and support services provided by VGM.') }}
+                    </p>
                 </div>
             </div>
         </div>
-    </div>
-
+    </section>
     <div class="row">
         <div class="col-lg-8">
             <div class="card mb-4">
