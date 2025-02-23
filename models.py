@@ -22,7 +22,7 @@ class User(UserMixin, db.Model):
     longitude = db.Column(db.Float)            # Geographical coordinates
     is_verified = db.Column(db.Boolean, default=False)
 
-    # New contact fields
+    # Contact fields
     mosque_email = db.Column(db.String(120))   # Public contact email
     mosque_website = db.Column(db.String(200)) # Mosque website
     mosque_fax = db.Column(db.String(20))      # Fax number
@@ -121,7 +121,7 @@ class Obituary(db.Model):
     burial_location = db.Column(db.String(200))
     family_contact = db.Column(db.String(200))
     prayer_time = db.Column(db.DateTime)
-    death_prayer_location = db.Column(db.String(200))  # New field for place of death prayer
+    death_prayer_location = db.Column(db.String(200))  # Place of death prayer
     cause_of_death = db.Column(db.String(200))
     additional_notes = db.Column(db.Text)
 
@@ -139,18 +139,3 @@ class ObituaryNotification(db.Model):
 
     obituary = db.relationship('Obituary', backref='notifications')
     user = db.relationship('User', backref='obituary_notifications')
-
-class MosqueFeedback(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    rating = db.Column(db.Integer, nullable=False)  # 1-5 stars
-    comment = db.Column(db.Text, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    is_approved = db.Column(db.Boolean, default=False)
-
-    mosque = db.relationship('User', foreign_keys=[mosque_id], backref='received_feedback')
-    user = db.relationship('User', foreign_keys=[user_id], backref='given_feedback')
-
-    def __repr__(self):
-        return f'<MosqueFeedback {self.id} by User {self.user_id} for Mosque {self.mosque_id}>'

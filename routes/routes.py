@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash,
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from app import db
-from models import User, Event, PrayerTime, Obituary, MosqueImage, MosqueVideo, MosqueFeedback
+from models import User, Event, PrayerTime, Obituary, MosqueImage, MosqueVideo
 from datetime import datetime
 from sqlalchemy import func
 import os
@@ -161,93 +161,11 @@ def mosque_detail(mosque_id):
     # Get upcoming events
     events = mosque.events.filter(Event.date >= datetime.utcnow()).order_by(Event.date).limit(5).all()
 
-    # Get average rating and approved feedback for this mosque
-    avg_rating = db.session.query(func.avg(MosqueFeedback.rating))\
-        .filter_by(mosque_id=mosque_id, is_approved=True).scalar()
-
-    feedbacks = MosqueFeedback.query\
-        .filter_by(mosque_id=mosque_id, is_approved=True)\
-        .order_by(MosqueFeedback.created_at.desc())\
-        .all()
-
     return render_template('mosque_detail.html',
                          mosque=mosque,
                          prayer_times=prayer_times,
                          events=events,
-                         feedbacks=feedbacks,
-                         avg_rating=avg_rating,
-                         func=func,  # Pass func to template
-                         MosqueFeedback=MosqueFeedback,  # Pass model to template
                          google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'))
-
-
-@routes.route('/mosque/<int:mosque_id>/feedback', methods=['POST'])
-@login_required
-def submit_feedback(mosque_id):
-    mosque = User.query.filter_by(id=mosque_id, user_type='mosque', is_verified=True).first_or_404()
-
-    # Check if user has already submitted feedback for this mosque
-    existing_feedback = MosqueFeedback.query.filter_by(
-        mosque_id=mosque_id,
-        user_id=current_user.id
-    ).first()
-
-    if existing_feedback:
-        flash(_('You have already submitted feedback for this mosque.'), 'warning')
-        return redirect(url_for('main.mosque_detail', mosque_id=mosque_id))
-
-    try:
-        rating = int(request.form.get('rating'))
-        comment = request.form.get('comment')
-
-        if not (1 <= rating <= 5) or not comment:
-            flash(_('Invalid feedback data. Please try again.'), 'error')
-            return redirect(url_for('main.mosque_detail', mosque_id=mosque_id))
-
-        feedback = MosqueFeedback(
-            mosque_id=mosque_id,
-            user_id=current_user.id,
-            rating=rating,
-            comment=comment,
-            # Auto-approve feedback from mosque admins
-            is_approved=current_user.is_admin
-        )
-
-        db.session.add(feedback)
-        db.session.commit()
-
-        flash(_('Thank you for your feedback! It will be reviewed before being published.'), 'success')
-    except Exception as e:
-        db.session.rollback()
-        flash(_('An error occurred while submitting your feedback.'), 'error')
-        print(f"Error submitting feedback: {e}")
-
-    return redirect(url_for('main.mosque_detail', mosque_id=mosque_id))
-
-@routes.route('/mosque/<int:mosque_id>/feedback/<int:feedback_id>/approve', methods=['POST'])
-@login_required
-def approve_feedback(mosque_id, feedback_id):
-    # Only mosque admins or the mosque owner can approve feedback
-    mosque = User.query.get_or_404(mosque_id)
-    if not (current_user.is_admin or current_user.id == mosque.id):
-        flash(_('You do not have permission to approve feedback.'), 'error')
-        return redirect(url_for('main.mosque_detail', mosque_id=mosque_id))
-
-    feedback = MosqueFeedback.query.get_or_404(feedback_id)
-    if feedback.mosque_id != mosque_id:
-        flash(_('Invalid feedback ID.'), 'error')
-        return redirect(url_for('main.mosque_detail', mosque_id=mosque_id))
-
-    try:
-        feedback.is_approved = True
-        db.session.commit()
-        flash(_('Feedback approved successfully.'), 'success')
-    except Exception as e:
-        db.session.rollback()
-        flash(_('An error occurred while approving the feedback.'), 'error')
-        print(f"Error approving feedback: {e}")
-
-    return redirect(url_for('main.mosque_detail', mosque_id=mosque_id))
 
 @routes.route('/mosque/<int:mosque_id>/edit', methods=['GET', 'POST'])
 @login_required
@@ -322,6 +240,12 @@ def edit_mosque(mosque_id):
             print(f"Error updating mosque: {e}")
 
     return render_template('edit_mosque.html', mosque=mosque)
+
+def allowed_file(filename):
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+from werkzeug.utils import secure_filename
 
 def initialize_mosques():
     """Initialize the mosques in the database with their coordinates"""
@@ -542,7 +466,6 @@ def initialize_mosques():
     except Exception as e:
         db.session.rollback()
         print(f"Error initializing mosques: {e}")
-
 
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
