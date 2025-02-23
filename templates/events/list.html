@@ -3,6 +3,7 @@
 {% block title %}{{ _('Events - VGM') }}{% endblock %}
 
 {% block styles %}
+<link href='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/main.min.css' rel='stylesheet' />
 <style>
 .section {
     margin-bottom: 3rem;
@@ -113,11 +114,104 @@
         padding: 1.25rem;
     }
 }
+
+/* Calendar Styles */
+#calendar {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+}
+
+.fc-button-primary {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.fc-button-primary:hover {
+    background-color: #0052cc !important;
+    border-color: #0052cc !important;
+}
+
+.fc-event {
+    cursor: pointer;
+    border: none !important;
+    padding: 2px 4px;
+}
+
+.fc-event.vgm-event {
+    background-color: #FF4154 !important;
+    border-color: #FF4154 !important;
+}
+
+.fc-event.collab-event {
+    background-color: #41B7AC !important;
+    border-color: #41B7AC !important;
+}
+
+.fc-event.individual-event {
+    background-color: #0066FF !important;
+    border-color: #0066FF !important;
+}
+
+.calendar-legend {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+.legend-vgm {
+    background-color: #FF4154;
+}
+
+.legend-collab {
+    background-color: #41B7AC;
+}
+
+.legend-individual {
+    background-color: #0066FF;
+}
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container">
+    <!-- Calendar Legend -->
+    <div class="calendar-legend">
+        <div class="legend-item">
+            <div class="legend-color legend-vgm"></div>
+            <span>{{ _('VGM Events') }}</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color legend-collab"></div>
+            <span>{{ _('Collaborations') }}</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color legend-individual"></div>
+            <span>{{ _('Mosque Events') }}</span>
+        </div>
+    </div>
+
+    <!-- Calendar View -->
+    <div id="calendar"></div>
+
     {% if vgm_events %}
     <div class="section mb-5">
         <h2 class="section-title">{{ _('VGM Events') }}</h2>
@@ -215,5 +309,34 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/calendar.js') }}"></script>
+<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/main.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.10/main.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@6.1.10/main.min.js'></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        events: '/events/api/calendar-events',
+        eventClassNames: function(arg) {
+            if (arg.event.extendedProps.eventType === 'vgm') {
+                return ['vgm-event'];
+            } else if (arg.event.extendedProps.eventType === 'collaboration') {
+                return ['collab-event'];
+            } else {
+                return ['individual-event'];
+            }
+        },
+        eventClick: function(info) {
+            window.location.href = '/events/' + info.event.id;
+        }
+    });
+    calendar.render();
+});
+</script>
 {% endblock %}

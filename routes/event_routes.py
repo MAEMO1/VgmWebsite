@@ -7,6 +7,38 @@ from models import Event, EventRegistration, EventNotification, User, EventMosqu
 # Create blueprint with url_prefix
 events = Blueprint('events', __name__, url_prefix='/events')
 
+@events.route('/api/calendar-events')
+def calendar_events():
+    start = request.args.get('start', type=str)
+    end = request.args.get('end', type=str)
+
+    # Convert string dates to datetime objects
+    start_date = datetime.fromisoformat(start.replace('Z', '+00:00')) if start else datetime.utcnow()
+    end_date = datetime.fromisoformat(end.replace('Z', '+00:00')) if end else datetime.utcnow() + timedelta(days=30)
+
+    # Query all events within the date range
+    events = Event.query.filter(
+        Event.date >= start_date,
+        Event.date <= end_date
+    ).all()
+
+    # Format events for FullCalendar
+    event_list = []
+    for event in events:
+        event_data = {
+            'id': event.id,
+            'title': event.title,
+            'start': event.date.isoformat(),
+            'end': (event.date + timedelta(hours=2)).isoformat(),  # Assuming 2-hour default duration
+            'extendedProps': {
+                'eventType': event.event_type,
+                'description': event.description
+            }
+        }
+        event_list.append(event_data)
+
+    return jsonify(event_list)
+
 @events.route('/')
 def event_list():
     # Get VGM events (highest priority)
