@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="800" viewBox="0 0 800 800" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <!-- Octagonal border -->
+    <path d="M400 50 L650 150 L750 400 L650 650 L400 750 L150 650 L50 400 L150 150 Z" 
+          fill="none" 
+          stroke="#D4AA37" 
+          stroke-width="20"/>
+    
+    <!-- Inner octagon -->
+    <path d="M400 100 L600 185 L685 400 L600 615 L400 700 L200 615 L115 400 L200 185 Z" 
+          fill="none" 
+          stroke="#D4AA37" 
+          stroke-width="10"/>
+    
+    <!-- Mosque dome -->
+    <path d="M250 450 Q400 200 550 450 L550 500 L250 500 Z" 
+          fill="#41B7AC"/>
+    
+    <!-- Base of dome -->
+    <rect x="250" y="500" width="300" height="30" 
+          fill="#41B7AC"/>
+    
+    <!-- Crescent moon -->
+    <path d="M370 200 A50 50 0 1 1 430 200 A40 40 0 1 0 370 200" 
+          fill="#41B7AC"/>
+    
+    <!-- VGM Text -->
+    <text x="400" y="600" 
+          font-family="Arial, sans-serif" 
+          font-size="100" 
+          font-weight="bold" 
+          text-anchor="middle">VGM</text>
+    
+    <!-- Subtitle -->
+    <text x="400" y="650" 
+          font-family="Arial, sans-serif" 
+          font-size="24" 
+          text-anchor="middle" 
+          fill="#41B7AC">Vereniging van Gentse Moskeeën</text>
+</svg>
