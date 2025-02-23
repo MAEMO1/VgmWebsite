@@ -575,3 +575,37 @@ def upload_board_photo():
         print(f"Error uploading photo: {e}")
         flash('Er is een fout opgetreden bij het uploaden van de foto.', 'error')
         return redirect(url_for('main.about'))
+
+@routes.route('/register/admin/<code>', methods=['GET', 'POST'])
+def register_admin(code):
+    # Check if the registration code is valid
+    ADMIN_REGISTRATION_CODE = "VGM2024"  # This should be an environment variable in production
+
+    if code != ADMIN_REGISTRATION_CODE:
+        flash('Ongeldige registratiecode.', 'error')
+        return redirect(url_for('main.register'))
+
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        if User.query.filter_by(email=email).first():
+            flash('Email bestaat al.', 'error')
+            return redirect(url_for('main.register_admin', code=code))
+
+        user = User(
+            username=username,
+            email=email,
+            password_hash=generate_password_hash(password),
+            user_type='admin',
+            is_admin=True
+        )
+        db.session.add(user)
+        db.session.commit()
+
+        login_user(user)
+        flash('Admin registratie succesvol!', 'success')
+        return redirect(url_for('main.index'))
+
+    return render_template('register_admin.html', code=code)

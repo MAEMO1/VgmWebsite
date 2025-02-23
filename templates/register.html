@@ -23,6 +23,11 @@
                     <div class="d-flex justify-content-center gap-3">
                         <a href="{{ url_for('main.register_visitor') }}" class="btn btn-primary">{{ _('Register as Visitor') }}</a>
                         <a href="{{ url_for('main.register_mosque') }}" class="btn btn-secondary">{{ _('Register as Mosque') }}</a>
+                        {% if 'admin_registration_code' in request.args %}
+                        <a href="{{ url_for('main.register_admin', code=request.args.get('admin_registration_code')) }}" class="btn btn-danger">
+                            {{ _('Register as Admin') }}
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
 
