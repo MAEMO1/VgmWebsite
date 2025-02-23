@@ -3,12 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="VGM - Vereniging van Gentse Moskeeën, serving the Muslim community in Ghent">
     <title>{% block title %}VGM - Vereniging van Gentse Moskeeën{% endblock %}</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/LogoVGM.jpg') }}">
+
+    <!-- Preload critical assets -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style">
+    <link rel="preload" href="{{ url_for('static', filename='images/LogoVGM.jpg') }}" as="image">
+
+    <!-- Stylesheets -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/LogoVGM.jpg') }}">
+
     {% if session.get('language') == 'ar' %}
     <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -26,22 +36,67 @@
         }
     </style>
     {% endif %}
+
     <style>
         :root {
-            --primary-color: #0066FF;
+            /* Primary colors with enhanced contrast ratios */
+            --primary-color: #0052CC;
             --secondary-color: #1C2B33;
             --background-light: #F6F7F9;
             --text-primary: #1C2B33;
-            --text-secondary: #566674;
+            --text-secondary: #445B6C;
             --border-color: #E4E6EB;
+            --error-color: #DC3545;
+            --success-color: #198754;
+            --warning-color: #FFC107;
+            --info-color: #0DCAF0;
         }
 
+        /* Enhanced accessibility styles */
         body {
             font-family: 'Inter', sans-serif;
             color: var(--text-primary);
             background-color: var(--background-light);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
+        /* Skip to main content link for keyboard navigation */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-color);
+            color: white;
+            padding: 8px;
+            z-index: 1050;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Loading indicator */
+        .loading-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary-color);
+            transform: scaleX(0);
+            transform-origin: 0 50%;
+            transition: transform 0.3s ease;
+            z-index: 1060;
+        }
+
+        .loading .loading-indicator {
+            transform: scaleX(1);
+        }
+
+        /* Enhanced navbar styles */
         .navbar {
             background: white;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -49,29 +104,48 @@
         }
 
         .navbar-brand {
-            padding: 0;
             display: flex;
             align-items: center;
+            gap: 1rem;
         }
 
         .navbar-brand img {
             max-height: 40px;
             width: auto;
-            margin-right: 1rem;
         }
 
-        .navbar-nav .nav-link {
+        .nav-link {
             color: var(--text-primary);
             font-weight: 500;
             padding: 1rem 1.25rem;
             transition: color 0.2s ease;
+            position: relative;
         }
 
-        .navbar-nav .nav-link:hover {
+        .nav-link:hover,
+        .nav-link:focus {
             color: var(--primary-color);
         }
 
-        .navbar-nav .dropdown-menu {
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover::after,
+        .nav-link:focus::after {
+            width: 100%;
+        }
+
+        /* Enhanced dropdown styles */
+        .dropdown-menu {
             border: 1px solid var(--border-color);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
@@ -83,36 +157,23 @@
             color: var(--text-primary);
             border-radius: 6px;
             font-weight: 500;
-        }
-
-        .dropdown-item:hover {
-            background-color: var(--background-light);
-            color: var(--primary-color);
-        }
-
-        .navbar-toggler {
-            border: none;
-            padding: 0.5rem;
-        }
-
-        .navbar-toggler:focus {
-            box-shadow: none;
-        }
-
-        .btn-language {
-            padding: 0.5rem 1rem;
-            color: var(--text-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-weight: 500;
             transition: all 0.2s ease;
         }
 
-        .btn-language:hover {
+        .dropdown-item:hover,
+        .dropdown-item:focus {
             background-color: var(--background-light);
             color: var(--primary-color);
+            transform: translateX(4px);
         }
 
+        /* Content area styles */
+        main {
+            min-height: calc(100vh - 180px);
+            padding: 2rem 0;
+        }
+
+        /* Enhanced footer styles */
         .footer {
             background: white;
             border-top: 1px solid var(--border-color);
@@ -120,11 +181,7 @@
             margin-top: 4rem;
         }
 
-        main {
-            min-height: calc(100vh - 180px);
-            padding-top: 2rem;
-        }
-
+        /* Responsive adjustments */
         @media (max-width: 992px) {
             .navbar-collapse {
                 background: white;
@@ -133,31 +190,64 @@
                 margin-top: 1rem;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             }
+
+            .nav-link::after {
+                display: none;
+            }
+        }
+
+        /* Focus styles for accessibility */
+        :focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        /* Focus-visible polyfill */
+        :focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
         }
     </style>
     {% block styles %}{% endblock %}
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg sticky-top">
+    <!-- Skip to main content link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Loading indicator -->
+    <div class="loading-indicator" role="progressbar" aria-hidden="true"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top" role="navigation" aria-label="Main navigation">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('main.index') }}">
-                <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" alt="VGM Logo">
+            <a class="navbar-brand" href="{{ url_for('main.index') }}" aria-label="VGM Home">
+                <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" alt="VGM Logo" loading="eager">
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <i class="fas fa-bars"></i>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars" aria-hidden="true"></i>
             </button>
+
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.index') }}">{{ _('Home') }}</a>
+                        <a class="nav-link" href="{{ url_for('main.index') }}" aria-current="{% if request.endpoint == 'main.index' %}page{% endif %}">
+                            {{ _('Home') }}
+                        </a>
                     </li>
 
                     <!-- About & Info Dropdown -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" 
+                           aria-expanded="false" aria-haspopup="true">
                             {{ _('About & Info') }}
                         </a>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu" aria-label="About & Info submenu">
                             <li><a class="dropdown-item" href="{{ url_for('main.about') }}">{{ _('About Us') }}</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('main.memorandum') }}">{{ _('Memorandum') }}</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('main.contact') }}">{{ _('Contact') }}</a></li>
@@ -166,10 +256,11 @@
 
                     <!-- Mosques & Prayer Dropdown -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" 
+                           aria-expanded="false" aria-haspopup="true">
                             {{ _('Mosques & Prayer') }}
                         </a>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu" aria-label="Mosques & Prayer submenu">
                             <li><a class="dropdown-item" href="{{ url_for('main.mosques') }}">{{ _('Mosques in Ghent') }}</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('main.prayer_times') }}">{{ _('Prayer Times') }}</a></li>
                         </ul>
@@ -177,10 +268,11 @@
 
                     <!-- Community Dropdown -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" 
+                           aria-expanded="false" aria-haspopup="true">
                             {{ _('Community') }}
                         </a>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu" aria-label="Community submenu">
                             <li><a class="dropdown-item" href="{{ url_for('blog.index') }}">{{ _('Blog') }}</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('events.event_list') }}">{{ _('Events') }}</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('obituaries.obituary_list') }}">{{ _('Obituaries') }}</a></li>
@@ -193,10 +285,11 @@
                     </li>
                     {% else %}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" 
+                           aria-expanded="false" aria-haspopup="true">
                             {{ _('Account') }}
                         </a>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu" aria-label="Account submenu">
                             <li><a class="dropdown-item" href="{{ url_for('main.register') }}">{{ _('Register') }}</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('main.login') }}">{{ _('Login') }}</a></li>
                         </ul>
@@ -205,13 +298,14 @@
 
                     <!-- Language Selector -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link btn-language dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-globe"></i>
+                        <a class="nav-link btn-language dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" 
+                           aria-expanded="false" aria-haspopup="true" aria-label="Select language">
+                            <i class="fas fa-globe" aria-hidden="true"></i>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{{ url_for('main.set_language', language='en') }}">English</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.set_language', language='nl') }}">Nederlands</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.set_language', language='ar') }}">العربية</a></li>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-label="Language selection">
+                            <li><a class="dropdown-item" href="{{ url_for('main.set_language', language='en') }}" lang="en">English</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.set_language', language='nl') }}" lang="nl">Nederlands</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.set_language', language='ar') }}" lang="ar">العربية</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -219,16 +313,20 @@
         </div>
     </nav>
 
-    <main>
+    <!-- Main content -->
+    <main id="main-content" role="main">
         <div class="container">
+            <!-- Flash messages -->
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                            {{ _(message) }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endfor %}
+                    <div class="flash-messages" role="alert" aria-live="polite">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ _(message) }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
                 {% endif %}
             {% endwith %}
 
@@ -236,7 +334,8 @@
         </div>
     </main>
 
-    <footer class="footer">
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo">
         <div class="container">
             <div class="row">
                 <div class="col-12 text-center">
@@ -246,7 +345,29 @@
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" defer></script>
+
+    <!-- Loading indicator script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingIndicator = document.querySelector('.loading-indicator');
+
+            // Show loading indicator on page navigation
+            document.addEventListener('click', function(e) {
+                const link = e.target.closest('a');
+                if (link && !e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey) {
+                    document.body.classList.add('loading');
+                }
+            });
+
+            // Show loading indicator on form submission
+            document.addEventListener('submit', function() {
+                document.body.classList.add('loading');
+            });
+        });
+    </script>
+
     {% block scripts %}{% endblock %}
 </body>
 </html>
