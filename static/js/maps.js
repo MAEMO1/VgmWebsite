@@ -5,29 +5,12 @@ function handleMapsError() {
     const mapElements = document.querySelectorAll('[id^="mosque-map"]');
     mapElements.forEach(element => {
         element.innerHTML = `
-            <div class="alert alert-warning">
-                <i class="fas fa-exclamation-triangle"></i>
-                <span class="ms-2">De kaart kon niet worden geladen. Hier zijn de adressen van de moskeeën:</span>
+            <div class="alert alert-info h-100 d-flex flex-column justify-content-center text-center">
+                <i class="fas fa-map-marked-alt fa-3x mb-3"></i>
+                <h4>Map Currently Unavailable</h4>
+                <p class="mb-0">You can still view all mosque details in the list.</p>
             </div>
-            <div class="mosque-addresses mt-3"></div>
         `;
-
-        // Display mosque addresses if available
-        const mosqueItems = document.querySelectorAll('.mosque-item');
-        const addressesContainer = element.querySelector('.mosque-addresses');
-        if (mosqueItems.length > 0 && addressesContainer) {
-            const addressList = document.createElement('ul');
-            addressList.className = 'list-group';
-            mosqueItems.forEach(item => {
-                const address = item.querySelector('p').textContent;
-                const name = item.querySelector('h4').textContent;
-                const li = document.createElement('li');
-                li.className = 'list-group-item';
-                li.innerHTML = `<strong>${name}</strong><br>${address}`;
-                addressList.appendChild(li);
-            });
-            addressesContainer.appendChild(addressList);
-        }
     });
 }
 
@@ -52,11 +35,11 @@ function initMap() {
             const lat = parseFloat(item.dataset.lat);
             const lng = parseFloat(item.dataset.lng);
             if (isNaN(lat) || isNaN(lng)) {
-                console.warn('Invalid coordinates for mosque:', item.querySelector('h4').textContent);
+                console.warn('Invalid coordinates for mosque:', item.querySelector('h5').textContent);
                 return;
             }
 
-            const title = item.querySelector('h4').textContent;
+            const title = item.querySelector('h5').textContent;
             const address = item.querySelector('p').textContent;
 
             const marker = new google.maps.Marker({
@@ -83,14 +66,6 @@ function initMap() {
 
             // Show info window when marker is clicked
             marker.addListener('click', () => {
-                markers.forEach(m => m.infoWindow.close());
-                infoWindow.open(map, marker);
-            });
-
-            // Add click event to center map on mosque when list item is clicked
-            item.addEventListener('click', () => {
-                map.setCenter({ lat, lng });
-                map.setZoom(16);
                 markers.forEach(m => m.infoWindow.close());
                 infoWindow.open(map, marker);
             });

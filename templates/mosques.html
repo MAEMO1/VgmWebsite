@@ -33,20 +33,20 @@
                     <div class="mosque-list">
                         {% for mosque in mosques %}
                         <a href="{{ url_for('main.mosque_detail', mosque_id=mosque.id) }}" class="text-decoration-none">
-                            <div class="mosque-item mb-3" data-lat="{{ mosque.latitude }}" data-lng="{{ mosque.longitude }}">
-                                <div class="d-flex align-items-start">
+                            <div class="mosque-item mb-3 p-2 border rounded hover-shadow" data-lat="{{ mosque.latitude }}" data-lng="{{ mosque.longitude }}">
+                                <div class="d-flex align-items-center">
                                     {% if mosque.mosque_image %}
-                                    <img src="{{ mosque.mosque_image }}" alt="{{ mosque.mosque_name }}" class="mosque-thumbnail me-2" style="width: 50px; height: 50px; object-fit: cover;">
+                                    <img src="{{ mosque.mosque_image }}" alt="{{ mosque.mosque_name }}" class="mosque-thumbnail me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
                                     {% else %}
                                     <div class="mosque-icon me-2">
-                                        <i class="fas fa-mosque fa-2x"></i>
+                                        <i class="fas fa-mosque fa-lg text-primary"></i>
                                     </div>
                                     {% endif %}
                                     <div>
-                                        <h5 class="mb-1">{{ mosque.mosque_name }}</h5>
-                                        <p class="mb-1 small"><i class="fas fa-map-marker-alt"></i> {{ mosque.get_full_address() }}</p>
+                                        <h5 class="mb-1 fs-6">{{ mosque.mosque_name }}</h5>
+                                        <p class="mb-0 small text-muted"><i class="fas fa-map-marker-alt"></i> {{ mosque.get_full_address() }}</p>
                                         {% if mosque.mosque_phone %}
-                                        <p class="mb-0 small"><i class="fas fa-phone"></i> {{ mosque.mosque_phone }}</p>
+                                        <p class="mb-0 small text-muted"><i class="fas fa-phone"></i> {{ mosque.mosque_phone }}</p>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -61,15 +61,41 @@
         </div>
     </div>
 </div>
+
+<style>
+.hover-shadow:hover {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    background-color: #f8f9fa;
+    transition: all 0.2s ease-in-out;
+}
+
+.mosque-item {
+    transition: transform 0.2s ease-in-out;
+}
+
+.mosque-item:hover {
+    transform: translateY(-2px);
+}
+</style>
+
 {% endblock %}
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/maps.js') }}"></script>
 <script>
     function handleMapsError() {
-        document.getElementById('mosque-map').innerHTML = 
-            '<div class="alert alert-danger">Failed to load Google Maps. Please try again later.</div>';
+        const mapContainer = document.getElementById('mosque-map');
+        if (mapContainer) {
+            mapContainer.innerHTML = `
+                <div class="alert alert-info h-100 d-flex flex-column justify-content-center text-center">
+                    <i class="fas fa-map-marked-alt fa-3x mb-3"></i>
+                    <h4>{{ _('Map Currently Unavailable') }}</h4>
+                    <p class="mb-0">{{ _('You can still view all mosques in the list on the right.') }}</p>
+                </div>
+            `;
+        }
     }
+
     function handleScriptError() {
         handleMapsError();
     }
