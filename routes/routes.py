@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, session
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
 from app import db
-from models import User, Event, PrayerTime, Obituary, MosqueImage, MosqueVideo
-from datetime import datetime
+from models import User, BoardMember # Added BoardMember import
+from datetime import datetime, date
 import os
 
 routes = Blueprint('main', __name__)
@@ -466,75 +467,115 @@ def initialize_mosques():
         db.session.rollback()
         print(f"Error initializing mosques: {e}")
 
-def allowed_file(filename):
-    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-from werkzeug.utils import secure_filename
-
 @routes.route('/memorandum')
 def memorandum():
     return render_template('memorandum.html')
 
 @routes.route('/about')
 def about():
-    board_members = [
-        {
-            'name': 'Abd El Motleb Omar Mohamed',
-            'role': 'Voorzitter',
-            'mosque': 'Islamitisch Cultureel centrum - Badr',
-            'image': 'chairman.jpg'
-        },
-        {
-            'name': 'Alci Bilal',
-            'role': 'Bestuurder',
-            'mosque': 'Groene Moskee Fatih',
-            'image': 'member1.jpg'
-        },
-        {
-            'name': 'Cetin Mutlu',
-            'role': 'Bestuurder',
-            'mosque': 'Moskee Eyup sultan',
-            'image': 'member2.jpg'
-        },
-        {
-            'name': 'Demirogullari Nedim',
-            'role': 'Bestuurder',
-            'mosque': 'Moskee Tevhid',
-            'image': 'member3.jpg'
-        },
-        {
-            'name': 'El Bakali Mohamed',
-            'role': 'Bestuurder',
-            'mosque': 'Moskee Al Fath',
-            'image': 'member4.jpg'
-        },
-        {
-            'name': 'Ibrahimi Hikmatullah',
-            'role': 'Bestuurder',
-            'mosque': 'Afghan Attaqwa moskee',
-            'image': 'member5.jpg'
-        },
-        {
-            'name': 'Köse Demirali',
-            'role': 'Bestuurder',
-            'mosque': 'Moskee Eyup sultan',
-            'image': 'member6.jpg'
-        },
-        {
-            'name': 'Saman Sheikh',
-            'role': 'Bestuurder',
-            'mosque': 'Moskee Salahaddien',
-            'image': 'member7.jpg'
-        },
-        {
-            'name': 'Senel Furkan',
-            'role': 'Bestuurder',
-            'mosque': 'Moskee Tevhid',
-            'image': 'member8.jpg'
-        }
-    ]
-    return render_template('about.html', board_members=board_members)
+    # Get the requested term or default to current term
+    term_start_str = request.args.get('term')
+    if term_start_str:
+        term_start = datetime.strptime(term_start_str, '%Y-%m-%d').date()
+    else:
+        # Default to current or most recent term
+        current_date = date.today()
+        term_start = BoardMember.query.filter(
+            BoardMember.term_end >= current_date
+        ).order_by(BoardMember.term_start.desc()).first()
+        if term_start:
+            term_start = term_start.term_start
+        else:
+            # If no current term, get the most recent past term
+            term_start = BoardMember.query.order_by(
+                BoardMember.term_start.desc()
+            ).first()
+            if term_start:
+                term_start = term_start.term_start
+            else:
+                # If no terms exist, default to current year
+                term_start = date(current_date.year, 1, 1)
+
+    # Get all available terms
+    terms = db.session.query(
+        BoardMember.term_start,
+        BoardMember.term_end
+    ).distinct().order_by(BoardMember.term_start.desc()).all()
+
+    # Get board members for the selected term
+    board_members = BoardMember.query.filter(
+        BoardMember.term_start == term_start
+    ).all()
+
+    # Get all mosques for the admin form
+    mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
+
+    return render_template('about.html',
+                         board_members=board_members,
+                         terms=terms,
+                         current_term_start=term_start,
+                         mosques=mosques)
+
+
+@routes.route('/manage_board_members', methods=['POST'])
+@login_required
+def manage_board_members():
+    if not current_user.is_admin:
+        flash('Alleen beheerders kunnen bestuursleden beheren.', 'error')
+        return redirect(url_for('main.about'))
+
+    try:
+        term_start = datetime.strptime(request.form['term_start'], '%Y-%m-%d').date()
+        term_end = datetime.strptime(request.form['term_end'], '%Y-%m-%d').date()
+
+        # Validate term dates
+        if term_end <= term_start:
+            flash('De einddatum moet na de startdatum liggen.', 'error')
+            return redirect(url_for('main.about'))
+
+        # Remove existing board members for this term
+        BoardMember.query.filter_by(term_start=term_start).delete()
+
+        names = request.form.getlist('names[]')
+        roles = request.form.getlist('roles[]')
+        mosque_ids = request.form.getlist('mosque_ids[]')
+        photos = request.files.getlist('photos[]')
+
+        for i, (name, role, mosque_id) in enumerate(zip(names, roles, mosque_ids)):
+            photo = photos[i] if i < len(photos) else None
+
+            # Handle photo upload
+            image_filename = None
+            if photo and photo.filename and allowed_file(photo.filename):
+                # Create board images directory if it doesn't exist
+                board_dir = os.path.join('static', 'images', 'board')
+                os.makedirs(board_dir, exist_ok=True)
+
+                # Generate unique filename
+                image_filename = f"board_member_{term_start}_{i+1}.jpg"
+                photo.save(os.path.join(board_dir, image_filename))
+
+            # Create board member
+            board_member = BoardMember(
+                name=name,
+                role=role,
+                mosque_id=mosque_id,
+                image=image_filename,
+                term_start=term_start,
+                term_end=term_end
+            )
+            db.session.add(board_member)
+
+        db.session.commit()
+        flash('Bestuursleden succesvol bijgewerkt.', 'success')
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error managing board members: {e}")
+        flash('Er is een fout opgetreden bij het bijwerken van de bestuursleden.', 'error')
+
+    return redirect(url_for('main.about'))
+
 
 @routes.route('/upload_board_photo', methods=['POST'])
 @login_required

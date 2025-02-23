@@ -139,3 +139,21 @@ class ObituaryNotification(db.Model):
 
     obituary = db.relationship('Obituary', backref='notifications')
     user = db.relationship('User', backref='obituary_notifications')
+
+
+class BoardMember(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    role = db.Column(db.String(50), nullable=False)
+    mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    image = db.Column(db.String(200))
+    term_start = db.Column(db.Date, nullable=False)
+    term_end = db.Column(db.Date, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationship with mosque
+    mosque = db.relationship('User', backref='board_positions')
+
+    def __repr__(self):
+        return f'<BoardMember {self.name} ({self.role})>'

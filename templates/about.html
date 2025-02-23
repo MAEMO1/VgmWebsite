@@ -21,47 +21,36 @@
         </div>
     </div>
 
-    <!-- Board Members -->
+    <!-- Board Members Section -->
     <div class="row mb-4">
         <div class="col-12">
-            <h2 class="mb-4">{{ _('Board Members') }}</h2>
-            {% if current_user.is_authenticated and current_user.is_admin %}
-            <div class="mb-4">
-                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#uploadForm">
-                    <i class="fas fa-upload me-2"></i>{{ _('Upload Board Member Photos') }}
-                </button>
-                <div class="collapse mt-3" id="uploadForm">
-                    <div class="card card-body">
-                        <form action="{{ url_for('main.upload_board_photo') }}" method="POST" enctype="multipart/form-data">
-                            <div class="mb-3">
-                                <label for="memberSelect" class="form-label">{{ _('Select Board Member') }}</label>
-                                <select class="form-select" id="memberSelect" name="member_id" required>
-                                    <option value="chairman">{{ _('Chairman') }}</option>
-                                    {% for i in range(1, 9) %}
-                                    <option value="member{{ i }}">{{ _('Member') }} {{ i }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="photoFile" class="form-label">{{ _('Select Photo') }}</label>
-                                <input type="file" class="form-control" id="photoFile" name="photo" accept="image/*" required>
-                            </div>
-                            <button type="submit" class="btn btn-success">
-                                <i class="fas fa-save me-2"></i>{{ _('Upload Photo') }}
-                            </button>
-                        </form>
-                    </div>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>{{ _('Board Members') }}</h2>
+                <div class="d-flex gap-3">
+                    <select class="form-select" id="termSelect" style="width: auto;">
+                        {% for term in terms %}
+                        <option value="{{ term.start.strftime('%Y-%m-%d') }}" 
+                                {% if term.start == current_term_start %}selected{% endif %}>
+                            {{ term.start.strftime('%Y') }} - {{ term.end.strftime('%Y') }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    {% if current_user.is_authenticated and current_user.is_admin %}
+                    <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#manageBoardModal">
+                        <i class="fas fa-edit me-2"></i>{{ _('Manage Board') }}
+                    </button>
+                    {% endif %}
                 </div>
             </div>
-            {% endif %}
         </div>
     </div>
 
-    <div class="row g-4">
+    <!-- Board Members Grid -->
+    <div class="row g-4" id="boardMembersGrid">
         {% for member in board_members %}
         <div class="col-md-6 col-lg-4">
             <div class="card h-100">
-                <img src="{{ url_for('static', filename='images/board/' + member.image) }}" 
+                <img src="{{ url_for('static', filename='images/board/' + member.image) if member.image else url_for('static', filename='images/default-profile.jpg') }}" 
                      class="card-img-top" 
                      alt="{{ member.name }}"
                      style="height: 300px; object-fit: cover;">
@@ -69,7 +58,7 @@
                     <h5 class="card-title">{{ member.name }}</h5>
                     <p class="card-text">
                         <small class="text-muted">{{ member.role }}</small><br>
-                        {{ _('Representing') }}: {{ member.mosque }}
+                        {{ _('Representing') }}: {{ member.mosque.mosque_name if member.mosque else '' }}
                     </p>
                 </div>
             </div>
@@ -77,6 +66,81 @@
         {% endfor %}
     </div>
 </div>
+
+{% if current_user.is_authenticated and current_user.is_admin %}
+<!-- Manage Board Modal -->
+<div class="modal fade" id="manageBoardModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ _('Manage Board Members') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('main.manage_board_members') }}" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">{{ _('Term Period') }}</label>
+                        <div class="row">
+                            <div class="col">
+                                <input type="date" class="form-control" name="term_start" required>
+                            </div>
+                            <div class="col">
+                                <input type="date" class="form-control" name="term_end" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="boardMembersForm">
+                        <!-- Template for board member inputs -->
+                        <div class="board-member-entry mb-3 border p-3">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <label class="form-label">{{ _('Name') }}</label>
+                                        <input type="text" class="form-control" name="names[]" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <label class="form-label">{{ _('Role') }}</label>
+                                        <input type="text" class="form-control" name="roles[]" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <label class="form-label">{{ _('Mosque') }}</label>
+                                        <select class="form-select" name="mosque_ids[]" required>
+                                            {% for mosque in mosques %}
+                                            <option value="{{ mosque.id }}">{{ mosque.mosque_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <label class="form-label">{{ _('Photo') }}</label>
+                                        <input type="file" class="form-control" name="photos[]" accept="image/*">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-secondary mb-3" id="addMemberBtn">
+                        <i class="fas fa-plus me-2"></i>{{ _('Add Member') }}
+                    </button>
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>{{ _('Save Changes') }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 
 <style>
 .card {
@@ -96,4 +160,30 @@
     padding-left: 1.5rem;
 }
 </style>
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Term selection handling
+    const termSelect = document.getElementById('termSelect');
+    if (termSelect) {
+        termSelect.addEventListener('change', function() {
+            window.location.href = "{{ url_for('main.about') }}?term=" + this.value;
+        });
+    }
+
+    // Add member button handling
+    const addMemberBtn = document.getElementById('addMemberBtn');
+    const boardMembersForm = document.getElementById('boardMembersForm');
+    if (addMemberBtn && boardMembersForm) {
+        addMemberBtn.addEventListener('click', function() {
+            const template = boardMembersForm.querySelector('.board-member-entry').cloneNode(true);
+            // Clear input values
+            template.querySelectorAll('input').forEach(input => input.value = '');
+            boardMembersForm.appendChild(template);
+        });
+    }
+});
+</script>
+{% endblock %}
 {% endblock %}
