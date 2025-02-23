@@ -2,146 +2,67 @@
 
 {% block title %}{{ _('Welcome - VGM') }}{% endblock %}
 
-{% block content %}
-<div class="container">
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="hero-section text-center py-4">
-                <h1 class="display-4 mb-3">{{ _('Welcome to VGM') }}</h1>
-                <p class="lead mb-4">{{ _('We are the Association of Ghent Mosques (VGM), dedicated to serving our community and promoting Islamic values.') }}</p>
-                <a href="{{ url_for('main.mosques') }}" class="btn btn-primary btn-lg">
-                    <i class="fas fa-mosque"></i> {{ _('Find a Mosque') }}
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-lg-8">
-            <!-- Ramadan Countdown -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3>{{ _('Countdown to Ramadan 1446/2025') }}</h3>
-                </div>
-                <div class="card-body">
-                    <div id="ramadanCountdown" class="text-center">
-                        <div class="countdown-timer">
-                            <div class="timer-block">
-                                <span class="number">00</span>
-                                <span class="label">{{ _('Days') }}</span>
-                            </div>
-                            <div class="timer-separator">:</div>
-                            <div class="timer-block">
-                                <span class="number">00</span>
-                                <span class="label">{{ _('Hours') }}</span>
-                            </div>
-                            <div class="timer-separator">:</div>
-                            <div class="timer-block">
-                                <span class="number">00</span>
-                                <span class="label">{{ _('Minutes') }}</span>
-                            </div>
-                            <div class="timer-separator">:</div>
-                            <div class="timer-block">
-                                <span class="number">00</span>
-                                <span class="label">{{ _('Seconds') }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Latest Blog Posts -->
-            <div class="card mb-4">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="mb-0">{{ _('Latest News') }}</h3>
-                    <a href="{{ url_for('blog.index') }}" class="btn btn-sm btn-outline-light">
-                        {{ _('All News') }} <i class="fas fa-arrow-right ms-1"></i>
-                    </a>
-                </div>
-                <div class="card-body">
-                    <div class="row row-cols-1 row-cols-md-2 g-4">
-                        {% for post in latest_posts %}
-                        <div class="col">
-                            <div class="news-card h-100">
-                                {% if post.image_url %}
-                                <img src="{{ post.image_url }}" class="news-image" alt="{{ post.title }}">
-                                {% endif %}
-                                <div class="news-content">
-                                    <h4 class="news-title">{{ post.title }}</h4>
-                                    <p class="news-meta">
-                                        <i class="far fa-calendar-alt"></i> {{ post.created_at.strftime('%d %b %Y') }}
-                                    </p>
-                                    <p class="news-excerpt">{{ post.excerpt or post.content[:100] }}...</p>
-                                    <a href="{{ url_for('blog.view', slug=post.slug) }}" class="btn btn-link p-0">
-                                        {{ _('Read More') }} <i class="fas fa-arrow-right ms-1"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4">
-            <!-- Next VGM Event -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3 class="mb-0">{{ _('Next VGM Event') }}</h3>
-                </div>
-                <div class="card-body">
-                    {% if next_event %}
-                    <div class="event-highlight">
-                        <h4>{{ next_event.title }}</h4>
-                        <div class="event-meta">
-                            <p class="mb-2">
-                                <i class="far fa-calendar"></i> {{ next_event.date.strftime('%d %B %Y') }}
-                            </p>
-                            <p class="mb-3">
-                                <i class="far fa-clock"></i> {{ next_event.date.strftime('%H:%M') }}
-                            </p>
-                        </div>
-                        <p class="event-description">{{ next_event.description }}</p>
-                        <a href="{{ url_for('events.event_detail', event_id=next_event.id) }}" class="btn btn-primary w-100">
-                            {{ _('More Info') }} <i class="fas fa-arrow-right ms-1"></i>
-                        </a>
-                    </div>
-                    {% else %}
-                    <p class="text-center text-muted my-4">{{ _('No upcoming events scheduled') }}</p>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Prayer Times -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="mb-0">{{ _('Prayer Times') }}</h3>
-                </div>
-                <div class="card-body">
-                    <div class="prayer-times">
-                        {% for prayer in prayer_times %}
-                        <div class="prayer-time">
-                            <span class="prayer-name">{{ prayer.prayer_name }}</span>
-                            <span class="prayer-time-badge">{{ prayer.time.strftime('%H:%M') }}</span>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
-
 {% block styles %}
 <style>
 .hero-section {
-    background-color: var(--white);
+    background-color: var(--bs-success);
     border-radius: 8px;
     padding: 3rem 2rem;
     margin-bottom: 2rem;
+    color: white;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    position: relative;
+    overflow: hidden;
+    border: none;
+}
+
+.hero-section::before,
+.hero-section::after {
+    display: none; /* Remove any pseudo-elements that might create lines */
+}
+
+.hero-section h1 {
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.hero-section .lead {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.hero-section .btn-primary {
+    background-color: white;
+    color: var(--bs-success);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.hero-section .btn-primary:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-2px);
+}
+
+/* Ensure no unwanted borders or lines */
+.row {
+    border: none;
+    position: relative;
+}
+
+.row::before,
+.row::after {
+    display: none;
+}
+
+.col-12 {
+    border: none;
+}
+
+.container {
+    border: none;
 }
 
 .countdown-timer {
@@ -300,6 +221,134 @@
     }
 }
 </style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="hero-section text-center">
+                <h1 class="display-4 mb-3">{{ _('Welcome to VGM') }}</h1>
+                <p class="lead mb-4">{{ _('We are the Association of Ghent Mosques (VGM), dedicated to serving our community and promoting Islamic values.') }}</p>
+                <a href="{{ url_for('main.mosques') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-mosque"></i> {{ _('Find a Mosque') }}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>{{ _('Countdown to Ramadan 1446/2025') }}</h3>
+                </div>
+                <div class="card-body">
+                    <div id="ramadanCountdown" class="text-center">
+                        <div class="countdown-timer">
+                            <div class="timer-block">
+                                <span class="number">00</span>
+                                <span class="label">{{ _('Days') }}</span>
+                            </div>
+                            <div class="timer-separator">:</div>
+                            <div class="timer-block">
+                                <span class="number">00</span>
+                                <span class="label">{{ _('Hours') }}</span>
+                            </div>
+                            <div class="timer-separator">:</div>
+                            <div class="timer-block">
+                                <span class="number">00</span>
+                                <span class="label">{{ _('Minutes') }}</span>
+                            </div>
+                            <div class="timer-separator">:</div>
+                            <div class="timer-block">
+                                <span class="number">00</span>
+                                <span class="label">{{ _('Seconds') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">{{ _('Latest News') }}</h3>
+                    <a href="{{ url_for('blog.index') }}" class="btn btn-sm btn-outline-light">
+                        {{ _('All News') }} <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row row-cols-1 row-cols-md-2 g-4">
+                        {% for post in latest_posts %}
+                        <div class="col">
+                            <div class="news-card h-100">
+                                {% if post.image_url %}
+                                <img src="{{ post.image_url }}" class="news-image" alt="{{ post.title }}">
+                                {% endif %}
+                                <div class="news-content">
+                                    <h4 class="news-title">{{ post.title }}</h4>
+                                    <p class="news-meta">
+                                        <i class="far fa-calendar-alt"></i> {{ post.created_at.strftime('%d %b %Y') }}
+                                    </p>
+                                    <p class="news-excerpt">{{ post.excerpt or post.content[:100] }}...</p>
+                                    <a href="{{ url_for('blog.view', slug=post.slug) }}" class="btn btn-link p-0">
+                                        {{ _('Read More') }} <i class="fas fa-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="mb-0">{{ _('Next VGM Event') }}</h3>
+                </div>
+                <div class="card-body">
+                    {% if next_event %}
+                    <div class="event-highlight">
+                        <h4>{{ next_event.title }}</h4>
+                        <div class="event-meta">
+                            <p class="mb-2">
+                                <i class="far fa-calendar"></i> {{ next_event.date.strftime('%d %B %Y') }}
+                            </p>
+                            <p class="mb-3">
+                                <i class="far fa-clock"></i> {{ next_event.date.strftime('%H:%M') }}
+                            </p>
+                        </div>
+                        <p class="event-description">{{ next_event.description }}</p>
+                        <a href="{{ url_for('events.event_detail', event_id=next_event.id) }}" class="btn btn-primary w-100">
+                            {{ _('More Info') }} <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                    {% else %}
+                    <p class="text-center text-muted my-4">{{ _('No upcoming events scheduled') }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">{{ _('Prayer Times') }}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="prayer-times">
+                        {% for prayer in prayer_times %}
+                        <div class="prayer-time">
+                            <span class="prayer-name">{{ prayer.prayer_name }}</span>
+                            <span class="prayer-time-badge">{{ prayer.time.strftime('%H:%M') }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
