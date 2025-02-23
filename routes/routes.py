@@ -480,40 +480,58 @@ def memorandum():
 def about():
     board_members = [
         {
-            'name': 'Mohammed Ahmed',
-            'role': 'Chairman',
-            'mosque': 'Al Markaz at Tarbawi',
+            'name': 'Abd El Motleb Omar Mohamed',
+            'role': 'Voorzitter',
+            'mosque': 'Islamitisch Cultureel centrum - Badr',
             'image': 'chairman.jpg'
         },
         {
-            'name': 'Yusuf Ali',
-            'role': 'Secretary',
-            'mosque': 'Tevhid Camii',
-            'image': 'secretary.jpg'
-        },
-        {
-            'name': 'Ibrahim Hassan',
-            'role': 'Treasurer',
-            'mosque': 'Moskee Al Fath',
-            'image': 'treasurer.jpg'
-        },
-        {
-            'name': 'Omar Malik',
-            'role': 'Board Member',
+            'name': 'Alci Bilal',
+            'role': 'Bestuurder',
             'mosque': 'Groene Moskee Fatih',
             'image': 'member1.jpg'
         },
         {
-            'name': 'Abdul Rahman',
-            'role': 'Board Member',
-            'mosque': 'IH-VAK Moskee',
+            'name': 'Cetin Mutlu',
+            'role': 'Bestuurder',
+            'mosque': 'Moskee Eyup sultan',
             'image': 'member2.jpg'
         },
         {
-            'name': 'Karim Nasser',
-            'role': 'Board Member',
-            'mosque': 'Moskee Salahaddien',
+            'name': 'Demirogullari Nedim',
+            'role': 'Bestuurder',
+            'mosque': 'Moskee Tevhid',
             'image': 'member3.jpg'
+        },
+        {
+            'name': 'El Bakali Mohamed',
+            'role': 'Bestuurder',
+            'mosque': 'Moskee Al Fath',
+            'image': 'member4.jpg'
+        },
+        {
+            'name': 'Ibrahimi Hikmatullah',
+            'role': 'Bestuurder',
+            'mosque': 'Afghan Attaqwa moskee',
+            'image': 'member5.jpg'
+        },
+        {
+            'name': 'Köse Demirali',
+            'role': 'Bestuurder',
+            'mosque': 'Moskee Eyup sultan',
+            'image': 'member6.jpg'
+        },
+        {
+            'name': 'Saman Sheikh',
+            'role': 'Bestuurder',
+            'mosque': 'Moskee Salahaddien',
+            'image': 'member7.jpg'
+        },
+        {
+            'name': 'Senel Furkan',
+            'role': 'Bestuurder',
+            'mosque': 'Moskee Tevhid',
+            'image': 'member8.jpg'
         }
     ]
     return render_template('about.html', board_members=board_members)
