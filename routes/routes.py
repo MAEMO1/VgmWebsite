@@ -467,10 +467,6 @@ def initialize_mosques():
         db.session.rollback()
         print(f"Error initializing mosques: {e}")
 
-@routes.route('/memorandum')
-def memorandum():
-    return render_template('memorandum.html')
-
 @routes.route('/about')
 def about():
     # Initialize default board members if none exist
@@ -489,12 +485,12 @@ def about():
             {
                 'name': 'Cetin Mutlu',
                 'role': 'Bestuurder',
-                'mosque_name': 'Moskee Eyup sultan',
+                'mosque_name': 'Eyup sultan Camii',
             },
             {
                 'name': 'Demirogullari Nedim',
                 'role': 'Bestuurder',
-                'mosque_name': 'Moskee Tevhid',
+                'mosque_name': 'Tevhid Camii',
             },
             {
                 'name': 'El Bakali Mohamed',
@@ -509,7 +505,7 @@ def about():
             {
                 'name': 'Köse Demirali',
                 'role': 'Bestuurder',
-                'mosque_name': 'Eyup sultan Camii',  # Updated to match exact mosque name
+                'mosque_name': 'Eyup sultan Camii',
             },
             {
                 'name': 'Saman Sheikh',
@@ -519,7 +515,7 @@ def about():
             {
                 'name': 'Senel Furkan',
                 'role': 'Bestuurder',
-                'mosque_name': 'Tevhid Camii',  # Updated to match exact mosque name
+                'mosque_name': 'Tevhid Camii',
             }
         ]
 
@@ -531,10 +527,10 @@ def about():
         BoardMember.query.delete()
 
         for member_data in default_board_members:
-            # Find the associated mosque
-            mosque = User.query.filter(
-                User.user_type == 'mosque',
-                User.mosque_name.ilike(f"%{member_data['mosque_name']}%")
+            # Find the associated mosque using exact name match
+            mosque = User.query.filter_by(
+                user_type='mosque',
+                mosque_name=member_data['mosque_name']
             ).first()
 
             if mosque:
@@ -547,6 +543,7 @@ def about():
                     image=f"member_{member_data['name'].lower().replace(' ', '_')}.jpg"
                 )
                 db.session.add(board_member)
+                print(f"Added board member {member_data['name']} for mosque {mosque.mosque_name}")
             else:
                 print(f"Warning: Mosque not found for board member {member_data['name']}")
 
@@ -591,6 +588,10 @@ def about():
                          terms=terms,
                          current_term_start=term_start,
                          mosques=mosques)
+
+@routes.route('/memorandum')
+def memorandum():
+    return render_template('memorandum.html')
 
 @routes.route('/manage_board_members', methods=['POST'])
 @login_required
