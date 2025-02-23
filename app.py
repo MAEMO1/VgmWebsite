@@ -64,6 +64,11 @@ def create_app():
         db.create_all()
         logging.info("Database tables created successfully")
 
+        # Initialize mosques data
+        from routes.routes import initialize_mosques
+        initialize_mosques()
+        logging.info("Mosques initialized successfully")
+
         return app
 
 # Create the application instance
