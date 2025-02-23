@@ -1,132 +1,252 @@
 {% extends "base.html" %}
 
-{% block title %}VGM Memorandum 2025-2030{% endblock %}
+{% block title %}Memorandum 2025-2030 - VGM{% endblock %}
 
 {% block content %}
 <div class="container py-5">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h1 class="display-4">Memorandum 2025-2030</h1>
-            <p class="lead">Vereniging van Gentse Moskeeën (VGM)</p>
-            <hr>
-        </div>
+    <div class="memorandum-header text-center mb-5">
+        <h1 class="display-4">Memorandum 2025-2030</h1>
+        <div class="separator"></div>
+        <p class="lead">Vereniging van Gentse Moskeeën (VGM)</p>
     </div>
 
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <p class="mb-0">
-                    <strong>{{ _('About VGM') }}:</strong> {{ _('The Association of Ghent Mosques (VGM) is the umbrella organization of Ghent mosques (21), established in 2016.') }}
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="about-vgm mb-4">
+                <p class="introduction">
+                    De Vereniging van Gentse Moskeeën (VGM) is de koepelvereniging van de Gentse moskeeën (21). 
+                    Opgericht in 2016 heeft de vereniging tot doel:
                 </p>
-                <a href="{{ url_for('static', filename='docs/MemorandumVGM.pdf') }}" class="btn btn-primary">
-                    <i class="fas fa-download me-2"></i>{{ _('Download Complete Memorandum') }}
-                </a>
+                <ul class="objectives-list">
+                    <li>De belangen van de moslims en moskeeën te behartigen</li>
+                    <li>De onderlinge samenwerking tussen de moskeeën te bevorderen</li>
+                    <li>Informeren over het Islamitisch geloof, zonder zich uit te spreken over mogelijke verschillen tussen rechtsscholen</li>
+                </ul>
             </div>
         </div>
     </div>
 
     <div class="row g-4">
-        <!-- Religious Identity -->
         <div class="col-md-6 col-lg-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="text-primary mb-3">
-                        <i class="fas fa-pray fa-2x"></i>
-                    </div>
-                    <h3 class="card-title">{{ _('Religious Identity') }}</h3>
-                    <p class="card-text">
-                        {{ _('Focus on accommodating religious identity in public spaces, including prayer rooms and Mecca-oriented burial grounds. Promoting acceptance of religious expressions in society.') }}
-                    </p>
+            <div class="theme-card">
+                <div class="icon-wrapper">
+                    <i class="fas fa-users"></i>
                 </div>
+                <h3>Identiteitsbeleving</h3>
+                <p>Focus op het faciliteren van de religieuze identiteitsbeleving in de publieke ruimte, waaronder gebedsruimtes en islamitische begraafplaatsen. Het bevorderen van acceptatie van religieuze uitingen in de samenleving.</p>
             </div>
         </div>
 
-        <!-- Education -->
         <div class="col-md-6 col-lg-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="text-primary mb-3">
-                        <i class="fas fa-graduation-cap fa-2x"></i>
-                    </div>
-                    <h3 class="card-title">{{ _('Education') }}</h3>
-                    <p class="card-text">
-                        {{ _('Emphasis on equal educational opportunities, functional use of mother tongue, combating racism, and respecting religious practices in schools.') }}
-                    </p>
+            <div class="theme-card">
+                <div class="icon-wrapper">
+                    <i class="fas fa-graduation-cap"></i>
                 </div>
+                <h3>Onderwijs</h3>
+                <p>Nadruk op gelijke onderwijskansen, functioneel gebruik van de moedertaal, bestrijding van racisme, en respect voor religieuze praktijken in scholen.</p>
             </div>
         </div>
 
-        <!-- Poverty -->
         <div class="col-md-6 col-lg-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="text-primary mb-3">
-                        <i class="fas fa-hands-helping fa-2x"></i>
-                    </div>
-                    <h3 class="card-title">{{ _('Poverty') }}</h3>
-                    <p class="card-text">
-                        {{ _('Collaboration with local organizations and continued investment in neighborhood operations to combat poverty and provide support.') }}
-                    </p>
+            <div class="theme-card">
+                <div class="icon-wrapper">
+                    <i class="fas fa-hand-holding-heart"></i>
                 </div>
+                <h3>Armoede</h3>
+                <p>Samenwerking met lokale organisaties en blijvende investering in buurtwerking om armoede te bestrijden en ondersteuning te bieden.</p>
             </div>
         </div>
 
-        <!-- Housing -->
         <div class="col-md-6 col-lg-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="text-primary mb-3">
-                        <i class="fas fa-home fa-2x"></i>
-                    </div>
-                    <h3 class="card-title">{{ _('Housing') }}</h3>
-                    <p class="card-text">
-                        {{ _('Addressing discrimination in the housing market, expanding affordable housing options, and implementing effective anti-discrimination policies.') }}
-                    </p>
+            <div class="theme-card">
+                <div class="icon-wrapper">
+                    <i class="fas fa-home"></i>
                 </div>
+                <h3>Huisvesting</h3>
+                <p>Aanpak van discriminatie op de woningmarkt, uitbreiding van betaalbare huisvesting, en implementatie van effectief antidiscriminatiebeleid.</p>
             </div>
         </div>
 
-        <!-- Work -->
         <div class="col-md-6 col-lg-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="text-primary mb-3">
-                        <i class="fas fa-briefcase fa-2x"></i>
-                    </div>
-                    <h3 class="card-title">{{ _('Work') }}</h3>
-                    <p class="card-text">
-                        {{ _('City of Ghent as an example of workplace inclusion, focusing on diversity in higher positions and employee well-being.') }}
-                    </p>
+            <div class="theme-card">
+                <div class="icon-wrapper">
+                    <i class="fas fa-briefcase"></i>
                 </div>
+                <h3>Werk</h3>
+                <p>Stad Gent als voorbeeld van inclusie op de werkvloer, met focus op diversiteit in hogere posities en welzijn van werknemers.</p>
             </div>
         </div>
 
-        <!-- Police -->
         <div class="col-md-6 col-lg-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="text-primary mb-3">
-                        <i class="fas fa-shield-alt fa-2x"></i>
-                    </div>
-                    <h3 class="card-title">{{ _('Police') }}</h3>
-                    <p class="card-text">
-                        {{ _('Building trust through community engagement, promoting diversity in the police force, and maintaining high standards of conduct.') }}
-                    </p>
+            <div class="theme-card">
+                <div class="icon-wrapper">
+                    <i class="fas fa-shield-alt"></i>
                 </div>
+                <h3>Politie</h3>
+                <p>Opbouwen van vertrouwen door gemeenschapsgerichte werking, bevorderen van diversiteit binnen het korps, en handhaving van hoge gedragsnormen.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12 text-center">
+            <div class="download-section">
+                <h3 class="mb-4">Download het volledige memorandum</h3>
+                <a href="{{ url_for('static', filename='docs/MemorandumVGM.pdf') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-file-pdf me-2"></i>Memorandum VGM 2025-2030
+                </a>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block styles %}
 <style>
-.card {
-    transition: transform 0.2s;
+.memorandum-header {
+    position: relative;
+    padding: 3rem 0;
 }
-.card:hover {
-    transform: translateY(-5px);
+
+.memorandum-header .display-4 {
+    color: var(--primary-color);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
 }
-.text-primary {
+
+.separator {
+    width: 80px;
+    height: 4px;
+    background: var(--primary-color);
+    margin: 1.5rem auto;
+    border-radius: 2px;
+}
+
+.about-vgm {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
+}
+
+.introduction {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+}
+
+.objectives-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.objectives-list li {
+    position: relative;
+    padding-left: 2rem;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.objectives-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    width: 8px;
+    height: 8px;
+    background: var(--primary-color);
+    border-radius: 50%;
+}
+
+.theme-card {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 16px;
+    height: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(65, 183, 172, 0.2);
+    border-color: var(--primary-color);
+}
+
+.icon-wrapper {
+    margin-bottom: 1.5rem;
+    color: var(--primary-color);
+}
+
+.icon-wrapper i {
+    font-size: 2.5rem;
     opacity: 0.9;
+}
+
+.theme-card h3 {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.theme-card p {
+    color: var(--text-color);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.download-section {
+    background: var(--white);
+    padding: 3rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
+    margin-top: 3rem;
+}
+
+.download-section h3 {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.btn-primary {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .memorandum-header {
+        padding: 2rem 0;
+    }
+
+    .theme-card {
+        padding: 1.5rem;
+    }
+
+    .icon-wrapper i {
+        font-size: 2rem;
+    }
+
+    .theme-card h3 {
+        font-size: 1.25rem;
+    }
+
+    .download-section {
+        padding: 2rem;
+    }
 }
 </style>
 {% endblock %}
