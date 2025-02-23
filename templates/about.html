@@ -57,10 +57,15 @@
                              alt="{{ member.name }}"
                              loading="lazy">
                     {% else %}
-                        <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" 
+                        <img src="{{ url_for('static', filename='images/placeholder.jpg') }}" 
                              class="card-img-top vgm-logo" 
                              alt="VGM Logo"
-                             loading="lazy">
+                             loading="lazy"
+                             style="background-image: url('{{ url_for('static', filename='images/LogoVGM.jpg') }}');
+                                    background-size: contain;
+                                    background-position: center;
+                                    background-repeat: no-repeat;
+                                    background-color: #f8f9fa;">
                     {% endif %}
                 </div>
                 <div class="card-body">
@@ -174,7 +179,6 @@
 .card-img-top.vgm-logo {
     object-fit: contain;
     padding: 1rem;
-    background-color: #f8f9fa;
 }
 .about-content {
     font-size: 1.1rem;
