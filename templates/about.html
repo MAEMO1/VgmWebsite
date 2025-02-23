@@ -29,9 +29,9 @@
                 <div class="d-flex gap-3">
                     <select class="form-select" id="termSelect" style="width: auto;">
                         {% for term in terms %}
-                        <option value="{{ term.start.strftime('%Y-%m-%d') }}" 
-                                {% if term.start == current_term_start %}selected{% endif %}>
-                            {{ term.start.strftime('%Y') }} - {{ term.end.strftime('%Y') }}
+                        <option value="{{ term[0].strftime('%Y-%m-%d') }}" 
+                                {% if term[0] == current_term_start %}selected{% endif %}>
+                            {{ term[0].strftime('%Y') }} - {{ term[1].strftime('%Y') }}
                         </option>
                         {% endfor %}
                     </select>

@@ -551,6 +551,12 @@ def about():
             db.session.rollback()
             print(f"Error initializing board members: {e}")
 
+    # Get all available terms
+    terms = db.session.query(
+        BoardMember.term_start,
+        BoardMember.term_end
+    ).distinct().group_by(BoardMember.term_start, BoardMember.term_end).all()
+
     # Get the requested term or default to current term
     term_start_str = request.args.get('term')
     if term_start_str:
@@ -566,12 +572,6 @@ def about():
             term_start = latest_term.term_start
         else:
             term_start = date(current_date.year, 1, 1)
-
-    # Get all available terms
-    terms = db.session.query(
-        BoardMember.term_start,
-        BoardMember.term_end
-    ).distinct().order_by(BoardMember.term_start.desc()).all()
 
     # Get board members for the selected term
     board_members = BoardMember.query.filter(
