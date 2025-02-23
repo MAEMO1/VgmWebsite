@@ -10,26 +10,30 @@
     padding: 3rem 2rem;
     margin-bottom: 2rem;
     color: white;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     position: relative;
-    overflow: hidden;
-    border: none;
+    border: none !important;
+    outline: none !important;
 }
 
-.hero-section::before,
-.hero-section::after {
-    display: none; /* Remove any pseudo-elements that might create lines */
+/* Reset any Bootstrap borders */
+.hero-section:before,
+.hero-section:after {
+    content: none !important;
 }
 
 .hero-section h1 {
     margin-bottom: 1.5rem;
     font-weight: 600;
+    position: relative;
+    z-index: 2;
 }
 
 .hero-section .lead {
     font-size: 1.25rem;
     margin-bottom: 2rem;
     opacity: 0.9;
+    position: relative;
+    z-index: 2;
 }
 
 .hero-section .btn-primary {
@@ -39,6 +43,8 @@
     padding: 0.75rem 1.5rem;
     font-weight: 500;
     transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
 }
 
 .hero-section .btn-primary:hover {
@@ -46,23 +52,20 @@
     transform: translateY(-2px);
 }
 
-/* Ensure no unwanted borders or lines */
-.row {
-    border: none;
-    position: relative;
-}
-
-.row::before,
-.row::after {
-    display: none;
-}
-
+/* Reset any Bootstrap row/container borders */
+.container,
+.row,
 .col-12 {
-    border: none;
+    border: none !important;
 }
 
-.container {
-    border: none;
+.container:before,
+.container:after,
+.row:before,
+.row:after,
+.col-12:before,
+.col-12:after {
+    display: none !important;
 }
 
 .countdown-timer {
