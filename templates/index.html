@@ -29,19 +29,22 @@
             <div class="card-body">
                 <div id="ramadanCountdown" class="text-center">
                     <div class="countdown-timer">
-                        <div class="days">
+                        <div class="timer-block">
                             <span class="number">00</span>
                             <span class="label">{{ _('Days') }}</span>
                         </div>
-                        <div class="hours">
+                        <div class="timer-separator">:</div>
+                        <div class="timer-block">
                             <span class="number">00</span>
                             <span class="label">{{ _('Hours') }}</span>
                         </div>
-                        <div class="minutes">
+                        <div class="timer-separator">:</div>
+                        <div class="timer-block">
                             <span class="number">00</span>
                             <span class="label">{{ _('Minutes') }}</span>
                         </div>
-                        <div class="seconds">
+                        <div class="timer-separator">:</div>
+                        <div class="timer-block">
                             <span class="number">00</span>
                             <span class="label">{{ _('Seconds') }}</span>
                         </div>
@@ -126,16 +129,25 @@
 .countdown-timer {
     display: flex;
     justify-content: center;
-    gap: 2rem;
+    align-items: center;
+    gap: 0.5rem;
     margin: 2rem 0;
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.countdown-timer > div {
+.timer-block {
     text-align: center;
-    padding: 1rem;
-    background: #f8f9fa;
-    border-radius: 8px;
-    min-width: 100px;
+    min-width: 80px;
+}
+
+.timer-separator {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #0d6efd;
+    margin-top: -1rem;
 }
 
 .countdown-timer .number {
@@ -146,10 +158,11 @@
 }
 
 .countdown-timer .label {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: #6c757d;
     text-transform: uppercase;
     display: block;
+    margin-top: -0.5rem;
 }
 
 .prayer-time {
