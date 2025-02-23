@@ -1,13 +1,13 @@
 :root {
-    --primary-color: #106B21;     /* Logo green */
-    --secondary-color: #0A4A15;   /* Darker green */
-    --accent-color: #E0A800;      /* Warm gold accent */
-    --text-color: #333333;
-    --light-bg: #F5F5F5;
-    --light-text: #666666;
+    --primary-color: #41B7AC;     /* Logo turquoise */
+    --secondary-color: #338F86;   /* Darker turquoise for hover */
+    --accent-color: #E4B622;      /* Logo gold */
+    --text-color: #2C3E50;        /* Dark blue-grey for text */
+    --light-bg: #F8F9FA;
+    --light-text: #6C757D;
     --white: #FFFFFF;
-    --border-color: #E5E5E5;
-    --heading-font: 'Playfair Display', serif;
+    --border-color: #E9ECEF;
+    --heading-font: 'Source Sans Pro', sans-serif;
     --body-font: 'Source Sans Pro', sans-serif;
     --box-shadow: 0 2px 15px rgba(0,0,0,0.06);
 }
@@ -24,13 +24,12 @@ body {
 .navbar {
     background-color: var(--white);
     box-shadow: var(--box-shadow);
-    padding: 1rem;
-    border-bottom: 3px solid var(--primary-color);
+    padding: 0.75rem 1rem;
 }
 
 .navbar-brand {
     color: var(--primary-color) !important;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 1.5rem;
     display: flex;
     align-items: center;
@@ -38,27 +37,24 @@ body {
 }
 
 .navbar-brand img {
-    height: 45px;
+    height: 50px;
     width: auto;
     margin-right: 12px;
     object-fit: contain;
-    background-color: var(--white);
-    padding: 4px;
-    border-radius: 4px;
+    padding: 0;
+    border-radius: 0;
 }
 
 .nav-link {
     color: var(--text-color) !important;
     font-weight: 500;
-    opacity: 0.9;
-    transition: all 0.3s ease;
-    padding: 0.7rem 1.2rem;
+    padding: 0.8rem 1.2rem;
     position: relative;
+    transition: all 0.3s ease;
 }
 
 .nav-link:hover {
     color: var(--primary-color) !important;
-    opacity: 1;
 }
 
 .nav-link::after {
@@ -68,7 +64,7 @@ body {
     left: 50%;
     width: 0;
     height: 2px;
-    background-color: var(--primary-color);
+    background-color: var(--accent-color);
     transition: all 0.3s ease;
     transform: translateX(-50%);
 }
@@ -94,7 +90,7 @@ body {
     right: 0;
     bottom: 0;
     left: 0;
-    background: linear-gradient(45deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 100%);
+    background: linear-gradient(45deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 100%);
 }
 
 .hero-section > * {
@@ -107,7 +103,7 @@ body {
     font-size: 3.2rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
 }
 
 .hero-section .lead {
@@ -136,7 +132,6 @@ body {
     background-color: var(--white);
     border-bottom: 2px solid var(--primary-color);
     padding: 1.5rem;
-    position: relative;
 }
 
 .card-header h2, .card-header h3 {
@@ -186,13 +181,13 @@ body {
 }
 
 .prayer-time-badge {
-    color: var(--primary-color);
-    font-weight: 500;
-    font-size: 0.95rem;
-    transition: color 0.3s ease;
-    padding: 0.4rem 0.8rem;
     background: var(--white);
+    color: var(--primary-color);
+    padding: 0.4rem 0.8rem;
     border-radius: 4px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
 }
 
 /* Buttons */
@@ -203,13 +198,13 @@ body {
     font-weight: 600;
     letter-spacing: 0.3px;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(16,107,33,0.2);
+    box-shadow: 0 2px 8px rgba(65,183,172,0.2);
 }
 
 .btn-primary:hover {
     background-color: var(--secondary-color);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(16,107,33,0.3);
+    box-shadow: 0 4px 12px rgba(65,183,172,0.3);
 }
 
 /* News Cards */
