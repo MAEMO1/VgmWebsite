@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Edit') }} {{ mosque.mosque_name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12 mb-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('main.mosques') }}">{{ _('Mosques') }}</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('main.mosque_detail', mosque_id=mosque.id) }}">{{ mosque.mosque_name }}</a></li>
+                    <li class="breadcrumb-item active">{{ _('Edit') }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3>{{ _('Edit Mosque Information') }}</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        <!-- Basic Information -->
+                        <div class="mb-4">
+                            <h4>{{ _('Basic Information') }}</h4>
+                            <div class="mb-3">
+                                <label for="history" class="form-label">{{ _('History') }}</label>
+                                <textarea class="form-control" id="history" name="history" rows="5">{{ mosque.history or '' }}</textarea>
+                                <small class="text-muted">{{ _('Share the history and background of your mosque') }}</small>
+                            </div>
+                            <div class="mb-3">
+                                <label for="establishment_year" class="form-label">{{ _('Year of Establishment') }}</label>
+                                <input type="number" class="form-control" id="establishment_year" name="establishment_year" 
+                                       value="{{ mosque.establishment_year or '' }}" min="1000" max="{{ current_year }}">
+                            </div>
+                        </div>
+
+                        <!-- Prayer Times -->
+                        <div class="mb-4">
+                            <h4>{{ _('Prayer Times') }}</h4>
+                            <div class="mb-3">
+                                <label for="friday_prayer_time" class="form-label">{{ _('Friday Prayer Time') }}</label>
+                                <input type="time" class="form-control" id="friday_prayer_time" name="friday_prayer_time"
+                                       value="{{ mosque.friday_prayer_time.strftime('%H:%M') if mosque.friday_prayer_time else '' }}">
+                            </div>
+                        </div>
+
+                        <!-- Media -->
+                        <div class="mb-4">
+                            <h4>{{ _('Media') }}</h4>
+                            <!-- Image Upload -->
+                            <div class="mb-3">
+                                <label for="images" class="form-label">{{ _('Add Images') }}</label>
+                                <input type="file" class="form-control" id="images" name="images" multiple accept="image/*">
+                                <small class="text-muted">{{ _('You can select multiple images') }}</small>
+                            </div>
+                            <div class="mb-3">
+                                <label for="image_description" class="form-label">{{ _('Image Description') }}</label>
+                                <input type="text" class="form-control" id="image_description" name="image_description">
+                            </div>
+
+                            <!-- Video URLs -->
+                            <div id="video-container">
+                                <div class="mb-3">
+                                    <label class="form-label">{{ _('Add Videos (YouTube/Vimeo URLs)') }}</label>
+                                    <div class="input-group mb-2">
+                                        <input type="url" class="form-control" name="video_urls[]" placeholder="https://...">
+                                        <input type="text" class="form-control" name="video_titles[]" placeholder="{{ _('Video Title') }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addVideoField()">
+                                <i class="fas fa-plus"></i> {{ _('Add Another Video') }}
+                            </button>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> {{ _('Save Changes') }}
+                            </button>
+                            <a href="{{ url_for('main.mosque_detail', mosque_id=mosque.id) }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i> {{ _('Cancel') }}
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Section -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>{{ _('Current Media') }}</h4>
+                </div>
+                <div class="card-body">
+                    {% if mosque.images.count() > 0 %}
+                    <h5>{{ _('Images') }}</h5>
+                    <div class="row g-2 mb-4">
+                        {% for image in mosque.images %}
+                        <div class="col-6">
+                            <img src="{{ image.url }}" alt="{{ image.description }}" class="img-fluid rounded">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    {% if mosque.videos.count() > 0 %}
+                    <h5>{{ _('Videos') }}</h5>
+                    <div class="list-group">
+                        {% for video in mosque.videos %}
+                        <div class="list-group-item">
+                            <h6>{{ video.title }}</h6>
+                            <a href="{{ video.url }}" target="_blank" class="small">{{ video.url }}</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function addVideoField() {
+    const container = document.getElementById('video-container');
+    const newField = document.createElement('div');
+    newField.className = 'mb-3';
+    newField.innerHTML = `
+        <div class="input-group mb-2">
+            <input type="url" class="form-control" name="video_urls[]" placeholder="https://...">
+            <input type="text" class="form-control" name="video_titles[]" placeholder="{{ _('Video Title') }}">
+            <button type="button" class="btn btn-outline-danger" onclick="this.parentElement.parentElement.remove()">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+    `;
+    container.appendChild(newField);
+}
+</script>
+{% endblock %}
