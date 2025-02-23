@@ -526,6 +526,10 @@ def about():
         # First clear any existing board members
         BoardMember.query.delete()
 
+        # Create board images directory if it doesn't exist
+        board_dir = os.path.join('static', 'images', 'board')
+        os.makedirs(board_dir, exist_ok=True)
+
         for member_data in default_board_members:
             # Find the associated mosque using exact name match
             mosque = User.query.filter_by(
@@ -549,6 +553,7 @@ def about():
 
         try:
             db.session.commit()
+            print("Successfully initialized all board members")
         except Exception as e:
             db.session.rollback()
             print(f"Error initializing board members: {e}")
