@@ -6,7 +6,7 @@
 <div class="container py-5">
     <div class="memorandum-header text-center mb-5">
         <div class="logo-container mb-4">
-            <img src="{{ url_for('static', filename='images/logo transparant.png') }}" alt="VGM Logo" class="logo-img">
+            <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" alt="VGM Logo" class="logo-img">
         </div>
         <h1 class="display-4">Memorandum 2025-2030</h1>
         <div class="separator"></div>
@@ -110,6 +110,9 @@
     max-width: 300px;
     margin: 0 auto 2rem;
     padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .logo-img {
@@ -123,13 +126,6 @@
     position: relative;
     padding: 3rem 0;
 }
-
-.memorandum-header .display-4 {
-    color: var(--primary-color);
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-}
-
 .separator {
     width: 80px;
     height: 4px;
