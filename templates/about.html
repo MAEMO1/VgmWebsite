@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('About VGM') }}{% endblock %}
+{% block title %}Over VGM{% endblock %}
 
 {% block content %}
 <div class="container py-5">
@@ -8,24 +8,24 @@
     <div class="row mb-5">
         <div class="col-12">
             <div class="about-header text-center mb-5">
-                <h1 class="display-4 text-primary mb-4">{{ _('About VGM') }}</h1>
-                <p class="lead mb-4">{{ _('The Association of Ghent Mosques (VGM)') }}</p>
+                <h1 class="display-4 text-primary mb-4">Over VGM</h1>
+                <p class="lead mb-4">Vereniging van Gentse Moskeeën (VGM)</p>
                 <div class="separator"></div>
             </div>
             <div class="about-content">
-                <p class="mb-4">{{ _('The Association of Ghent Mosques (VGM) is the umbrella organization of Ghent mosques (21). Established in 2016, the association aims to:') }}</p>
+                <p class="mb-4">De Vereniging van Gentse Moskeeën (VGM) is de koepelorganisatie van de Gentse moskeeën (21). Opgericht in 2016, streeft de vereniging naar:</p>
                 <div class="objectives">
                     <div class="objective-item">
                         <i class="fas fa-star text-primary me-3"></i>
-                        <span>{{ _('Represent the interests of Muslims and mosques, particularly those in Ghent') }}</span>
+                        <span>Het behartigen van de belangen van moslims en moskeeën, in het bijzonder die in Gent</span>
                     </div>
                     <div class="objective-item">
                         <i class="fas fa-handshake text-primary me-3"></i>
-                        <span>{{ _('Promote cooperation between mosques, especially those in Ghent') }}</span>
+                        <span>Het bevorderen van samenwerking tussen moskeeën, vooral die in Gent</span>
                     </div>
                     <div class="objective-item">
                         <i class="fas fa-book-open text-primary me-3"></i>
-                        <span>{{ _('Provide information about the Islamic faith, without expressing preferences for specific schools of thought') }}</span>
+                        <span>Het verstrekken van informatie over het islamitische geloof, zonder voorkeur voor specifieke denkrichtingen</span>
                     </div>
                 </div>
             </div>
@@ -37,7 +37,7 @@
         <div class="row mb-4">
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="section-title">{{ _('Board Members') }}</h2>
+                    <h2 class="section-title">Bestuursleden</h2>
                     <div class="d-flex gap-3">
                         <select class="form-select custom-select" id="termSelect">
                             {% for term in terms %}
@@ -49,7 +49,7 @@
                         </select>
                         {% if current_user.is_authenticated and current_user.is_admin %}
                         <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#manageBoardModal">
-                            <i class="fas fa-edit me-2"></i>{{ _('Manage Board') }}
+                            <i class="fas fa-edit me-2"></i>Bestuur Beheren
                         </button>
                         {% endif %}
                     </div>
@@ -80,7 +80,7 @@
                         <p class="member-role">{{ member.role }}</p>
                         <p class="member-mosque">
                             <i class="fas fa-mosque text-primary"></i>
-                            {{ _('Representing') }}: {{ member.mosque.mosque_name if member.mosque else '' }}
+                            Vertegenwoordigt: {{ member.mosque.mosque_name if member.mosque else '' }}
                         </p>
                     </div>
                 </div>
@@ -96,13 +96,13 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">{{ _('Manage Board Members') }}</h5>
+                <h5 class="modal-title">Bestuur Beheren</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <form action="{{ url_for('main.manage_board_members') }}" method="POST" enctype="multipart/form-data">
                     <div class="mb-4">
-                        <label class="form-label">{{ _('Term Period') }}</label>
+                        <label class="form-label">Bestuursperiode</label>
                         <div class="row g-3">
                             <div class="col">
                                 <input type="date" class="form-control" name="term_start" required>
@@ -117,15 +117,15 @@
                         <div class="board-member-entry">
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label class="form-label">{{ _('Name') }}</label>
+                                    <label class="form-label">Naam</label>
                                     <input type="text" class="form-control" name="names[]" required>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">{{ _('Role') }}</label>
+                                    <label class="form-label">Functie</label>
                                     <input type="text" class="form-control" name="roles[]" required>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">{{ _('Mosque') }}</label>
+                                    <label class="form-label">Moskee</label>
                                     <select class="form-select" name="mosque_ids[]" required>
                                         {% for mosque in mosques %}
                                         <option value="{{ mosque.id }}">{{ mosque.mosque_name }}</option>
@@ -133,7 +133,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">{{ _('Photo') }}</label>
+                                    <label class="form-label">Foto</label>
                                     <input type="file" class="form-control" name="photos[]" accept="image/*">
                                 </div>
                             </div>
@@ -142,13 +142,13 @@
 
                     <div class="mt-4">
                         <button type="button" class="btn btn-secondary" id="addMemberBtn">
-                            <i class="fas fa-plus me-2"></i>{{ _('Add Member') }}
+                            <i class="fas fa-plus me-2"></i>Lid Toevoegen
                         </button>
                     </div>
 
                     <div class="mt-4 text-end">
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save me-2"></i>{{ _('Save Changes') }}
+                            <i class="fas fa-save me-2"></i>Wijzigingen Opslaan
                         </button>
                     </div>
                 </form>
@@ -194,19 +194,21 @@
 .objective-item {
     display: flex;
     align-items: center;
-    padding: 1rem;
-    background: var(--light-bg);
-    border-radius: 8px;
+    padding: 1.25rem;
+    background: var(--white);
+    border-radius: 12px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--border-color);
 }
 
 .objective-item:hover {
     transform: translateX(10px);
     box-shadow: 0 4px 12px rgba(65, 183, 172, 0.1);
+    border-color: var(--primary-color);
 }
 
 .objective-item i {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     color: var(--primary-color);
 }
 
@@ -220,23 +222,27 @@
     font-weight: 700;
     position: relative;
     display: inline-block;
+    font-size: 2rem;
+    margin-bottom: 0;
 }
 
 .board-member-card {
     background: var(--white);
-    border-radius: 12px;
+    border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--border-color);
 }
 
 .board-member-card:hover {
     transform: translateY(-10px);
     box-shadow: 0 8px 16px rgba(65, 183, 172, 0.2);
+    border-color: var(--primary-color);
 }
 
 .member-image {
-    height: 250px;
+    height: 280px;
     overflow: hidden;
     position: relative;
 }
@@ -248,6 +254,10 @@
     transition: transform 0.3s ease;
 }
 
+.board-member-card:hover .member-image img {
+    transform: scale(1.05);
+}
+
 .placeholder-image {
     width: 100%;
     height: 100%;
@@ -255,63 +265,76 @@
     align-items: center;
     justify-content: center;
     background: var(--light-bg);
+    padding: 2rem;
 }
 
 .placeholder-image img {
-    width: 60%;
+    width: 70%;
     height: auto;
     object-fit: contain;
+    opacity: 0.8;
 }
 
 .member-info {
-    padding: 1.5rem;
+    padding: 1.75rem;
+    background: var(--white);
+    position: relative;
 }
 
 .member-name {
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     color: var(--primary-color);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
     font-weight: 600;
 }
 
 .member-role {
     color: var(--light-text);
-    font-size: 0.9rem;
+    font-size: 1rem;
     margin-bottom: 1rem;
+    font-style: italic;
 }
 
 .member-mosque {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: var(--text-color);
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
+    margin: 0;
 }
 
 /* Form Styling */
 .custom-select {
     min-width: 200px;
     border-color: var(--border-color);
+    padding: 0.75rem;
+    border-radius: 8px;
 }
 
 .board-member-entry {
     background: var(--light-bg);
-    padding: 1.5rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
+    padding: 1.75rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
 }
 
 @media (max-width: 768px) {
     .objective-item {
-        padding: 0.75rem;
+        padding: 1rem;
     }
 
     .member-image {
-        height: 200px;
+        height: 240px;
     }
 
     .member-info {
-        padding: 1rem;
+        padding: 1.25rem;
+    }
+
+    .section-title {
+        font-size: 1.75rem;
     }
 }
 </style>
