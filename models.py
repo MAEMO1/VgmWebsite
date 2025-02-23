@@ -36,12 +36,10 @@ class User(UserMixin, db.Model):
     youtube_url = db.Column(db.String(200))
     whatsapp_number = db.Column(db.String(20))
 
-    # Existing fields remain unchanged
     history = db.Column(db.Text)
     establishment_year = db.Column(db.Integer)
     friday_prayer_time = db.Column(db.Time)
 
-    # Relationships remain unchanged
     images = db.relationship('MosqueImage', backref='mosque', lazy='dynamic')
     videos = db.relationship('MosqueVideo', backref='mosque', lazy='dynamic')
     prayer_times = db.relationship('PrayerTime', backref='mosque', lazy='dynamic')
@@ -81,7 +79,6 @@ class Event(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     organizer_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Link to mosque user
 
-    # Relationships
     registrations = db.relationship('EventRegistration', backref='event', lazy='dynamic')
     notifications = db.relationship('EventNotification', backref='event', lazy='dynamic')
 
@@ -118,7 +115,6 @@ class Obituary(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Link to mosque user for verification
 
-    # New fields for extended features
     age = db.Column(db.Integer)
     birth_place = db.Column(db.String(200))
     death_place = db.Column(db.String(200))
@@ -129,7 +125,6 @@ class Obituary(db.Model):
     cause_of_death = db.Column(db.String(200))
     additional_notes = db.Column(db.Text)
 
-    # Notification tracking
     notifications_sent = db.Column(db.Boolean, default=False)
     reminder_sent = db.Column(db.Boolean, default=False)
 
@@ -142,6 +137,20 @@ class ObituaryNotification(db.Model):
     sent_at = db.Column(db.DateTime, default=datetime.utcnow)
     read = db.Column(db.Boolean, default=False)
 
-    # Relationships
     obituary = db.relationship('Obituary', backref='notifications')
     user = db.relationship('User', backref='obituary_notifications')
+
+class MosqueFeedback(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)  # 1-5 stars
+    comment = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    is_approved = db.Column(db.Boolean, default=False)
+
+    mosque = db.relationship('User', foreign_keys=[mosque_id], backref='received_feedback')
+    user = db.relationship('User', foreign_keys=[user_id], backref='given_feedback')
+
+    def __repr__(self):
+        return f'<MosqueFeedback {self.id} by User {self.user_id} for Mosque {self.mosque_id}>'
