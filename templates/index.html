@@ -7,7 +7,7 @@
 .hero-section {
     background-color: var(--bs-success);
     border-radius: 8px;
-    padding: 3rem 2rem;
+    padding: 2rem 2rem;
     margin-bottom: 2rem;
     color: white;
     position: relative;
@@ -22,16 +22,8 @@
 }
 
 .hero-section h1 {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     font-weight: 600;
-    position: relative;
-    z-index: 2;
-}
-
-.hero-section .lead {
-    font-size: 1.25rem;
-    margin-bottom: 2rem;
-    opacity: 0.9;
     position: relative;
     z-index: 2;
 }
@@ -232,7 +224,6 @@
         <div class="col-12">
             <div class="hero-section text-center">
                 <h1 class="display-4 mb-3">{{ _('Welcome to VGM') }}</h1>
-                <p class="lead mb-4">{{ _('We are the Association of Ghent Mosques (VGM), dedicated to serving our community and promoting Islamic values.') }}</p>
                 <a href="{{ url_for('main.mosques') }}" class="btn btn-primary btn-lg">
                     <i class="fas fa-mosque"></i> {{ _('Find a Mosque') }}
                 </a>
