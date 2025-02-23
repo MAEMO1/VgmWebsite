@@ -530,6 +530,15 @@ def about():
         board_dir = os.path.join('static', 'images', 'board')
         os.makedirs(board_dir, exist_ok=True)
 
+        # Create a default profile image if it doesn't exist
+        default_profile = os.path.join('static', 'images', 'default-profile.jpg')
+        if not os.path.exists(default_profile):
+            with open(default_profile, 'w') as f:
+                f.write('')  # Create empty file
+
+        print("\nStarting board member initialization...")
+        print("----------------------------------------")
+
         for member_data in default_board_members:
             # Find the associated mosque using exact name match
             mosque = User.query.filter_by(
@@ -538,25 +547,33 @@ def about():
             ).first()
 
             if mosque:
-                board_member = BoardMember(
-                    name=member_data['name'],
-                    role=member_data['role'],
-                    mosque_id=mosque.id,
-                    term_start=term_start,
-                    term_end=term_end,
-                    image=f"member_{member_data['name'].lower().replace(' ', '_')}.jpg"
-                )
-                db.session.add(board_member)
-                print(f"Added board member {member_data['name']} for mosque {mosque.mosque_name}")
+                try:
+                    # Generate member image name
+                    image_name = f"member_{member_data['name'].lower().replace(' ', '_')}.jpg"
+
+                    board_member = BoardMember(
+                        name=member_data['name'],
+                        role=member_data['role'],
+                        mosque_id=mosque.id,
+                        term_start=term_start,
+                        term_end=term_end,
+                        image=image_name
+                    )
+                    db.session.add(board_member)
+                    print(f"Added board member: {member_data['name']} for mosque: {mosque.mosque_name}")
+                except Exception as e:
+                    print(f"Error adding board member {member_data['name']}: {str(e)}")
             else:
-                print(f"Warning: Mosque not found for board member {member_data['name']}")
+                print(f"Warning: Mosque not found: {member_data['mosque_name']}")
 
         try:
             db.session.commit()
-            print("Successfully initialized all board members")
+            print("\nSuccessfully committed all board members to database")
+            print("Number of board members:", BoardMember.query.count())
+            print("----------------------------------------\n")
         except Exception as e:
             db.session.rollback()
-            print(f"Error initializing board members: {e}")
+            print(f"Error committing board members: {e}")
 
     # Get all available terms
     terms = db.session.query(
