@@ -22,17 +22,26 @@
     letter-spacing: -0.02em;
 }
 
-.hero-section .btn-primary {
-    background-color: white;
-    color: var(--primary-color);
-    border: none;
+.hero-section .btn {
     padding: 0.75rem 1.5rem;
     font-weight: 600;
     border-radius: 8px;
     transition: all 0.2s ease;
 }
 
-.hero-section .btn-primary:hover {
+.hero-section .btn-primary {
+    background-color: white;
+    color: var(--primary-color);
+    border: none;
+}
+
+.hero-section .btn-success {
+    background-color: var(--success-color);
+    border: none;
+    color: white;
+}
+
+.hero-section .btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -207,9 +216,14 @@
         <div class="col-12">
             <div class="hero-section text-center">
                 <h1 class="mb-4">{{ _('Welcome to VGM') }}</h1>
-                <a href="{{ url_for('main.mosques') }}" class="btn btn-primary btn-lg">
-                    <i class="fas fa-mosque me-2"></i>{{ _('Find a Mosque') }}
-                </a>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{{ url_for('main.mosques') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-mosque me-2"></i>{{ _('Find a Mosque') }}
+                    </a>
+                    <a href="{{ url_for('main.donate_vgm') }}" class="btn btn-success btn-lg">
+                        <i class="fas fa-hand-holding-heart me-2"></i>{{ _('Support VGM') }}
+                    </a>
+                </div>
             </div>
         </div>
     </div>

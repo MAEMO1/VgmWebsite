@@ -27,10 +27,21 @@
                             {% endif %}
                         </div>
                         <div class="col-md-4 text-end">
+                            {% if mosque.donation_enabled %}
+                            <a href="{{ url_for('main.donate_mosque', mosque_id=mosque.id) }}" class="btn btn-success mb-2 w-100">
+                                <i class="fas fa-hand-holding-heart"></i> {{ _('Support this Mosque') }}
+                            </a>
+                            {% endif %}
+
                             {% if current_user.is_authenticated and (current_user.is_admin or current_user.id == mosque.id) %}
-                            <a href="{{ url_for('main.edit_mosque', mosque_id=mosque.id) }}" class="btn btn-primary">
+                            <a href="{{ url_for('main.edit_mosque', mosque_id=mosque.id) }}" class="btn btn-primary w-100">
                                 <i class="fas fa-edit"></i> {{ _('Edit Mosque Information') }}
                             </a>
+                            {% if current_user.id == mosque.id %}
+                            <a href="{{ url_for('main.mosque_donations', mosque_id=mosque.id) }}" class="btn btn-outline-primary mt-2 w-100">
+                                <i class="fas fa-cog"></i> {{ _('Donation Settings') }}
+                            </a>
+                            {% endif %}
                             {% endif %}
                         </div>
                     </div>
@@ -40,6 +51,27 @@
 
         <!-- Main Content -->
         <div class="col-md-8">
+            <!-- Donation Section (if enabled) -->
+            {% if mosque.donation_enabled and mosque.donation_description %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>{{ _('Support Our Mosque') }}</h3>
+                </div>
+                <div class="card-body">
+                    <p>{{ mosque.donation_description }}</p>
+                    {% if mosque.donation_goal %}
+                    <div class="donation-goal mb-3">
+                        <h4>{{ _('Current Goal') }}: €{{ "{:,.2f}".format(mosque.donation_goal) }}</h4>
+                        <p>{{ mosque.donation_goal_description }}</p>
+                    </div>
+                    {% endif %}
+                    <a href="{{ url_for('main.donate_mosque', mosque_id=mosque.id) }}" class="btn btn-success">
+                        <i class="fas fa-heart"></i> {{ _('Make a Donation') }}
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
             <!-- About Section -->
             <div class="card mb-4">
                 <div class="card-header">
@@ -223,6 +255,9 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block styles %}
 <style>
 .social-links .btn {
     width: 40px;
@@ -235,6 +270,18 @@
 
 .social-links .btn i {
     line-height: inherit;
+}
+
+.donation-goal {
+    background: var(--background-light);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+.donation-goal h4 {
+    color: var(--success);
+    margin-bottom: 1rem;
 }
 </style>
 {% endblock %}

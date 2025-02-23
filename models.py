@@ -21,6 +21,15 @@ class User(UserMixin, db.Model):
     latitude = db.Column(db.Float)             # Geographical coordinates
     longitude = db.Column(db.Float)            # Geographical coordinates
     is_verified = db.Column(db.Boolean, default=False)
+    verification_status = db.Column(db.String(20), default='pending')  # 'pending', 'approved', 'rejected'
+    verification_note = db.Column(db.Text)  # Admin feedback for verification
+
+    # Donation-related fields
+    donation_enabled = db.Column(db.Boolean, default=False)
+    donation_iban = db.Column(db.String(34))  # IBAN number for donations
+    donation_description = db.Column(db.Text)  # Description of what donations are used for
+    donation_goal = db.Column(db.Float)  # Optional donation goal
+    donation_goal_description = db.Column(db.Text)  # Description of the donation goal
 
     # Contact fields
     mosque_email = db.Column(db.String(120))   # Public contact email
@@ -40,6 +49,7 @@ class User(UserMixin, db.Model):
     establishment_year = db.Column(db.Integer)
     friday_prayer_time = db.Column(db.Time)
 
+    # Relationships remain unchanged
     images = db.relationship('MosqueImage', backref='mosque', lazy='dynamic')
     videos = db.relationship('MosqueVideo', backref='mosque', lazy='dynamic')
     prayer_times = db.relationship('PrayerTime', backref='mosque', lazy='dynamic')
@@ -211,3 +221,19 @@ class BlogPost(db.Model):
 
     def __repr__(self):
         return f'<BlogPost {self.title}>'
+
+class Donation(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    amount = db.Column(db.Float, nullable=False)
+    donor_name = db.Column(db.String(100))  # Optional, can be anonymous
+    donor_email = db.Column(db.String(120))  # Optional, for receipt
+    message = db.Column(db.Text)  # Optional message from donor
+    date = db.Column(db.DateTime, default=datetime.utcnow)
+    is_anonymous = db.Column(db.Boolean, default=False)
+
+    # For mosque-specific donations
+    mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    # If mosque_id is NULL, it's a VGM donation
+
+    status = db.Column(db.String(20), default='pending')  # 'pending', 'completed', 'failed'
+    transaction_id = db.Column(db.String(100))  # Payment provider transaction ID

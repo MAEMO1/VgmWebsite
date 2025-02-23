@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Support VGM') }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h2>{{ _('Support VGM') }}</h2>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <p>{{ _('Your support helps VGM continue its work in serving and uniting the Muslim community in Ghent.') }}</p>
+                    </div>
+
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">{{ _('Donation Amount (€)') }}</label>
+                            <input type="number" step="0.01" min="1" class="form-control" id="amount" name="amount" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="donor_name" class="form-label">{{ _('Your Name') }}</label>
+                            <input type="text" class="form-control" id="donor_name" name="donor_name">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="donor_email" class="form-label">{{ _('Email') }}</label>
+                            <input type="email" class="form-control" id="donor_email" name="donor_email">
+                            <small class="text-muted">{{ _('For donation receipt (optional)') }}</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="message" class="form-label">{{ _('Message (optional)') }}</label>
+                            <textarea class="form-control" id="message" name="message" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="is_anonymous" name="is_anonymous">
+                            <label class="form-check-label" for="is_anonymous">{{ _('Make donation anonymous') }}</label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-heart"></i> {{ _('Complete Donation') }}
+                            </button>
+                            <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary">
+                                {{ _('Back to Home') }}
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

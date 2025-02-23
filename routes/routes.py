@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from app import db
-from models import User, BoardMember, Event, PrayerTime, BlogPost, MosqueImage, MosqueVideo
+from models import User, BoardMember, Event, PrayerTime, BlogPost, MosqueImage, MosqueVideo, Donation # Added Donation model
 from datetime import datetime, date
 import os
 
@@ -70,6 +70,28 @@ def register_mosque():
             flash('Email bestaat al.', 'error')
             return redirect(url_for('main.register_mosque'))
 
+        # Check if mosque exists in official list
+        official_mosque = User.query.filter(
+            db.and_(
+                User.user_type == 'mosque',
+                User.mosque_name == mosque_name,
+                User.mosque_street == street,
+                User.mosque_number == number,
+                User.is_verified == True
+            )
+        ).first()
+
+        verification_status = 'pending'
+        verification_note = None
+
+        if official_mosque:
+            if official_mosque.email != "info@" + mosque_name.lower().replace(" ", "") + ".be":
+                verification_status = 'requires_review'
+                verification_note = 'Mosque exists in official list but requires admin verification.'
+        else:
+            verification_status = 'requires_review'
+            verification_note = 'Mosque not found in official list. Requires admin verification.'
+
         mosque = User(
             username=mosque_name.lower().replace(" ", "_"),
             email=email,
@@ -81,7 +103,9 @@ def register_mosque():
             mosque_postal=postal,
             mosque_city=city,
             mosque_phone=phone,
-            is_verified=False  # Mosques need verification by admin
+            verification_status=verification_status,
+            verification_note=verification_note,
+            is_verified=False  # All mosques need verification
         )
         db.session.add(mosque)
         db.session.commit()
@@ -782,3 +806,111 @@ def register_admin(code):
         return redirect(url_for('main.index'))
 
     return render_template('register_admin.html', code=code)
+
+
+@routes.route('/admin/verify_mosque/<int:mosque_id>', methods=['POST'])
+@login_required
+def verify_mosque(mosque_id):
+    if not current_user.is_admin:
+        flash('Geen toegang.', 'error')
+        return redirect(url_for('main.index'))
+
+    mosque = User.query.get_or_404(mosque_id)
+    action = request.form.get('action')
+    note = request.form.get('note')
+
+    if action == 'approve':
+        mosque.is_verified = True
+        mosque.verification_status = 'approved'
+        flash('Moskee geverifieerd.', 'success')
+    elif action == 'reject':
+        mosque.is_verified = False
+        mosque.verification_status = 'rejected'
+        flash('Moskee verificatie geweigerd.', 'warning')
+
+    mosque.verification_note = note
+    db.session.commit()
+
+    return redirect(url_for('admin.mosque_verification_list'))
+
+
+@routes.route('/mosque/<int:mosque_id>/donations', methods=['GET', 'POST'])
+@login_required
+def mosque_donations(mosque_id):
+    mosque = User.query.get_or_404(mosque_id)
+
+    # Check if user has permission to manage donations
+    if not (current_user.is_admin or current_user.id == mosque.id):
+        flash('Geen toegang tot donatie instellingen.', 'error')
+        return redirect(url_for('main.mosque_detail', mosque_id=mosque_id))
+
+    if request.method == 'POST':
+        mosque.donation_enabled = bool(request.form.get('donation_enabled'))
+        mosque.donation_iban = request.form.get('donation_iban')
+        mosque.donation_description = request.form.get('donation_description')
+        mosque.donation_goal = float(request.form.get('donation_goal')) if request.form.get('donation_goal') else None
+        mosque.donation_goal_description = request.form.get('donation_goal_description')
+
+        db.session.commit()
+        flash('Donatie instellingen bijgewerkt.', 'success')
+        return redirect(url_for('main.mosque_detail', mosque_id=mosque_id))
+
+    return render_template('mosque_donations.html', mosque=mosque)
+
+@routes.route('/donate/vgm', methods=['GET', 'POST'])
+def donate_vgm():
+    if request.method == 'POST':
+        amount = float(request.form.get('amount'))
+        donor_name = request.form.get('donor_name')
+        donor_email = request.form.get('donor_email')
+        message = request.form.get('message')
+        is_anonymous = bool(request.form.get('is_anonymous'))
+
+        donation = Donation(
+            amount=amount,
+            donor_name=donor_name if not is_anonymous else None,
+            donor_email=donor_email,
+            message=message,
+            is_anonymous=is_anonymous
+        )
+        db.session.add(donation)
+        db.session.commit()
+
+        # Here you would typically integrate with a payment provider
+        flash('Bedankt voor uw steun aan VGM!', 'success')
+        return redirect(url_for('main.index'))
+
+    return render_template('donate_vgm.html')
+
+
+@routes.route('/mosque/<int:mosque_id>/donate', methods=['GET', 'POST'])
+def donate_mosque(mosque_id):
+    mosque = User.query.get_or_404(mosque_id)
+
+    if not mosque.donation_enabled:
+        flash('Donaties zijn momenteel niet mogelijk voor deze moskee.', 'info')
+        return redirect(url_for('main.mosque_detail', mosque_id=mosque_id))
+
+    if request.method == 'POST':
+        amount = float(request.form.get('amount'))
+        donor_name = request.form.get('donor_name')
+        donor_email = request.form.get('donor_email')
+        message = request.form.get('message')
+        is_anonymous = bool(request.form.get('is_anonymous'))
+
+        donation = Donation(
+            amount=amount,
+            donor_name=donor_name if not is_anonymous else None,
+            donor_email=donor_email,
+            message=message,
+            is_anonymous=is_anonymous,
+            mosque_id=mosque_id
+        )
+        db.session.add(donation)
+        db.session.commit()
+
+        # Here you would typically integrate with a payment provider
+        flash(f'Bedankt voor uw steun aan {mosque.mosque_name}!', 'success')
+        return redirect(url_for('main.mosque_detail', mosque_id=mosque_id))
+
+    return render_template('donate_mosque.html', mosque=mosque)
