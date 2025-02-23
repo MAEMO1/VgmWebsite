@@ -6,7 +6,11 @@
 <div class="container py-5">
     <div class="memorandum-header text-center mb-5">
         <div class="logo-container mb-4">
-            <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" alt="VGM Logo" class="vgm-logo">
+            <!-- Temporarily using Font Awesome mosque icon until actual logo is provided -->
+            <div class="temp-logo">
+                <i class="fas fa-mosque"></i>
+                <span>VGM</span>
+            </div>
         </div>
         <h1 class="display-4">Memorandum 2025-2030</h1>
         <div class="separator"></div>
@@ -109,6 +113,26 @@
 .logo-container {
     max-width: 200px;
     margin: 0 auto 2rem;
+}
+
+.temp-logo {
+    background: var(--primary-color);
+    color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.temp-logo i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.temp-logo span {
+    font-size: 1.5rem;
+    font-weight: bold;
 }
 
 .vgm-logo {
