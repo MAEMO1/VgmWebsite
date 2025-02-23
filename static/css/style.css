@@ -1,7 +1,7 @@
 :root {
-    --primary-color: #41B7AC;     /* VGM Logo turquoise */
-    --secondary-color: #338F86;   /* Darker turquoise for hover */
-    --accent-color: #D4AA37;      /* VGM Logo gold */
+    --primary-color: #41B7AC;     /* VGM Logo turquoise exact match */
+    --secondary-color: #3AA69B;   /* Slightly darker turquoise for hover */
+    --accent-color: #D4AA37;      /* VGM Logo gold exact match */
     --text-color: #333333;        /* Dark text for readability */
     --light-bg: #F8F9FA;
     --light-text: #666666;
@@ -38,12 +38,12 @@ body {
 }
 
 .navbar-brand img {
-    height: 70px;             /* Increased logo size */
+    height: 70px;
     width: auto;
     margin-right: 15px;
     object-fit: contain;
-    padding: 8px;            /* Added padding */
-    background: white;       /* White background to ensure visibility */
+    padding: 8px;
+    background: white;
 }
 
 .nav-link {
@@ -150,50 +150,6 @@ body {
     padding: 1.5rem;
 }
 
-/* Prayer Times */
-.prayer-times {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.prayer-time {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background: var(--light-bg);
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
-
-.prayer-time:hover {
-    background: var(--primary-color);
-    transform: translateX(5px);
-}
-
-.prayer-time:hover .prayer-name,
-.prayer-time:hover .prayer-time-badge {
-    color: var(--white);
-}
-
-.prayer-name {
-    font-family: var(--heading-font);
-    font-weight: 600;
-    color: var(--text-color);
-    transition: color 0.3s ease;
-}
-
-.prayer-time-badge {
-    background: var(--white);
-    color: var(--primary-color);
-    padding: 0.4rem 0.8rem;
-    border-radius: 4px;
-    font-weight: 500;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-}
-
 /* Buttons */
 .btn-primary {
     background-color: var(--primary-color);
@@ -241,10 +197,6 @@ body {
 
     .hero-section .display-4 {
         font-size: 2.2rem;
-    }
-
-    .news-image {
-        height: 180px;
     }
 
     .card-header, .card-body {
