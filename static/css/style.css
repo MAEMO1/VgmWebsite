@@ -1,7 +1,7 @@
 :root {
     --primary-color: #41B7AC;     /* VGM Logo turquoise exact match */
     --secondary-color: #3AA69B;   /* Slightly darker turquoise for hover */
-    --accent-color: #D4AA37;      /* VGM Logo gold exact match */
+    --accent-color: #D4AA37;      /* VGM Logo gold - only used for specific accents */
     --text-color: #333333;        /* Dark text for readability */
     --light-bg: #F8F9FA;
     --light-text: #666666;
@@ -25,7 +25,7 @@ body {
     background-color: var(--white);
     box-shadow: var(--box-shadow);
     padding: 0.5rem 1rem;
-    border-bottom: 3px solid var(--accent-color);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .navbar-brand {
@@ -65,7 +65,7 @@ body {
     left: 50%;
     width: 0;
     height: 2px;
-    background-color: var(--accent-color);
+    background-color: var(--primary-color);
     transition: all 0.3s ease;
     transform: translateX(-50%);
 }
@@ -82,7 +82,7 @@ body {
     margin: -2rem -1rem 3rem;
     position: relative;
     overflow: hidden;
-    border-bottom: 3px solid var(--accent-color);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .hero-section::before {
@@ -123,7 +123,7 @@ body {
     margin-bottom: 2rem;
     background: var(--white);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border-top: 3px solid var(--accent-color);
+    border: 1px solid var(--border-color);
 }
 
 .card:hover {
@@ -170,7 +170,7 @@ body {
 /* Footer */
 .footer {
     background-color: var(--white);
-    border-top: 3px solid var(--accent-color);
+    border-top: 1px solid var(--border-color);
     padding: 2rem 0;
     margin-top: 4rem;
 }
