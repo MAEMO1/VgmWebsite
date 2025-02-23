@@ -469,8 +469,17 @@ def initialize_mosques():
 
 @routes.route('/about')
 def about():
-    # Initialize default board members if none exist
-    if BoardMember.query.count() == 0:
+    # Initialize default board members if count is not correct
+    expected_board_count = 9
+    if BoardMember.query.count() != expected_board_count:
+        print("\nStarting board member initialization...")
+        print("----------------------------------------")
+
+        # First clear any existing board members
+        BoardMember.query.delete()
+        db.session.commit()
+        print("Cleared existing board members")
+
         default_board_members = [
             {
                 'name': 'Abd El Motleb Omar Mohamed',
@@ -485,12 +494,12 @@ def about():
             {
                 'name': 'Cetin Mutlu',
                 'role': 'Bestuurder',
-                'mosque_name': 'Eyup sultan Camii',  # Updated to match exact name
+                'mosque_name': 'Eyup sultan Camii',
             },
             {
                 'name': 'Demirogullari Nedim',
                 'role': 'Bestuurder',
-                'mosque_name': 'Tevhid Camii',  # Updated to match exact name
+                'mosque_name': 'Tevhid Camii',
             },
             {
                 'name': 'El Bakali Mohamed',
@@ -505,7 +514,7 @@ def about():
             {
                 'name': 'Köse Demirali',
                 'role': 'Bestuurder',
-                'mosque_name': 'Eyup sultan Camii',  # Updated to match exact name
+                'mosque_name': 'Eyup sultan Camii',
             },
             {
                 'name': 'Saman Sheikh',
@@ -515,7 +524,7 @@ def about():
             {
                 'name': 'Senel Furkan',
                 'role': 'Bestuurder',
-                'mosque_name': 'Tevhid Camii',  # Updated to match exact name
+                'mosque_name': 'Tevhid Camii',
             }
         ]
 
@@ -523,31 +532,27 @@ def about():
         term_start = date(2024, 1, 1)
         term_end = date(2027, 12, 31)
 
-        # First clear any existing board members
-        BoardMember.query.delete()
-
         # Create board images directory if it doesn't exist
         board_dir = os.path.join('static', 'images', 'board')
         os.makedirs(board_dir, exist_ok=True)
 
-        # Create a default profile image if it doesn't exist
-        default_profile = os.path.join('static', 'images', 'default-profile.jpg')
-        if not os.path.exists(default_profile):
-            with open(default_profile, 'w') as f:
-                f.write('')  # Create empty file
-
-        print("\nStarting board member initialization...")
+        print("\nAttempting to add board members...")
         print("----------------------------------------")
 
         for member_data in default_board_members:
-            # Find the associated mosque using exact name match
-            mosque = User.query.filter_by(
-                user_type='mosque',
-                mosque_name=member_data['mosque_name']
-            ).first()
+            try:
+                # Find the associated mosque with detailed logging
+                mosque = User.query.filter_by(
+                    user_type='mosque',
+                    mosque_name=member_data['mosque_name']
+                ).first()
 
-            if mosque:
-                try:
+                print(f"\nProcessing board member: {member_data['name']}")
+                print(f"Looking for mosque: {member_data['mosque_name']}")
+
+                if mosque:
+                    print(f"Found mosque: {mosque.mosque_name} (ID: {mosque.id})")
+
                     # Generate member image name
                     image_name = f"member_{member_data['name'].lower().replace(' ', '_')}.jpg"
 
@@ -560,16 +565,27 @@ def about():
                         image=image_name
                     )
                     db.session.add(board_member)
-                    print(f"Added board member: {member_data['name']} for mosque: {mosque.mosque_name}")
-                except Exception as e:
-                    print(f"Error adding board member {member_data['name']}: {str(e)}")
-            else:
-                print(f"Warning: Mosque not found: {member_data['mosque_name']}")
+                    print(f"Added board member successfully")
+                else:
+                    print(f"ERROR: Mosque not found: {member_data['mosque_name']}")
+                    # Query to show similar mosque names
+                    similar_mosques = User.query.filter(
+                        User.user_type == 'mosque',
+                        User.mosque_name.ilike(f"%{member_data['mosque_name'].split()[-1]}%")
+                    ).all()
+                    if similar_mosques:
+                        print("Similar mosque names found:")
+                        for m in similar_mosques:
+                            print(f"- {m.mosque_name}")
+
+            except Exception as e:
+                print(f"Error adding board member {member_data['name']}: {str(e)}")
+                db.session.rollback()
 
         try:
             db.session.commit()
             print("\nSuccessfully committed all board members to database")
-            print("Number of board members:", BoardMember.query.count())
+            print(f"Number of board members: {BoardMember.query.count()}")
             print("----------------------------------------\n")
         except Exception as e:
             db.session.rollback()
