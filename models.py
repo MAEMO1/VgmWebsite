@@ -13,20 +13,33 @@ class User(UserMixin, db.Model):
     # Mosque-specific fields
     mosque_name = db.Column(db.String(200))
     mosque_address = db.Column(db.String(300))
+    mosque_street = db.Column(db.String(100))  # New field for street
+    mosque_number = db.Column(db.String(10))   # New field for house number
+    mosque_postal = db.Column(db.String(10))   # New field for postal code
+    mosque_city = db.Column(db.String(100))    # New field for city
     mosque_phone = db.Column(db.String(20))
+    mosque_image = db.Column(db.String(500))   # New field for mosque image URL
+    latitude = db.Column(db.Float)             # New field for map coordinates
+    longitude = db.Column(db.Float)            # New field for map coordinates
     is_verified = db.Column(db.Boolean, default=False)  # For mosque accounts
 
     # Notification preferences
     notify_new_events = db.Column(db.Boolean, default=True)
     notify_event_changes = db.Column(db.Boolean, default=True)
     notify_event_reminders = db.Column(db.Boolean, default=True)
-    notify_obituaries = db.Column(db.Boolean, default=True)  # New field for obituary notifications
+    notify_obituaries = db.Column(db.Boolean, default=True)
 
     # Relationships
     notifications = db.relationship('EventNotification', backref='user', lazy='dynamic')
     event_registrations = db.relationship('EventRegistration', backref='user', lazy='dynamic')
     managed_events = db.relationship('Event', backref='organizer', lazy='dynamic')
     obituaries = db.relationship('Obituary', backref='mosque', lazy='dynamic')
+
+    def get_full_address(self):
+        """Return the full formatted address for the mosque"""
+        if self.user_type == 'mosque':
+            return f"{self.mosque_street} {self.mosque_number}, {self.mosque_postal} {self.mosque_city}"
+        return None
 
 class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)

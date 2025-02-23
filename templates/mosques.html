@@ -10,13 +10,13 @@
             <p class="text-center">{{ _('Find mosques in the Ghent area') }}</p>
         </div>
     </div>
-    
+
     <div class="row">
         <!-- Google Maps Container -->
         <div class="col-md-8 mb-4">
             <div id="mosque-map" style="height: 500px; width: 100%;"></div>
         </div>
-        
+
         <!-- Mosque List -->
         <div class="col-md-4">
             <div class="card">
@@ -26,10 +26,23 @@
                 <div class="card-body">
                     <div class="mosque-list">
                         {% for mosque in mosques %}
-                        <div class="mosque-item mb-3" data-lat="{{ mosque.latitude|default('51.0543') }}" data-lng="{{ mosque.longitude|default('3.7174') }}">
-                            <h4>{{ mosque.mosque_name }}</h4>
-                            <p><i class="fas fa-map-marker-alt"></i> {{ mosque.mosque_address }}</p>
-                            <p><i class="fas fa-phone"></i> {{ mosque.mosque_phone }}</p>
+                        <div class="mosque-item mb-3" data-lat="{{ mosque.latitude }}" data-lng="{{ mosque.longitude }}">
+                            <div class="d-flex align-items-start">
+                                {% if mosque.mosque_image %}
+                                <img src="{{ mosque.mosque_image }}" alt="{{ mosque.mosque_name }}" class="mosque-thumbnail me-3" style="width: 80px; height: 80px; object-fit: cover;">
+                                {% else %}
+                                <div class="mosque-icon me-3">
+                                    <i class="fas fa-mosque fa-3x"></i>
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <h4>{{ mosque.mosque_name }}</h4>
+                                    <p class="mb-1"><i class="fas fa-map-marker-alt"></i> {{ mosque.get_full_address() }}</p>
+                                    {% if mosque.mosque_phone %}
+                                    <p class="mb-0"><i class="fas fa-phone"></i> {{ mosque.mosque_phone }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
                         {% else %}
                         <p>{{ _('No mosques found') }}</p>
@@ -51,10 +64,16 @@ let markers = [];
 function initMap() {
     // Center on Ghent
     const ghent = { lat: 51.0543, lng: 3.7174 };
-    
+
     map = new google.maps.Map(document.getElementById("mosque-map"), {
-        zoom: 12,
+        zoom: 13,
         center: ghent,
+        styles: [
+            {
+                featureType: "poi.business",
+                stylers: [{ visibility: "off" }]
+            }
+        ]
     });
 
     // Add markers for each mosque
@@ -62,19 +81,42 @@ function initMap() {
         const lat = parseFloat(item.dataset.lat);
         const lng = parseFloat(item.dataset.lng);
         const title = item.querySelector('h4').textContent;
+        const address = item.querySelector('p').textContent;
 
         const marker = new google.maps.Marker({
             position: { lat, lng },
             map: map,
-            title: title
+            title: title,
+            icon: {
+                url: 'https://maps.google.com/mapfiles/kml/shapes/mosque.png',
+                scaledSize: new google.maps.Size(32, 32)
+            }
         });
 
-        markers.push(marker);
+        // Add info window with mosque details
+        const infoWindow = new google.maps.InfoWindow({
+            content: `
+                <div>
+                    <h5>${title}</h5>
+                    <p>${address}</p>
+                </div>
+            `
+        });
+
+        markers.push({ marker, infoWindow });
+
+        // Show info window when marker is clicked
+        marker.addListener('click', () => {
+            markers.forEach(m => m.infoWindow.close());
+            infoWindow.open(map, marker);
+        });
 
         // Add click event to center map on mosque when list item is clicked
         item.addEventListener('click', () => {
             map.setCenter({ lat, lng });
-            map.setZoom(15);
+            map.setZoom(16);
+            markers.forEach(m => m.infoWindow.close());
+            infoWindow.open(map, marker);
         });
     });
 }
