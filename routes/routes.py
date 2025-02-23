@@ -473,6 +473,84 @@ def memorandum():
 
 @routes.route('/about')
 def about():
+    # Initialize default board members if none exist
+    if BoardMember.query.count() == 0:
+        default_board_members = [
+            {
+                'name': 'Abd El Motleb Omar Mohamed',
+                'role': 'Voorzitter',
+                'mosque_name': 'Islamitisch Cultureel centrum - Badr',
+            },
+            {
+                'name': 'Alci Bilal',
+                'role': 'Bestuurder',
+                'mosque_name': 'Groene Moskee Fatih',
+            },
+            {
+                'name': 'Cetin Mutlu',
+                'role': 'Bestuurder',
+                'mosque_name': 'Moskee Eyup sultan',
+            },
+            {
+                'name': 'Demirogullari Nedim',
+                'role': 'Bestuurder',
+                'mosque_name': 'Moskee Tevhid',
+            },
+            {
+                'name': 'El Bakali Mohamed',
+                'role': 'Bestuurder',
+                'mosque_name': 'Moskee Al Fath',
+            },
+            {
+                'name': 'Ibrahimi Hikmatullah',
+                'role': 'Bestuurder',
+                'mosque_name': 'Afghan Attaqwa moskee',
+            },
+            {
+                'name': 'Köse Demirali',
+                'role': 'Bestuurder',
+                'mosque_name': 'Moskee Eyup sultan',
+            },
+            {
+                'name': 'Saman Sheikh',
+                'role': 'Bestuurder',
+                'mosque_name': 'Moskee Salahaddien',
+            },
+            {
+                'name': 'Senel Furkan',
+                'role': 'Bestuurder',
+                'mosque_name': 'Moskee Tevhid',
+            }
+        ]
+
+        # Current term: 2024-2027
+        term_start = date(2024, 1, 1)
+        term_end = date(2027, 12, 31)
+
+        for member_data in default_board_members:
+            # Find the associated mosque
+            mosque = User.query.filter_by(
+                user_type='mosque',
+                mosque_name=member_data['mosque_name']
+            ).first()
+
+            if mosque:
+                board_member = BoardMember(
+                    name=member_data['name'],
+                    role=member_data['role'],
+                    mosque_id=mosque.id,
+                    term_start=term_start,
+                    term_end=term_end,
+                    image=f"member_{member_data['name'].lower().replace(' ', '_')}.jpg"
+                )
+                db.session.add(board_member)
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error initializing board members: {e}")
+
     # Get the requested term or default to current term
     term_start_str = request.args.get('term')
     if term_start_str:
@@ -480,21 +558,14 @@ def about():
     else:
         # Default to current or most recent term
         current_date = date.today()
-        term_start = BoardMember.query.filter(
+        latest_term = BoardMember.query.filter(
             BoardMember.term_end >= current_date
         ).order_by(BoardMember.term_start.desc()).first()
-        if term_start:
-            term_start = term_start.term_start
+
+        if latest_term:
+            term_start = latest_term.term_start
         else:
-            # If no current term, get the most recent past term
-            term_start = BoardMember.query.order_by(
-                BoardMember.term_start.desc()
-            ).first()
-            if term_start:
-                term_start = term_start.term_start
-            else:
-                # If no terms exist, default to current year
-                term_start = date(current_date.year, 1, 1)
+            term_start = date(current_date.year, 1, 1)
 
     # Get all available terms
     terms = db.session.query(
@@ -515,7 +586,6 @@ def about():
                          terms=terms,
                          current_term_start=term_start,
                          mosques=mosques)
-
 
 @routes.route('/manage_board_members', methods=['POST'])
 @login_required
