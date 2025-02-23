@@ -2,15 +2,35 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta
 from app import db
-from models import Event, EventRegistration, EventNotification, User
+from models import Event, EventRegistration, EventNotification, User, EventMosqueCollaboration
 
 # Create blueprint with url_prefix
 events = Blueprint('events', __name__, url_prefix='/events')
 
 @events.route('/')
 def event_list():
-    upcoming_events = Event.query.filter(Event.date >= datetime.utcnow()).order_by(Event.date).all()
-    return render_template('events/list.html', events=upcoming_events)
+    # Get VGM events (highest priority)
+    vgm_events = Event.query.filter(
+        Event.event_type == 'vgm',
+        Event.date >= datetime.utcnow()
+    ).order_by(Event.date).all()
+
+    # Get collaboration events
+    collab_events = Event.query.filter(
+        Event.event_type == 'collaboration',
+        Event.date >= datetime.utcnow()
+    ).order_by(Event.date).all()
+
+    # Get individual mosque events
+    individual_events = Event.query.filter(
+        Event.event_type == 'individual',
+        Event.date >= datetime.utcnow()
+    ).order_by(Event.date).all()
+
+    return render_template('events/list.html',
+                         vgm_events=vgm_events,
+                         collab_events=collab_events,
+                         individual_events=individual_events)
 
 @events.route('/<int:event_id>')
 def event_detail(event_id):
@@ -22,12 +42,22 @@ def event_detail(event_id):
             event_id=event_id,
             status='registered'
         ).first() is not None
-    return render_template('events/detail.html', event=event, is_registered=is_registered)
+
+    # Get collaborating mosques for this event
+    collaborations = EventMosqueCollaboration.query.filter_by(event_id=event_id).all()
+
+    return render_template('events/detail.html',
+                         event=event,
+                         is_registered=is_registered,
+                         collaborations=collaborations)
 
 @events.route('/create', methods=['GET', 'POST'])
 @login_required
 def create_event():
     if request.method == 'POST':
+        event_type = request.form.get('event_type')
+        collaborating_mosque_ids = request.form.getlist('collaborating_mosques[]')
+
         event = Event(
             title=request.form['title'],
             description=request.form['description'],
@@ -35,8 +65,21 @@ def create_event():
             location=request.form['location'],
             max_participants=int(request.form['max_participants']) if request.form['max_participants'] else None,
             registration_required=bool(request.form.get('registration_required')),
-            reminder_before=int(request.form['reminder_before']) if request.form['reminder_before'] else None
+            reminder_before=int(request.form['reminder_before']) if request.form['reminder_before'] else None,
+            event_type=event_type,
+            is_featured=bool(request.form.get('is_featured')),
+            organizer_id=current_user.id
         )
+
+        if event_type == 'collaboration':
+            for mosque_id in collaborating_mosque_ids:
+                collab = EventMosqueCollaboration(
+                    event_id=event.id,
+                    mosque_id=int(mosque_id),
+                    role='co-organizer'
+                )
+                db.session.add(collab)
+
         db.session.add(event)
         db.session.commit()
 
@@ -54,7 +97,10 @@ def create_event():
 
         flash('Event created successfully!', 'success')
         return redirect(url_for('events.event_detail', event_id=event.id))
-    return render_template('events/create.html')
+
+    # Get all mosques for collaboration selection
+    mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
+    return render_template('events/create.html', mosques=mosques)
 
 @events.route('/<int:event_id>/register', methods=['POST'])
 @login_required

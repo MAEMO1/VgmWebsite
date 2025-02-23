@@ -1,51 +1,216 @@
 {% extends "base.html" %}
 
-{% block title %}Events - Mosque Management{% endblock %}
+{% block title %}{{ _('Events - VGM') }}{% endblock %}
+
+{% block styles %}
+<style>
+.section {
+    margin-bottom: 3rem;
+}
+
+.section-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+}
+
+.event-card {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    height: 100%;
+    position: relative;
+}
+
+.event-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.event-card.featured {
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 4px 12px rgba(0, 102, 255, 0.1);
+}
+
+.event-card.collaboration {
+    border: 2px solid #41B7AC;
+}
+
+.event-label {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--primary-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 0.875rem;
+    z-index: 1;
+}
+
+.event-card.collaboration .event-label {
+    background: #41B7AC;
+}
+
+.event-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.event-content {
+    padding: 1.5rem;
+}
+
+.event-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.event-meta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.event-description {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.floating-action-button {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 1000;
+}
+
+.floating-action-button .btn {
+    border-radius: 30px;
+    padding: 0.75rem 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+    .section-title {
+        font-size: 1.5rem;
+    }
+
+    .event-image {
+        height: 180px;
+    }
+
+    .event-content {
+        padding: 1.25rem;
+    }
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h2>Events Calendar</h2>
-            </div>
-            <div class="card-body">
-                <div id="calendar"></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h3>Upcoming Events</h3>
-                {% if current_user.is_authenticated %}
-                <a href="{{ url_for('events.create_event') }}" class="btn btn-primary btn-sm float-end">
-                    <i class="fas fa-plus"></i> Create Event
-                </a>
-                {% endif %}
-            </div>
-            <div class="card-body">
-                <div class="list-group">
-                    {% for event in events %}
-                    <a href="{{ url_for('events.event_detail', event_id=event.id) }}" class="list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">{{ event.title }}</h5>
-                            <small class="text-muted">{{ event.date.strftime('%d %B %Y') }}</small>
+<div class="container">
+    {% if vgm_events %}
+    <div class="section mb-5">
+        <h2 class="section-title">{{ _('VGM Events') }}</h2>
+        <div class="row">
+            {% for event in vgm_events %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="event-card featured">
+                    <div class="event-label">VGM</div>
+                    {% if event.featured_image %}
+                    <img src="{{ event.featured_image }}" alt="{{ event.title }}" class="event-image">
+                    {% endif %}
+                    <div class="event-content">
+                        <h3 class="event-title">{{ event.title }}</h3>
+                        <div class="event-meta">
+                            <span><i class="far fa-calendar me-2"></i>{{ event.date.strftime('%d %B %Y') }}</span>
+                            <span><i class="far fa-clock me-2"></i>{{ event.date.strftime('%H:%M') }}</span>
                         </div>
-                        <p class="mb-1">{{ event.description[:100] }}...</p>
-                        <small class="text-muted">
-                            <i class="fas fa-map-marker-alt"></i> {{ event.location }}
-                        </small>
-                    </a>
-                    {% else %}
-                    <div class="list-group-item">
-                        <p class="text-center mb-0">No upcoming events</p>
+                        <p class="event-description">{{ event.description[:150] }}...</p>
+                        <a href="{{ url_for('events.event_detail', event_id=event.id) }}" class="btn btn-primary">
+                            {{ _('View Details') }}
+                        </a>
                     </div>
-                    {% endfor %}
                 </div>
             </div>
+            {% endfor %}
         </div>
     </div>
+    {% endif %}
+
+    {% if collab_events %}
+    <div class="section mb-5">
+        <h2 class="section-title">{{ _('Mosque Collaborations') }}</h2>
+        <div class="row">
+            {% for event in collab_events %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="event-card collaboration">
+                    <div class="event-label">{{ _('Collaboration') }}</div>
+                    {% if event.featured_image %}
+                    <img src="{{ event.featured_image }}" alt="{{ event.title }}" class="event-image">
+                    {% endif %}
+                    <div class="event-content">
+                        <h3 class="event-title">{{ event.title }}</h3>
+                        <div class="event-meta">
+                            <span><i class="far fa-calendar me-2"></i>{{ event.date.strftime('%d %B %Y') }}</span>
+                            <span><i class="far fa-clock me-2"></i>{{ event.date.strftime('%H:%M') }}</span>
+                        </div>
+                        <p class="event-description">{{ event.description[:150] }}...</p>
+                        <a href="{{ url_for('events.event_detail', event_id=event.id) }}" class="btn btn-outline-primary">
+                            {{ _('View Details') }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if individual_events %}
+    <div class="section">
+        <h2 class="section-title">{{ _('Mosque Events') }}</h2>
+        <div class="row">
+            {% for event in individual_events %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="event-card">
+                    {% if event.featured_image %}
+                    <img src="{{ event.featured_image }}" alt="{{ event.title }}" class="event-image">
+                    {% endif %}
+                    <div class="event-content">
+                        <h3 class="event-title">{{ event.title }}</h3>
+                        <div class="event-meta">
+                            <span><i class="far fa-calendar me-2"></i>{{ event.date.strftime('%d %B %Y') }}</span>
+                            <span><i class="far fa-clock me-2"></i>{{ event.date.strftime('%H:%M') }}</span>
+                        </div>
+                        <p class="event-description">{{ event.description[:150] }}...</p>
+                        <a href="{{ url_for('events.event_detail', event_id=event.id) }}" class="btn btn-outline-secondary">
+                            {{ _('View Details') }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if current_user.is_authenticated %}
+    <div class="floating-action-button">
+        <a href="{{ url_for('events.create_event') }}" class="btn btn-primary btn-lg">
+            <i class="fas fa-plus me-2"></i>{{ _('Create Event') }}
+        </a>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
 

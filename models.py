@@ -67,6 +67,14 @@ class MosqueVideo(db.Model):
     description = db.Column(db.Text)
     upload_date = db.Column(db.DateTime, default=datetime.utcnow)
 
+class EventMosqueCollaboration(db.Model):
+    """Association table for mosque collaborations on events"""
+    id = db.Column(db.Integer, primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
+    mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    role = db.Column(db.String(50))  # e.g., 'host', 'co-organizer'
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
 class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -78,10 +86,41 @@ class Event(db.Model):
     reminder_before = db.Column(db.Integer)  # Minutes before event to send reminder
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    organizer_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Link to mosque user
+
+    # New fields for event categorization
+    event_type = db.Column(db.String(20), nullable=False, default='individual')  # 'vgm', 'collaboration', 'individual'
+    is_featured = db.Column(db.Boolean, default=False)  # For highlighting important events
+    featured_image = db.Column(db.String(500))  # URL to event image
+    featured_until = db.Column(db.DateTime)  # How long to feature the event
+
+    # Relationships
+    organizer_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Primary organizer (mosque or VGM)
+    collaborating_mosques = db.relationship('User',
+                                          secondary='event_mosque_collaboration',
+                                          backref=db.backref('collaborated_events', lazy='dynamic'))
 
     registrations = db.relationship('EventRegistration', backref='event', lazy='dynamic')
     notifications = db.relationship('EventNotification', backref='event', lazy='dynamic')
+
+    @property
+    def is_vgm_event(self):
+        return self.event_type == 'vgm'
+
+    @property
+    def is_collaboration(self):
+        return self.event_type == 'collaboration'
+
+    @property
+    def is_individual(self):
+        return self.event_type == 'individual'
+
+    @property
+    def should_be_featured(self):
+        if not self.is_featured:
+            return False
+        if self.featured_until and datetime.utcnow() > self.featured_until:
+            return False
+        return True
 
 class EventRegistration(db.Model):
     id = db.Column(db.Integer, primary_key=True)
