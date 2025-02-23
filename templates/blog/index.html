@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-12">
             <h1 class="display-4 mb-4">{{ _('VGM Blog') }}</h1>
-            
+
             {% if current_user.is_authenticated and current_user.is_admin %}
             <div class="mb-4">
                 <a href="{{ url_for('blog.create') }}" class="btn btn-primary">
@@ -21,24 +21,33 @@
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {% for post in posts %}
         <div class="col">
-            <div class="card h-100">
-                {% if post.image_url %}
-                <img src="{{ post.image_url }}" class="card-img-top" alt="{{ post.title }}" loading="lazy">
-                {% else %}
-                <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" 
-                     class="card-img-top"
-                     alt="VGM Logo"
-                     style="height: 200px; object-fit: contain; padding: 1rem; background-color: #f8f9fa;">
-                {% endif %}
+            <div class="card h-100 blog-card">
+                <div class="card-img-wrapper">
+                    {% if post.image_url %}
+                    <img src="{{ post.image_url }}" 
+                         class="card-img-top" 
+                         alt="{{ post.title }}"
+                         loading="lazy">
+                    {% else %}
+                    <div class="placeholder-img">
+                        <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" 
+                             class="card-img-top"
+                             alt="VGM Logo">
+                    </div>
+                    {% endif %}
+                </div>
                 <div class="card-body">
                     <h5 class="card-title">{{ post.title }}</h5>
                     <p class="card-text text-muted small">
-                        {{ _('By') }} {{ post.author.username }} | 
-                        {{ post.created_at.strftime('%d-%m-%Y') }}
+                        <i class="fas fa-user me-1"></i> {{ post.author.username }} 
+                        <span class="mx-2">|</span>
+                        <i class="far fa-calendar me-1"></i> {{ post.created_at.strftime('%d-%m-%Y') }}
                     </p>
-                    <p class="card-text">{{ post.excerpt or post.content[:200] + '...' }}</p>
+                    <p class="card-text excerpt">{{ post.excerpt or post.content[:200] + '...' }}</p>
+                </div>
+                <div class="card-footer bg-transparent border-0">
                     <a href="{{ url_for('blog.view', slug=post.slug) }}" class="btn btn-outline-primary">
-                        {{ _('Read More') }}
+                        {{ _('Read More') }} <i class="fas fa-arrow-right ms-1"></i>
                     </a>
                 </div>
             </div>
@@ -46,4 +55,81 @@
         {% endfor %}
     </div>
 </div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.blog-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.blog-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.card-img-wrapper {
+    height: 200px;
+    overflow: hidden;
+    position: relative;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.placeholder-img {
+    height: 100%;
+    background-color: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.placeholder-img img {
+    max-height: 100%;
+    width: auto;
+    object-fit: contain;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.excerpt {
+    color: #6c757d;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.5;
+}
+
+.card-footer {
+    padding-top: 0;
+}
+
+@media (max-width: 768px) {
+    .card-img-wrapper {
+        height: 180px;
+    }
+}
+
+@media (max-width: 576px) {
+    .blog-card {
+        margin-bottom: 1.5rem;
+    }
+
+    .card-img-wrapper {
+        height: 160px;
+    }
+}
+</style>
 {% endblock %}
