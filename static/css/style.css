@@ -1,15 +1,15 @@
 :root {
-    --primary-color: #CC1417;     /* Rich red like Al Jazeera */
-    --secondary-color: #9B0F11;   /* Darker red */
-    --accent-color: #D4AF37;      /* Royal gold */
-    --text-color: #1A1A1A;
-    --light-bg: #F8F9FA;
-    --light-text: #6C757D;
+    --primary-color: #8B0000;     /* Deep burgundy red */
+    --secondary-color: #590000;   /* Darker red */
+    --accent-color: #B8860B;      /* Dark goldenrod */
+    --text-color: #222222;
+    --light-bg: #F9F9F9;
+    --light-text: #666666;
     --white: #FFFFFF;
-    --border-color: #DEE2E6;
-    --heading-font: 'Georgia', serif;
-    --body-font: 'Roboto', sans-serif;
-    --box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+    --border-color: #E0E0E0;
+    --heading-font: 'Playfair Display', serif;  /* More elegant serif font */
+    --body-font: 'Source Sans Pro', sans-serif; /* Professional sans-serif */
+    --box-shadow: 0 2px 15px rgba(0,0,0,0.06);
 }
 
 body {
@@ -17,13 +17,14 @@ body {
     line-height: 1.6;
     color: var(--text-color);
     background-color: var(--light-bg);
+    font-size: 16px;
 }
 
 /* Navigation */
 .navbar {
     background-color: var(--white);
     box-shadow: var(--box-shadow);
-    padding: 1rem;
+    padding: 0.8rem 1rem;
     position: relative;
 }
 
@@ -33,8 +34,8 @@ body {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 3px;
-    background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-color) 100%);
+    height: 2px;
+    background: var(--primary-color);
 }
 
 .navbar-brand {
@@ -48,7 +49,7 @@ body {
 }
 
 .navbar-brand img {
-    height: 50px;
+    height: 45px;
     width: auto;
     margin-right: 15px;
     object-fit: contain;
@@ -57,7 +58,7 @@ body {
 .nav-link {
     color: var(--text-color) !important;
     font-weight: 500;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.2px;
     padding: 0.8rem 1.2rem;
     position: relative;
     transition: all 0.3s ease;
@@ -73,14 +74,14 @@ body {
     bottom: 0;
     left: 50%;
     width: 0;
-    height: 2px;
-    background-color: var(--accent-color);
+    height: 1px;
+    background-color: var(--primary-color);
     transition: all 0.3s ease;
     transform: translateX(-50%);
 }
 
 .nav-link:hover::after {
-    width: 80%;
+    width: 70%;
 }
 
 /* Hero Section */
@@ -100,7 +101,7 @@ body {
     right: 0;
     bottom: 0;
     left: 0;
-    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    background: linear-gradient(45deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) 100%);
 }
 
 .hero-section > * {
@@ -110,23 +111,24 @@ body {
 
 .hero-section .display-4 {
     font-family: var(--heading-font);
-    font-size: 3.5rem;
+    font-size: 3.2rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    letter-spacing: -0.5px;
 }
 
 .hero-section .lead {
     font-size: 1.25rem;
     max-width: 800px;
     margin: 0 auto 2rem;
-    opacity: 0.9;
+    opacity: 0.95;
+    line-height: 1.8;
 }
 
 /* Cards */
 .card {
     border: none;
-    border-radius: 12px;
+    border-radius: 8px;
     box-shadow: var(--box-shadow);
     margin-bottom: 2rem;
     background: var(--white);
@@ -135,8 +137,8 @@ body {
 }
 
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 25px rgba(0,0,0,0.12);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
 
 .card-header {
@@ -146,22 +148,13 @@ body {
     position: relative;
 }
 
-.card-header::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 1.5rem;
-    right: 1.5rem;
-    height: 2px;
-    background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-color) 100%);
-}
-
 .card-header h2, .card-header h3 {
     color: var(--primary-color);
     font-family: var(--heading-font);
     font-size: 1.5rem;
     font-weight: 700;
     margin: 0;
+    letter-spacing: -0.3px;
 }
 
 .card-body {
@@ -181,13 +174,12 @@ body {
     align-items: center;
     padding: 1.25rem;
     background: var(--light-bg);
-    border-radius: 8px;
+    border-radius: 6px;
     transition: all 0.3s ease;
 }
 
 .prayer-time:hover {
-    background: linear-gradient(45deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-    box-shadow: var(--box-shadow);
+    background: var(--primary-color);
     transform: translateX(5px);
 }
 
@@ -206,30 +198,34 @@ body {
 .prayer-time-badge {
     color: var(--primary-color);
     font-weight: 500;
-    font-size: 1rem;
+    font-size: 0.95rem;
     transition: color 0.3s ease;
+    padding: 0.4rem 0.8rem;
+    background: var(--white);
+    border-radius: 4px;
 }
 
 /* Buttons */
 .btn-primary {
-    background: linear-gradient(45deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    background: var(--primary-color);
     border: none;
     padding: 0.8rem 1.5rem;
-    font-weight: 500;
-    letter-spacing: 0.5px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(204,20,23,0.3);
+    box-shadow: 0 2px 8px rgba(139,0,0,0.2);
 }
 
 .btn-primary:hover {
+    background: var(--secondary-color);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(204,20,23,0.4);
+    box-shadow: 0 4px 12px rgba(139,0,0,0.3);
 }
 
 /* News Cards */
 .news-card {
     background: var(--white);
-    border-radius: 12px;
+    border-radius: 8px;
     overflow: hidden;
     height: 100%;
     display: flex;
@@ -238,13 +234,13 @@ body {
 }
 
 .news-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-3px);
     box-shadow: var(--box-shadow);
 }
 
 .news-image {
     width: 100%;
-    height: 220px;
+    height: 200px;
     object-fit: cover;
 }
 
@@ -257,10 +253,11 @@ body {
 
 .news-title {
     font-family: var(--heading-font);
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     margin-bottom: 1rem;
     line-height: 1.4;
     color: var(--primary-color);
+    letter-spacing: -0.3px;
 }
 
 .news-meta {
@@ -276,7 +273,7 @@ body {
     font-size: 1rem;
     color: var(--text-color);
     margin-bottom: 1.5rem;
-    line-height: 1.6;
+    line-height: 1.7;
     flex-grow: 1;
 }
 
@@ -299,7 +296,7 @@ body {
     }
 
     .hero-section .display-4 {
-        font-size: 3rem;
+        font-size: 2.8rem;
     }
 }
 
@@ -309,7 +306,7 @@ body {
     }
 
     .hero-section .display-4 {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
     }
 
     .news-image {
