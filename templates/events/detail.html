@@ -26,32 +26,89 @@
                         <strong>Maximum Participants:</strong> {{ event.max_participants }}
                     </p>
                     {% endif %}
+
+                    {% if event.is_collaboration %}
+                    <div class="collaborating-mosques mt-4">
+                        <h4>{{ _('Collaborating Mosques') }}</h4>
+                        <ul class="list-unstyled">
+                            {% for collab in collaborations %}
+                            <li>
+                                <i class="fas fa-mosque me-2"></i>
+                                {{ collab.mosque.mosque_name }} - {{ collab.role }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
             <div class="col-md-4">
-                {% if event.registration_required %}
+                <div class="action-buttons mb-4">
                     {% if current_user.is_authenticated %}
-                        {% if is_registered %}
-                            <form method="POST" action="{{ url_for('events.cancel_registration', event_id=event.id) }}">
-                                <button type="submit" class="btn btn-danger btn-block">
-                                    <i class="fas fa-times"></i> Cancel Registration
-                                </button>
-                            </form>
-                        {% else %}
-                            <form method="POST" action="{{ url_for('events.register_event', event_id=event.id) }}">
-                                <button type="submit" class="btn btn-success btn-block">
-                                    <i class="fas fa-check"></i> Register for Event
-                                </button>
-                            </form>
+                        {% if current_user.is_admin or (current_user.user_type == 'mosque' and event.organizer_id == current_user.id) %}
+                        <form method="POST" action="{{ url_for('events.delete_event', event_id=event.id) }}" 
+                              onsubmit="return confirm('{{ _('Are you sure you want to delete this event?') }}');"
+                              class="mb-3">
+                            <button type="submit" class="btn btn-danger btn-block w-100">
+                                <i class="fas fa-trash"></i> {{ _('Delete Event') }}
+                            </button>
+                        </form>
                         {% endif %}
-                    {% else %}
-                        <div class="alert alert-info">
-                            Please <a href="{{ url_for('login') }}">login</a> to register for this event.
-                        </div>
                     {% endif %}
-                {% endif %}
+
+                    {% if event.registration_required %}
+                        {% if current_user.is_authenticated %}
+                            {% if is_registered %}
+                                <form method="POST" action="{{ url_for('events.cancel_registration', event_id=event.id) }}">
+                                    <button type="submit" class="btn btn-danger btn-block w-100">
+                                        <i class="fas fa-times"></i> {{ _('Cancel Registration') }}
+                                    </button>
+                                </form>
+                            {% else %}
+                                <form method="POST" action="{{ url_for('events.register_event', event_id=event.id) }}">
+                                    <button type="submit" class="btn btn-success btn-block w-100">
+                                        <i class="fas fa-check"></i> {{ _('Register for Event') }}
+                                    </button>
+                                </form>
+                            {% endif %}
+                        {% else %}
+                            <div class="alert alert-info">
+                                {{ _('Please') }} <a href="{{ url_for('main.login') }}">{{ _('login') }}</a> {{ _('to register for this event.') }}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.action-buttons {
+    background: var(--background-light);
+    padding: 1.5rem;
+    border-radius: 12px;
+}
+
+.btn-block {
+    margin-bottom: 1rem;
+}
+
+.btn-block:last-child {
+    margin-bottom: 0;
+}
+
+.collaborating-mosques h4 {
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.collaborating-mosques li {
+    padding: 0.5rem 0;
+    color: var(--text-secondary);
+}
+</style>
 {% endblock %}

@@ -158,3 +158,33 @@ def notification_settings():
         flash('Notification settings updated successfully!', 'success')
         return redirect(url_for('events.notification_settings'))
     return render_template('events/notification_settings.html')
+
+
+@events.route('/<int:event_id>/delete', methods=['POST'])
+@login_required
+def delete_event(event_id):
+    event = Event.query.get_or_404(event_id)
+
+    # Check if user has permission to delete
+    if not (current_user.is_admin or 
+            (current_user.user_type == 'mosque' and event.organizer_id == current_user.id)):
+        flash('You do not have permission to delete this event.', 'error')
+        return redirect(url_for('events.event_detail', event_id=event_id))
+
+    try:
+        # Delete associated records first
+        EventRegistration.query.filter_by(event_id=event_id).delete()
+        EventNotification.query.filter_by(event_id=event_id).delete()
+        EventMosqueCollaboration.query.filter_by(event_id=event_id).delete()
+
+        # Delete the event
+        db.session.delete(event)
+        db.session.commit()
+        flash('Event successfully deleted.', 'success')
+        return redirect(url_for('events.event_list'))
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error deleting event: {e}")
+        flash('An error occurred while deleting the event.', 'error')
+        return redirect(url_for('events.event_detail', event_id=event_id))
