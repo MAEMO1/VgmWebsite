@@ -51,10 +51,17 @@
         <div class="col">
             <div class="card h-100 board-member-card">
                 <div class="card-img-wrapper">
-                    <img src="{{ url_for('static', filename='images/board/' + member.image) if member.image else url_for('static', filename='images/default-profile.jpg') }}" 
-                         class="card-img-top" 
-                         alt="{{ member.name }}"
-                         loading="lazy">
+                    {% if member.image and member.image.startswith('member_') %}
+                        <img src="{{ url_for('static', filename='images/board/' + member.image) }}" 
+                             class="card-img-top" 
+                             alt="{{ member.name }}"
+                             loading="lazy">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" 
+                             class="card-img-top vgm-logo" 
+                             alt="VGM Logo"
+                             loading="lazy">
+                    {% endif %}
                 </div>
                 <div class="card-body">
                     <h5 class="card-title">{{ member.name }}</h5>
@@ -163,6 +170,11 @@
     height: 100%;
     object-fit: cover;
     object-position: center;
+}
+.card-img-top.vgm-logo {
+    object-fit: contain;
+    padding: 1rem;
+    background-color: #f8f9fa;
 }
 .about-content {
     font-size: 1.1rem;
