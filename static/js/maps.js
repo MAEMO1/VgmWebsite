@@ -1,47 +1,74 @@
+let map;
+let markers = [];
+
 function initMap() {
-    // Default mosque location (example coordinates)
-    const mosqueLocation = { lat: 51.0504, lng: 3.7101 };
-    
-    const map = new google.maps.Map(document.getElementById('mosque-map'), {
-        zoom: 15,
-        center: mosqueLocation,
+    // Center on Ghent
+    const ghent = { lat: 51.0543, lng: 3.7174 };
+
+    map = new google.maps.Map(document.getElementById("mosque-map"), {
+        zoom: 13,
+        center: ghent,
         styles: [
             {
-                "featureType": "poi.place_of_worship",
-                "elementType": "geometry",
-                "stylers": [
-                    { "visibility": "on" },
-                    { "color": "#e9e9e9" }
-                ]
+                featureType: "poi.business",
+                stylers: [{ visibility: "off" }]
             }
         ]
     });
 
-    const marker = new google.maps.Marker({
-        position: mosqueLocation,
-        map: map,
-        title: 'Our Mosque',
-        icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 10,
-            fillColor: '#4CAF50',
-            fillOpacity: 0.8,
-            strokeWeight: 2,
-            strokeColor: '#fff'
+    // Add markers for each mosque
+    document.querySelectorAll('.mosque-item').forEach(item => {
+        const lat = parseFloat(item.dataset.lat);
+        const lng = parseFloat(item.dataset.lng);
+        if (isNaN(lat) || isNaN(lng)) {
+            console.warn('Invalid coordinates for mosque:', item.querySelector('h4').textContent);
+            return;
         }
+
+        const title = item.querySelector('h4').textContent;
+        const address = item.querySelector('p').textContent;
+
+        const marker = new google.maps.Marker({
+            position: { lat, lng },
+            map: map,
+            title: title,
+            icon: {
+                url: 'https://maps.google.com/mapfiles/kml/shapes/mosque.png',
+                scaledSize: new google.maps.Size(32, 32)
+            }
+        });
+
+        // Add info window with mosque details
+        const infoWindow = new google.maps.InfoWindow({
+            content: `
+                <div class="info-window">
+                    <h5>${title}</h5>
+                    <p>${address}</p>
+                </div>
+            `
+        });
+
+        markers.push({ marker, infoWindow });
+
+        // Show info window when marker is clicked
+        marker.addListener('click', () => {
+            markers.forEach(m => m.infoWindow.close());
+            infoWindow.open(map, marker);
+        });
+
+        // Add click event to center map on mosque when list item is clicked
+        item.addEventListener('click', () => {
+            map.setCenter({ lat, lng });
+            map.setZoom(16);
+            markers.forEach(m => m.infoWindow.close());
+            infoWindow.open(map, marker);
+        });
     });
 
-    const infoWindow = new google.maps.InfoWindow({
-        content: `
-            <div class="map-info-window">
-                <h3>Our Mosque</h3>
-                <p>Address: 123 Mosque Street</p>
-                <p>Phone: (123) 456-7890</p>
-            </div>
-        `
-    });
-
-    marker.addListener('click', () => {
-        infoWindow.open(map, marker);
-    });
+    // Add error handling for Google Maps
+    window.gm_authFailure = function() {
+        console.error('Google Maps authentication failed. Please check your API key.');
+        document.getElementById('mosque-map').innerHTML = 
+            '<div class="alert alert-danger">Failed to load Google Maps. Please try again later.</div>';
+    };
 }

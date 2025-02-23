@@ -1,12 +1,72 @@
-from flask import render_template, redirect, url_for, request, flash, session
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from app import db
 from models import User, Event, PrayerTime, Obituary
 from datetime import datetime
-from flask_babel import _
-from . import routes
 import os
+
+routes = Blueprint('main', __name__)
+
+def initialize_mosques():
+    """Initialize the mosques in the database with their coordinates"""
+    mosques_data = [
+        {
+            "name": "IH-VAK Moskee",
+            "street": "Koopvaardijlaan",
+            "number": "44",
+            "postal": "9000",
+            "city": "Gent",
+            "lat": 51.0673,
+            "lng": 3.7373
+        },
+        {
+            "name": "Al Markaz at Tarbawi",
+            "street": "Elyzeese Velden",
+            "number": "35",
+            "postal": "9000",
+            "city": "Gent",
+            "lat": 51.0543,
+            "lng": 3.7174
+        },
+        # Add all other mosques here with their coordinates
+    ]
+
+    for mosque_data in mosques_data:
+        # Check if mosque already exists
+        existing_mosque = User.query.filter_by(mosque_name=mosque_data["name"]).first()
+        if not existing_mosque:
+            mosque = User(
+                username=mosque_data["name"].lower().replace(" ", "_"),
+                email=f"info@{mosque_data['name'].lower().replace(' ', '')}.be",
+                password_hash=generate_password_hash("temporary_password"),
+                user_type="mosque",
+                mosque_name=mosque_data["name"],
+                mosque_street=mosque_data["street"],
+                mosque_number=mosque_data["number"],
+                mosque_postal=mosque_data["postal"],
+                mosque_city=mosque_data["city"],
+                latitude=mosque_data["lat"],
+                longitude=mosque_data["lng"],
+                is_verified=True
+            )
+            db.session.add(mosque)
+
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error initializing mosques: {e}")
+
+@routes.route('/prayer_times')
+def prayer_times():
+    try:
+        today = datetime.today().date()
+        prayer_times = PrayerTime.query.filter_by(date=today).all()
+        return render_template('prayer_times.html', prayer_times=prayer_times)
+    except Exception as e:
+        print(f"Error fetching prayer times: {e}")
+        return render_template('prayer_times.html', prayer_times=[])
 
 @routes.route('/')
 def index():
@@ -18,148 +78,15 @@ def index():
         today = datetime.today().date()
         prayer_times = PrayerTime.query.filter_by(date=today).all()
 
-        return render_template('index.html', events=events, prayer_times=prayer_times)
+        return render_template('index.html', 
+                             events=events, 
+                             prayer_times=prayer_times,
+                             google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'))
     except Exception as e:
-        return render_template('index.html', events=[], prayer_times=[])
-
-@routes.route('/prayer-times')
-def prayer_times():
-    times = PrayerTime.query.filter_by(date=datetime.today().date()).all()
-    return render_template('prayer_times.html', times=times)
-
-@routes.route('/contact')
-def contact():
-    return render_template('contact.html')
-
-@routes.route('/obituaries')
-def obituaries():
-    obituaries = Obituary.query.filter_by(is_approved=True).order_by(Obituary.date_of_death.desc()).all()
-    return render_template('obituaries.html', obituaries=obituaries)
-
-@routes.route('/register')
-def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
-    return render_template('register.html')
-
-@routes.route('/register/visitor', methods=['GET', 'POST'])
-def register_visitor():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
-
-    if request.method == 'POST':
-        username = request.form.get('username')
-        email = request.form.get('email')
-        password = request.form.get('password')
-        confirm_password = request.form.get('confirm_password')
-
-        if User.query.filter_by(email=email).first():
-            flash('Email already registered.', 'error')
-            return redirect(url_for('main.register_visitor'))
-
-        if User.query.filter_by(username=username).first():
-            flash('Username already taken.', 'error')
-            return redirect(url_for('main.register_visitor'))
-
-        if password != confirm_password:
-            flash('Passwords do not match.', 'error')
-            return redirect(url_for('main.register_visitor'))
-
-        user = User(
-            username=username,
-            email=email,
-            password_hash=generate_password_hash(password),
-            user_type='visitor'
-        )
-        db.session.add(user)
-        db.session.commit()
-
-        flash('Registration successful! You can now login.', 'success')
-        return redirect(url_for('main.login'))
-
-    return render_template('register_visitor.html')
-
-@routes.route('/register/mosque', methods=['GET', 'POST'])
-def register_mosque():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
-
-    if request.method == 'POST':
-        mosque_name = request.form.get('mosque_name')
-        mosque_address = request.form.get('mosque_address')
-        mosque_phone = request.form.get('mosque_phone')
-        email = request.form.get('email')
-        password = request.form.get('password')
-        confirm_password = request.form.get('confirm_password')
-
-        if User.query.filter_by(email=email).first():
-            flash('Email already registered.', 'error')
-            return redirect(url_for('main.register_mosque'))
-
-        if User.query.filter_by(mosque_name=mosque_name).first():
-            flash('A mosque with this name is already registered.', 'error')
-            return redirect(url_for('main.register_mosque'))
-
-        if password != confirm_password:
-            flash('Passwords do not match.', 'error')
-            return redirect(url_for('main.register_mosque'))
-
-        user = User(
-            username=mosque_name,
-            email=email,
-            password_hash=generate_password_hash(password),
-            user_type='mosque',
-            mosque_name=mosque_name,
-            mosque_address=mosque_address,
-            mosque_phone=mosque_phone,
-            is_verified=False
-        )
-        db.session.add(user)
-        db.session.commit()
-
-        flash('Registration submitted! Please wait for administrator verification.', 'success')
-        return redirect(url_for('main.login'))
-
-    return render_template('register_mosque.html')
-
-@routes.route('/login', methods=['GET', 'POST'])
-def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
-
-    if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
-
-        user = User.query.filter_by(email=email).first()
-
-        if user and check_password_hash(user.password_hash, password):
-            if user.user_type == 'mosque' and not user.is_verified:
-                flash('Your mosque account is pending verification.', 'warning')
-                return redirect(url_for('main.login'))
-
-            login_user(user)
-            flash('Logged in successfully.', 'success')
-            return redirect(url_for('main.index'))
-        else:
-            flash('Invalid email or password.', 'error')
-
-    return render_template('login.html')
-
-@routes.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    flash('Logged out successfully.', 'success')
-    return redirect(url_for('main.index'))
-
-@routes.route('/language/<language>')
-def set_language(language):
-    if language not in ['en', 'nl', 'ar']:
-        return redirect(url_for('main.index'))
-
-    session['language'] = language
-    return redirect(request.referrer or url_for('main.index'))
+        return render_template('index.html', 
+                             events=[], 
+                             prayer_times=[],
+                             google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'))
 
 @routes.route('/mosques')
 def mosques():
@@ -168,3 +95,11 @@ def mosques():
     return render_template('mosques.html', 
                          mosques=mosque_users,
                          google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'))
+
+@routes.route('/set_language/<language>')
+def set_language(language):
+    if language not in ['en', 'nl', 'ar']:
+        return redirect(url_for('main.index'))
+
+    session['language'] = language
+    return redirect(request.referrer or url_for('main.index'))

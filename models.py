@@ -12,28 +12,15 @@ class User(UserMixin, db.Model):
 
     # Mosque-specific fields
     mosque_name = db.Column(db.String(200))
-    mosque_address = db.Column(db.String(300))
-    mosque_street = db.Column(db.String(100))  # New field for street
-    mosque_number = db.Column(db.String(10))   # New field for house number
-    mosque_postal = db.Column(db.String(10))   # New field for postal code
-    mosque_city = db.Column(db.String(100))    # New field for city
+    mosque_street = db.Column(db.String(100))  # Street name
+    mosque_number = db.Column(db.String(10))   # House number
+    mosque_postal = db.Column(db.String(10))   # Postal code
+    mosque_city = db.Column(db.String(100))    # City
     mosque_phone = db.Column(db.String(20))
-    mosque_image = db.Column(db.String(500))   # New field for mosque image URL
-    latitude = db.Column(db.Float)             # New field for map coordinates
-    longitude = db.Column(db.Float)            # New field for map coordinates
-    is_verified = db.Column(db.Boolean, default=False)  # For mosque accounts
-
-    # Notification preferences
-    notify_new_events = db.Column(db.Boolean, default=True)
-    notify_event_changes = db.Column(db.Boolean, default=True)
-    notify_event_reminders = db.Column(db.Boolean, default=True)
-    notify_obituaries = db.Column(db.Boolean, default=True)
-
-    # Relationships
-    notifications = db.relationship('EventNotification', backref='user', lazy='dynamic')
-    event_registrations = db.relationship('EventRegistration', backref='user', lazy='dynamic')
-    managed_events = db.relationship('Event', backref='organizer', lazy='dynamic')
-    obituaries = db.relationship('Obituary', backref='mosque', lazy='dynamic')
+    mosque_image = db.Column(db.String(500))   # URL to mosque image
+    latitude = db.Column(db.Float)             # Geographical coordinates
+    longitude = db.Column(db.Float)            # Geographical coordinates
+    is_verified = db.Column(db.Boolean, default=False)
 
     def get_full_address(self):
         """Return the full formatted address for the mosque"""
