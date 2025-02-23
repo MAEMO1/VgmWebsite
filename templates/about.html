@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('About VGM') }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Association Description -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h1 class="display-4">{{ _('About VGM') }}</h1>
+            <p class="lead">{{ _('The Association of Ghent Mosques (VGM)') }}</p>
+            <hr class="my-4">
+            <div class="about-content">
+                <p>{{ _('The Association of Ghent Mosques (VGM) is the umbrella organization of Ghent mosques (21). Established in 2016, the association aims to:') }}</p>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check text-success me-2"></i>{{ _('Represent the interests of Muslims and mosques, particularly those in Ghent') }}</li>
+                    <li><i class="fas fa-check text-success me-2"></i>{{ _('Promote cooperation between mosques, especially those in Ghent') }}</li>
+                    <li><i class="fas fa-check text-success me-2"></i>{{ _('Provide information about the Islamic faith, without expressing preferences for specific schools of thought') }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Board Members -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-4">{{ _('Board Members') }}</h2>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {% for member in board_members %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                <img src="{{ url_for('static', filename='images/board/' + member.image) }}" 
+                     class="card-img-top" 
+                     alt="{{ member.name }}"
+                     style="height: 300px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ member.name }}</h5>
+                    <p class="card-text">
+                        <small class="text-muted">{{ member.role }}</small><br>
+                        {{ _('Representing') }}: {{ member.mosque }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.card {
+    transition: transform 0.2s;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.card:hover {
+    transform: translateY(-5px);
+}
+.about-content {
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+.about-content ul li {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+}
+</style>
+{% endblock %}

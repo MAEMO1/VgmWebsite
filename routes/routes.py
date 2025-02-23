@@ -475,3 +475,45 @@ from werkzeug.utils import secure_filename
 @routes.route('/memorandum')
 def memorandum():
     return render_template('memorandum.html')
+
+@routes.route('/about')
+def about():
+    board_members = [
+        {
+            'name': 'Mohammed Ahmed',
+            'role': 'Chairman',
+            'mosque': 'Al Markaz at Tarbawi',
+            'image': 'chairman.jpg'
+        },
+        {
+            'name': 'Yusuf Ali',
+            'role': 'Secretary',
+            'mosque': 'Tevhid Camii',
+            'image': 'secretary.jpg'
+        },
+        {
+            'name': 'Ibrahim Hassan',
+            'role': 'Treasurer',
+            'mosque': 'Moskee Al Fath',
+            'image': 'treasurer.jpg'
+        },
+        {
+            'name': 'Omar Malik',
+            'role': 'Board Member',
+            'mosque': 'Groene Moskee Fatih',
+            'image': 'member1.jpg'
+        },
+        {
+            'name': 'Abdul Rahman',
+            'role': 'Board Member',
+            'mosque': 'IH-VAK Moskee',
+            'image': 'member2.jpg'
+        },
+        {
+            'name': 'Karim Nasser',
+            'role': 'Board Member',
+            'mosque': 'Moskee Salahaddien',
+            'image': 'member3.jpg'
+        }
+    ]
+    return render_template('about.html', board_members=board_members)
