@@ -509,7 +509,7 @@ def about():
             {
                 'name': 'Köse Demirali',
                 'role': 'Bestuurder',
-                'mosque_name': 'Moskee Eyup sultan',
+                'mosque_name': 'Eyup sultan Camii',  # Updated to match exact mosque name
             },
             {
                 'name': 'Saman Sheikh',
@@ -519,7 +519,7 @@ def about():
             {
                 'name': 'Senel Furkan',
                 'role': 'Bestuurder',
-                'mosque_name': 'Moskee Tevhid',
+                'mosque_name': 'Tevhid Camii',  # Updated to match exact mosque name
             }
         ]
 
@@ -527,11 +527,14 @@ def about():
         term_start = date(2024, 1, 1)
         term_end = date(2027, 12, 31)
 
+        # First clear any existing board members
+        BoardMember.query.delete()
+
         for member_data in default_board_members:
             # Find the associated mosque
-            mosque = User.query.filter_by(
-                user_type='mosque',
-                mosque_name=member_data['mosque_name']
+            mosque = User.query.filter(
+                User.user_type == 'mosque',
+                User.mosque_name.ilike(f"%{member_data['mosque_name']}%")
             ).first()
 
             if mosque:
@@ -544,6 +547,8 @@ def about():
                     image=f"member_{member_data['name'].lower().replace(' ', '_')}.jpg"
                 )
                 db.session.add(board_member)
+            else:
+                print(f"Warning: Mosque not found for board member {member_data['name']}")
 
         try:
             db.session.commit()
