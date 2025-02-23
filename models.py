@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from app import db
 from flask_login import UserMixin
 
@@ -44,6 +44,7 @@ class User(UserMixin, db.Model):
     videos = db.relationship('MosqueVideo', backref='mosque', lazy='dynamic')
     prayer_times = db.relationship('PrayerTime', backref='mosque', lazy='dynamic')
     events = db.relationship('Event', backref='mosque', lazy='dynamic')
+    authored_posts = db.relationship('BlogPost', backref='author', lazy='dynamic')
 
     def get_full_address(self):
         """Return the full formatted address for the mosque"""
@@ -140,7 +141,6 @@ class ObituaryNotification(db.Model):
     obituary = db.relationship('Obituary', backref='notifications')
     user = db.relationship('User', backref='obituary_notifications')
 
-
 class BoardMember(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -157,3 +157,18 @@ class BoardMember(db.Model):
 
     def __repr__(self):
         return f'<BoardMember {self.name} ({self.role})>'
+
+class BlogPost(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    published = db.Column(db.Boolean, default=True)
+    image_url = db.Column(db.String(500))  # Optional featured image
+    slug = db.Column(db.String(200), unique=True, nullable=False)
+    excerpt = db.Column(db.Text)  # Short description for preview
+
+    def __repr__(self):
+        return f'<BlogPost {self.title}>'

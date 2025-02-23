@@ -112,22 +112,30 @@ def prayer_times():
 @routes.route('/')
 def index():
     try:
-        events = Event.query.filter(
+        # Get next event
+        next_event = Event.query.filter(
             Event.date >= datetime.utcnow()
-        ).order_by(Event.date).limit(3).all()
+        ).order_by(Event.date).first()
 
+        # Get latest blog posts
+        latest_posts = BlogPost.query.filter_by(
+            published=True
+        ).order_by(BlogPost.created_at.desc()).limit(3).all()
+
+        # Get today's prayer times
         today = datetime.today().date()
         prayer_times = PrayerTime.query.filter_by(date=today).all()
 
         return render_template('index.html', 
-                             events=events, 
-                             prayer_times=prayer_times,
-                             google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'))
+                            next_event=next_event,
+                            latest_posts=latest_posts,
+                            prayer_times=prayer_times)
     except Exception as e:
+        print(f"Error loading index page: {e}")
         return render_template('index.html', 
-                             events=[], 
-                             prayer_times=[],
-                             google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'))
+                            next_event=None,
+                            latest_posts=[],
+                            prayer_times=[])
 
 @routes.route('/mosques')
 def mosques():

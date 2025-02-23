@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Blog - VGM') }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="display-4 mb-4">{{ _('VGM Blog') }}</h1>
+            
+            {% if current_user.is_authenticated and current_user.is_admin %}
+            <div class="mb-4">
+                <a href="{{ url_for('blog.create') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>{{ _('New Article') }}
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for post in posts %}
+        <div class="col">
+            <div class="card h-100">
+                {% if post.image_url %}
+                <img src="{{ post.image_url }}" class="card-img-top" alt="{{ post.title }}" loading="lazy">
+                {% else %}
+                <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" 
+                     class="card-img-top"
+                     alt="VGM Logo"
+                     style="height: 200px; object-fit: contain; padding: 1rem; background-color: #f8f9fa;">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ post.title }}</h5>
+                    <p class="card-text text-muted small">
+                        {{ _('By') }} {{ post.author.username }} | 
+                        {{ post.created_at.strftime('%d-%m-%Y') }}
+                    </p>
+                    <p class="card-text">{{ post.excerpt or post.content[:200] + '...' }}</p>
+                    <a href="{{ url_for('blog.view', slug=post.slug) }}" class="btn btn-outline-primary">
+                        {{ _('Read More') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

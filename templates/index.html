@@ -1,16 +1,16 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('Welcome - Mosque Management') }}{% endblock %}
+{% block title %}{{ _('Welcome - VGM') }}{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-md-8">
-        <div class="card">
+        <div class="card mb-4">
             <div class="card-header">
-                <h2>{{ _('Welcome to Our Mosque') }}</h2>
+                <h2>{{ _('Welcome to VGM') }}</h2>
             </div>
             <div class="card-body">
-                <p class="lead">{{ _('We are a community-focused mosque dedicated to serving our members and promoting Islamic values.') }}</p>
+                <p class="lead">{{ _('We are the Association of Ghent Mosques (VGM), dedicated to serving our community and promoting Islamic values.') }}</p>
 
                 <!-- Add prominent Find a Mosque button -->
                 <div class="text-center mb-4">
@@ -18,49 +18,102 @@
                         <i class="fas fa-mosque"></i> {{ _('Find a Mosque') }}
                     </a>
                 </div>
+            </div>
+        </div>
 
-                <div class="row mt-4">
-                    <div class="col-md-6">
-                        <h3>{{ _('Next Prayer Time') }}</h3>
-                        <div class="prayer-times">
-                            {% for prayer in prayer_times[:1] %}
-                            <div class="prayer-time">
-                                <span>{{ prayer.prayer_name }}</span>
-                                <span>{{ prayer.time.strftime('%H:%M') }}</span>
-                            </div>
-                            {% endfor %}
+        <!-- Ramadan Countdown -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>{{ _('Countdown to Ramadan 1446/2025') }}</h3>
+            </div>
+            <div class="card-body">
+                <div id="ramadanCountdown" class="text-center">
+                    <div class="countdown-timer">
+                        <div class="days">
+                            <span class="number">00</span>
+                            <span class="label">{{ _('Days') }}</span>
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <h3>{{ _('Upcoming Events') }}</h3>
-                        <div class="list-group">
-                            {% for event in events[:3] %}
-                            <a href="{{ url_for('events.event_list') }}" class="list-group-item list-group-item-action">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1">{{ event.title }}</h5>
-                                    <small>{{ event.date.strftime('%d %b') }}</small>
-                                </div>
-                                <p class="mb-1">{{ event.description[:100] }}...</p>
-                            </a>
-                            {% endfor %}
+                        <div class="hours">
+                            <span class="number">00</span>
+                            <span class="label">{{ _('Hours') }}</span>
+                        </div>
+                        <div class="minutes">
+                            <span class="number">00</span>
+                            <span class="label">{{ _('Minutes') }}</span>
+                        </div>
+                        <div class="seconds">
+                            <span class="number">00</span>
+                            <span class="label">{{ _('Seconds') }}</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card">
+
+        <!-- Latest Blog Posts -->
+        <div class="card mb-4">
             <div class="card-header">
-                <h3>{{ _('Location') }}</h3>
+                <h3>{{ _('Latest News') }}</h3>
             </div>
             <div class="card-body">
-                <div id="mosque-map" style="height: 300px;"></div>
-                <div class="mt-3">
-                    <h4>{{ _('Address') }}</h4>
-                    <p>{{ _('123 Mosque Street') }}<br>{{ _('City, Country') }}<br>{{ _('Postal Code') }}</p>
-                    <h4>{{ _('Contact') }}</h4>
-                    <p>{{ _('Phone: (123) 456-7890') }}<br>{{ _('Email: info@mosque.com') }}</p>
+                <div class="list-group">
+                    {% for post in latest_posts %}
+                    <a href="{{ url_for('blog.view', slug=post.slug) }}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ post.title }}</h5>
+                            <small>{{ post.created_at.strftime('%d %b') }}</small>
+                        </div>
+                        <p class="mb-1">{{ post.excerpt or post.content[:100] }}...</p>
+                    </a>
+                    {% endfor %}
+                </div>
+                <div class="text-end mt-3">
+                    <a href="{{ url_for('blog.index') }}" class="btn btn-outline-primary">
+                        {{ _('View All News') }} <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <!-- Next VGM Event -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>{{ _('Next VGM Event') }}</h3>
+            </div>
+            <div class="card-body">
+                {% if next_event %}
+                <div class="event-highlight">
+                    <h4>{{ next_event.title }}</h4>
+                    <p class="text-muted">
+                        <i class="far fa-calendar"></i> {{ next_event.date.strftime('%d %B %Y') }}<br>
+                        <i class="far fa-clock"></i> {{ next_event.date.strftime('%H:%M') }}
+                    </p>
+                    <p>{{ next_event.description }}</p>
+                    <a href="{{ url_for('events.event_detail', event_id=next_event.id) }}" class="btn btn-primary">
+                        {{ _('More Info') }}
+                    </a>
+                </div>
+                {% else %}
+                <p>{{ _('No upcoming events scheduled') }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Prayer Times -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>{{ _('Prayer Times') }}</h3>
+            </div>
+            <div class="card-body">
+                <div class="prayer-times">
+                    {% for prayer in prayer_times %}
+                    <div class="prayer-time d-flex justify-content-between align-items-center mb-2">
+                        <span>{{ prayer.prayer_name }}</span>
+                        <span class="badge bg-primary">{{ prayer.time.strftime('%H:%M') }}</span>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -68,7 +121,74 @@
 </div>
 {% endblock %}
 
+{% block styles %}
+<style>
+.countdown-timer {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.countdown-timer > div {
+    text-align: center;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    min-width: 100px;
+}
+
+.countdown-timer .number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #0d6efd;
+    display: block;
+}
+
+.countdown-timer .label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    display: block;
+}
+
+.prayer-time {
+    padding: 0.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.prayer-time:last-child {
+    border-bottom: none;
+}
+
+.event-highlight {
+    text-align: center;
+    padding: 1rem;
+}
+</style>
+{% endblock %}
+
 {% block scripts %}
-<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap" async defer></script>
-<script src="{{ url_for('static', filename='js/maps.js') }}"></script>
+<script>
+// Ramadan countdown
+function updateRamadanCountdown() {
+    const ramadanStart = new Date('2025-03-01T00:00:00');
+    const now = new Date();
+    const diff = ramadanStart - now;
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    document.querySelector('.countdown-timer .days .number').textContent = String(days).padStart(2, '0');
+    document.querySelector('.countdown-timer .hours .number').textContent = String(hours).padStart(2, '0');
+    document.querySelector('.countdown-timer .minutes .number').textContent = String(minutes).padStart(2, '0');
+    document.querySelector('.countdown-timer .seconds .number').textContent = String(seconds).padStart(2, '0');
+}
+
+// Update countdown every second
+setInterval(updateRamadanCountdown, 1000);
+updateRamadanCountdown(); // Initial update
+</script>
 {% endblock %}
