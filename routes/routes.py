@@ -179,8 +179,24 @@ def edit_mosque(mosque_id):
 
     if request.method == 'POST':
         try:
+            # Update basic information
             mosque.history = request.form.get('history')
             mosque.establishment_year = int(request.form.get('establishment_year')) if request.form.get('establishment_year') else None
+
+            # Update contact information
+            mosque.mosque_email = request.form.get('mosque_email')
+            mosque.mosque_website = request.form.get('mosque_website')
+            mosque.mosque_phone = request.form.get('mosque_phone')
+            mosque.mosque_fax = request.form.get('mosque_fax')
+            mosque.emergency_contact = request.form.get('emergency_contact')
+            mosque.emergency_phone = request.form.get('emergency_phone')
+
+            # Update social media links
+            mosque.facebook_url = request.form.get('facebook_url')
+            mosque.twitter_url = request.form.get('twitter_url')
+            mosque.instagram_url = request.form.get('instagram_url')
+            mosque.youtube_url = request.form.get('youtube_url')
+            mosque.whatsapp_number = request.form.get('whatsapp_number')
 
             # Parse and set Friday prayer time
             friday_time = request.form.get('friday_prayer_time')
@@ -203,8 +219,8 @@ def edit_mosque(mosque_id):
                         db.session.add(mosque_image)
 
             # Handle video URLs
-            video_urls = request.form.getlist('video_urls')
-            video_titles = request.form.getlist('video_titles')
+            video_urls = request.form.getlist('video_urls[]')
+            video_titles = request.form.getlist('video_titles[]')
             for url, title in zip(video_urls, video_titles):
                 if url and title:
                     mosque_video = MosqueVideo(

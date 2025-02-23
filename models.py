@@ -22,12 +22,26 @@ class User(UserMixin, db.Model):
     longitude = db.Column(db.Float)            # Geographical coordinates
     is_verified = db.Column(db.Boolean, default=False)
 
-    # New mosque fields
-    history = db.Column(db.Text)                   # Mosque history text
-    establishment_year = db.Column(db.Integer)     # Year of establishment
-    friday_prayer_time = db.Column(db.Time)        # Regular Friday prayer time
+    # New contact fields
+    mosque_email = db.Column(db.String(120))   # Public contact email
+    mosque_website = db.Column(db.String(200)) # Mosque website
+    mosque_fax = db.Column(db.String(20))      # Fax number
+    emergency_contact = db.Column(db.String(100)) # Emergency contact name
+    emergency_phone = db.Column(db.String(20))  # Emergency contact number
 
-    # Relationships
+    # Social media links
+    facebook_url = db.Column(db.String(200))
+    twitter_url = db.Column(db.String(200))
+    instagram_url = db.Column(db.String(200))
+    youtube_url = db.Column(db.String(200))
+    whatsapp_number = db.Column(db.String(20))
+
+    # Existing fields remain unchanged
+    history = db.Column(db.Text)
+    establishment_year = db.Column(db.Integer)
+    friday_prayer_time = db.Column(db.Time)
+
+    # Relationships remain unchanged
     images = db.relationship('MosqueImage', backref='mosque', lazy='dynamic')
     videos = db.relationship('MosqueVideo', backref='mosque', lazy='dynamic')
     prayer_times = db.relationship('PrayerTime', backref='mosque', lazy='dynamic')

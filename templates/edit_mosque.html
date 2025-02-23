@@ -24,6 +24,111 @@
                 </div>
                 <div class="card-body">
                     <form method="POST" enctype="multipart/form-data">
+                        <!-- Contact Information -->
+                        <div class="mb-4">
+                            <h4>{{ _('Contact Information') }}</h4>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="mosque_email" class="form-label">{{ _('Public Email') }}</label>
+                                        <input type="email" class="form-control" id="mosque_email" name="mosque_email" 
+                                               value="{{ mosque.mosque_email or '' }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="mosque_website" class="form-label">{{ _('Website') }}</label>
+                                        <input type="url" class="form-control" id="mosque_website" name="mosque_website" 
+                                               value="{{ mosque.mosque_website or '' }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="mosque_phone" class="form-label">{{ _('Phone Number') }}</label>
+                                        <input type="tel" class="form-control" id="mosque_phone" name="mosque_phone" 
+                                               value="{{ mosque.mosque_phone or '' }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="mosque_fax" class="form-label">{{ _('Fax Number') }}</label>
+                                        <input type="tel" class="form-control" id="mosque_fax" name="mosque_fax" 
+                                               value="{{ mosque.mosque_fax or '' }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="emergency_contact" class="form-label">{{ _('Emergency Contact Name') }}</label>
+                                        <input type="text" class="form-control" id="emergency_contact" name="emergency_contact" 
+                                               value="{{ mosque.emergency_contact or '' }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="emergency_phone" class="form-label">{{ _('Emergency Phone') }}</label>
+                                        <input type="tel" class="form-control" id="emergency_phone" name="emergency_phone" 
+                                               value="{{ mosque.emergency_phone or '' }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Social Media Links -->
+                        <div class="mb-4">
+                            <h4>{{ _('Social Media') }}</h4>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="facebook_url" class="form-label">
+                                            <i class="fab fa-facebook"></i> {{ _('Facebook') }}
+                                        </label>
+                                        <input type="url" class="form-control" id="facebook_url" name="facebook_url" 
+                                               value="{{ mosque.facebook_url or '' }}" placeholder="https://facebook.com/...">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="twitter_url" class="form-label">
+                                            <i class="fab fa-twitter"></i> {{ _('Twitter') }}
+                                        </label>
+                                        <input type="url" class="form-control" id="twitter_url" name="twitter_url" 
+                                               value="{{ mosque.twitter_url or '' }}" placeholder="https://twitter.com/...">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="instagram_url" class="form-label">
+                                            <i class="fab fa-instagram"></i> {{ _('Instagram') }}
+                                        </label>
+                                        <input type="url" class="form-control" id="instagram_url" name="instagram_url" 
+                                               value="{{ mosque.instagram_url or '' }}" placeholder="https://instagram.com/...">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="youtube_url" class="form-label">
+                                            <i class="fab fa-youtube"></i> {{ _('YouTube') }}
+                                        </label>
+                                        <input type="url" class="form-control" id="youtube_url" name="youtube_url" 
+                                               value="{{ mosque.youtube_url or '' }}" placeholder="https://youtube.com/...">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="whatsapp_number" class="form-label">
+                                    <i class="fab fa-whatsapp"></i> {{ _('WhatsApp Number') }}
+                                </label>
+                                <input type="tel" class="form-control" id="whatsapp_number" name="whatsapp_number" 
+                                       value="{{ mosque.whatsapp_number or '' }}" placeholder="+32...">
+                            </div>
+                        </div>
+
                         <!-- Basic Information -->
                         <div class="mb-4">
                             <h4>{{ _('Basic Information') }}</h4>
