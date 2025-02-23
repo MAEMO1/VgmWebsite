@@ -485,12 +485,12 @@ def about():
             {
                 'name': 'Cetin Mutlu',
                 'role': 'Bestuurder',
-                'mosque_name': 'Eyup sultan Camii',
+                'mosque_name': 'Eyup sultan Camii',  # Updated to match exact name
             },
             {
                 'name': 'Demirogullari Nedim',
                 'role': 'Bestuurder',
-                'mosque_name': 'Tevhid Camii',
+                'mosque_name': 'Tevhid Camii',  # Updated to match exact name
             },
             {
                 'name': 'El Bakali Mohamed',
@@ -505,7 +505,7 @@ def about():
             {
                 'name': 'Köse Demirali',
                 'role': 'Bestuurder',
-                'mosque_name': 'Eyup sultan Camii',
+                'mosque_name': 'Eyup sultan Camii',  # Updated to match exact name
             },
             {
                 'name': 'Saman Sheikh',
@@ -515,7 +515,7 @@ def about():
             {
                 'name': 'Senel Furkan',
                 'role': 'Bestuurder',
-                'mosque_name': 'Tevhid Camii',
+                'mosque_name': 'Tevhid Camii',  # Updated to match exact name
             }
         ]
 
