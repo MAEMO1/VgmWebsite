@@ -1,15 +1,15 @@
 :root {
-    --primary-color: #41B7AC;     /* Logo turquoise */
-    --secondary-color: #338F86;   /* Darker turquoise for hover */
-    --accent-color: #E4B622;      /* Logo gold */
-    --text-color: #2C3E50;        /* Dark blue-grey for text */
+    --primary-color: #006C5F;     /* VGM Logo green */
+    --secondary-color: #005046;   /* Darker green for hover */
+    --accent-color: #D4AA37;      /* VGM Logo gold */
+    --text-color: #333333;        /* Darker text for better readability */
     --light-bg: #F8F9FA;
-    --light-text: #6C757D;
+    --light-text: #666666;
     --white: #FFFFFF;
     --border-color: #E9ECEF;
     --heading-font: 'Source Sans Pro', sans-serif;
     --body-font: 'Source Sans Pro', sans-serif;
-    --box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+    --box-shadow: 0 2px 15px rgba(0,0,0,0.08);
 }
 
 body {
@@ -24,7 +24,7 @@ body {
 .navbar {
     background-color: var(--white);
     box-shadow: var(--box-shadow);
-    padding: 0.75rem 1rem;
+    padding: 0.5rem 1rem;
 }
 
 .navbar-brand {
@@ -37,12 +37,12 @@ body {
 }
 
 .navbar-brand img {
-    height: 50px;
+    height: 60px;             /* Increased logo size */
     width: auto;
-    margin-right: 12px;
+    margin-right: 15px;
     object-fit: contain;
-    padding: 0;
-    border-radius: 0;
+    padding: 5px;            /* Added padding */
+    background: white;       /* White background to ensure visibility */
 }
 
 .nav-link {
@@ -116,7 +116,7 @@ body {
 /* Cards */
 .card {
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     box-shadow: var(--box-shadow);
     margin-bottom: 2rem;
     background: var(--white);
@@ -125,13 +125,14 @@ body {
 
 .card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 20px rgba(0,108,95,0.15);
 }
 
 .card-header {
     background-color: var(--white);
     border-bottom: 2px solid var(--primary-color);
     padding: 1.5rem;
+    border-radius: 12px 12px 0 0 !important;
 }
 
 .card-header h2, .card-header h3 {
@@ -159,7 +160,7 @@ body {
     align-items: center;
     padding: 1rem;
     background: var(--light-bg);
-    border-radius: 6px;
+    border-radius: 8px;
     transition: all 0.3s ease;
 }
 
@@ -198,67 +199,13 @@ body {
     font-weight: 600;
     letter-spacing: 0.3px;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(65,183,172,0.2);
+    box-shadow: 0 2px 8px rgba(0,108,95,0.2);
 }
 
 .btn-primary:hover {
     background-color: var(--secondary-color);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(65,183,172,0.3);
-}
-
-/* News Cards */
-.news-card {
-    background: var(--white);
-    border-radius: 8px;
-    overflow: hidden;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.news-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--box-shadow);
-}
-
-.news-image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-
-.news-content {
-    padding: 1.5rem;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.news-title {
-    font-family: var(--heading-font);
-    font-size: 1.3rem;
-    margin-bottom: 1rem;
-    line-height: 1.4;
-    color: var(--primary-color);
-}
-
-.news-meta {
-    font-size: 0.9rem;
-    color: var(--light-text);
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.news-excerpt {
-    font-size: 1rem;
-    color: var(--text-color);
-    margin-bottom: 1.5rem;
-    line-height: 1.7;
-    flex-grow: 1;
+    box-shadow: 0 4px 12px rgba(0,108,95,0.3);
 }
 
 /* Footer */

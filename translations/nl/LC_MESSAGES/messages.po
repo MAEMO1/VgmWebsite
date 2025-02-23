@@ -1,8 +1,6 @@
 # Dutch translations for PROJECT.
 # Copyright (C) 2025 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
@@ -20,11 +18,11 @@ msgstr ""
 
 #: templates/about.html:3 templates/about.html:10 templates/memorandum.html:19
 msgid "About VGM"
-msgstr ""
+msgstr "Over VGM"
 
 #: templates/about.html:11
 msgid "The Association of Ghent Mosques (VGM)"
-msgstr ""
+msgstr "De Vereniging van Gentse Moskeeën (VGM)"
 
 #: templates/about.html:14
 msgid ""
@@ -50,7 +48,7 @@ msgstr ""
 
 #: templates/about.html:28
 msgid "Board Members"
-msgstr ""
+msgstr "Bestuursleden"
 
 #: templates/about.html:40
 msgid "Manage Board"
@@ -94,52 +92,52 @@ msgstr ""
 
 #: templates/base.html:43
 msgid "Home"
-msgstr ""
+msgstr "Home"
 
 #: templates/base.html:46
 msgid "About Us"
-msgstr ""
+msgstr "Over Ons"
 
 #: templates/base.html:49 templates/mosques.html:3 templates/mosques.html:9
 msgid "Mosques in Ghent"
-msgstr ""
+msgstr "Moskeeën in Gent"
 
 #: templates/base.html:52
 msgid "Blog"
-msgstr ""
+msgstr "Blog"
 
 #: templates/base.html:55
 msgid "Events"
-msgstr ""
+msgstr "Evenementen"
 
 #: templates/base.html:58
 msgid "Obituaries"
-msgstr ""
+msgstr "Overlijdensberichten"
 
 #: templates/base.html:61
 msgid "Memorandum"
-msgstr ""
+msgstr "Memorandum"
 
 #: templates/base.html:64
 msgid "Contact"
-msgstr ""
+msgstr "Contact"
 
 #: templates/base.html:68
 msgid "Logout"
-msgstr ""
+msgstr "Uitloggen"
 
 #: templates/base.html:72 templates/register.html:10
 #: templates/register_admin.html:35
 msgid "Register"
-msgstr ""
+msgstr "Registreren"
 
 #: templates/base.html:75 templates/login.html:10 templates/login.html:30
 msgid "Login"
-msgstr ""
+msgstr "Inloggen"
 
 #: templates/base.html:114
 msgid "© 2024 Vereniging van Gentse Moskeeën. All rights reserved."
-msgstr ""
+msgstr "© 2024 Vereniging van Gentse Moskeeën. Alle rechten voorbehouden."
 
 #: templates/edit_mosque.html:3 templates/edit_mosque.html:13
 msgid "Edit"
@@ -224,7 +222,7 @@ msgstr ""
 #: templates/edit_mosque.html:149 templates/index.html:119
 #: templates/mosque_detail.html:131
 msgid "Prayer Times"
-msgstr ""
+msgstr "Gebedstijden"
 
 #: templates/edit_mosque.html:151
 msgid "Friday Prayer Time"
@@ -280,17 +278,17 @@ msgstr ""
 
 #: templates/index.html:10
 msgid "Welcome to VGM"
-msgstr ""
+msgstr "Welkom bij VGM"
 
 #: templates/index.html:11
 msgid ""
 "We are the Association of Ghent Mosques (VGM), dedicated to serving our "
 "community and promoting Islamic values."
-msgstr ""
+msgstr "Wij zijn de Vereniging van Gentse Moskeeën (VGM), toegewijd aan het dienen van onze gemeenschap en het bevorderen van islamitische waarden."
 
 #: templates/index.html:13
 msgid "Find a Mosque"
-msgstr ""
+msgstr "Vind een Moskee"
 
 #: templates/index.html:24
 msgid "Countdown to Ramadan 1446/2025"
@@ -298,23 +296,23 @@ msgstr ""
 
 #: templates/index.html:31
 msgid "Days"
-msgstr ""
+msgstr "Dagen"
 
 #: templates/index.html:36
 msgid "Hours"
-msgstr ""
+msgstr "Uren"
 
 #: templates/index.html:41
 msgid "Minutes"
-msgstr ""
+msgstr "Minuten"
 
 #: templates/index.html:46
 msgid "Seconds"
-msgstr ""
+msgstr "Seconden"
 
 #: templates/index.html:56
 msgid "Latest News"
-msgstr ""
+msgstr "Laatste Nieuws"
 
 #: templates/index.html:58
 msgid "All News"
@@ -322,7 +320,7 @@ msgstr ""
 
 #: templates/blog/index.html:50 templates/index.html:76
 msgid "Read More"
-msgstr ""
+msgstr "Lees Meer"
 
 #: templates/index.html:91
 msgid "Next VGM Event"
@@ -360,15 +358,15 @@ msgstr ""
 msgid ""
 "The Association of Ghent Mosques (VGM) is the umbrella organization of "
 "Ghent mosques (21), established in 2016."
-msgstr ""
+msgstr "De Vereniging van Gentse Moskeeën (VGM) is de koepelorganisatie van Gentse moskeeën (21), opgericht in 2016."
 
 #: templates/memorandum.html:22
 msgid "Download Complete Memorandum"
-msgstr ""
+msgstr "Download Volledig Memorandum"
 
 #: templates/memorandum.html:36
 msgid "Religious Identity"
-msgstr ""
+msgstr "Religieuze Identiteit"
 
 #: templates/memorandum.html:38
 msgid ""
@@ -379,7 +377,7 @@ msgstr ""
 
 #: templates/memorandum.html:51
 msgid "Education"
-msgstr ""
+msgstr "Onderwijs"
 
 #: templates/memorandum.html:53
 msgid ""
@@ -389,7 +387,7 @@ msgstr ""
 
 #: templates/memorandum.html:66
 msgid "Poverty"
-msgstr ""
+msgstr "Armoede"
 
 #: templates/memorandum.html:68
 msgid ""
@@ -399,7 +397,7 @@ msgstr ""
 
 #: templates/memorandum.html:81
 msgid "Housing"
-msgstr ""
+msgstr "Huisvesting"
 
 #: templates/memorandum.html:83
 msgid ""
@@ -409,7 +407,7 @@ msgstr ""
 
 #: templates/memorandum.html:96
 msgid "Work"
-msgstr ""
+msgstr "Werk"
 
 #: templates/memorandum.html:98
 msgid ""
@@ -419,7 +417,7 @@ msgstr ""
 
 #: templates/memorandum.html:111
 msgid "Police"
-msgstr ""
+msgstr "Politie"
 
 #: templates/memorandum.html:113
 msgid ""
@@ -602,4 +600,3 @@ msgstr ""
 #: templates/blog/index.html:14
 msgid "New Article"
 msgstr ""
-
