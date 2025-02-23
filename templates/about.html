@@ -7,77 +7,86 @@
     <!-- Association Description -->
     <div class="row mb-5">
         <div class="col-12">
-            <h1 class="display-4">{{ _('About VGM') }}</h1>
-            <p class="lead">{{ _('The Association of Ghent Mosques (VGM)') }}</p>
-            <hr class="my-4">
+            <div class="about-header text-center mb-5">
+                <h1 class="display-4 text-primary mb-4">{{ _('About VGM') }}</h1>
+                <p class="lead mb-4">{{ _('The Association of Ghent Mosques (VGM)') }}</p>
+                <div class="separator"></div>
+            </div>
             <div class="about-content">
-                <p>{{ _('The Association of Ghent Mosques (VGM) is the umbrella organization of Ghent mosques (21). Established in 2016, the association aims to:') }}</p>
-                <ul class="list-unstyled">
-                    <li><i class="fas fa-check text-success me-2"></i>{{ _('Represent the interests of Muslims and mosques, particularly those in Ghent') }}</li>
-                    <li><i class="fas fa-check text-success me-2"></i>{{ _('Promote cooperation between mosques, especially those in Ghent') }}</li>
-                    <li><i class="fas fa-check text-success me-2"></i>{{ _('Provide information about the Islamic faith, without expressing preferences for specific schools of thought') }}</li>
-                </ul>
+                <p class="mb-4">{{ _('The Association of Ghent Mosques (VGM) is the umbrella organization of Ghent mosques (21). Established in 2016, the association aims to:') }}</p>
+                <div class="objectives">
+                    <div class="objective-item">
+                        <i class="fas fa-star text-primary me-3"></i>
+                        <span>{{ _('Represent the interests of Muslims and mosques, particularly those in Ghent') }}</span>
+                    </div>
+                    <div class="objective-item">
+                        <i class="fas fa-handshake text-primary me-3"></i>
+                        <span>{{ _('Promote cooperation between mosques, especially those in Ghent') }}</span>
+                    </div>
+                    <div class="objective-item">
+                        <i class="fas fa-book-open text-primary me-3"></i>
+                        <span>{{ _('Provide information about the Islamic faith, without expressing preferences for specific schools of thought') }}</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Board Members Section -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>{{ _('Board Members') }}</h2>
-                <div class="d-flex gap-3">
-                    <select class="form-select" id="termSelect" style="width: auto;">
-                        {% for term in terms %}
-                        <option value="{{ term[0].strftime('%Y-%m-%d') }}" 
-                                {% if term[0] == current_term_start %}selected{% endif %}>
-                            {{ term[0].strftime('%Y') }} - {{ term[1].strftime('%Y') }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                    {% if current_user.is_authenticated and current_user.is_admin %}
-                    <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#manageBoardModal">
-                        <i class="fas fa-edit me-2"></i>{{ _('Manage Board') }}
-                    </button>
-                    {% endif %}
+    <div class="board-section">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="section-title">{{ _('Board Members') }}</h2>
+                    <div class="d-flex gap-3">
+                        <select class="form-select custom-select" id="termSelect">
+                            {% for term in terms %}
+                            <option value="{{ term[0].strftime('%Y-%m-%d') }}" 
+                                    {% if term[0] == current_term_start %}selected{% endif %}>
+                                {{ term[0].strftime('%Y') }} - {{ term[1].strftime('%Y') }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        {% if current_user.is_authenticated and current_user.is_admin %}
+                        <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#manageBoardModal">
+                            <i class="fas fa-edit me-2"></i>{{ _('Manage Board') }}
+                        </button>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Board Members Grid -->
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="boardMembersGrid">
-        {% for member in board_members %}
-        <div class="col">
-            <div class="card h-100 board-member-card">
-                <div class="card-img-wrapper">
-                    {% if member.image and member.image.startswith('member_') %}
-                        <img src="{{ url_for('static', filename='images/board/' + member.image) }}" 
-                             class="card-img-top" 
-                             alt="{{ member.name }}"
-                             loading="lazy">
-                    {% else %}
-                        <img src="{{ url_for('static', filename='images/placeholder.jpg') }}" 
-                             class="card-img-top vgm-logo" 
-                             alt="VGM Logo"
-                             loading="lazy"
-                             style="background-image: url('{{ url_for('static', filename='images/LogoVGM.jpg') }}');
-                                    background-size: contain;
-                                    background-position: center;
-                                    background-repeat: no-repeat;
-                                    background-color: #f8f9fa;">
-                    {% endif %}
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">{{ member.name }}</h5>
-                    <p class="card-text">
-                        <small class="text-muted">{{ member.role }}</small><br>
-                        {{ _('Representing') }}: {{ member.mosque.mosque_name if member.mosque else '' }}
-                    </p>
+        <!-- Board Members Grid -->
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="boardMembersGrid">
+            {% for member in board_members %}
+            <div class="col">
+                <div class="board-member-card">
+                    <div class="member-image">
+                        {% if member.image and member.image.startswith('member_') %}
+                            <img src="{{ url_for('static', filename='images/board/' + member.image) }}" 
+                                 alt="{{ member.name }}"
+                                 loading="lazy">
+                        {% else %}
+                            <div class="placeholder-image">
+                                <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" 
+                                     alt="VGM Logo"
+                                     loading="lazy">
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name">{{ member.name }}</h3>
+                        <p class="member-role">{{ member.role }}</p>
+                        <p class="member-mosque">
+                            <i class="fas fa-mosque text-primary"></i>
+                            {{ _('Representing') }}: {{ member.mosque.mosque_name if member.mosque else '' }}
+                        </p>
+                    </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
 </div>
 
@@ -92,9 +101,9 @@
             </div>
             <div class="modal-body">
                 <form action="{{ url_for('main.manage_board_members') }}" method="POST" enctype="multipart/form-data">
-                    <div class="mb-3">
+                    <div class="mb-4">
                         <label class="form-label">{{ _('Term Period') }}</label>
-                        <div class="row">
+                        <div class="row g-3">
                             <div class="col">
                                 <input type="date" class="form-control" name="term_start" required>
                             </div>
@@ -105,46 +114,39 @@
                     </div>
 
                     <div id="boardMembersForm">
-                        <!-- Template for board member inputs -->
-                        <div class="board-member-entry mb-3 border p-3">
-                            <div class="row">
+                        <div class="board-member-entry">
+                            <div class="row g-3">
                                 <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label class="form-label">{{ _('Name') }}</label>
-                                        <input type="text" class="form-control" name="names[]" required>
-                                    </div>
+                                    <label class="form-label">{{ _('Name') }}</label>
+                                    <input type="text" class="form-control" name="names[]" required>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label class="form-label">{{ _('Role') }}</label>
-                                        <input type="text" class="form-control" name="roles[]" required>
-                                    </div>
+                                    <label class="form-label">{{ _('Role') }}</label>
+                                    <input type="text" class="form-control" name="roles[]" required>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label class="form-label">{{ _('Mosque') }}</label>
-                                        <select class="form-select" name="mosque_ids[]" required>
-                                            {% for mosque in mosques %}
-                                            <option value="{{ mosque.id }}">{{ mosque.mosque_name }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
+                                    <label class="form-label">{{ _('Mosque') }}</label>
+                                    <select class="form-select" name="mosque_ids[]" required>
+                                        {% for mosque in mosques %}
+                                        <option value="{{ mosque.id }}">{{ mosque.mosque_name }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="mb-2">
-                                        <label class="form-label">{{ _('Photo') }}</label>
-                                        <input type="file" class="form-control" name="photos[]" accept="image/*">
-                                    </div>
+                                    <label class="form-label">{{ _('Photo') }}</label>
+                                    <input type="file" class="form-control" name="photos[]" accept="image/*">
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <button type="button" class="btn btn-secondary mb-3" id="addMemberBtn">
-                        <i class="fas fa-plus me-2"></i>{{ _('Add Member') }}
-                    </button>
+                    <div class="mt-4">
+                        <button type="button" class="btn btn-secondary" id="addMemberBtn">
+                            <i class="fas fa-plus me-2"></i>{{ _('Add Member') }}
+                        </button>
+                    </div>
 
-                    <div class="text-end">
+                    <div class="mt-4 text-end">
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save me-2"></i>{{ _('Save Changes') }}
                         </button>
@@ -157,40 +159,160 @@
 {% endif %}
 
 <style>
-.card {
-    transition: transform 0.2s;
-    border: none;
+/* About Page Specific Styles */
+.about-header {
+    position: relative;
+    margin-bottom: 4rem;
+}
+
+.about-header .display-4 {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.separator {
+    width: 80px;
+    height: 4px;
+    background: var(--primary-color);
+    margin: 2rem auto;
+    border-radius: 2px;
+}
+
+.about-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-color);
+}
+
+.objectives {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.objective-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background: var(--light-bg);
+    border-radius: 8px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.objective-item:hover {
+    transform: translateX(10px);
+    box-shadow: 0 4px 12px rgba(65, 183, 172, 0.1);
+}
+
+.objective-item i {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
+
+/* Board Members Section */
+.board-section {
+    margin-top: 4rem;
+}
+
+.section-title {
+    color: var(--primary-color);
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+}
+
+.board-member-card {
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.card:hover {
-    transform: translateY(-5px);
+
+.board-member-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(65, 183, 172, 0.2);
 }
-.card-img-wrapper {
-    height: 200px;
+
+.member-image {
+    height: 250px;
     overflow: hidden;
     position: relative;
 }
-.card-img-top {
+
+.member-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center;
+    transition: transform 0.3s ease;
 }
-.card-img-top.vgm-logo {
+
+.placeholder-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--light-bg);
+}
+
+.placeholder-image img {
+    width: 60%;
+    height: auto;
     object-fit: contain;
-    padding: 1rem;
 }
-.about-content {
-    font-size: 1.1rem;
-    line-height: 1.6;
+
+.member-info {
+    padding: 1.5rem;
 }
-.about-content ul li {
+
+.member-name {
+    font-size: 1.25rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.member-role {
+    color: var(--light-text);
+    font-size: 0.9rem;
     margin-bottom: 1rem;
-    padding-left: 1.5rem;
 }
-.board-member-card {
-    border-radius: 10px;
-    overflow: hidden;
+
+.member-mosque {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Form Styling */
+.custom-select {
+    min-width: 200px;
+    border-color: var(--border-color);
+}
+
+.board-member-entry {
+    background: var(--light-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .objective-item {
+        padding: 0.75rem;
+    }
+
+    .member-image {
+        height: 200px;
+    }
+
+    .member-info {
+        padding: 1rem;
+    }
 }
 </style>
 
@@ -211,8 +333,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (addMemberBtn && boardMembersForm) {
         addMemberBtn.addEventListener('click', function() {
             const template = boardMembersForm.querySelector('.board-member-entry').cloneNode(true);
-            // Clear input values
             template.querySelectorAll('input').forEach(input => input.value = '');
+            template.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
             boardMembersForm.appendChild(template);
         });
     }
