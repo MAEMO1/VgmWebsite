@@ -6,28 +6,18 @@
     <meta name="description" content="VGM - Vereniging van Gentse Moskeeën, serving the Muslim community in Ghent">
     <title>{% block title %}VGM - Vereniging van Gentse Moskeeën{% endblock %}</title>
 
-    <!-- Preload critical assets -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style">
-    <link rel="preload" href="{{ url_for('static', filename='images/LogoVGM01.png') }}" as="image">
-
     <!-- Stylesheets -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/LogoVGM01.png') }}">
-
     <style>
         :root {
-            --primary-color: #41B7AC;     /* VGM Logo turquoise exact match */
-            --secondary-color: #3AA69B;   /* Slightly darker turquoise for hover */
-            --accent-color: #D4AA37;      /* VGM Logo gold - only used for specific accents */
-            --text-color: #333333;        /* Dark text for readability */
+            --primary-color: #41B7AC;     /* VGM Logo turquoise */
+            --accent-color: #D4AA37;      /* VGM Logo gold */
+            --text-color: #333333;
             --light-bg: #F8F9FA;
-            --light-text: #666666;
-            --white: #FFFFFF;
             --border-color: #E9ECEF;
         }
 
@@ -41,24 +31,110 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1rem;
-            padding: 0.5rem 0;
+            gap: 0.5rem;
+            padding: 1rem 0;
         }
 
         .logo-container {
             width: 140px;
             height: 140px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 0.5rem;
-            transition: transform 0.3s ease;
+            position: relative;
         }
 
-        .logo-img {
+        .logo-octagon {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            position: relative;
+            background: white;
+            clip-path: polygon(
+                30% 0%, 70% 0%, 
+                100% 30%, 100% 70%, 
+                70% 100%, 30% 100%, 
+                0% 70%, 0% 30%
+            );
+            border: 2px solid var(--accent-color);
+        }
+
+        .logo-octagon::before {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            background: white;
+            clip-path: polygon(
+                30% 0%, 70% 0%, 
+                100% 30%, 100% 70%, 
+                70% 100%, 30% 100%, 
+                0% 70%, 0% 30%
+            );
+            border: 2px solid var(--accent-color);
+        }
+
+        .logo-dome {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 30%;
+            background: var(--primary-color);
+            border-radius: 100% 100% 0 0;
+        }
+
+        .logo-crescent {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%) rotate(-15deg);
+            width: 20%;
+            height: 20%;
+            background: var(--primary-color);
+            border-radius: 50%;
+        }
+
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: black;
+            margin-top: 5%;
+            text-align: center;
+        }
+
+        .logo-subtext {
+            font-size: 0.875rem;
+            color: var(--primary-color);
+            text-align: center;
+            margin-top: -5px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 992px) {
+            .logo-container {
+                width: 100px;
+                height: 100px;
+            }
+
+            .logo-text {
+                font-size: 1.5rem;
+            }
+
+            .logo-subtext {
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Rest of your existing styles... */
+        .navbar {
+            background: white;
+            padding: 0.5rem 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .navbar-brand {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.5rem 0;
         }
 
         .nav-link {
@@ -277,13 +353,13 @@
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('main.index') }}" aria-label="VGM Home">
                 <div class="logo-container">
-                    <img src="{{ url_for('static', filename='images/LogoVGM01.png') }}"
-                         alt="VGM Logo"
-                         class="logo-img"
-                         width="140"
-                         height="140">
+                    <div class="logo-octagon">
+                        <div class="logo-dome"></div>
+                        <div class="logo-crescent"></div>
+                    </div>
+                    <div class="logo-text">VGM</div>
+                    <div class="logo-subtext">Vereniging van Gentse Moskeeën</div>
                 </div>
-                <span class="brand-text">VGM</span>
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
