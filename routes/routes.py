@@ -161,14 +161,23 @@ def mosque_detail(mosque_id):
     # Get upcoming events
     events = mosque.events.filter(Event.date >= datetime.utcnow()).order_by(Event.date).limit(5).all()
 
-    # Get feedback for this mosque
-    feedbacks = MosqueFeedback.query.filter_by(mosque_id=mosque_id, is_approved=True).all()
+    # Get average rating and approved feedback for this mosque
+    avg_rating = db.session.query(func.avg(MosqueFeedback.rating))\
+        .filter_by(mosque_id=mosque_id, is_approved=True).scalar()
+
+    feedbacks = MosqueFeedback.query\
+        .filter_by(mosque_id=mosque_id, is_approved=True)\
+        .order_by(MosqueFeedback.created_at.desc())\
+        .all()
 
     return render_template('mosque_detail.html',
                          mosque=mosque,
                          prayer_times=prayer_times,
                          events=events,
                          feedbacks=feedbacks,
+                         avg_rating=avg_rating,
+                         func=func,  # Pass func to template
+                         MosqueFeedback=MosqueFeedback,  # Pass model to template
                          google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'))
 
 

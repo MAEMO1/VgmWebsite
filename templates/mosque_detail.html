@@ -160,7 +160,6 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3>{{ _('Community Feedback') }}</h3>
                     <div class="average-rating">
-                        {% set avg_rating = mosque.received_feedback.filter_by(is_approved=True).with_entities(func.avg(MosqueFeedback.rating)).scalar() %}
                         {% if avg_rating %}
                         <span class="stars">
                             {% for i in range(5) %}
@@ -172,7 +171,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    {% if current_user.is_authenticated and not current_user.given_feedback.filter_by(mosque_id=mosque.id).first() %}
+                    {% if current_user.is_authenticated and not MosqueFeedback.query.filter_by(mosque_id=mosque.id, user_id=current_user.id).first() %}
                     <form method="POST" action="{{ url_for('main.submit_feedback', mosque_id=mosque.id) }}" class="mb-4">
                         <div class="mb-3">
                             <label class="form-label">{{ _('Your Rating') }}</label>
@@ -192,7 +191,7 @@
                     {% endif %}
 
                     <div class="feedback-list">
-                        {% for feedback in mosque.received_feedback.filter_by(is_approved=True).order_by(MosqueFeedback.created_at.desc()).all() %}
+                        {% for feedback in feedbacks %}
                         <div class="feedback-item mb-3 p-3 border rounded">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
