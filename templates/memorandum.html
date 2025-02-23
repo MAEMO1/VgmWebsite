@@ -5,6 +5,9 @@
 {% block content %}
 <div class="container py-5">
     <div class="memorandum-header text-center mb-5">
+        <div class="logo-container mb-4">
+            <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" alt="VGM Logo" class="vgm-logo">
+        </div>
         <h1 class="display-4">Memorandum 2025-2030</h1>
         <div class="separator"></div>
         <p class="lead">Vereniging van Gentse Moskeeën (VGM)</p>
@@ -103,6 +106,18 @@
 
 {% block styles %}
 <style>
+.logo-container {
+    max-width: 200px;
+    margin: 0 auto 2rem;
+}
+
+.vgm-logo {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 .memorandum-header {
     position: relative;
     padding: 3rem 0;
