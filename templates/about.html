@@ -2,6 +2,53 @@
 
 {% block title %}Over VGM{% endblock %}
 
+{# Define macro at the start of the template #}
+{% macro board_member_entry(member=None) %}
+<div class="board-member-entry">
+    <input type="hidden" name="member_ids[]" value="{{ member.id if member else '' }}">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">Naam</label>
+            <input type="text" class="form-control" name="names[]" value="{{ member.name if member else '' }}" required>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Functie</label>
+            <input type="text" class="form-control" name="roles[]" value="{{ member.role if member else '' }}" required>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Moskee</label>
+            <select class="form-select" name="mosque_ids[]" required>
+                {% for mosque in mosques %}
+                <option value="{{ mosque.id }}" {% if member and mosque.id == member.mosque_id %}selected{% endif %}>
+                    {{ mosque.mosque_name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Foto</label>
+            <div class="image-upload-container">
+                <input type="file" class="form-control" name="photos[]" accept="image/*" onchange="previewImage(this)">
+                <div class="image-preview mt-2">
+                    {% if member and member.image %}
+                        <img src="{{ url_for('static', filename='images/board/' + member.image) }}" 
+                             alt="Huidige foto" class="current-photo">
+                    {% else %}
+                        <div class="placeholder-preview">
+                            <img src="{{ url_for('static', filename='images/image_1740420347783.png') }}" 
+                                 alt="VGM Logo" class="logo-placeholder">
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" class="btn btn-outline-danger btn-sm mt-3 remove-member" onclick="removeMember(this)">
+        <i class="fas fa-trash me-1"></i>Verwijderen
+    </button>
+</div>
+{% endmacro %}
+
 {% block content %}
 <div class="about-container">
     <!-- Hero Section -->
@@ -67,7 +114,7 @@
                 {% for member in board_members %}
                 <div class="leader-card">
                     <div class="leader-image">
-                        {% if member.image and member.image.startswith('member_') %}
+                        {% if member.image %}
                             <img src="{{ url_for('static', filename='images/board/' + member.image) }}" 
                                  alt="{{ member.name }}"
                                  loading="lazy">
@@ -141,11 +188,26 @@
     </div>
 </div>
 {% endif %}
-
 {% endblock %}
 
 {% block styles %}
 <style>
+/* Custom Properties */
+:root {
+    --primary-color: #005A87;
+    --secondary-color: #41B7AC;
+    --accent-color: #FF4154;
+    --background-light: #f8f9fa;
+    --text-primary: #2c3e50;
+    --text-secondary: #6c757d;
+    --border-color: #e9ecef;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --transition: all 0.3s ease;
+}
+
 /* General Styles */
 .about-container {
     overflow: hidden;
@@ -322,6 +384,28 @@
     transform: scale(1.05);
 }
 
+.image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 90, 135, 0.05);
+    padding: 2rem;
+}
+
+.logo-placeholder {
+    max-width: 85%;
+    height: auto;
+    object-fit: contain;
+    opacity: 0.9;
+    transition: var(--transition);
+}
+
+.leader-card:hover .logo-placeholder {
+    opacity: 1;
+    transform: scale(1.05);
+}
 
 .leader-info {
     padding: 2rem;
@@ -511,51 +595,4 @@ function removeMember(button) {
     }
 }
 </script>
-
-{% macro board_member_entry(member=None) %}
-<div class="board-member-entry">
-    <input type="hidden" name="member_ids[]" value="{{ member.id if member else '' }}">
-    <div class="row g-3">
-        <div class="col-md-6">
-            <label class="form-label">Naam</label>
-            <input type="text" class="form-control" name="names[]" value="{{ member.name if member else '' }}" required>
-        </div>
-        <div class="col-md-6">
-            <label class="form-label">Functie</label>
-            <input type="text" class="form-control" name="roles[]" value="{{ member.role if member else '' }}" required>
-        </div>
-        <div class="col-md-6">
-            <label class="form-label">Moskee</label>
-            <select class="form-select" name="mosque_ids[]" required>
-                {% for mosque in mosques %}
-                <option value="{{ mosque.id }}" {% if member and mosque.id == member.mosque_id %}selected{% endif %}>
-                    {{ mosque.mosque_name }}
-                </option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col-md-6">
-            <label class="form-label">Foto</label>
-            <div class="image-upload-container">
-                <input type="file" class="form-control" name="photos[]" accept="image/*" onchange="previewImage(this)">
-                <div class="image-preview mt-2">
-                    {% if member and member.image %}
-                        <img src="{{ url_for('static', filename='images/board/' + member.image) }}" 
-                             alt="Huidige foto" class="current-photo">
-                    {% else %}
-                        <div class="placeholder-preview">
-                            <img src="{{ url_for('static', filename='images/image_1740420347783.png') }}" 
-                                 alt="VGM Logo" class="logo-placeholder">
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-    <button type="button" class="btn btn-outline-danger btn-sm mt-3 remove-member" onclick="removeMember(this)">
-        <i class="fas fa-trash me-1"></i>Verwijderen
-    </button>
-</div>
-{% endmacro %}
-
 {% endblock %}
