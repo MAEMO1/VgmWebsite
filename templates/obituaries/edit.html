@@ -95,16 +95,6 @@
                     {% endif %}
                 </div>
 
-                <div id="other_location_container">
-                    {{ form.other_location_address.label(class="form-label required-field") }}
-                    {{ form.other_location_address(class="form-control" + (" is-invalid" if form.other_location_address.errors else "")) }}
-                    {% if form.other_location_address.errors %}
-                        {% for error in form.other_location_address.errors %}
-                            <div class="error-message">{{ error }}</div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-
                 <div class="mb-4">
                     {{ form.time_type.label(class="form-label required-field") }}
                     {{ form.time_type(class="form-select" + (" is-invalid" if form.time_type.errors else "")) }}
@@ -220,26 +210,6 @@ document.addEventListener('DOMContentLoaded', function() {
         timeType.addEventListener('change', updateTimeContainers);
         // Initialize on page load
         updateTimeContainers();
-    }
-
-    // Handle location selection
-    const locationSelect = document.getElementById('death_prayer_location');
-    const otherLocationContainer = document.getElementById('other_location_container');
-
-    function updateLocationContainer() {
-        if (locationSelect.value === 'andere') {
-            otherLocationContainer.classList.add('visible');
-            document.getElementById('other_location_address').required = true;
-        } else {
-            otherLocationContainer.classList.remove('visible');
-            document.getElementById('other_location_address').required = false;
-        }
-    }
-
-    if (locationSelect) {
-        locationSelect.addEventListener('change', updateLocationContainer);
-        // Initialize on page load
-        updateLocationContainer();
     }
 
     // Ensure prayer time is after death date
