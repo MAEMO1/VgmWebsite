@@ -13,23 +13,22 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/LogoVGM.png') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/file.svg') }}">
 
     <style>
         :root {
             --primary-color: #41B7AC;     /* VGM Logo turquoise */
             --accent-color: #E8AE26;      /* VGM Logo gold */
             --text-color: #333333;        /* Dark gray for text */
-            --light-bg: #f5f5f3;          /* Light gray menu background */
+            --light-bg: #F8F9FA;          /* Very light gray for backgrounds */
             --border-color: #E9ECEF;      /* Light gray for borders */
             --white: #FFFFFF;             /* Pure white */
         }
 
         .navbar {
-            background: var(--light-bg);
+            background: var(--white);
             padding: 0.5rem 0;
-            box-shadow: none;
-            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
         .navbar-brand {
@@ -37,25 +36,15 @@
             align-items: center;
             gap: 1.5rem;
             padding: 0.5rem 0;
-            transition: transform 0.3s ease;
-            background: transparent;
         }
 
-        .navbar-brand:hover {
-            transform: scale(1.02);
-        }
-
-        .navbar .logo-container {
+        .logo-container {
             width: 120px;
             height: auto;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: transform 0.3s ease;
-            background-color: #f5f5f3 !important;
-            padding: 0.5rem;
-            border-radius: 4px;
-            margin: 0 0.5rem;
         }
 
         .logo-container:hover {
@@ -66,8 +55,14 @@
             width: 100%;
             height: auto;
             display: block;
-            object-fit: contain;
         }
+
+        @media (max-width: 992px) {
+            .logo-container {
+                width: 80px;
+            }
+        }
+
         .nav-link {
             color: var(--text-color);
             font-weight: 500;
@@ -97,7 +92,6 @@
         }
 
         .dropdown-menu {
-            background: var(--light-bg);
             border: 1px solid var(--border-color);
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             border-radius: 8px;
@@ -111,26 +105,9 @@
         }
 
         .dropdown-item:hover {
-            background-color: var(--white);
+            background-color: var(--light-bg);
             color: var(--primary-color);
             transform: translateX(4px);
-        }
-
-        .navbar-collapse {
-            background: var(--light-bg);
-            padding: 1rem;
-            border-radius: 8px;
-            margin-top: 1rem;
-        }
-
-        @media (max-width: 992px) {
-            .navbar-collapse {
-                background: var(--light-bg); /* Updated background color */
-                padding: 1rem;
-                border-radius: 8px;
-                margin-top: 1rem;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            }
         }
 
         main {
@@ -143,6 +120,16 @@
             border-top: 1px solid var(--border-color);
             padding: 2rem 0;
             margin-top: 4rem;
+        }
+
+        @media (max-width: 992px) {
+            .navbar-collapse {
+                background: white;
+                padding: 1rem;
+                border-radius: 8px;
+                margin-top: 1rem;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
         }
 
         .btn-primary {
@@ -182,8 +169,8 @@
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('main.index') }}" aria-label="VGM Home">
                 <div class="logo-container">
-                    <img src="{{ url_for('static', filename='images/image_1740398078884.png') }}"
-                         alt="VGM Logo"
+                    <img src="{{ url_for('static', filename='images/file.svg') }}" 
+                         alt="VGM Logo" 
                          class="logo-img"
                          width="120">
                 </div>
