@@ -695,18 +695,22 @@ def manage_board_members():
             flash('De einddatum moet na de startdatum liggen.', 'error')
             return redirect(url_for('main.about'))
 
+        # Get existing board members for this term to preserve images if not updated
+        existing_members = {member.id: member.image for member in BoardMember.query.filter_by(term_start=term_start).all()}
+
         # Remove existing board members for this term
         BoardMember.query.filter_by(term_start=term_start).delete()
 
         names = request.form.getlist('names[]')
         roles = request.form.getlist('roles[]')
         mosque_ids = request.form.getlist('mosque_ids[]')
+        member_ids = request.form.getlist('member_ids[]')  # Added to track existing members
         photos = request.files.getlist('photos[]')
 
-        for i, (name, role, mosque_id) in enumerate(zip(names, roles, mosque_ids)):
+        for i, (name, role, mosque_id, member_id) in enumerate(zip(names, roles, mosque_ids, member_ids)):
             photo = photos[i] if i < len(photos) else None
 
-            # Handle photo upload
+            # Handle photo upload or keep existing photo
             image_filename = None
             if photo and photo.filename and allowed_file(photo.filename):
                 # Create board images directory if it doesn't exist
@@ -714,8 +718,11 @@ def manage_board_members():
                 os.makedirs(board_dir, exist_ok=True)
 
                 # Generate unique filename
-                image_filename = f"board_member_{term_start}_{i+1}.jpg"
+                image_filename = f"member_{name.lower().replace(' ', '_')}.jpg"
                 photo.save(os.path.join(board_dir, image_filename))
+            elif member_id and member_id in existing_members:
+                # Keep existing photo if no new photo was uploaded
+                image_filename = existing_members[member_id]
 
             # Create board member
             board_member = BoardMember(
