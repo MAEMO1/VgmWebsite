@@ -1,59 +1,323 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('Support VGM') }}{% endblock %}
+{% block title %}{{ _('Steun VGM') }}{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card">
-                <div class="card-header">
-                    <h2>{{ _('Support VGM') }}</h2>
+<div class="donate-hero">
+    <div class="container">
+        <div class="hero-content text-center">
+            <h1 class="display-4 mb-4">{{ _('Steun onze Gemeenschap') }}</h1>
+            <p class="lead mb-4">{{ _('Help VGM bij het versterken van de moslimgemeenschap in Gent') }}</p>
+            <div class="donation-progress">
+                <div class="progress mb-3">
+                    <div class="progress-bar" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
-                <div class="card-body">
-                    <div class="mb-4">
-                        <p>{{ _('Your support helps VGM continue its work in serving and uniting the Muslim community in Ghent.') }}</p>
+                <div class="progress-stats">
+                    <div class="stat">
+                        <span class="stat-value">€6,500</span>
+                        <span class="stat-label">{{ _('Opgehaald') }}</span>
                     </div>
-
-                    <form method="POST">
-                        <div class="mb-3">
-                            <label for="amount" class="form-label">{{ _('Donation Amount (€)') }}</label>
-                            <input type="number" step="0.01" min="1" class="form-control" id="amount" name="amount" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="donor_name" class="form-label">{{ _('Your Name') }}</label>
-                            <input type="text" class="form-control" id="donor_name" name="donor_name">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="donor_email" class="form-label">{{ _('Email') }}</label>
-                            <input type="email" class="form-control" id="donor_email" name="donor_email">
-                            <small class="text-muted">{{ _('For donation receipt (optional)') }}</small>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="message" class="form-label">{{ _('Message (optional)') }}</label>
-                            <textarea class="form-control" id="message" name="message" rows="3"></textarea>
-                        </div>
-
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="is_anonymous" name="is_anonymous">
-                            <label class="form-check-label" for="is_anonymous">{{ _('Make donation anonymous') }}</label>
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-success">
-                                <i class="fas fa-heart"></i> {{ _('Complete Donation') }}
-                            </button>
-                            <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary">
-                                {{ _('Back to Home') }}
-                            </a>
-                        </div>
-                    </form>
+                    <div class="stat">
+                        <span class="stat-value">€10,000</span>
+                        <span class="stat-label">{{ _('Doel') }}</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<div class="donation-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="donation-card">
+                    <div class="donation-options mb-4">
+                        <h3 class="text-center mb-4">{{ _('Kies een donatiebedrag') }}</h3>
+                        <div class="amount-grid">
+                            <button class="amount-option" data-amount="10">€10</button>
+                            <button class="amount-option" data-amount="25">€25</button>
+                            <button class="amount-option" data-amount="50">€50</button>
+                            <button class="amount-option" data-amount="100">€100</button>
+                            <button class="amount-option" data-amount="250">€250</button>
+                            <button class="amount-option custom" data-amount="custom">
+                                {{ _('Ander bedrag') }}
+                            </button>
+                        </div>
+                    </div>
+
+                    <form method="POST" class="donation-form">
+                        <div class="custom-amount-input mb-4" style="display: none;">
+                            <label for="custom_amount" class="form-label">{{ _('Voer een bedrag in') }}</label>
+                            <div class="input-group">
+                                <span class="input-group-text">€</span>
+                                <input type="number" class="form-control" id="custom_amount" name="amount" min="1" step="0.01">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="monthly_donation" name="is_monthly">
+                                <label class="form-check-label" for="monthly_donation">
+                                    {{ _('Maak dit een maandelijkse donatie') }}
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="personal-info">
+                            <div class="mb-3">
+                                <label for="donor_name" class="form-label">{{ _('Naam') }}</label>
+                                <input type="text" class="form-control" id="donor_name" name="donor_name">
+                            </div>
+                            <div class="mb-3">
+                                <label for="donor_email" class="form-label">{{ _('E-mail') }}</label>
+                                <input type="email" class="form-control" id="donor_email" name="donor_email">
+                                <div class="form-text">{{ _('Voor donatiebewijs') }}</div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="is_anonymous" name="is_anonymous">
+                                    <label class="form-check-label" for="is_anonymous">
+                                        {{ _('Maak mijn donatie anoniem') }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg donation-submit">
+                                <i class="fas fa-heart me-2"></i>{{ _('Doneer Nu') }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="impact-section mt-5">
+                    <h3 class="text-center mb-4">{{ _('Uw Impact') }}</h3>
+                    <div class="impact-grid">
+                        <div class="impact-item">
+                            <div class="impact-icon">
+                                <i class="fas fa-mosque"></i>
+                            </div>
+                            <h4>{{ _('Moskeeën') }}</h4>
+                            <p>{{ _('Ondersteuning van 21 moskeeën in Gent') }}</p>
+                        </div>
+                        <div class="impact-item">
+                            <div class="impact-icon">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <h4>{{ _('Educatie') }}</h4>
+                            <p>{{ _('Islamitisch onderwijs en culturele programma\'s') }}</p>
+                        </div>
+                        <div class="impact-item">
+                            <div class="impact-icon">
+                                <i class="fas fa-hands-helping"></i>
+                            </div>
+                            <h4>{{ _('Gemeenschap') }}</h4>
+                            <p>{{ _('Sociale projecten en gemeenschapsactiviteiten') }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+:root {
+    --primary-color: #005A87;
+    --secondary-color: #41B7AC;
+    --accent-color: #FF4154;
+    --background-light: #F8F9FA;
+    --text-primary: #2C3E50;
+    --text-secondary: #6C757D;
+    --border-color: #E9ECEF;
+}
+
+/* Hero Section */
+.donate-hero {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 6rem 0;
+    margin-bottom: -4rem;
+}
+
+.hero-content {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Progress Bar */
+.donation-progress {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    border-radius: 1rem;
+    backdrop-filter: blur(10px);
+}
+
+.progress {
+    height: 1rem;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 1rem;
+}
+
+.progress-bar {
+    background-color: white;
+    border-radius: 1rem;
+}
+
+.progress-stats {
+    display: flex;
+    justify-content: space-between;
+    color: white;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* Donation Section */
+.donation-section {
+    padding: 6rem 0;
+    background-color: var(--background-light);
+}
+
+.donation-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Amount Grid */
+.amount-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.amount-option {
+    background: white;
+    border: 2px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.amount-option:hover {
+    border-color: var(--primary-color);
+    background: var(--background-light);
+}
+
+.amount-option.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* Impact Section */
+.impact-section {
+    padding: 3rem 0;
+}
+
+.impact-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+.impact-item {
+    text-align: center;
+}
+
+.impact-icon {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.impact-item h4 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.impact-item p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .amount-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .impact-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .donate-hero {
+        padding: 4rem 0;
+    }
+
+    .donation-progress {
+        padding: 1.5rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const amountOptions = document.querySelectorAll('.amount-option');
+    const customAmountInput = document.querySelector('.custom-amount-input');
+    const donationForm = document.querySelector('.donation-form');
+    const customAmountField = document.getElementById('custom_amount');
+
+    amountOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            const amount = this.dataset.amount;
+
+            // Remove active class from all options
+            amountOptions.forEach(opt => opt.classList.remove('active'));
+
+            // Add active class to clicked option
+            this.classList.add('active');
+
+            if (amount === 'custom') {
+                customAmountInput.style.display = 'block';
+                customAmountField.focus();
+            } else {
+                customAmountInput.style.display = 'none';
+                customAmountField.value = amount;
+            }
+        });
+    });
+
+    // Set initial amount
+    amountOptions[1].click(); // Select €25 by default
+});
+</script>
 {% endblock %}
