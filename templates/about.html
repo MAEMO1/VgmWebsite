@@ -73,7 +73,7 @@
                                  loading="lazy">
                         {% else %}
                             <div class="image-placeholder">
-                                <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" 
+                                <img src="{{ url_for('static', filename='images/image_1740420347783.png') }}" 
                                      alt="VGM Logo"
                                      loading="lazy"
                                      class="logo-placeholder">
@@ -151,7 +151,7 @@
                                                  alt="Huidige foto" class="current-photo">
                                             {% else %}
                                                 <div class="placeholder-preview">
-                                                    <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" 
+                                                    <img src="{{ url_for('static', filename='images/image_1740420347783.png') }}" 
                                                          alt="VGM Logo" class="logo-placeholder">
                                                 </div>
                                             {% endif %}
@@ -371,21 +371,20 @@
     align-items: center;
     justify-content: center;
     background: rgba(0, 90, 135, 0.05);
-    padding: 3rem;
+    padding: 2rem;
 }
 
 .logo-placeholder {
-    max-width: 70%;
+    max-width: 85%;
     height: auto;
     object-fit: contain;
-    opacity: 0.7;
-    filter: grayscale(20%);
+    opacity: 0.9;
     transition: all 0.3s ease;
 }
 
 .leader-card:hover .logo-placeholder {
-    opacity: 0.9;
-    filter: grayscale(0%);
+    opacity: 1;
+    transform: scale(1.05);
 }
 
 .leader-info {
@@ -470,7 +469,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem;
+    padding: 1.5rem;
 }
 
 .current-photo {
@@ -555,7 +554,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (preview) {
                         preview.innerHTML = `
                             <div class="placeholder-preview">
-                                <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" 
+                                <img src="{{ url_for('static', filename='images/image_1740420347783.png') }}" 
                                      alt="VGM Logo" class="logo-placeholder">
                             </div>`;
                     }
