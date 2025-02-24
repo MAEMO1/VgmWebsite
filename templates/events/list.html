@@ -16,37 +16,49 @@
     border: 1px solid var(--border-color);
 }
 
-.legend-item {
+/* Filter Styles */
+.calendar-filters {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.25rem;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
 }
 
-.legend-title {
+.filter-button {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 1.1rem;
-    font-weight: 700;
 }
 
-.legend-description {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    font-weight: normal;
-    margin-left: 1.5rem;
+.filter-button.vgm {
+    background-color: #FF4154;
+    color: white;
 }
 
-.legend-color {
-    width: 16px;
-    height: 16px;
-    border-radius: 4px;
+.filter-button.collab {
+    background-color: #41B7AC;
+    color: white;
 }
 
-.legend-vgm { background-color: #FF4154; }
-.legend-collab { background-color: #41B7AC; }
-.legend-individual { background-color: #0066FF; }
+.filter-button.individual {
+    background-color: #0066FF;
+    color: white;
+}
+
+.filter-button.disabled {
+    opacity: 0.5;
+    background-color: #f0f0f0;
+    color: #666;
+}
 
 /* Calendar Styles */
 #calendar {
@@ -250,6 +262,22 @@
         </div>
     </div>
 
+    <!-- Calendar Filters -->
+    <div class="calendar-filters">
+        <button class="filter-button vgm" data-type="vgm">
+            <div class="legend-color legend-vgm"></div>
+            VGM
+        </button>
+        <button class="filter-button collab" data-type="collab">
+            <div class="legend-color legend-collab"></div>
+            Co-Moskee
+        </button>
+        <button class="filter-button individual" data-type="individual">
+            <div class="legend-color legend-individual"></div>
+            Solo Moskee
+        </button>
+    </div>
+
     <!-- Calendar View -->
     <div id="calendar"></div>
 
@@ -355,6 +383,12 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
+    var activeFilters = {
+        vgm: true,
+        collab: true,
+        individual: true
+    };
+
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         height: 'auto',
@@ -376,9 +410,17 @@ document.addEventListener('DOMContentLoaded', function() {
         eventClick: function(info) {
             window.location.href = '/events/' + info.event.id;
         },
-        dayMaxEvents: true, // allow "more" link when too many events
-        locale: 'nl', // Set Dutch locale
-        firstDay: 1, // Start week on Monday
+        eventDidMount: function(info) {
+            // Hide events based on filters
+            const eventType = info.event.extendedProps.eventType === 'vgm' ? 'vgm' :
+                info.event.extendedProps.eventType === 'collaboration' ? 'collab' : 'individual';
+            if (!activeFilters[eventType]) {
+                info.el.style.display = 'none';
+            }
+        },
+        dayMaxEvents: true,
+        locale: 'nl',
+        firstDay: 1,
         buttonText: {
             today: 'Vandaag',
             month: 'Maand',
@@ -386,6 +428,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     calendar.render();
+
+    // Filter functionality
+    document.querySelectorAll('.filter-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const type = this.dataset.type;
+            activeFilters[type] = !activeFilters[type];
+
+            // Update button appearance
+            if (activeFilters[type]) {
+                this.classList.remove('disabled');
+            } else {
+                this.classList.add('disabled');
+            }
+
+            // Rerender calendar with new filters
+            calendar.refetchEvents();
+        });
+    });
 });
 </script>
 {% endblock %}
