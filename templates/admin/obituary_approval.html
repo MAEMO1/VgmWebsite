@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Obituary Approval - Admin{% endblock %}
+{% block title %}{{ _('Obituary Approval - Admin') }}{% endblock %}
 
 {% block content %}
 <div class="card">
     <div class="card-header">
-        <h2>Pending Obituaries</h2>
+        <h2>{{ _('Pending Obituaries') }}</h2>
     </div>
     <div class="card-body">
         {% if obituaries %}
@@ -13,11 +13,11 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Date of Death</th>
-                        <th>Funeral Date</th>
-                        <th>Submitted</th>
-                        <th>Actions</th>
+                        <th>{{ _('Name') }}</th>
+                        <th>{{ _('Date of Death') }}</th>
+                        <th>{{ _('Funeral Date') }}</th>
+                        <th>{{ _('Submitted') }}</th>
+                        <th>{{ _('Actions') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -29,16 +29,16 @@
                             {% if obituary.funeral_date %}
                                 {{ obituary.funeral_date.strftime('%d %B %Y %H:%M') }}
                             {% else %}
-                                Not specified
+                                {{ _('Not specified') }}
                             {% endif %}
                         </td>
                         <td>{{ obituary.created_at.strftime('%d %B %Y') }}</td>
                         <td>
                             <form method="POST" action="{{ url_for('approve_obituary', id=obituary.id) }}" class="d-inline">
-                                <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                <button type="submit" class="btn btn-success btn-sm">{{ _('Approve') }}</button>
                             </form>
                             <form method="POST" action="{{ url_for('delete_obituary', id=obituary.id) }}" class="d-inline">
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                <button type="submit" class="btn btn-danger btn-sm">{{ _('Delete') }}</button>
                             </form>
                         </td>
                     </tr>
@@ -47,7 +47,7 @@
             </table>
         </div>
         {% else %}
-        <p class="text-center">No pending obituaries to approve.</p>
+        <p class="text-center">{{ _('No pending obituaries to approve.') }}</p>
         {% endif %}
     </div>
 </div>

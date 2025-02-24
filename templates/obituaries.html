@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}Obituaries - Mosque Management{% endblock %}
+{% block title %}{{ _('Obituaries - Mosque Management') }}{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-md-8">
         <div class="card">
             <div class="card-header">
-                <h2>Recent Obituaries</h2>
+                <h2>{{ _('Recent Obituaries') }}</h2>
             </div>
             <div class="card-body">
                 {% for obituary in obituaries %}
@@ -15,37 +15,37 @@
                     <h4>{{ obituary.name }}</h4>
                     <div class="obituary-details">
                         <p class="text-muted">
-                            Date of Death: {{ obituary.date_of_death.strftime('%d %B %Y') }}
+                            {{ _('Date of Death') }}: {{ obituary.date_of_death.strftime('%d %B %Y') }}
                             {% if obituary.age %}
-                                <span class="ms-2">Age: {{ obituary.age }}</span>
+                                <span class="ms-2">{{ _('Age') }}: {{ obituary.age }}</span>
                             {% endif %}
                         </p>
                         {% if obituary.birth_place %}
-                            <p><strong>Place of Birth:</strong> {{ obituary.birth_place }}</p>
+                            <p><strong>{{ _('Place of Birth') }}:</strong> {{ obituary.birth_place }}</p>
                         {% endif %}
                         {% if obituary.death_place %}
-                            <p><strong>Place of Death:</strong> {{ obituary.death_place }}</p>
+                            <p><strong>{{ _('Place of Death') }}:</strong> {{ obituary.death_place }}</p>
                         {% endif %}
                         {% if obituary.funeral_date %}
                             <p>
-                                <strong>Funeral Service:</strong> 
+                                <strong>{{ _('Funeral Date & Time') }}:</strong> 
                                 {{ obituary.funeral_date.strftime('%d %B %Y at %H:%M') }}
                             </p>
                         {% endif %}
                         {% if obituary.prayer_time %}
                             <p>
-                                <strong>Prayer Time:</strong>
+                                <strong>{{ _('Prayer Time') }}:</strong>
                                 {{ obituary.prayer_time.strftime('%d %B %Y at %H:%M') }}
                             </p>
                         {% endif %}
                         {% if obituary.death_prayer_location %}
                             <p>
-                                <strong>Place of Death Prayer:</strong>
+                                <strong>{{ _('Place of Death Prayer') }}:</strong>
                                 {{ obituary.death_prayer_location }}
                             </p>
                         {% endif %}
                         {% if obituary.burial_location %}
-                            <p><strong>Burial Location:</strong> {{ obituary.burial_location }}</p>
+                            <p><strong>{{ _('Burial Location') }}:</strong> {{ obituary.burial_location }}</p>
                         {% endif %}
                         <p>{{ obituary.details }}</p>
                         {% if obituary.additional_notes %}
@@ -54,13 +54,13 @@
                         {% if current_user.is_authenticated %}
                             <button class="btn btn-sm btn-primary subscribe-notifications" 
                                     data-obituary-id="{{ obituary.id }}">
-                                <i class="fas fa-bell"></i> Subscribe to Updates
+                                <i class="fas fa-bell"></i> {{ _('Subscribe to Updates') }}
                             </button>
                         {% endif %}
                     </div>
                 </div>
                 {% else %}
-                <p class="text-center">No obituaries to display.</p>
+                <p class="text-center">{{ _('No obituaries to display.') }}</p>
                 {% endfor %}
             </div>
         </div>
@@ -69,59 +69,60 @@
         {% if current_user.is_authenticated and current_user.user_type == 'mosque' %}
             <div class="card">
                 <div class="card-header">
-                    <h3>Submit an Obituary</h3>
+                    <h3>{{ _('Submit an Obituary') }}</h3>
                 </div>
                 <div class="card-body">
                     <form method="POST" action="{{ url_for('obituaries.submit_obituary') }}">
                         <div class="mb-3">
-                            <label for="name" class="form-label">Name of Deceased</label>
+                            <label for="name" class="form-label">{{ _('Name of Deceased') }}</label>
                             <input type="text" class="form-control" id="name" name="name" required>
                         </div>
                         <div class="mb-3">
-                            <label for="age" class="form-label">Age</label>
+                            <label for="age" class="form-label">{{ _('Age') }}</label>
                             <input type="number" class="form-control" id="age" name="age">
                         </div>
                         <div class="mb-3">
-                            <label for="birth_place" class="form-label">Place of Birth</label>
+                            <label for="birth_place" class="form-label">{{ _('Place of Birth') }}</label>
                             <input type="text" class="form-control" id="birth_place" name="birth_place">
                         </div>
                         <div class="mb-3">
-                            <label for="death_place" class="form-label">Place of Death</label>
+                            <label for="death_place" class="form-label">{{ _('Place of Death') }}</label>
                             <input type="text" class="form-control" id="death_place" name="death_place">
                         </div>
                         <div class="mb-3">
-                            <label for="date_of_death" class="form-label">Date of Death</label>
+                            <label for="date_of_death" class="form-label">{{ _('Date of Death') }}</label>
                             <input type="date" class="form-control" id="date_of_death" name="date_of_death" required>
                         </div>
                         <div class="mb-3">
-                            <label for="funeral_date" class="form-label">Funeral Date & Time</label>
+                            <label for="funeral_date" class="form-label">{{ _('Funeral Date & Time') }}</label>
                             <input type="datetime-local" class="form-control" id="funeral_date" name="funeral_date">
                         </div>
                         <div class="mb-3">
-                            <label for="prayer_time" class="form-label">Prayer Time</label>
+                            <label for="prayer_time" class="form-label">{{ _('Prayer Time') }}</label>
                             <input type="datetime-local" class="form-control" id="prayer_time" name="prayer_time">
                         </div>
                         <div class="mb-3">
-                            <label for="death_prayer_location" class="form-label">Place of Death Prayer</label>
-                            <input type="text" class="form-control" id="death_prayer_location" name="death_prayer_location" placeholder="Enter the location where the death prayer will be held">
+                            <label for="death_prayer_location" class="form-label">{{ _('Place of Death Prayer') }}</label>
+                            <input type="text" class="form-control" id="death_prayer_location" name="death_prayer_location" 
+                                   placeholder="{{ _('Enter the location where the death prayer will be held') }}">
                         </div>
                         <div class="mb-3">
-                            <label for="burial_location" class="form-label">Burial Location</label>
+                            <label for="burial_location" class="form-label">{{ _('Burial Location') }}</label>
                             <input type="text" class="form-control" id="burial_location" name="burial_location">
                         </div>
                         <div class="mb-3">
-                            <label for="family_contact" class="form-label">Family Contact Information</label>
+                            <label for="family_contact" class="form-label">{{ _('Family Contact Information') }}</label>
                             <input type="text" class="form-control" id="family_contact" name="family_contact">
                         </div>
                         <div class="mb-3">
-                            <label for="details" class="form-label">Details</label>
+                            <label for="details" class="form-label">{{ _('Details') }}</label>
                             <textarea class="form-control" id="details" name="details" rows="3"></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="additional_notes" class="form-label">Additional Notes</label>
+                            <label for="additional_notes" class="form-label">{{ _('Additional Notes') }}</label>
                             <textarea class="form-control" id="additional_notes" name="additional_notes" rows="2"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit for Approval</button>
+                        <button type="submit" class="btn btn-primary">{{ _('Submit for Approval') }}</button>
                     </form>
                 </div>
             </div>
@@ -129,7 +130,7 @@
         {% if current_user.is_authenticated %}
             <div class="card mt-3">
                 <div class="card-header">
-                    <h3>Notification Preferences</h3>
+                    <h3>{{ _('Notification Preferences') }}</h3>
                 </div>
                 <div class="card-body">
                     <form method="POST" action="{{ url_for('obituaries.update_preferences') }}">
@@ -137,10 +138,10 @@
                             <input type="checkbox" class="form-check-input" id="notify_obituaries" 
                                    name="notify_obituaries" {% if current_user.notify_obituaries %}checked{% endif %}>
                             <label class="form-check-label" for="notify_obituaries">
-                                Receive notifications for new obituaries
+                                {{ _('Receive notifications for new obituaries') }}
                             </label>
                         </div>
-                        <button type="submit" class="btn btn-primary">Save Preferences</button>
+                        <button type="submit" class="btn btn-primary">{{ _('Save Preferences') }}</button>
                     </form>
                 </div>
             </div>
@@ -152,7 +153,6 @@
 {% block scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Handle notification subscription
     const subscribeButtons = document.querySelectorAll('.subscribe-notifications');
     subscribeButtons.forEach(button => {
         button.addEventListener('click', function() {
@@ -166,9 +166,9 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Successfully subscribed to notifications');
+                    alert('{{ _('Successfully subscribed to notifications') }}');
                     this.disabled = true;
-                    this.textContent = 'Subscribed';
+                    this.textContent = '{{ _('Subscribed') }}';
                 }
             });
         });
