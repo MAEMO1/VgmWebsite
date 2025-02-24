@@ -15,16 +15,15 @@ def index():
             'subtopics': [
                 'Maatschappij',
                 'Gemeenschap',
-                'Aankondigingen',
-                'Vorming & Educatie'
+                'Aankondigingen'
             ]
         },
-        'onderwijs': {
-            'title': 'Onderwijs & Onderzoek',
+        'vorming': {
+            'title': 'Vorming & Educatie',
             'subtopics': [
+                'Onderwijs & Onderzoek',
                 'Opvoeding & Jeugd',
-                'Workshops & Cursussen',
-                'Gemeenschapsleven'
+                'Workshops & Cursussen'
             ]
         },
         'gemeenschap': {
