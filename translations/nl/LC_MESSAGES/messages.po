@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-02-23 02:57+0000\n"
-"PO-Revision-Date: 2025-02-23 02:57+0000\n"
+"POT-Creation-Date: 2025-02-24 12:00+0000\n"
+"PO-Revision-Date: 2025-02-24 12:00+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: nl\n"
 "Language-Team: nl <LL@li.org>\n"
@@ -14,7 +14,56 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.12.1\n"
+
+#: templates/base.html:43
+msgid "Home"
+msgstr "Home"
+
+#: templates/base.html:46
+msgid "About Us"
+msgstr "Over Ons"
+
+#: templates/base.html:49 templates/mosques.html:3 templates/mosques.html:9
+msgid "Mosques in Ghent"
+msgstr "Moskeeën in Gent"
+
+#: templates/base.html:52
+msgid "Blog"
+msgstr "Blog"
+
+#: templates/base.html:55
+msgid "Events"
+msgstr "Evenementen"
+
+#: templates/base.html:58
+msgid "Obituaries"
+msgstr "Overlijdensberichten"
+
+#: templates/base.html:61
+msgid "Memorandum"
+msgstr "Memorandum"
+
+#: templates/base.html:64
+msgid "Contact"
+msgstr "Contact"
+
+#: templates/base.html:68
+msgid "Logout"
+msgstr "Uitloggen"
+
+#: templates/base.html:72 templates/register.html:10
+#: templates/register_admin.html:35
+msgid "Register"
+msgstr "Registreren"
+
+#: templates/base.html:75 templates/login.html:10 templates/login.html:30
+msgid "Login"
+msgstr "Inloggen"
+
+#: templates/base.html:114
+msgid "© 2024 Vereniging van Gentse Moskeeën. All rights reserved."
+msgstr "© 2024 Vereniging van Gentse Moskeeën. Alle rechten voorbehouden."
 
 #: templates/about.html:3 templates/about.html:10 templates/memorandum.html:19
 msgid "About VGM"
@@ -90,98 +139,49 @@ msgstr ""
 msgid "Save Changes"
 msgstr ""
 
-#: templates/base.html:43
-msgid "Home"
-msgstr "Home"
-
-#: templates/base.html:46
-msgid "About Us"
-msgstr "Over Ons"
-
-#: templates/base.html:49 templates/mosques.html:3 templates/mosques.html:9
-msgid "Mosques in Ghent"
-msgstr "Moskeeën in Gent"
-
-#: templates/base.html:52
-msgid "Blog"
-msgstr "Blog"
-
-#: templates/base.html:55
-msgid "Events"
-msgstr "Evenementen"
-
-#: templates/base.html:58
-msgid "Obituaries"
-msgstr "Overlijdensberichten"
-
-#: templates/base.html:61
-msgid "Memorandum"
-msgstr "Memorandum"
-
-#: templates/base.html:64
-msgid "Contact"
-msgstr "Contact"
-
-#: templates/base.html:68
-msgid "Logout"
-msgstr "Uitloggen"
-
-#: templates/base.html:72 templates/register.html:10
-#: templates/register_admin.html:35
-msgid "Register"
-msgstr "Registreren"
-
-#: templates/base.html:75 templates/login.html:10 templates/login.html:30
-msgid "Login"
-msgstr "Inloggen"
-
-#: templates/base.html:114
-msgid "© 2024 Vereniging van Gentse Moskeeën. All rights reserved."
-msgstr "© 2024 Vereniging van Gentse Moskeeën. Alle rechten voorbehouden."
-
 #: templates/edit_mosque.html:3 templates/edit_mosque.html:13
 msgid "Edit"
-msgstr ""
+msgstr "Bewerken"
 
 #: templates/edit_mosque.html:11 templates/mosque_detail.html:12
 msgid "Mosques"
-msgstr ""
+msgstr "Moskeeën"
 
 #: templates/edit_mosque.html:23 templates/mosque_detail.html:32
 msgid "Edit Mosque Information"
-msgstr ""
+msgstr "Moskee Informatie Bewerken"
 
 #: templates/edit_mosque.html:29 templates/mosque_detail.html:64
 msgid "Contact Information"
-msgstr ""
+msgstr "Contactgegevens"
 
 #: templates/edit_mosque.html:33
 msgid "Public Email"
-msgstr ""
+msgstr "Openbaar E-mailadres"
 
 #: templates/edit_mosque.html:40
 msgid "Website"
-msgstr ""
+msgstr "Website"
 
 #: templates/edit_mosque.html:49
 msgid "Phone Number"
-msgstr ""
+msgstr "Telefoonnummer"
 
 #: templates/edit_mosque.html:56
 msgid "Fax Number"
-msgstr ""
+msgstr "Faxnummer"
 
 #: templates/edit_mosque.html:65
 msgid "Emergency Contact Name"
-msgstr ""
+msgstr "Naam Contactpersoon voor Noodgevallen"
 
 #: templates/edit_mosque.html:72 templates/mosque_detail.html:87
 msgid "Emergency Phone"
-msgstr ""
+msgstr "Noodnummer"
 
 #: templates/edit_mosque.html:82 templates/mosque_detail.html:95
 msgid "Social Media"
-msgstr ""
+msgstr "Sociale Media"
 
 #: templates/edit_mosque.html:87
 msgid "Facebook"
@@ -205,19 +205,19 @@ msgstr ""
 
 #: templates/edit_mosque.html:134
 msgid "Basic Information"
-msgstr ""
+msgstr "Basisinformatie"
 
 #: templates/edit_mosque.html:136 templates/mosque_detail.html:50
 msgid "History"
-msgstr ""
+msgstr "Geschiedenis"
 
 #: templates/edit_mosque.html:138
 msgid "Share the history and background of your mosque"
-msgstr ""
+msgstr "Deel de geschiedenis en achtergrond van uw moskee"
 
 #: templates/edit_mosque.html:141
 msgid "Year of Establishment"
-msgstr ""
+msgstr "Oprichtingsjaar"
 
 #: templates/edit_mosque.html:149 templates/index.html:119
 #: templates/mosque_detail.html:131
@@ -226,51 +226,51 @@ msgstr "Gebedstijden"
 
 #: templates/edit_mosque.html:151
 msgid "Friday Prayer Time"
-msgstr ""
+msgstr "Vrijdaggebed Tijd"
 
 #: templates/edit_mosque.html:159
 msgid "Media"
-msgstr ""
+msgstr "Media"
 
 #: templates/edit_mosque.html:162
 msgid "Add Images"
-msgstr ""
+msgstr "Afbeeldingen Toevoegen"
 
 #: templates/edit_mosque.html:164
 msgid "You can select multiple images"
-msgstr ""
+msgstr "U kunt meerdere afbeeldingen selecteren"
 
 #: templates/edit_mosque.html:167
 msgid "Image Description"
-msgstr ""
+msgstr "Afbeeldingsbeschrijving"
 
 #: templates/edit_mosque.html:174
 msgid "Add Videos (YouTube/Vimeo URLs)"
-msgstr ""
+msgstr "Video's Toevoegen (YouTube/Vimeo URLs)"
 
 #: templates/edit_mosque.html:177 templates/edit_mosque.html:244
 msgid "Video Title"
-msgstr ""
+msgstr "Video Titel"
 
 #: templates/edit_mosque.html:182
 msgid "Add Another Video"
-msgstr ""
+msgstr "Nog een Video Toevoegen"
 
 #: templates/edit_mosque.html:191
 msgid "Cancel"
-msgstr ""
+msgstr "Annuleren"
 
 #: templates/edit_mosque.html:203
 msgid "Current Media"
-msgstr ""
+msgstr "Huidige Media"
 
 #: templates/edit_mosque.html:207
 msgid "Images"
-msgstr ""
+msgstr "Afbeeldingen"
 
 #: templates/edit_mosque.html:218 templates/mosque_detail.html:212
 msgid "Videos"
-msgstr ""
+msgstr "Video's"
 
 #: templates/index.html:3
 msgid "Welcome - VGM"
@@ -427,51 +427,51 @@ msgstr ""
 
 #: templates/mosque_detail.html:3
 msgid "Mosque Details"
-msgstr ""
+msgstr "Moskee Details"
 
 #: templates/mosque_detail.html:46
 msgid "About"
-msgstr ""
+msgstr "Over"
 
 #: templates/mosque_detail.html:55
 msgid "Establishment"
-msgstr ""
+msgstr "Oprichting"
 
 #: templates/mosque_detail.html:56
 msgid "Established in"
-msgstr ""
+msgstr "Opgericht in"
 
 #: templates/mosque_detail.html:84
 msgid "Emergency Contact"
-msgstr ""
+msgstr "Contact voor Noodgevallen"
 
 #: templates/mosque_detail.html:145
 msgid "Prayer times not available"
-msgstr ""
+msgstr "Gebedstijden niet beschikbaar"
 
 #: templates/mosque_detail.html:151
 msgid "Friday Prayer"
-msgstr ""
+msgstr "Vrijdaggebed"
 
 #: templates/mosque_detail.html:152
 msgid "Friday prayer is held at"
-msgstr ""
+msgstr "Vrijdaggebed wordt gehouden om"
 
 #: templates/mosque_detail.html:161
 msgid "Upcoming Events"
-msgstr ""
+msgstr "Aankomende Evenementen"
 
 #: templates/mosque_detail.html:177
 msgid "No upcoming events"
-msgstr ""
+msgstr "Geen aankomende evenementen"
 
 #: templates/mosque_detail.html:195
 msgid "Gallery"
-msgstr ""
+msgstr "Galerij"
 
 #: templates/mosque_detail.html:207
 msgid "No images available"
-msgstr ""
+msgstr "Geen afbeeldingen beschikbaar"
 
 #: templates/mosques.html:10
 msgid "Find mosques in the Ghent area"
@@ -600,3 +600,117 @@ msgstr ""
 #: templates/blog/index.html:14
 msgid "New Article"
 msgstr ""
+
+#: templates/about.html:15
+msgid "President"
+msgstr "Voorzitter"
+
+#: templates/about.html:16
+msgid "Vice President"
+msgstr "Vice-voorzitter"
+
+#: templates/about.html:17
+msgid "Secretary"
+msgstr "Secretaris"
+
+#: templates/about.html:18
+msgid "Treasurer"
+msgstr "Penningmeester"
+
+#: templates/about.html:19
+msgid "Member"
+msgstr "Lid"
+
+#: templates/mosque_detail.html:25
+msgid "Prayer Times"
+msgstr "Gebedstijden"
+
+#: templates/mosque_detail.html:30
+msgid "Today's Prayer Times"
+msgstr "Gebedstijden Vandaag"
+
+#: templates/mosque_detail.html:35
+msgid "Fajr"
+msgstr "Fajr"
+
+#: templates/mosque_detail.html:36
+msgid "Dhuhr"
+msgstr "Dhuhr"
+
+#: templates/mosque_detail.html:37
+msgid "Asr"
+msgstr "Asr"
+
+#: templates/mosque_detail.html:38
+msgid "Maghrib"
+msgstr "Maghrib"
+
+#: templates/mosque_detail.html:39
+msgid "Isha"
+msgstr "Isha"
+
+#: templates/events/list.html:5
+msgid "Upcoming Events"
+msgstr "Aankomende Evenementen"
+
+#: templates/events/list.html:15
+msgid "No upcoming events"
+msgstr "Geen aankomende evenementen"
+
+#: templates/events/detail.html:20
+msgid "Event Details"
+msgstr "Evenement Details"
+
+#: templates/events/detail.html:25
+msgid "Date"
+msgstr "Datum"
+
+#: templates/events/detail.html:26
+msgid "Time"
+msgstr "Tijd"
+
+#: templates/events/detail.html:27
+msgid "Location"
+msgstr "Locatie"
+
+#: templates/events/detail.html:35
+msgid "Register for Event"
+msgstr "Registreer voor Evenement"
+
+#: templates/events/detail.html:37
+msgid "Already Registered"
+msgstr "Al Geregistreerd"
+
+msgid "Confirm Password"
+msgstr "Bevestig Wachtwoord"
+
+
+msgid "Manage Board Members"
+msgstr "Beheer Bestuursleden"
+
+msgid "Add Member"
+msgstr "Lid Toevoegen"
+
+msgid "Term Period"
+msgstr "Termijn Periode"
+
+msgid "Role"
+msgstr "Functie"
+
+msgid "Save Changes"
+msgstr "Wijzigingen Opslaan"
+
+msgid "Delete"
+msgstr "Verwijderen"
+
+msgid "Edit Profile"
+msgstr "Profiel Bewerken"
+
+msgid "Settings"
+msgstr "Instellingen"
+
+msgid "Notifications"
+msgstr "Meldingen"
+
+msgid "Logout"
+msgstr "Uitloggen"
