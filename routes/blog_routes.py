@@ -8,10 +8,71 @@ blog = Blueprint('blog', __name__)
 
 @blog.route('/')
 def index():
+    # Get categories for the sidebar
+    categories = {
+        'maatschappij': {
+            'title': 'Maatschappelijke Thema\'s',
+            'subtopics': [
+                'Integratie & Burgerschap',
+                'Werk & Economie',
+                'Gezondheid & Welzijn',
+                'Duurzaamheid & Milieu'
+            ]
+        },
+        'onderwijs': {
+            'title': 'Onderwijs & Ontwikkeling',
+            'subtopics': [
+                'Islamitisch Onderwijs',
+                'Taalonderwijs',
+                'Beroepsontwikkeling',
+                'Studiebegeleiding'
+            ]
+        },
+        'gemeenschap': {
+            'title': 'Gemeenschap & Sociaal',
+            'subtopics': [
+                'Vrijwilligerswerk',
+                'Sociale Projecten',
+                'Buurtinitiatieven',
+                'Interculturele Dialoog'
+            ]
+        },
+        'spiritualiteit': {
+            'title': 'Spiritualiteit & Bezinning',
+            'subtopics': [
+                'Ramadan & Feestdagen',
+                'Dagelijkse Spiritualiteit',
+                'Gebedsdiensten',
+                'Religieuze Vieringen'
+            ]
+        },
+        'jeugd': {
+            'title': 'Jeugd & Toekomst',
+            'subtopics': [
+                'Jongerenactiviteiten',
+                'Sportactiviteiten',
+                'Mentoring & Coaching',
+                'Talentontwikkeling'
+            ]
+        },
+        'cultuur': {
+            'title': 'Cultuur & Traditie',
+            'subtopics': [
+                'Culturele Evenementen',
+                'Kunst & Creativiteit',
+                'Culinaire Tradities',
+                'Islamitische Geschiedenis'
+            ]
+        }
+    }
+
     posts = BlogPost.query.filter_by(
         published=True
     ).order_by(BlogPost.created_at.desc()).all()
-    return render_template('blog/index.html', posts=posts)
+
+    return render_template('blog/index.html', 
+                         posts=posts, 
+                         categories=categories)
 
 @blog.route('/gemeenschap')
 def community():

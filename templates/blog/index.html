@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('Blog - VGM') }}{% endblock %}
+{% block title %}{{ _('Nieuws & Reflecties - VGM') }}{% endblock %}
 
 {% block styles %}
 <style>
@@ -17,6 +17,87 @@
     --transition: all 0.3s ease;
 }
 
+.blog-container {
+    display: flex;
+    max-width: 1400px;
+    margin: 0 auto;
+    min-height: calc(100vh - 200px);
+}
+
+.sidebar {
+    width: 300px;
+    background: white;
+    padding: 2rem;
+    border-right: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.main-content {
+    flex: 1;
+    padding: 2rem;
+    background: var(--background-light);
+}
+
+.topic-section {
+    margin-bottom: 2rem;
+}
+
+.topic-header {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.topic-header:hover {
+    color: var(--secondary-color);
+}
+
+.topic-header i {
+    transition: transform 0.3s ease;
+}
+
+.topic-header.active i {
+    transform: rotate(180deg);
+}
+
+.subtopics {
+    margin-left: 1rem;
+    display: none;
+}
+
+.subtopics.active {
+    display: block;
+}
+
+.subtopic-link {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: 4px;
+    transition: var(--transition);
+}
+
+.subtopic-link:hover {
+    background: var(--background-light);
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.subtopic-link.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Articles Grid (existing styles remain) */
 .blog-container {
     max-width: 1400px;
     margin: 0 auto;
@@ -184,89 +265,171 @@
         font-size: 1rem;
     }
 }
+@media (max-width: 992px) {
+    .blog-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+}
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="blog-container">
-    {% if current_user.is_authenticated and current_user.is_admin %}
-    <div class="admin-controls">
-        <a href="{{ url_for('blog.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus me-2"></i>{{ _('Nieuw Artikel') }}
-        </a>
-    </div>
-    {% endif %}
-
-    {% if posts %}
-    <!-- Featured Article (Latest Post) -->
-    {% set featured = posts[0] %}
-    <div class="featured-article">
-        <div class="row g-0">
-            <div class="col-lg-6">
-                {% if featured.image_url %}
-                <img src="{{ featured.image_url }}" 
-                     class="featured-image" 
-                     alt="{{ featured.title }}"
-                     loading="lazy">
-                {% else %}
-                <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}"
-                     class="featured-image"
-                     alt="VGM Logo">
-                {% endif %}
+    <aside class="sidebar">
+        <h2 class="mb-4">{{ _('Categorieën') }}</h2>
+        {% for category_key, category in categories.items() %}
+        <div class="topic-section">
+            <div class="topic-header" data-category="{{ category_key }}">
+                {{ category.title }}
+                <i class="fas fa-chevron-down"></i>
             </div>
-            <div class="col-lg-6">
-                <div class="featured-content">
-                    <span class="featured-category">{{ _('Uitgelicht') }}</span>
-                    <h1 class="featured-title">{{ featured.title }}</h1>
-                    <p class="featured-excerpt">{{ featured.excerpt or featured.content[:300] + '...' }}</p>
-                    <div class="article-meta">
-                        <span><i class="fas fa-user me-2"></i>{{ featured.author.username }}</span>
-                        <span><i class="far fa-calendar me-2"></i>{{ featured.created_at.strftime('%d-%m-%Y') }}</span>
+            <div class="subtopics" id="{{ category_key }}-subtopics">
+                {% for subtopic in category.subtopics %}
+                <a href="#{{ category_key }}/{{ subtopic|lower }}" class="subtopic-link">
+                    {{ subtopic }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </aside>
+
+    <main class="main-content">
+        {% if current_user.is_authenticated and current_user.is_admin %}
+        <div class="admin-controls mb-4">
+            <a href="{{ url_for('blog.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>{{ _('Nieuw Artikel') }}
+            </a>
+        </div>
+        {% endif %}
+
+        {% if posts %}
+        <!-- Featured Article (Latest Post) -->
+        {% set featured = posts[0] %}
+        <div class="featured-article">
+            <div class="row g-0">
+                <div class="col-lg-6">
+                    {% if featured.image_url %}
+                    <img src="{{ featured.image_url }}" 
+                         class="featured-image" 
+                         alt="{{ featured.title }}"
+                         loading="lazy">
+                    {% else %}
+                    <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}"
+                         class="featured-image"
+                         alt="VGM Logo">
+                    {% endif %}
+                </div>
+                <div class="col-lg-6">
+                    <div class="featured-content">
+                        <span class="featured-category">{{ _('Uitgelicht') }}</span>
+                        <h1 class="featured-title">{{ featured.title }}</h1>
+                        <p class="featured-excerpt">{{ featured.excerpt or featured.content[:300] + '...' }}</p>
+                        <div class="article-meta">
+                            <span><i class="fas fa-user me-2"></i>{{ featured.author.username }}</span>
+                            <span><i class="far fa-calendar me-2"></i>{{ featured.created_at.strftime('%d-%m-%Y') }}</span>
+                        </div>
+                        <a href="{{ url_for('blog.view', slug=featured.slug) }}" class="btn btn-primary mt-4">
+                            {{ _('Lees Meer') }} <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
                     </div>
-                    <a href="{{ url_for('blog.view', slug=featured.slug) }}" class="btn btn-primary mt-4">
-                        {{ _('Lees Meer') }} <i class="fas fa-arrow-right ms-2"></i>
-                    </a>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Article Grid (Remaining Posts) -->
-    <div class="article-grid">
-        {% for post in posts[1:] %}
-        <article class="article-card">
-            <div class="article-image-wrapper">
-                {% if post.image_url %}
-                <img src="{{ post.image_url }}" 
-                     class="article-image" 
-                     alt="{{ post.title }}"
-                     loading="lazy">
-                {% else %}
-                <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}"
-                     class="article-image"
-                     alt="VGM Logo">
-                {% endif %}
-            </div>
-            <div class="article-content">
-                <div class="article-category">{{ _('Nieuws') }}</div>
-                <h2 class="article-title">{{ post.title }}</h2>
-                <p class="article-excerpt">{{ post.excerpt or post.content[:150] + '...' }}</p>
-                <div class="article-meta">
-                    <span><i class="fas fa-user me-1"></i>{{ post.author.username }}</span>
-                    <span><i class="far fa-calendar me-1"></i>{{ post.created_at.strftime('%d-%m-%Y') }}</span>
+        <!-- Article Grid (Remaining Posts) -->
+        <div class="article-grid">
+            {% for post in posts[1:] %}
+            <article class="article-card">
+                <div class="article-image-wrapper">
+                    {% if post.image_url %}
+                    <img src="{{ post.image_url }}" 
+                         class="article-image" 
+                         alt="{{ post.title }}"
+                         loading="lazy">
+                    {% else %}
+                    <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}"
+                         class="article-image"
+                         alt="VGM Logo">
+                    {% endif %}
                 </div>
-                <a href="{{ url_for('blog.view', slug=post.slug) }}" class="btn btn-outline-primary mt-3">
-                    {{ _('Lees Meer') }}
-                </a>
-            </div>
-        </article>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="text-center py-5">
-        <h2>{{ _('Nog geen blogartikelen beschikbaar') }}</h2>
-        <p class="text-muted">{{ _('Kom later terug voor nieuwe artikelen') }}</p>
-    </div>
-    {% endif %}
+                <div class="article-content">
+                    <div class="article-category">{{ _('Nieuws') }}</div>
+                    <h2 class="article-title">{{ post.title }}</h2>
+                    <p class="article-excerpt">{{ post.excerpt or post.content[:150] + '...' }}</p>
+                    <div class="article-meta">
+                        <span><i class="fas fa-user me-1"></i>{{ post.author.username }}</span>
+                        <span><i class="far fa-calendar me-1"></i>{{ post.created_at.strftime('%d-%m-%Y') }}</span>
+                    </div>
+                    <a href="{{ url_for('blog.view', slug=post.slug) }}" class="btn btn-outline-primary mt-3">
+                        {{ _('Lees Meer') }}
+                    </a>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <h2>{{ _('Nog geen blogartikelen beschikbaar') }}</h2>
+            <p class="text-muted">{{ _('Kom later terug voor nieuwe artikelen') }}</p>
+        </div>
+        {% endif %}
+    </main>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle category expansion
+    const topicHeaders = document.querySelectorAll('.topic-header');
+
+    topicHeaders.forEach(header => {
+        header.addEventListener('click', function() {
+            const categoryKey = this.dataset.category;
+            const subtopics = document.getElementById(`${categoryKey}-subtopics`);
+
+            // Toggle active class
+            this.classList.toggle('active');
+            subtopics.classList.toggle('active');
+
+            // Close other categories
+            topicHeaders.forEach(otherHeader => {
+                if (otherHeader !== header) {
+                    const otherCategoryKey = otherHeader.dataset.category;
+                    const otherSubtopics = document.getElementById(`${otherCategoryKey}-subtopics`);
+                    otherHeader.classList.remove('active');
+                    otherSubtopics.classList.remove('active');
+                }
+            });
+        });
+    });
+
+    // Handle subtopic navigation
+    const subtopicLinks = document.querySelectorAll('.subtopic-link');
+    subtopicLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Remove active class from all links
+            subtopicLinks.forEach(l => l.classList.remove('active'));
+
+            // Add active class to clicked link
+            this.classList.add('active');
+
+            // Here you would typically filter the articles based on the selected category/subtopic
+            // For now, we'll just update the URL hash
+            window.location.hash = this.getAttribute('href');
+        });
+    });
+});
+</script>
 {% endblock %}
