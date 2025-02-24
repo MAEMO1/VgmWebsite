@@ -6,22 +6,12 @@
 <div class="donate-hero">
     <div class="container">
         <div class="hero-content text-center">
-            <h1 class="display-4 mb-4">{{ _('Steun onze Gemeenschap') }}</h1>
-            <p class="lead mb-4">{{ _('Help VGM bij het versterken van de moslimgemeenschap in Gent') }}</p>
-            <div class="donation-progress">
-                <div class="progress mb-3">
-                    <div class="progress-bar" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-                <div class="progress-stats">
-                    <div class="stat">
-                        <span class="stat-value">€6,500</span>
-                        <span class="stat-label">{{ _('Opgehaald') }}</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value">€10,000</span>
-                        <span class="stat-label">{{ _('Doel') }}</span>
-                    </div>
-                </div>
+            <div class="quran-quote">
+                <p class="quote-text">
+                    "And spend [in the way of Allah] from what We have provided you before death approaches one of you and he says,
+                    'My Lord, if only You would delay me for a brief term so I would give charity and be among the righteous.'"
+                </p>
+                <p class="quote-source">[ Qur'an, 63:10 ]</p>
             </div>
         </div>
     </div>
@@ -84,6 +74,33 @@
                             </div>
                         </div>
 
+                        <div class="payment-methods mb-4">
+                            <h4 class="text-center mb-3">{{ _('Kies een betaalmethode') }}</h4>
+                            <div class="payment-grid">
+                                <div class="payment-option">
+                                    <input type="radio" name="payment_method" id="bank_transfer" value="bank_transfer" checked>
+                                    <label for="bank_transfer">
+                                        <i class="fas fa-university"></i>
+                                        <span>{{ _('Bankoverschrijving') }}</span>
+                                    </label>
+                                </div>
+                                <div class="payment-option">
+                                    <input type="radio" name="payment_method" id="paypal" value="paypal">
+                                    <label for="paypal">
+                                        <i class="fab fa-paypal"></i>
+                                        <span>PayPal</span>
+                                    </label>
+                                </div>
+                                <div class="payment-option">
+                                    <input type="radio" name="payment_method" id="apple_pay" value="apple_pay">
+                                    <label for="apple_pay">
+                                        <i class="fab fa-apple-pay"></i>
+                                        <span>Apple Pay</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary btn-lg donation-submit">
                                 <i class="fas fa-heart me-2"></i>{{ _('Doneer Nu') }}
@@ -140,60 +157,42 @@
 .donate-hero {
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     color: white;
-    padding: 6rem 0;
-    margin-bottom: -4rem;
+    padding: 8rem 0;
+    position: relative;
+    overflow: hidden;
 }
 
 .hero-content {
-    max-width: 700px;
+    max-width: 800px;
     margin: 0 auto;
 }
 
-/* Progress Bar */
-.donation-progress {
+.quran-quote {
     background: rgba(255, 255, 255, 0.1);
-    padding: 2rem;
+    padding: 3rem;
     border-radius: 1rem;
     backdrop-filter: blur(10px);
+    margin: 0 auto;
 }
 
-.progress {
-    height: 1rem;
-    background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 1rem;
-}
-
-.progress-bar {
-    background-color: white;
-    border-radius: 1rem;
-}
-
-.progress-stats {
-    display: flex;
-    justify-content: space-between;
-    color: white;
-}
-
-.stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.stat-value {
+.quote-text {
     font-size: 1.5rem;
-    font-weight: 600;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    font-weight: 300;
 }
 
-.stat-label {
-    font-size: 0.9rem;
-    opacity: 0.8;
+.quote-source {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    font-weight: 500;
 }
 
 /* Donation Section */
 .donation-section {
     padding: 6rem 0;
     background-color: var(--background-light);
+    margin-top: -4rem;
 }
 
 .donation-card {
@@ -233,6 +232,44 @@
     border-color: var(--primary-color);
 }
 
+/* Payment Methods */
+.payment-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.payment-option {
+    position: relative;
+}
+
+.payment-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+}
+
+.payment-option label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem;
+    border: 2px solid var(--border-color);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.payment-option label i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.payment-option input[type="radio"]:checked + label {
+    border-color: var(--primary-color);
+    background: var(--background-light);
+}
+
 /* Impact Section */
 .impact-section {
     padding: 3rem 0;
@@ -268,21 +305,34 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .amount-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .impact-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-
     .donate-hero {
         padding: 4rem 0;
     }
 
-    .donation-progress {
-        padding: 1.5rem;
+    .quran-quote {
+        padding: 2rem;
+    }
+
+    .quote-text {
+        font-size: 1.2rem;
+    }
+
+    .amount-grid,
+    .payment-grid,
+    .impact-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .payment-option label {
+        flex-direction: row;
+        justify-content: center;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .payment-option label i {
+        margin-bottom: 0;
     }
 }
 </style>
