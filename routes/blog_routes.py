@@ -27,10 +27,10 @@ def index():
             ]
         },
         'gemeenschap': {
-            'title': 'Projecten & Initiatieven',
+            'title': 'Gemeenschapsleven',
             'subtopics': [
-                'Vrijwilligers & Samenwerkingen',
-                'Geloof & Inspiratie'
+                'Projecten & Initiatieven',
+                'Vrijwilligers & Samenwerkingen'
             ]
         },
         'spiritualiteit': {
