@@ -5,9 +5,16 @@
 {% block styles %}
 <style>
 .obituaries-container {
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 2rem auto;
     padding: 1rem;
+}
+
+.section-header {
+    color: #005A87;
+    margin: 2rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #005A87;
 }
 
 .obituary-card {
@@ -104,17 +111,55 @@
     background: #004a70;
     color: white;
 }
+
+.faq-section {
+    margin-top: 4rem;
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 12px;
+}
+
+.faq-item {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.faq-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.faq-question {
+    font-weight: 600;
+    color: #005A87;
+    margin-bottom: 0.5rem;
+}
+
+.faq-answer {
+    color: #6c757d;
+}
+
+.no-records {
+    text-align: center;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    margin: 1rem 0;
+}
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="obituaries-container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>{{ _('Overlijdensberichten') }}</h1>
-    </div>
+    <h1>{{ _('Overlijdensberichten') }}</h1>
 
-    {% if obituaries %}
-        {% for obituary in obituaries %}
+    <!-- Eerstvolgende Dodengebeden -->
+    <h2 class="section-header">{{ _('Eerstvolgende Dodengebeden') }}</h2>
+    {% set upcoming_found = false %}
+    {% for obituary in upcoming_obituaries %}
+        {% set upcoming_found = true %}
         <div class="obituary-card">
             <div class="obituary-header">
                 <div>
@@ -126,15 +171,6 @@
                     {% endif %}
                 </div>
                 <span class="date-badge">{{ obituary.date_of_death.strftime('%d-%m-%Y') }}</span>
-            </div>
-
-            <div class="details-grid">
-                {% if obituary.death_place %}
-                <div class="detail-item">
-                    <div class="detail-label">{{ _('Plaats van Overlijden') }}</div>
-                    <div class="detail-value">{{ obituary.death_place }}</div>
-                </div>
-                {% endif %}
             </div>
 
             <div class="prayer-info">
@@ -191,13 +227,118 @@
             </div>
             {% endif %}
         </div>
-        {% endfor %}
-    {% else %}
-        <div class="text-center py-5">
-            <h2>{{ _('Geen overlijdensberichten') }}</h2>
-            <p class="text-muted">{{ _('Er zijn momenteel geen overlijdensberichten om weer te geven.') }}</p>
+    {% endfor %}
+    {% if not upcoming_found %}
+        <div class="no-records">
+            <h3>{{ _('Geen aankomende dodengebeden') }}</h3>
+            <p class="text-muted">{{ _('Er zijn momenteel geen aankomende dodengebeden gepland.') }}</p>
         </div>
     {% endif %}
+
+    <!-- Recent Overleden -->
+    <h2 class="section-header">{{ _('Recent Overleden') }}</h2>
+    {% set recent_found = false %}
+    {% for obituary in recent_obituaries %}
+        {% set recent_found = true %}
+        <div class="obituary-card">
+            <div class="obituary-header">
+                <div>
+                    <h2 class="obituary-title">{{ obituary.name }}</h2>
+                    {% if obituary.age %}
+                    <div class="text-muted mt-1">
+                        {{ obituary.age }} {{ _('jaar') }}
+                    </div>
+                    {% endif %}
+                </div>
+                <span class="date-badge">{{ obituary.date_of_death.strftime('%d-%m-%Y') }}</span>
+            </div>
+
+            <div class="prayer-info">
+                <div class="detail-item">
+                    <div class="detail-label">{{ _('Dodengebed') }}</div>
+                    <div class="detail-value">
+                        {{ obituary.death_prayer_location }}
+                        {% if obituary.prayer_time %}
+                            - {{ obituary.prayer_time.strftime('%d-%m-%Y %H:%M') }}
+                        {% elif obituary.prayer_after %}
+                            - {{ obituary.prayer_date.strftime('%d-%m-%Y') }} {{ {
+                                'fajr': _('Na Fajr (Ochtendgebed)'),
+                                'dhuhr': _('Na Dhuhr (Middaggebed)'),
+                                'asr': _('Na Asr (Namiddaggebed)'),
+                                'maghrib': _('Na Maghrib (Zonsonderganggebed)'),
+                                'isha': _('Na Isha (Avondgebed)'),
+                                'jumuah': _('Na Jumuah (Vrijdaggebed)')
+                            }[obituary.prayer_after] }}
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if obituary.burial_location %}
+                <div class="detail-item mt-2">
+                    <div class="detail-label">{{ _('Begraafplaats') }}</div>
+                    <div class="detail-value">{{ obituary.burial_location }}</div>
+                </div>
+                {% endif %}
+            </div>
+
+            {% if current_user.is_authenticated and (current_user.is_admin or current_user.id == obituary.mosque_id or current_user.id == obituary.submitter_id) %}
+            <div class="actions">
+                {% if not obituary.is_approved and current_user.id == obituary.mosque_id %}
+                <form action="{{ url_for('obituaries.verify_obituary', obituary_id=obituary.id) }}" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-success btn-sm">
+                        <i class="fas fa-check me-1"></i>{{ _('Verifiëren') }}
+                    </button>
+                </form>
+                {% endif %}
+
+                <a href="{{ url_for('obituaries.edit_obituary', obituary_id=obituary.id) }}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-edit me-1"></i>{{ _('Bewerken') }}
+                </a>
+
+                {% if current_user.is_admin %}
+                <form action="{{ url_for('obituaries.delete_obituary', obituary_id=obituary.id) }}" method="POST" 
+                      onsubmit="return confirm('{{ _('Weet u zeker dat u dit overlijdensbericht wilt verwijderen?') }}');"
+                      class="d-inline">
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash me-1"></i>{{ _('Verwijderen') }}
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+    {% if not recent_found %}
+        <div class="no-records">
+            <h3>{{ _('Geen recente overlijdensberichten') }}</h3>
+            <p class="text-muted">{{ _('Er zijn momenteel geen recente overlijdensberichten.') }}</p>
+        </div>
+    {% endif %}
+
+    <!-- Veelgestelde vragen -->
+    <div class="faq-section">
+        <h2 class="section-header">{{ _('Veelgestelde vragen') }}</h2>
+
+        <div class="faq-item">
+            <div class="faq-question">{{ _('Hoe kan ik een overlijdensbericht toevoegen?') }}</div>
+            <div class="faq-answer">{{ _('U kunt een overlijdensbericht toevoegen door op de + knop rechtsonder te klikken. Als u een moskee selecteert voor het dodengebed, moet deze het bericht eerst verifiëren voordat het wordt gepubliceerd.') }}</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">{{ _('Wie kan een overlijdensbericht bewerken?') }}</div>
+            <div class="faq-answer">{{ _('Een overlijdensbericht kan bewerkt worden door de persoon die het heeft toegevoegd, de geselecteerde moskee en de beheerders van de website.') }}</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">{{ _('Wanneer is verificatie nodig?') }}</div>
+            <div class="faq-answer">{{ _('Verificatie is alleen nodig wanneer u een specifieke moskee selecteert voor het dodengebed. Als u "Andere locatie" kiest, wordt het bericht direct gepubliceerd.') }}</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">{{ _('Hoe lang blijft een overlijdensbericht zichtbaar?') }}</div>
+            <div class="faq-answer">{{ _('Overlijdensberichten blijven zichtbaar in het archief. Recente overlijdens en aankomende dodengebeden worden prominent weergegeven op de pagina.') }}</div>
+        </div>
+    </div>
 
     <a href="{{ url_for('obituaries.create') }}" class="add-btn" title="{{ _('Overlijdensbericht Toevoegen') }}">
         <i class="fas fa-plus"></i>

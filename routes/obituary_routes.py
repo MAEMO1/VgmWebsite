@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from datetime import datetime
-from sqlalchemy import or_, case
+from datetime import datetime, timedelta
+from sqlalchemy import or_, case, and_
 from app import db
 from models import Obituary, ObituaryNotification, User
 from forms import ObituaryForm
@@ -13,26 +13,40 @@ def index():
     # Get current datetime
     now = datetime.now()
 
-    # Query obituaries with custom ordering
-    obituaries = Obituary.query.filter_by(is_approved=True)\
-        .order_by(
-            # First, sort by future dates (both specific times and prayer dates)
-            case(
-                # For specific times, use prayer_time
-                (Obituary.prayer_time >= now, 1),
-                # For prayer dates, use prayer_date
-                (Obituary.prayer_date >= now.date(), 1),
-                # Past events come last
-                else_=2
-            ),
-            # Then sort by the actual datetime
-            Obituary.prayer_time.asc().nullslast(),
-            Obituary.prayer_date.asc().nullslast(),
-            # Finally sort by date of death for items without prayer times
-            Obituary.date_of_death.desc()
-        ).all()
+    # Get upcoming obituaries (future prayer times and dates)
+    upcoming_obituaries = Obituary.query.filter(
+        and_(
+            Obituary.is_approved == True,
+            or_(
+                and_(Obituary.prayer_time.isnot(None), Obituary.prayer_time >= now),
+                and_(Obituary.prayer_date.isnot(None), Obituary.prayer_date >= now.date())
+            )
+        )
+    ).order_by(
+        # Sort by prayer time first, then by prayer date
+        Obituary.prayer_time.asc().nullslast(),
+        Obituary.prayer_date.asc().nullslast()
+    ).all()
 
-    return render_template('obituaries/index.html', obituaries=obituaries)
+    # Get recent obituaries (past 30 days, excluding those with future prayers)
+    thirty_days_ago = now - timedelta(days=30)
+    recent_obituaries = Obituary.query.filter(
+        and_(
+            Obituary.is_approved == True,
+            Obituary.date_of_death >= thirty_days_ago,
+            or_(
+                and_(Obituary.prayer_time.isnot(None), Obituary.prayer_time < now),
+                and_(Obituary.prayer_date.isnot(None), Obituary.prayer_date < now.date()),
+                and_(Obituary.prayer_time.is_(None), Obituary.prayer_date.is_(None))
+            )
+        )
+    ).order_by(
+        Obituary.date_of_death.desc()
+    ).all()
+
+    return render_template('obituaries/index.html',
+                         upcoming_obituaries=upcoming_obituaries,
+                         recent_obituaries=recent_obituaries)
 
 @obituaries.route('/create', methods=['GET', 'POST'])
 @login_required
