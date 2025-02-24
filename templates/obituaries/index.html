@@ -4,7 +4,7 @@
 
 {% block styles %}
 <style>
-:root {
+::root {
     --primary-color: #005A87;
     --secondary-color: #41B7AC;
     --accent-color: #FF4154;
@@ -195,6 +195,17 @@
                         onclick="subscribeToNotifications({{ obituary.id }})">
                     <i class="fas fa-bell me-2"></i>{{ _('Ontvang Updates') }}
                 </button>
+                {% if current_user.is_admin %}
+                <div class="actions">
+                    <form action="{{ url_for('obituaries.delete_obituary', obituary_id=obituary.id) }}" method="POST" 
+                          onsubmit="return confirm('{{ _('Weet u zeker dat u dit overlijdensbericht wilt verwijderen?') }}');"
+                          class="d-inline">
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash me-1"></i>{{ _('Verwijderen') }}
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
             </div>
             {% endif %}
         </div>

@@ -191,3 +191,42 @@ def update_preferences():
     db.session.commit()
     flash('Voorkeuren voor notificaties zijn bijgewerkt.', 'success')
     return redirect(url_for('obituaries.index'))
+
+@obituaries.route('/<int:obituary_id>/delete', methods=['POST'])
+@login_required
+def delete_obituary(obituary_id):
+    if not current_user.is_admin:
+        flash('U heeft geen toestemming om overlijdensberichten te verwijderen.', 'error')
+        return redirect(url_for('obituaries.index'))
+
+    obituary = Obituary.query.get_or_404(obituary_id)
+
+    try:
+        # Notify related parties about deletion
+        if obituary.mosque_id:
+            notification = ObituaryNotification(
+                user_id=obituary.mosque_id,
+                notification_type='deletion',
+                message=f'Overlijdensbericht voor {obituary.name} is verwijderd door een administrator'
+            )
+            db.session.add(notification)
+
+        # Notify submitter
+        if obituary.submitter_id:
+            notification = ObituaryNotification(
+                user_id=obituary.submitter_id,
+                notification_type='deletion',
+                message=f'Uw overlijdensbericht voor {obituary.name} is verwijderd door een administrator'
+            )
+            db.session.add(notification)
+
+        # Delete the obituary
+        db.session.delete(obituary)
+        db.session.commit()
+        flash('Overlijdensbericht is succesvol verwijderd.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Er is een fout opgetreden bij het verwijderen van het overlijdensbericht.', 'error')
+        print(f"Error: {str(e)}")
+
+    return redirect(url_for('obituaries.index'))
