@@ -20,13 +20,13 @@
             --primary-color: #41B7AC;     /* VGM Logo turquoise */
             --accent-color: #E8AE26;      /* VGM Logo gold */
             --text-color: #333333;        /* Dark gray for text */
-            --light-bg: #F8F9FA;          /* Very light gray for backgrounds */
+            --light-bg: #f6f6f6;          /* Light gray from logo rectangle */
             --border-color: #E9ECEF;      /* Light gray for borders */
             --white: #FFFFFF;             /* Pure white */
         }
 
         .navbar {
-            background: var(--white);
+            background: var(--light-bg);
             padding: 0.5rem 0;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
@@ -94,6 +94,7 @@
         }
 
         .dropdown-menu {
+            background: var(--light-bg);
             border: 1px solid var(--border-color);
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             border-radius: 8px;
@@ -107,9 +108,16 @@
         }
 
         .dropdown-item:hover {
-            background-color: var(--light-bg);
+            background-color: var(--white);
             color: var(--primary-color);
             transform: translateX(4px);
+        }
+
+        .navbar-collapse {
+            background: var(--light-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
         }
 
         main {
@@ -126,7 +134,7 @@
 
         @media (max-width: 992px) {
             .navbar-collapse {
-                background: white;
+                background: var(--light-bg); /* Updated background color */
                 padding: 1rem;
                 border-radius: 8px;
                 margin-top: 1rem;
