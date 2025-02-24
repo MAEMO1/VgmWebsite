@@ -5,6 +5,49 @@
 {% block styles %}
 <link href='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/main.min.css' rel='stylesheet' />
 <style>
+/* Calendar Legend Styles */
+.calendar-legend {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding: 1.2rem;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.legend-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+}
+
+.legend-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.legend-description {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: normal;
+    margin-left: 1.5rem;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+.legend-vgm { background-color: #FF4154; }
+.legend-collab { background-color: #41B7AC; }
+.legend-individual { background-color: #0066FF; }
+
 /* Bestaande stijlen behouden */
 .section {
     margin-bottom: 3rem;
@@ -24,40 +67,6 @@
     border-radius: 12px;
     border: 1px solid var(--border-color);
     margin-bottom: 2rem;
-}
-
-.calendar-legend {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    padding: 1rem;
-    background: white;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-}
-
-.legend-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.legend-color {
-    width: 16px;
-    height: 16px;
-    border-radius: 4px;
-}
-
-.legend-vgm {
-    background-color: #FF4154;
-}
-
-.legend-collab {
-    background-color: #41B7AC;
-}
-
-.legend-individual {
-    background-color: #0066FF;
 }
 
 .event-card {
@@ -198,16 +207,31 @@
     <!-- Calendar Legend -->
     <div class="calendar-legend">
         <div class="legend-item">
-            <div class="legend-color legend-vgm"></div>
-            <span>{{ _('VGM Events') }}</span>
+            <div class="legend-title">
+                <div class="legend-color legend-vgm"></div>
+                <span>VGM</span>
+            </div>
+            <div class="legend-description">
+                ({{ _('Evenementen georganiseerd door de Vereniging van Gentse Moskeeën') }})
+            </div>
         </div>
         <div class="legend-item">
-            <div class="legend-color legend-collab"></div>
-            <span>{{ _('Mosque Collaborations') }}</span>
+            <div class="legend-title">
+                <div class="legend-color legend-individual"></div>
+                <span>Solo Moskee</span>
+            </div>
+            <div class="legend-description">
+                ({{ _('Evenementen van een individuele moskee') }})
+            </div>
         </div>
         <div class="legend-item">
-            <div class="legend-color legend-individual"></div>
-            <span>{{ _('Mosque Events') }}</span>
+            <div class="legend-title">
+                <div class="legend-color legend-collab"></div>
+                <span>Co-Moskee</span>
+            </div>
+            <div class="legend-description">
+                ({{ _('Evenementen waarin meerdere moskeeën samenwerken') }})
+            </div>
         </div>
     </div>
 
@@ -216,7 +240,7 @@
 
     {% if vgm_events %}
     <div class="section">
-        <h2 class="section-title">{{ _('VGM Events') }}</h2>
+        <h2 class="section-title">VGM</h2>
         <div class="row">
             {% for event in vgm_events %}
             <div class="col-md-6 col-lg-4 mb-4">
@@ -245,7 +269,7 @@
 
     {% if collab_events %}
     <div class="section">
-        <h2 class="section-title">{{ _('Mosque Collaborations') }}</h2>
+        <h2 class="section-title">Co-Moskee</h2>
         <div class="row">
             {% for event in collab_events %}
             <div class="col-md-6 col-lg-4 mb-4">
@@ -274,7 +298,7 @@
 
     {% if individual_events %}
     <div class="section">
-        <h2 class="section-title">{{ _('Mosque Events') }}</h2>
+        <h2 class="section-title">Solo Moskee</h2>
         <div class="row">
             {% for event in individual_events %}
             <div class="col-md-6 col-lg-4 mb-4">
@@ -303,7 +327,7 @@
     {% if current_user.is_authenticated %}
     <div class="floating-action-button">
         <a href="{{ url_for('events.create_event') }}" class="btn btn-primary btn-lg">
-            <i class="fas fa-plus me-2"></i>{{ _('Create Event') }}
+            <i class="fas fa-plus me-2"></i>{{ _('Evenement Aanmaken') }}
         </a>
     </div>
     {% endif %}
