@@ -35,7 +35,7 @@
                              alt="Huidige foto" class="current-photo">
                     {% else %}
                         <div class="placeholder-preview">
-                            <img src="{{ url_for('static', filename='images/image_1740420347783.png') }}" 
+                            <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" 
                                  alt="VGM Logo" class="logo-placeholder">
                         </div>
                     {% endif %}
@@ -120,7 +120,7 @@
                                  loading="lazy">
                         {% else %}
                             <div class="image-placeholder">
-                                <img src="{{ url_for('static', filename='images/image_1740420347783.png') }}" 
+                                <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" 
                                      alt="VGM Logo"
                                      loading="lazy"
                                      class="logo-placeholder">
@@ -380,10 +380,6 @@
     transition: transform 0.3s ease;
 }
 
-.leader-card:hover .leader-image img {
-    transform: scale(1.05);
-}
-
 .image-placeholder {
     width: 100%;
     height: 100%;
@@ -395,7 +391,7 @@
 }
 
 .logo-placeholder {
-    max-width: 85%;
+    width: 85%;
     height: auto;
     object-fit: contain;
     opacity: 0.9;
