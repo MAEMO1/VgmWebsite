@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Profiel - VGM') }}{% endblock %}
+
+{% block styles %}
+<style>
+:root {
+    --primary-color: #005A87;
+    --secondary-color: #41B7AC;
+    --accent-color: #FF4154;
+    --background-light: #f8f9fa;
+    --text-primary: #2c3e50;
+    --text-secondary: #6c757d;
+    --border-color: #e9ecef;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --transition: all 0.3s ease;
+}
+
+.container {
+    max-width: 800px;
+    padding: 2rem 1rem;
+}
+
+.profile-card {
+    background: white;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+}
+
+.profile-header {
+    background: var(--primary-color);
+    color: white;
+    padding: 2rem;
+    position: relative;
+}
+
+.profile-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.profile-subtitle {
+    opacity: 0.9;
+    margin-top: 0.5rem;
+}
+
+.profile-body {
+    padding: 2rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+}
+
+.form-control {
+    padding: 0.875rem 1rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0,90,135,0.1);
+}
+
+.btn {
+    padding: 0.875rem 1.75rem;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.alert {
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 2rem 0;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="profile-card">
+        <div class="profile-header">
+            <h1 class="profile-title">{{ _('Mijn Profiel') }}</h1>
+            <p class="profile-subtitle">{{ _('Beheer je accountinstellingen') }}</p>
+        </div>
+        
+        <div class="profile-body">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <div class="mb-4">
+                    <label for="username" class="form-label">{{ _('Gebruikersnaam') }}</label>
+                    <input type="text" class="form-control" id="username" name="username" 
+                           value="{{ current_user.username }}" required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="email" class="form-label">{{ _('Email') }}</label>
+                    <input type="email" class="form-control" id="email" name="email" 
+                           value="{{ current_user.email }}" required>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="mb-4">
+                    <label for="new_password" class="form-label">{{ _('Nieuw Wachtwoord') }}</label>
+                    <input type="password" class="form-control" id="new_password" name="new_password"
+                           placeholder="{{ _('Laat leeg om het huidige wachtwoord te behouden') }}">
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    {{ _('Profiel Bijwerken') }}
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -914,3 +914,27 @@ def donate_mosque(mosque_id):
         return redirect(url_for('main.mosque_detail', mosque_id=mosque_id))
 
     return render_template('donate_mosque.html', mosque=mosque)
+
+# Add profile route after existing routes
+@routes.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    if request.method == 'POST':
+        try:
+            current_user.username = request.form.get('username')
+            current_user.email = request.form.get('email')
+
+            # Update password if provided
+            new_password = request.form.get('new_password')
+            if new_password:
+                current_user.password_hash = generate_password_hash(new_password)
+
+            db.session.commit()
+            flash('Profiel succesvol bijgewerkt!', 'success')
+            return redirect(url_for('main.profile'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Er is een fout opgetreden bij het bijwerken van uw profiel.', 'error')
+            print(f"Error updating profile: {e}")
+
+    return render_template('profile.html')
