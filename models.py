@@ -209,6 +209,10 @@ class BlogPost(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     published = db.Column(db.Boolean, default=True)
     image_url = db.Column(db.String(500))  # Featured image
+    video_url = db.Column(db.String(500))  # Video URL (YouTube, Vimeo, etc.)
+    video_platform = db.Column(db.String(50))  # 'youtube', 'vimeo', etc.
+    video_thumbnail = db.Column(db.String(500))  # Thumbnail for video
+    has_video = db.Column(db.Boolean, default=False)  # Quick check if post contains video
     slug = db.Column(db.String(200), unique=True, nullable=False)
     excerpt = db.Column(db.Text)  # Short description for preview
     is_featured = db.Column(db.Boolean, default=False)  # For highlighting important articles

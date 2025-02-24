@@ -64,6 +64,30 @@
     margin-top: 0.25rem;
 }
 
+.media-section {
+    background: var(--background-light);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.media-type-selector {
+    margin-bottom: 1.5rem;
+}
+
+.video-preview {
+    width: 100%;
+    max-width: 640px;
+    margin: 1rem 0;
+    border-radius: 8px;
+    overflow: hidden;
+    display: none;
+}
+
+.video-preview.active {
+    display: block;
+}
+
 .btn {
     padding: 0.75rem 1.5rem;
     font-weight: 500;
@@ -76,11 +100,6 @@
     border-color: var(--primary-color);
 }
 
-.btn-outline-secondary {
-    color: var(--text-secondary);
-    border-color: var(--border-color);
-}
-
 .preview-section {
     margin-top: 2rem;
     padding: 2rem;
@@ -91,26 +110,6 @@
 
 .preview-section.active {
     display: block;
-}
-
-/* Image Upload Preview */
-.image-preview {
-    width: 100%;
-    max-height: 300px;
-    border-radius: 8px;
-    overflow: hidden;
-    margin-top: 1rem;
-    display: none;
-}
-
-.image-preview.active {
-    display: block;
-}
-
-.image-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
 }
 </style>
 {% endblock %}
@@ -139,12 +138,37 @@
                     <textarea class="form-control" id="content" name="content" rows="10" required></textarea>
                 </div>
 
-                <div class="mb-4">
-                    <label for="image_url" class="form-label">{{ _('Afbeelding URL') }}</label>
-                    <input type="url" class="form-control" id="image_url" name="image_url">
-                    <div class="form-text">{{ _('URL van de hoofdafbeelding voor het artikel') }}</div>
-                    <div class="image-preview" id="imagePreview">
-                        <img src="" alt="Preview">
+                <div class="media-section">
+                    <div class="media-type-selector">
+                        <label class="form-label">{{ _('Media Type') }}</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="mediaType" id="imageType" value="image" checked>
+                            <label class="form-check-label" for="imageType">{{ _('Afbeelding') }}</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="mediaType" id="videoType" value="video">
+                            <label class="form-check-label" for="videoType">{{ _('Video') }}</label>
+                        </div>
+                    </div>
+
+                    <div id="imageSection" class="mb-4">
+                        <label for="image_url" class="form-label">{{ _('Afbeelding URL') }}</label>
+                        <input type="url" class="form-control" id="image_url" name="image_url">
+                        <div class="form-text">{{ _('URL van de hoofdafbeelding voor het artikel') }}</div>
+                        <div class="image-preview" id="imagePreview">
+                            <img src="" alt="Preview">
+                        </div>
+                    </div>
+
+                    <div id="videoSection" class="mb-4" style="display: none;">
+                        <label for="video_url" class="form-label">{{ _('Video URL') }}</label>
+                        <input type="url" class="form-control" id="video_url" name="video_url">
+                        <div class="form-text">{{ _('URL van de video (YouTube of Vimeo)') }}</div>
+                        <select class="form-control mt-2" id="video_platform" name="video_platform">
+                            <option value="youtube">YouTube</option>
+                            <option value="vimeo">Vimeo</option>
+                        </select>
+                        <div class="video-preview" id="videoPreview"></div>
                     </div>
                 </div>
 
@@ -153,6 +177,7 @@
                     <select class="form-control" id="category" name="category">
                         <option value="Nieuws">{{ _('Nieuws') }}</option>
                         <option value="Evenementen">{{ _('Evenementen') }}</option>
+                        <option value="Video">{{ _('Video') }}</option>
                         <option value="Gemeenschap">{{ _('Gemeenschap') }}</option>
                         <option value="Onderwijs">{{ _('Onderwijs') }}</option>
                         <option value="Cultuur">{{ _('Cultuur') }}</option>
@@ -193,9 +218,27 @@
 document.addEventListener('DOMContentLoaded', function() {
     const imageUrlInput = document.getElementById('image_url');
     const imagePreview = document.getElementById('imagePreview');
+    const videoUrlInput = document.getElementById('video_url');
+    const videoPreview = document.getElementById('videoPreview');
     const previewBtn = document.getElementById('previewBtn');
     const previewSection = document.getElementById('previewSection');
-    
+    const mediaTypeRadios = document.getElementsByName('mediaType');
+    const imageSection = document.getElementById('imageSection');
+    const videoSection = document.getElementById('videoSection');
+
+    // Media type toggle
+    mediaTypeRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.value === 'image') {
+                imageSection.style.display = 'block';
+                videoSection.style.display = 'none';
+            } else {
+                imageSection.style.display = 'none';
+                videoSection.style.display = 'block';
+            }
+        });
+    });
+
     // Image preview
     imageUrlInput.addEventListener('input', function() {
         const url = this.value;
@@ -206,6 +249,34 @@ document.addEventListener('DOMContentLoaded', function() {
             imagePreview.classList.remove('active');
         }
     });
+
+    // Video preview
+    function getVideoEmbedUrl(url, platform) {
+        if (platform === 'youtube') {
+            const videoId = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
+            return videoId ? `https://www.youtube.com/embed/${videoId[1]}` : null;
+        } else if (platform === 'vimeo') {
+            const videoId = url.match(/vimeo\.com\/([0-9]+)/i);
+            return videoId ? `https://player.vimeo.com/video/${videoId[1]}` : null;
+        }
+        return null;
+    }
+
+    function updateVideoPreview() {
+        const url = videoUrlInput.value;
+        const platform = document.getElementById('video_platform').value;
+        const embedUrl = getVideoEmbedUrl(url, platform);
+
+        if (embedUrl) {
+            videoPreview.innerHTML = `<iframe width="100%" height="360" src="${embedUrl}" frameborder="0" allowfullscreen></iframe>`;
+            videoPreview.classList.add('active');
+        } else {
+            videoPreview.classList.remove('active');
+        }
+    }
+
+    videoUrlInput.addEventListener('input', updateVideoPreview);
+    document.getElementById('video_platform').addEventListener('change', updateVideoPreview);
 
     // Article preview
     previewBtn.addEventListener('click', function() {
@@ -218,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('previewContent').innerHTML = content;
 
         previewSection.classList.toggle('active');
-        
+
         if (previewSection.classList.contains('active')) {
             previewSection.scrollIntoView({ behavior: 'smooth' });
         }

@@ -29,8 +29,22 @@ def create():
         title = request.form.get('title')
         content = request.form.get('content')
         excerpt = request.form.get('excerpt')
-        image_url = request.form.get('image_url')
+        category = request.form.get('category')
         is_featured = bool(request.form.get('is_featured', False))
+
+        # Handle media type (image or video)
+        media_type = request.form.get('mediaType')
+        image_url = None
+        video_url = None
+        video_platform = None
+        has_video = False
+
+        if media_type == 'image':
+            image_url = request.form.get('image_url')
+        else:  # video
+            video_url = request.form.get('video_url')
+            video_platform = request.form.get('video_platform')
+            has_video = bool(video_url)
 
         # Create URL-friendly slug from title
         slug = title.lower().replace(' ', '-')
@@ -40,10 +54,17 @@ def create():
             content=content,
             excerpt=excerpt,
             image_url=image_url,
+            video_url=video_url,
+            video_platform=video_platform,
+            has_video=has_video,
             slug=slug,
             author_id=current_user.id,
-            is_featured=is_featured
+            is_featured=is_featured,
+            category=category
         )
+
+        # Calculate reading time
+        post.reading_time = post.calculate_reading_time()
 
         db.session.add(post)
         db.session.commit()
