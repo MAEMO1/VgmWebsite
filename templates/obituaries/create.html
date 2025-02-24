@@ -55,6 +55,14 @@
     font-size: 0.875rem;
     margin-top: 0.25rem;
 }
+
+#other_location_container {
+    display: none;
+}
+
+#other_location_container.visible {
+    display: block;
+}
 </style>
 {% endblock %}
 
@@ -140,14 +148,23 @@
                 <h3 class="section-title">{{ _('Gebedsdienst Details') }}</h3>
 
                 <div class="mb-3">
-                    {{ form.mosque_id.label(class="form-label required-field") }}
-                    {{ form.mosque_id(class="form-control" + (" is-invalid" if form.mosque_id.errors else "")) }}
-                    {% if form.mosque_id.errors %}
-                        {% for error in form.mosque_id.errors %}
+                    {{ form.death_prayer_location.label(class="form-label required-field") }}
+                    {{ form.death_prayer_location(class="form-control" + (" is-invalid" if form.death_prayer_location.errors else "")) }}
+                    {% if form.death_prayer_location.errors %}
+                        {% for error in form.death_prayer_location.errors %}
                             <div class="error-message">{{ error }}</div>
                         {% endfor %}
                     {% endif %}
-                    <div class="help-text">{{ _('Dit bericht zal worden geverifieerd door de geselecteerde moskee') }}</div>
+                </div>
+
+                <div id="other_location_container" class="mb-3">
+                    {{ form.other_location_address.label(class="form-label required-field") }}
+                    {{ form.other_location_address(class="form-control" + (" is-invalid" if form.other_location_address.errors else "")) }}
+                    {% if form.other_location_address.errors %}
+                        {% for error in form.other_location_address.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
                 </div>
 
                 <div class="mb-3">
@@ -155,16 +172,6 @@
                     {{ form.prayer_time(class="form-control" + (" is-invalid" if form.prayer_time.errors else ""), type="datetime-local") }}
                     {% if form.prayer_time.errors %}
                         {% for error in form.prayer_time.errors %}
-                            <div class="error-message">{{ error }}</div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-
-                <div class="mb-3">
-                    {{ form.death_prayer_location.label(class="form-label") }}
-                    {{ form.death_prayer_location(class="form-control" + (" is-invalid" if form.death_prayer_location.errors else "")) }}
-                    {% if form.death_prayer_location.errors %}
-                        {% for error in form.death_prayer_location.errors %}
                             <div class="error-message">{{ error }}</div>
                         {% endfor %}
                     {% endif %}
@@ -239,6 +246,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 prayerTime.min = this.value + 'T00:00';
             }
         });
+    }
+
+    // Handle showing/hiding other location address field
+    const locationSelect = document.getElementById('death_prayer_location');
+    const otherLocationContainer = document.getElementById('other_location_container');
+
+    if (locationSelect && otherLocationContainer) {
+        locationSelect.addEventListener('change', function() {
+            if (this.value === 'andere') {
+                otherLocationContainer.classList.add('visible');
+                document.getElementById('other_location_address').required = true;
+            } else {
+                otherLocationContainer.classList.remove('visible');
+                document.getElementById('other_location_address').required = false;
+            }
+        });
+
+        // Check initial value
+        if (locationSelect.value === 'andere') {
+            otherLocationContainer.classList.add('visible');
+            document.getElementById('other_location_address').required = true;
+        }
     }
 });
 </script>

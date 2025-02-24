@@ -18,10 +18,15 @@ def create():
     # Get all mosques for the form dropdown
     mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
     form = ObituaryForm()
-    form.mosque_id.choices = [(mosque.id, mosque.username) for mosque in mosques]
+
+    # Format mosque names and add "Andere" option
+    mosque_choices = [(str(mosque.id), mosque.username.replace('_', ' ').title()) for mosque in mosques]
+    mosque_choices.append(('andere', 'Andere'))
+    form.death_prayer_location.choices = mosque_choices
 
     if form.validate_on_submit():
         try:
+            # Create the obituary
             obituary = Obituary(
                 name=form.name.data,
                 age=form.age.data,
@@ -29,20 +34,28 @@ def create():
                 death_place=form.death_place.data,
                 date_of_death=form.date_of_death.data,
                 prayer_time=form.prayer_time.data,
-                death_prayer_location=form.death_prayer_location.data,
                 burial_location=form.burial_location.data,
                 family_contact=form.family_contact.data,
                 additional_notes=form.additional_notes.data,
-                mosque_id=form.mosque_id.data,
                 submitter_id=current_user.id,
-                is_approved=current_user.is_admin or (current_user.user_type == 'mosque' and current_user.id == form.mosque_id.data)
+                is_approved=False  # Always require verification
             )
+
+            # Handle location
+            if form.death_prayer_location.data == 'andere':
+                obituary.death_prayer_location = form.other_location_address.data
+                obituary.mosque_id = None  # No mosque associated
+            else:
+                mosque_id = int(form.death_prayer_location.data)
+                obituary.mosque_id = mosque_id
+                obituary.death_prayer_location = User.query.get(mosque_id).username.replace('_', ' ').title()
 
             db.session.add(obituary)
             db.session.commit()
 
-            # Send notification to the selected mosque for verification if needed
-            if not obituary.is_approved:
+            # Send notifications
+            # To mosques
+            if obituary.mosque_id:
                 notification = ObituaryNotification(
                     obituary_id=obituary.id,
                     user_id=obituary.mosque_id,
@@ -50,13 +63,22 @@ def create():
                     message=f'Nieuw overlijdensbericht ter verificatie: {obituary.name}'
                 )
                 db.session.add(notification)
-                db.session.commit()
 
-                flash('Overlijdensbericht is ingediend en wacht op verificatie door de moskee.', 'info')
-            else:
-                flash('Overlijdensbericht is succesvol toegevoegd.', 'success')
+            # To admins
+            admins = User.query.filter_by(is_admin=True).all()
+            for admin in admins:
+                notification = ObituaryNotification(
+                    obituary_id=obituary.id,
+                    user_id=admin.id,
+                    notification_type='verification_needed',
+                    message=f'Nieuw overlijdensbericht ter verificatie: {obituary.name}'
+                )
+                db.session.add(notification)
 
+            db.session.commit()
+            flash('Overlijdensbericht is ingediend en wacht op verificatie.', 'info')
             return redirect(url_for('obituaries.index'))
+
         except Exception as e:
             db.session.rollback()
             flash('Er is een fout opgetreden bij het toevoegen van het overlijdensbericht. Probeer het opnieuw.', 'error')
@@ -78,20 +100,44 @@ def verify_obituary(obituary_id):
         flash('U heeft geen toestemming om dit overlijdensbericht te verifiëren.', 'error')
         return redirect(url_for('obituaries.index'))
 
+    # Get modification data
+    new_mosque_id = request.form.get('new_mosque_id')
+    if new_mosque_id and current_user.is_admin:
+        # Handle mosque change
+        old_mosque_id = obituary.mosque_id
+        obituary.mosque_id = int(new_mosque_id)
+
+        # Notify new mosque
+        notification = ObituaryNotification(
+            obituary_id=obituary.id,
+            user_id=new_mosque_id,
+            notification_type='mosque_changed',
+            message=f'U bent aangeduid voor het dodengebed van {obituary.name}'
+        )
+        db.session.add(notification)
+
+        # Notify original mosque if exists
+        if old_mosque_id:
+            notification = ObituaryNotification(
+                obituary_id=obituary.id,
+                user_id=old_mosque_id,
+                notification_type='mosque_changed',
+                message=f'Een andere moskee is aangeduid voor het dodengebed van {obituary.name}'
+            )
+            db.session.add(notification)
+
+        # Notify submitter
+        notification = ObituaryNotification(
+            obituary_id=obituary.id,
+            user_id=obituary.submitter_id,
+            notification_type='mosque_changed',
+            message=f'De moskee voor het dodengebed is gewijzigd'
+        )
+        db.session.add(notification)
+
     try:
         obituary.is_approved = True
         db.session.commit()
-
-        # Send notification to the submitter
-        notification = ObituaryNotification(
-            obituary_id=obituary.id,
-            user_id=obituary.submitter_id,  # Send to the person who submitted the obituary
-            notification_type='verified',
-            message=f'Uw overlijdensbericht voor {obituary.name} is geverifieerd.'
-        )
-        db.session.add(notification)
-        db.session.commit()
-
         flash('Overlijdensbericht is geverifieerd.', 'success')
     except Exception as e:
         db.session.rollback()
@@ -117,7 +163,9 @@ def pending_obituaries():
             is_approved=False
         ).order_by(Obituary.date_of_death.desc()).all()
 
-    return render_template('obituaries/pending.html', obituaries=pending)
+    # Get all mosques for the modification form
+    mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
+    return render_template('obituaries/pending.html', obituaries=pending, mosques=mosques)
 
 @obituaries.route('/<int:obituary_id>/subscribe', methods=['POST'])
 @login_required
@@ -127,7 +175,7 @@ def subscribe_notifications(obituary_id):
             obituary_id=obituary_id,
             user_id=current_user.id,
             notification_type='subscription',
-            message='Subscribed to obituary updates'
+            message='Geabonneerd op updates voor dit overlijdensbericht'
         )
         db.session.add(notification)
         db.session.commit()
