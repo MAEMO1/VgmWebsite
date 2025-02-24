@@ -4,7 +4,7 @@
 
 {% block styles %}
 <style>
-::root {
+:root {
     --primary-color: #005A87;
     --secondary-color: #41B7AC;
     --accent-color: #FF4154;
@@ -174,9 +174,7 @@
                         <label for="image_url" class="form-label">{{ _('Afbeelding URL') }}</label>
                         <input type="url" class="form-control" id="image_url" name="image_url">
                         <div class="form-text">{{ _('URL van de hoofdafbeelding voor het artikel') }}</div>
-                        <div class="image-preview" id="imagePreview">
-                            <img src="" alt="Preview">
-                        </div>
+                        <div class="image-preview" id="imagePreview"></div>
                     </div>
 
                     <div id="videoSection" class="mb-4" style="display: none;">
@@ -192,22 +190,41 @@
                 </div>
                 {% endif %}
 
+                <!-- Categories Section -->
                 <div class="mb-4">
-                    <label for="category" class="form-label">{{ _('Categorie') }}</label>
-                    <select class="form-control" id="category" name="category">
-                        {% if is_video %}
-                        <option value="Video" selected>{{ _('Video') }}</option>
-                        <option value="Gemeenschap">{{ _('Gemeenschap') }}</option>
-                        <option value="Onderwijs">{{ _('Onderwijs') }}</option>
-                        {% else %}
-                        <option value="Nieuws">{{ _('Nieuws') }}</option>
-                        <option value="Evenementen">{{ _('Evenementen') }}</option>
-                        <option value="Video">{{ _('Video') }}</option>
-                        <option value="Gemeenschap">{{ _('Gemeenschap') }}</option>
-                        <option value="Onderwijs">{{ _('Onderwijs') }}</option>
-                        <option value="Cultuur">{{ _('Cultuur') }}</option>
-                        {% endif %}
-                    </select>
+                    <label class="form-label">{{ _('Categorieën') }}</label>
+                    <div class="categories-container">
+                        {% for category_key, category in categories.items() %}
+                        <div class="category-section mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input category-checkbox" 
+                                       type="checkbox" 
+                                       name="categories[]" 
+                                       value="{{ category.title }}"
+                                       id="category-{{ category_key }}">
+                                <label class="form-check-label" for="category-{{ category_key }}">
+                                    {{ category.title }}
+                                </label>
+                            </div>
+                            <div class="subcategories ms-4">
+                                {% for subtopic in category.subtopics %}
+                                <div class="form-check">
+                                    <input class="form-check-input subcategory-checkbox" 
+                                           type="checkbox" 
+                                           name="subcategories[]" 
+                                           value="{{ subtopic }}"
+                                           data-parent="{{ category_key }}"
+                                           id="subcategory-{{ category_key }}-{{ loop.index }}">
+                                    <label class="form-check-label" for="subcategory-{{ category_key }}-{{ loop.index }}">
+                                        {{ subtopic }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="form-text">{{ _('Selecteer één of meerdere categorieën en subcategorieën voor dit artikel') }}</div>
                 </div>
 
                 <div class="mb-4">
@@ -250,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     {% if not is_video %}
     const imageUrlInput = document.getElementById('image_url');
-    const imagePreviewImg = document.getElementById('imagePreview').querySelector('img'); // Corrected selector
+    const imagePreview = document.getElementById('imagePreview');
     const mediaTypeRadios = document.getElementsByName('mediaType');
     const imageSection = document.getElementById('imageSection');
     const videoSection = document.getElementById('videoSection');
@@ -272,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function() {
     imageUrlInput.addEventListener('input', function() {
         const url = this.value;
         if (url) {
-            imagePreviewImg.src = url; // Use corrected selector
+            imagePreview.innerHTML = `<img src="${url}" alt="Preview">`;
             imagePreview.classList.add('active');
         } else {
             imagePreview.classList.remove('active');
@@ -325,6 +342,42 @@ document.addEventListener('DOMContentLoaded', function() {
         if (previewSection.classList.contains('active')) {
             previewSection.scrollIntoView({ behavior: 'smooth' });
         }
+    });
+
+    // Category checkboxes functionality
+    const categoryCheckboxes = document.querySelectorAll('.category-checkbox');
+    const subcategoryCheckboxes = document.querySelectorAll('.subcategory-checkbox');
+
+    // When a main category is checked/unchecked, toggle all its subcategories
+    categoryCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const categoryKey = this.id.replace('category-', '');
+            const subcategories = document.querySelectorAll(`[data-parent="${categoryKey}"]`);
+            subcategories.forEach(sub => {
+                sub.checked = this.checked;
+            });
+        });
+    });
+
+    // When all subcategories are checked/unchecked, toggle the main category
+    subcategoryCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const parentKey = this.dataset.parent;
+            const parentCheckbox = document.getElementById(`category-${parentKey}`);
+            const siblingCheckboxes = document.querySelectorAll(`[data-parent="${parentKey}"]`);
+            const allChecked = Array.from(siblingCheckboxes).every(cb => cb.checked);
+            const noneChecked = Array.from(siblingCheckboxes).every(cb => !cb.checked);
+
+            if (allChecked) {
+                parentCheckbox.checked = true;
+                parentCheckbox.indeterminate = false;
+            } else if (noneChecked) {
+                parentCheckbox.checked = false;
+                parentCheckbox.indeterminate = false;
+            } else {
+                parentCheckbox.indeterminate = true;
+            }
+        });
     });
 });
 </script>

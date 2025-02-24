@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_required, current_user
 from app import db
-from models import BlogPost
+from models import BlogPost, BlogCategory
 from datetime import datetime
 
 blog = Blueprint('blog', __name__)
@@ -43,6 +43,7 @@ def index():
         }
     }
 
+    # Get posts and their categories
     posts = BlogPost.query.filter_by(
         published=True
     ).order_by(BlogPost.created_at.desc()).all()
@@ -95,6 +96,41 @@ def create():
         flash('Alleen administrators kunnen content aanmaken.', 'error')
         return redirect(url_for('blog.index'))
 
+    # Get all categories for the form
+    categories = {
+        'actualiteit': {
+            'title': 'Actualiteit & Nieuws',
+            'subtopics': [
+                'Maatschappij',
+                'Gemeenschap',
+                'Aankondigingen'
+            ]
+        },
+        'vorming': {
+            'title': 'Vorming & Educatie',
+            'subtopics': [
+                'Onderwijs & Onderzoek',
+                'Opvoeding & Jeugd',
+                'Workshops & Cursussen'
+            ]
+        },
+        'gemeenschap': {
+            'title': 'Gemeenschapsleven',
+            'subtopics': [
+                'Projecten & Initiatieven',
+                'Vrijwilligers & Samenwerkingen'
+            ]
+        },
+        'spiritualiteit': {
+            'title': 'Geloof & Inspiratie',
+            'subtopics': [
+                'Aanbiddingen',
+                'Reflecties & Inspiratie',
+                'Lezingen'
+            ]
+        }
+    }
+
     # Determine if we're creating a video post based on the referrer
     is_video = request.referrer and 'gemeenschap' in request.referrer.lower()
 
@@ -102,7 +138,6 @@ def create():
         title = request.form.get('title')
         content = request.form.get('content')
         excerpt = request.form.get('excerpt')
-        category = request.form.get('category', 'Video' if is_video else 'Nieuws')
         is_featured = bool(request.form.get('is_featured', False))
 
         # Handle media type (image or video)
@@ -122,6 +157,7 @@ def create():
         # Create URL-friendly slug from title
         slug = title.lower().replace(' ', '-')
 
+        # Create the blog post
         post = BlogPost(
             title=title,
             content=content,
@@ -132,9 +168,28 @@ def create():
             has_video=has_video,
             slug=slug,
             author_id=current_user.id,
-            is_featured=is_featured,
-            category=category
+            is_featured=is_featured
         )
+
+        # Handle categories and subcategories
+        selected_categories = request.form.getlist('categories[]')
+        selected_subcategories = request.form.getlist('subcategories[]')
+
+        # Add main categories
+        for category_name in selected_categories:
+            category = BlogCategory.query.filter_by(name=category_name).first()
+            if not category:
+                category = BlogCategory(name=category_name)
+                db.session.add(category)
+            post.categories.append(category)
+
+        # Add subcategories
+        for subcategory_name in selected_subcategories:
+            subcategory = BlogCategory.query.filter_by(name=subcategory_name).first()
+            if not subcategory:
+                subcategory = BlogCategory(name=subcategory_name)
+                db.session.add(subcategory)
+            post.categories.append(subcategory)
 
         # Calculate reading time
         post.reading_time = post.calculate_reading_time()
@@ -142,7 +197,9 @@ def create():
         db.session.add(post)
         db.session.commit()
 
-        flash('Video succesvol toegevoegd!' if has_video else 'Blog post succesvol aangemaakt!', 'success')
+        flash('Video succesvol toegevoegd!' if has_video else 'Artikel succesvol aangemaakt!', 'success')
         return redirect(url_for('blog.view', slug=post.slug))
 
-    return render_template('blog/create.html', is_video=is_video)
+    return render_template('blog/create.html', 
+                         is_video=is_video,
+                         categories=categories)

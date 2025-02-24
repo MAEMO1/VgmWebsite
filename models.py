@@ -200,6 +200,25 @@ class BoardMember(db.Model):
     def __repr__(self):
         return f'<BoardMember {self.name} ({self.role})>'
 
+# Add new models for categories and tags
+class BlogCategory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    parent_id = db.Column(db.Integer, db.ForeignKey('blog_category.id'), nullable=True)
+    posts = db.relationship('BlogPost', secondary='post_categories', back_populates='categories')
+
+    # Self-referential relationship for parent-child categories
+    subcategories = db.relationship('BlogCategory',
+        backref=db.backref('parent', remote_side=[id]),
+        cascade="all, delete-orphan")
+
+# Association table for many-to-many relationship between posts and categories
+post_categories = db.Table('post_categories',
+    db.Column('post_id', db.Integer, db.ForeignKey('blog_post.id'), primary_key=True),
+    db.Column('category_id', db.Integer, db.ForeignKey('blog_category.id'), primary_key=True)
+)
+
+# Update BlogPost model to include categories relationship
 class BlogPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
@@ -216,8 +235,10 @@ class BlogPost(db.Model):
     slug = db.Column(db.String(200), unique=True, nullable=False)
     excerpt = db.Column(db.Text)  # Short description for preview
     is_featured = db.Column(db.Boolean, default=False)  # For highlighting important articles
-    category = db.Column(db.String(50), default='Nieuws')  # Article category
     reading_time = db.Column(db.Integer)  # Estimated reading time in minutes
+
+    # Add categories relationship
+    categories = db.relationship('BlogCategory', secondary='post_categories', back_populates='posts')
 
     def __repr__(self):
         return f'<BlogPost {self.title}>'
