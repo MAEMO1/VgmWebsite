@@ -26,6 +26,18 @@ def create():
 
     if form.validate_on_submit():
         try:
+            # Handle location first to determine death_prayer_location value
+            death_prayer_location = None
+            if form.death_prayer_location.data == '0':
+                death_prayer_location = form.other_location_address.data
+                mosque_id = None
+                is_approved = True  # Auto-approve if no mosque involved
+            else:
+                mosque_id = int(form.death_prayer_location.data)
+                mosque = User.query.get(mosque_id)
+                death_prayer_location = mosque.username.replace('_', ' ').title()
+                is_approved = current_user.is_admin  # Direct goedkeuring voor admins
+
             # Create the obituary
             obituary = Obituary(
                 name=form.name.data,
@@ -33,32 +45,24 @@ def create():
                 birth_place=form.birth_place.data,
                 death_place=form.death_place.data,
                 date_of_death=form.date_of_death.data,
-                death_prayer_location=form.death_prayer_location.data,
+                death_prayer_location=death_prayer_location,
                 prayer_time=form.prayer_time.data if form.time_type.data == 'specific' else None,
                 prayer_after=form.after_prayer.data if form.time_type.data == 'after_prayer' else None,
                 burial_location=form.burial_location.data,
                 family_contact=form.family_contact.data,
                 additional_notes=form.additional_notes.data,
                 submitter_id=current_user.id,
+                mosque_id=mosque_id,
+                is_approved=is_approved
             )
-
-            # Handle location
-            if form.death_prayer_location.data == '0':
-                obituary.mosque_id = None
-                obituary.is_approved = True  # Auto-approve if no mosque involved
-            else:
-                mosque_id = int(form.death_prayer_location.data)
-                obituary.mosque_id = mosque_id
-                obituary.death_prayer_location = User.query.get(mosque_id).username.replace('_', ' ').title()
-                obituary.is_approved = current_user.is_admin  # Direct goedkeuring voor admins
 
             db.session.add(obituary)
 
             # Send notification to mosque if needed
-            if obituary.mosque_id and not current_user.is_admin:
+            if mosque_id and not current_user.is_admin:
                 notification = ObituaryNotification(
                     obituary_id=obituary.id,
-                    user_id=obituary.mosque_id,
+                    user_id=mosque_id,
                     notification_type='verification_needed',
                     message=f'Nieuw overlijdensbericht ter verificatie: {obituary.name}'
                 )
@@ -66,7 +70,7 @@ def create():
 
             db.session.commit()
 
-            if obituary.is_approved:
+            if is_approved:
                 flash('Overlijdensbericht is succesvol toegevoegd.', 'success')
             else:
                 flash('Overlijdensbericht is ingediend en wacht op verificatie van de moskee.', 'info')
@@ -93,37 +97,26 @@ def edit_obituary(obituary_id):
     mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
     form = ObituaryForm(obj=obituary)
 
-    # Format mosque names and add "Andere" option
+    # Format mosque choices
     mosque_choices = [(str(mosque.id), mosque.username.replace('_', ' ').title()) for mosque in mosques]
     mosque_choices.append(('0', 'Andere locatie'))
     form.death_prayer_location.choices = mosque_choices
 
     if form.validate_on_submit():
         try:
-            # Update obituary details
-            obituary.name = form.name.data
-            obituary.age = form.age.data
-            obituary.birth_place = form.birth_place.data
-            obituary.death_place = form.death_place.data
-            obituary.date_of_death = form.date_of_death.data
-            obituary.prayer_time = form.prayer_time.data if form.time_type.data == 'specific' else None
-            obituary.prayer_after = form.after_prayer.data if form.time_type.data == 'after_prayer' else None
-            obituary.burial_location = form.burial_location.data
-            obituary.family_contact = form.family_contact.data
-            obituary.additional_notes = form.additional_notes.data
-
             # Handle location changes
-            old_mosque_id = obituary.mosque_id
             if form.death_prayer_location.data == '0':
-                obituary.death_prayer_location = 'Andere locatie'
+                obituary.death_prayer_location = form.other_location_address.data
                 obituary.mosque_id = None
                 obituary.is_approved = True
             else:
                 new_mosque_id = int(form.death_prayer_location.data)
-                if new_mosque_id != old_mosque_id:
+                mosque = User.query.get(new_mosque_id)
+                obituary.death_prayer_location = mosque.username.replace('_', ' ').title()
+
+                # Only update mosque_id and approval status if it changed
+                if new_mosque_id != obituary.mosque_id:
                     obituary.mosque_id = new_mosque_id
-                    obituary.death_prayer_location = User.query.get(new_mosque_id).username.replace('_', ' ').title()
-                    # Only require new approval if changed to different mosque and editor is not admin
                     if not current_user.is_admin:
                         obituary.is_approved = False
                         # Notify new mosque
@@ -135,6 +128,18 @@ def edit_obituary(obituary_id):
                         )
                         db.session.add(notification)
 
+            # Update other fields
+            obituary.name = form.name.data
+            obituary.age = form.age.data
+            obituary.birth_place = form.birth_place.data
+            obituary.death_place = form.death_place.data
+            obituary.date_of_death = form.date_of_death.data
+            obituary.prayer_time = form.prayer_time.data if form.time_type.data == 'specific' else None
+            obituary.prayer_after = form.after_prayer.data if form.time_type.data == 'after_prayer' else None
+            obituary.burial_location = form.burial_location.data
+            obituary.family_contact = form.family_contact.data
+            obituary.additional_notes = form.additional_notes.data
+
             db.session.commit()
             flash('Overlijdensbericht is succesvol bijgewerkt.', 'success')
             return redirect(url_for('obituaries.index'))
@@ -144,12 +149,12 @@ def edit_obituary(obituary_id):
             flash('Er is een fout opgetreden bij het bijwerken van het overlijdensbericht.', 'error')
             print(f"Error: {str(e)}")
 
-    # Pre-fill the form with current values
+    # Pre-fill the form
     if obituary.mosque_id:
         form.death_prayer_location.data = str(obituary.mosque_id)
     else:
         form.death_prayer_location.data = '0'
-        
+        form.other_location_address.data = obituary.death_prayer_location
 
     return render_template('obituaries/edit.html', form=form, obituary=obituary)
 
@@ -183,7 +188,6 @@ def delete_obituary(obituary_id):
     obituary = Obituary.query.get_or_404(obituary_id)
 
     try:
-        # Delete the obituary
         db.session.delete(obituary)
         db.session.commit()
         flash('Overlijdensbericht is succesvol verwijderd.', 'success')

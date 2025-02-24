@@ -95,6 +95,16 @@
                     {% endif %}
                 </div>
 
+                <div id="other_location_container">
+                    {{ form.other_location_address.label(class="form-label required-field") }}
+                    {{ form.other_location_address(class="form-control" + (" is-invalid" if form.other_location_address.errors else "")) }}
+                    {% if form.other_location_address.errors %}
+                        {% for error in form.other_location_address.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
                 <div class="mb-4">
                     {{ form.time_type.label(class="form-label required-field") }}
                     {{ form.time_type(class="form-select" + (" is-invalid" if form.time_type.errors else "")) }}
@@ -175,6 +185,70 @@
 </div>
 {% endblock %}
 
+{% block styles %}
+<style>
+.obituary-form {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.form-section {
+    margin-bottom: 2.5rem;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid #dee2e6;
+}
+
+.form-section:last-child {
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    color: #005A87;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #005A87;
+}
+
+.required-field::after {
+    content: "*";
+    color: #dc3545;
+    margin-left: 4px;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.help-text {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+#specific_time_container,
+#after_prayer_container,
+#other_location_container {
+    display: none;
+    margin-top: 1rem;
+}
+
+#specific_time_container.visible,
+#after_prayer_container.visible,
+#other_location_container.visible {
+    display: block;
+}
+</style>
+{% endblock %}
+
 {% block scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -210,6 +284,26 @@ document.addEventListener('DOMContentLoaded', function() {
         timeType.addEventListener('change', updateTimeContainers);
         // Initialize on page load
         updateTimeContainers();
+    }
+
+    // Handle location selection
+    const locationSelect = document.getElementById('death_prayer_location');
+    const otherLocationContainer = document.getElementById('other_location_container');
+
+    function updateLocationContainer() {
+        if (locationSelect.value === '0') {
+            otherLocationContainer.classList.add('visible');
+            document.getElementById('other_location_address').required = true;
+        } else {
+            otherLocationContainer.classList.remove('visible');
+            document.getElementById('other_location_address').required = false;
+        }
+    }
+
+    if (locationSelect) {
+        locationSelect.addEventListener('change', updateLocationContainer);
+        // Initialize on page load
+        updateLocationContainer();
     }
 
     // Ensure prayer time is after death date
