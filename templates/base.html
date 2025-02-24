@@ -27,7 +27,7 @@
 
         .navbar {
             background: var(--light-bg);
-            padding: 0.5rem 0;
+            padding: 0;
             box-shadow: none;
             border-bottom: 1px solid var(--border-color);
         }
@@ -36,7 +36,7 @@
             display: flex;
             align-items: center;
             gap: 1.5rem;
-            padding: 0.5rem 0;
+            padding: 0;
             transition: transform 0.3s ease;
             background: transparent;
         }
@@ -47,12 +47,13 @@
 
         .logo-container {
             width: 120px;
-            height: auto;
+            height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: transform 0.3s ease;
-            background: transparent;
+            background: var(--light-bg);
+            margin: 0;
             padding: 0;
         }
 
@@ -62,9 +63,11 @@
 
         .logo-img {
             width: 100%;
-            height: auto;
+            height: 100%;
             display: block;
             object-fit: contain;
+            margin: 0;
+            padding: 0;
         }
         .nav-link {
             color: var(--text-color);
