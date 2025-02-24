@@ -119,50 +119,7 @@
 
                     <div id="boardMembersForm">
                         {% for member in board_members %}
-                        <div class="board-member-entry">
-                            <input type="hidden" name="member_ids[]" value="{{ member.id }}">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Naam</label>
-                                    <input type="text" class="form-control" name="names[]" value="{{ member.name }}" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Functie</label>
-                                    <input type="text" class="form-control" name="roles[]" value="{{ member.role }}" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Moskee</label>
-                                    <select class="form-select" name="mosque_ids[]" required>
-                                        {% for mosque in mosques %}
-                                        <option value="{{ mosque.id }}" {% if mosque.id == member.mosque_id %}selected{% endif %}>
-                                            {{ mosque.mosque_name }}
-                                        </option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Foto</label>
-                                    <div class="image-upload-container">
-                                        <input type="file" class="form-control" name="photos[]" accept="image/*" 
-                                               onchange="previewImage(this)">
-                                        <div class="image-preview mt-2">
-                                            {% if member.image %}
-                                            <img src="{{ url_for('static', filename='images/board/' + member.image) }}" 
-                                                 alt="Huidige foto" class="current-photo">
-                                            {% else %}
-                                                <div class="placeholder-preview">
-                                                    <img src="{{ url_for('static', filename='images/image_1740420347783.png') }}" 
-                                                         alt="VGM Logo" class="logo-placeholder">
-                                                </div>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <button type="button" class="btn btn-outline-danger btn-sm mt-3 remove-member" onclick="removeMember(this)">
-                                <i class="fas fa-trash me-1"></i>Verwijderen
-                            </button>
-                        </div>
+                            {{ board_member_entry(member) }}
                         {% endfor %}
                     </div>
 
@@ -184,6 +141,7 @@
     </div>
 </div>
 {% endif %}
+
 {% endblock %}
 
 {% block styles %}
@@ -364,28 +322,6 @@
     transform: scale(1.05);
 }
 
-.image-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 90, 135, 0.05);
-    padding: 2rem;
-}
-
-.logo-placeholder {
-    max-width: 85%;
-    height: auto;
-    object-fit: contain;
-    opacity: 0.9;
-    transition: all 0.3s ease;
-}
-
-.leader-card:hover .logo-placeholder {
-    opacity: 1;
-    transform: scale(1.05);
-}
 
 .leader-info {
     padding: 2rem;
@@ -470,12 +406,15 @@
     align-items: center;
     justify-content: center;
     padding: 1.5rem;
+    background: rgba(0, 90, 135, 0.05);
+    border-radius: 8px;
 }
 
 .current-photo {
     width: 100%;
     height: auto;
     border-radius: 8px;
+    object-fit: cover;
 }
 
 .remove-member {
@@ -540,32 +479,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add member button handling
     const addMemberBtn = document.getElementById('addMemberBtn');
     const boardMembersForm = document.getElementById('boardMembersForm');
+    const memberTemplate = `{{ board_member_entry() | safe }}`;
+
     if (addMemberBtn && boardMembersForm) {
         addMemberBtn.addEventListener('click', function() {
-            const template = boardMembersForm.querySelector('.board-member-entry').cloneNode(true);
-
-            // Reset form values
-            template.querySelectorAll('input').forEach(input => {
-                if (input.type !== 'hidden') {
-                    input.value = '';
-                }
-                if (input.type === 'file') {
-                    const preview = input.nextElementSibling;
-                    if (preview) {
-                        preview.innerHTML = `
-                            <div class="placeholder-preview">
-                                <img src="{{ url_for('static', filename='images/image_1740420347783.png') }}" 
-                                     alt="VGM Logo" class="logo-placeholder">
-                            </div>`;
-                    }
-                }
-            });
-
-            // Reset member ID and select
-            template.querySelector('input[name="member_ids[]"]').value = '';
-            template.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
-
-            boardMembersForm.appendChild(template);
+            // Insert the template HTML
+            boardMembersForm.insertAdjacentHTML('beforeend', memberTemplate);
         });
     }
 });
@@ -592,4 +511,51 @@ function removeMember(button) {
     }
 }
 </script>
+
+{% macro board_member_entry(member=None) %}
+<div class="board-member-entry">
+    <input type="hidden" name="member_ids[]" value="{{ member.id if member else '' }}">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">Naam</label>
+            <input type="text" class="form-control" name="names[]" value="{{ member.name if member else '' }}" required>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Functie</label>
+            <input type="text" class="form-control" name="roles[]" value="{{ member.role if member else '' }}" required>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Moskee</label>
+            <select class="form-select" name="mosque_ids[]" required>
+                {% for mosque in mosques %}
+                <option value="{{ mosque.id }}" {% if member and mosque.id == member.mosque_id %}selected{% endif %}>
+                    {{ mosque.mosque_name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Foto</label>
+            <div class="image-upload-container">
+                <input type="file" class="form-control" name="photos[]" accept="image/*" onchange="previewImage(this)">
+                <div class="image-preview mt-2">
+                    {% if member and member.image %}
+                        <img src="{{ url_for('static', filename='images/board/' + member.image) }}" 
+                             alt="Huidige foto" class="current-photo">
+                    {% else %}
+                        <div class="placeholder-preview">
+                            <img src="{{ url_for('static', filename='images/image_1740420347783.png') }}" 
+                                 alt="VGM Logo" class="logo-placeholder">
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" class="btn btn-outline-danger btn-sm mt-3 remove-member" onclick="removeMember(this)">
+        <i class="fas fa-trash me-1"></i>Verwijderen
+    </button>
+</div>
+{% endmacro %}
+
 {% endblock %}
