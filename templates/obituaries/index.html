@@ -49,28 +49,6 @@
     font-size: 0.875rem;
 }
 
-.details-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.detail-item {
-    margin-bottom: 1rem;
-}
-
-.detail-label {
-    font-weight: 600;
-    color: #6c757d;
-    font-size: 0.875rem;
-    margin-bottom: 0.25rem;
-}
-
-.detail-value {
-    color: #2c3e50;
-}
-
 .prayer-info {
     background: #f8f9fa;
     padding: 1rem;
@@ -81,6 +59,9 @@
 
 .prayer-info .detail-label {
     color: #005A87;
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
 }
 
 .actions {
@@ -141,12 +122,18 @@
     color: #6c757d;
 }
 
-.no-records {
-    text-align: center;
-    padding: 2rem;
-    background: #f8f9fa;
-    border-radius: 12px;
-    margin: 1rem 0;
+.pagination {
+    margin: 2rem 0;
+}
+
+.page-link {
+    color: #005A87;
+    border-color: #005A87;
+}
+
+.page-item.active .page-link {
+    background-color: #005A87;
+    border-color: #005A87;
 }
 </style>
 {% endblock %}
@@ -155,164 +142,172 @@
 <div class="obituaries-container">
     <h1>{{ _('Overlijdensberichten') }}</h1>
 
-    <!-- Eerstvolgende Dodengebeden -->
-    <h2 class="section-header">{{ _('Eerstvolgende Dodengebeden') }}</h2>
-    {% set upcoming_found = false %}
-    {% for obituary in upcoming_obituaries %}
-        {% set upcoming_found = true %}
-        <div class="obituary-card">
-            <div class="obituary-header">
-                <div>
-                    <h2 class="obituary-title">{{ obituary.name }}</h2>
-                    {% if obituary.age %}
-                    <div class="text-muted mt-1">
-                        {{ obituary.age }} {{ _('jaar') }}
-                    </div>
-                    {% endif %}
-                </div>
-                <span class="date-badge">{{ obituary.date_of_death.strftime('%d-%m-%Y') }}</span>
-            </div>
-
-            <div class="prayer-info">
-                <div class="detail-item">
-                    <div class="detail-label">{{ _('Dodengebed') }}</div>
-                    <div class="detail-value">
-                        {{ obituary.death_prayer_location }}
-                        {% if obituary.prayer_time %}
-                            - {{ obituary.prayer_time.strftime('%d-%m-%Y %H:%M') }}
-                        {% elif obituary.prayer_after and obituary.prayer_date %}
-                            - {{ obituary.prayer_date.strftime('%d-%m-%Y') }} {{ {
-                                'fajr': _('Na Fajr (Ochtendgebed)'),
-                                'dhuhr': _('Na Dhuhr (Middaggebed)'),
-                                'asr': _('Na Asr (Namiddaggebed)'),
-                                'maghrib': _('Na Maghrib (Zonsonderganggebed)'),
-                                'isha': _('Na Isha (Avondgebed)'),
-                                'jumuah': _('Na Jumuah (Vrijdaggebed)')
-                            }[obituary.prayer_after] }}
-                        {% endif %}
-                    </div>
-                </div>
-
-                {% if obituary.burial_location %}
-                <div class="detail-item mt-2">
-                    <div class="detail-label">{{ _('Begraafplaats') }}</div>
-                    <div class="detail-value">{{ obituary.burial_location }}</div>
-                </div>
-                {% endif %}
-            </div>
-
-            {% if current_user.is_authenticated and (current_user.is_admin or current_user.id == obituary.mosque_id or current_user.id == obituary.submitter_id) %}
-            <div class="actions">
-                {% if not obituary.is_approved and current_user.id == obituary.mosque_id %}
-                <form action="{{ url_for('obituaries.verify_obituary', obituary_id=obituary.id) }}" method="POST" class="d-inline">
-                    <button type="submit" class="btn btn-success btn-sm">
-                        <i class="fas fa-check me-1"></i>{{ _('Verifiëren') }}
-                    </button>
-                </form>
-                {% endif %}
-
-                <a href="{{ url_for('obituaries.edit_obituary', obituary_id=obituary.id) }}" class="btn btn-primary btn-sm">
-                    <i class="fas fa-edit me-1"></i>{{ _('Bewerken') }}
-                </a>
-
-                {% if current_user.is_admin %}
-                <form action="{{ url_for('obituaries.delete_obituary', obituary_id=obituary.id) }}" method="POST" 
-                      onsubmit="return confirm('{{ _('Weet u zeker dat u dit overlijdensbericht wilt verwijderen?') }}');"
-                      class="d-inline">
-                    <button type="submit" class="btn btn-danger btn-sm">
-                        <i class="fas fa-trash me-1"></i>{{ _('Verwijderen') }}
-                    </button>
-                </form>
-                {% endif %}
-            </div>
-            {% endif %}
-        </div>
-    {% endfor %}
-    {% if not upcoming_found %}
-        <div class="no-records">
-            <h3>{{ _('Geen aankomende dodengebeden') }}</h3>
-            <p class="text-muted">{{ _('Er zijn momenteel geen aankomende dodengebeden gepland.') }}</p>
-        </div>
-    {% endif %}
-
     <!-- Recent Overleden -->
     <h2 class="section-header">{{ _('Recent Overleden') }}</h2>
-    {% set recent_found = false %}
     {% for obituary in recent_obituaries %}
-        {% set recent_found = true %}
-        <div class="obituary-card">
-            <div class="obituary-header">
-                <div>
-                    <h2 class="obituary-title">{{ obituary.name }}</h2>
-                    {% if obituary.age %}
-                    <div class="text-muted mt-1">
-                        {{ obituary.age }} {{ _('jaar') }}
-                    </div>
+    <div class="obituary-card">
+        <div class="obituary-header">
+            <div>
+                <h2 class="obituary-title">{{ obituary.name }}</h2>
+                {% if obituary.age %}
+                <div class="text-muted mt-1">
+                    {{ obituary.age }} {{ _('jaar') }}
+                </div>
+                {% endif %}
+            </div>
+            <span class="date-badge">{{ obituary.date_of_death.strftime('%d-%m-%Y') if obituary.date_of_death else '' }}</span>
+        </div>
+
+        <div class="prayer-info">
+            <div class="detail-item">
+                <div class="detail-label">{{ _('Dodengebed') }}</div>
+                <div class="detail-value">
+                    {{ obituary.death_prayer_location }}
+                    {% if obituary.prayer_time %}
+                        - {{ obituary.prayer_time.strftime('%d-%m-%Y %H:%M') }}
+                    {% elif obituary.prayer_after and obituary.prayer_date %}
+                        - {{ obituary.prayer_date.strftime('%d-%m-%Y') }} {{ {
+                            'fajr': _('Na Fajr (Ochtendgebed)'),
+                            'dhuhr': _('Na Dhuhr (Middaggebed)'),
+                            'asr': _('Na Asr (Namiddaggebed)'),
+                            'maghrib': _('Na Maghrib (Zonsonderganggebed)'),
+                            'isha': _('Na Isha (Avondgebed)'),
+                            'jumuah': _('Na Jumuah (Vrijdaggebed)')
+                        }[obituary.prayer_after] }}
                     {% endif %}
                 </div>
-                <span class="date-badge">{{ obituary.date_of_death.strftime('%d-%m-%Y') }}</span>
             </div>
 
-            <div class="prayer-info">
-                <div class="detail-item">
-                    <div class="detail-label">{{ _('Dodengebed') }}</div>
-                    <div class="detail-value">
-                        {{ obituary.death_prayer_location }}
-                        {% if obituary.prayer_time %}
-                            - {{ obituary.prayer_time.strftime('%d-%m-%Y %H:%M') }}
-                        {% elif obituary.prayer_after and obituary.prayer_date %}
-                            - {{ obituary.prayer_date.strftime('%d-%m-%Y') }} {{ {
-                                'fajr': _('Na Fajr (Ochtendgebed)'),
-                                'dhuhr': _('Na Dhuhr (Middaggebed)'),
-                                'asr': _('Na Asr (Namiddaggebed)'),
-                                'maghrib': _('Na Maghrib (Zonsonderganggebed)'),
-                                'isha': _('Na Isha (Avondgebed)'),
-                                'jumuah': _('Na Jumuah (Vrijdaggebed)')
-                            }[obituary.prayer_after] }}
-                        {% endif %}
-                    </div>
-                </div>
-
-                {% if obituary.burial_location %}
-                <div class="detail-item mt-2">
-                    <div class="detail-label">{{ _('Begraafplaats') }}</div>
-                    <div class="detail-value">{{ obituary.burial_location }}</div>
-                </div>
-                {% endif %}
-            </div>
-
-            {% if current_user.is_authenticated and (current_user.is_admin or current_user.id == obituary.mosque_id or current_user.id == obituary.submitter_id) %}
-            <div class="actions">
-                {% if not obituary.is_approved and current_user.id == obituary.mosque_id %}
-                <form action="{{ url_for('obituaries.verify_obituary', obituary_id=obituary.id) }}" method="POST" class="d-inline">
-                    <button type="submit" class="btn btn-success btn-sm">
-                        <i class="fas fa-check me-1"></i>{{ _('Verifiëren') }}
-                    </button>
-                </form>
-                {% endif %}
-
-                <a href="{{ url_for('obituaries.edit_obituary', obituary_id=obituary.id) }}" class="btn btn-primary btn-sm">
-                    <i class="fas fa-edit me-1"></i>{{ _('Bewerken') }}
-                </a>
-
-                {% if current_user.is_admin %}
-                <form action="{{ url_for('obituaries.delete_obituary', obituary_id=obituary.id) }}" method="POST" 
-                      onsubmit="return confirm('{{ _('Weet u zeker dat u dit overlijdensbericht wilt verwijderen?') }}');"
-                      class="d-inline">
-                    <button type="submit" class="btn btn-danger btn-sm">
-                        <i class="fas fa-trash me-1"></i>{{ _('Verwijderen') }}
-                    </button>
-                </form>
-                {% endif %}
+            {% if obituary.burial_location %}
+            <div class="detail-item mt-2">
+                <div class="detail-label">{{ _('Begraafplaats') }}</div>
+                <div class="detail-value">{{ obituary.burial_location }}</div>
             </div>
             {% endif %}
         </div>
-    {% endfor %}
-    {% if not recent_found %}
-        <div class="no-records">
-            <h3>{{ _('Geen recente overlijdensberichten') }}</h3>
-            <p class="text-muted">{{ _('Er zijn momenteel geen recente overlijdensberichten.') }}</p>
+
+        {% if current_user.is_authenticated and (current_user.is_admin or current_user.id == obituary.mosque_id or current_user.id == obituary.submitter_id) %}
+        <div class="actions">
+            {% if not obituary.is_approved and current_user.id == obituary.mosque_id %}
+            <form action="{{ url_for('obituaries.verify_obituary', obituary_id=obituary.id) }}" method="POST" class="d-inline">
+                <button type="submit" class="btn btn-success btn-sm">
+                    <i class="fas fa-check me-1"></i>{{ _('Verifiëren') }}
+                </button>
+            </form>
+            {% endif %}
+
+            <a href="{{ url_for('obituaries.edit_obituary', obituary_id=obituary.id) }}" class="btn btn-primary btn-sm">
+                <i class="fas fa-edit me-1"></i>{{ _('Bewerken') }}
+            </a>
+
+            {% if current_user.is_admin %}
+            <form action="{{ url_for('obituaries.delete_obituary', obituary_id=obituary.id) }}" method="POST" 
+                  onsubmit="return confirm('{{ _('Weet u zeker dat u dit overlijdensbericht wilt verwijderen?') }}');"
+                  class="d-inline">
+                <button type="submit" class="btn btn-danger btn-sm">
+                    <i class="fas fa-trash me-1"></i>{{ _('Verwijderen') }}
+                </button>
+            </form>
+            {% endif %}
         </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    {% if recent_pages > 1 %}
+    <nav aria-label="Recent obituaries pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% for p in range(1, recent_pages + 1) %}
+            <li class="page-item {% if p == recent_page %}active{% endif %}">
+                <a class="page-link" href="{{ url_for('obituaries.index', recent_page=p, upcoming_page=upcoming_page) }}">{{ p }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    <!-- Eerstvolgende Dodengebeden -->
+    <h2 class="section-header mt-5">{{ _('Eerstvolgende Dodengebeden') }}</h2>
+    {% for obituary in upcoming_obituaries %}
+    <div class="obituary-card">
+        <div class="obituary-header">
+            <div>
+                <h2 class="obituary-title">{{ obituary.name }}</h2>
+                {% if obituary.age %}
+                <div class="text-muted mt-1">
+                    {{ obituary.age }} {{ _('jaar') }}
+                </div>
+                {% endif %}
+            </div>
+            <span class="date-badge">{{ obituary.date_of_death.strftime('%d-%m-%Y') if obituary.date_of_death else '' }}</span>
+        </div>
+
+        <div class="prayer-info">
+            <div class="detail-item">
+                <div class="detail-label">{{ _('Dodengebed') }}</div>
+                <div class="detail-value">
+                    {{ obituary.death_prayer_location }}
+                    {% if obituary.prayer_time %}
+                        - {{ obituary.prayer_time.strftime('%d-%m-%Y %H:%M') }}
+                    {% elif obituary.prayer_after and obituary.prayer_date %}
+                        - {{ obituary.prayer_date.strftime('%d-%m-%Y') }} {{ {
+                            'fajr': _('Na Fajr (Ochtendgebed)'),
+                            'dhuhr': _('Na Dhuhr (Middaggebed)'),
+                            'asr': _('Na Asr (Namiddaggebed)'),
+                            'maghrib': _('Na Maghrib (Zonsonderganggebed)'),
+                            'isha': _('Na Isha (Avondgebed)'),
+                            'jumuah': _('Na Jumuah (Vrijdaggebed)')
+                        }[obituary.prayer_after] }}
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if obituary.burial_location %}
+            <div class="detail-item mt-2">
+                <div class="detail-label">{{ _('Begraafplaats') }}</div>
+                <div class="detail-value">{{ obituary.burial_location }}</div>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if current_user.is_authenticated and (current_user.is_admin or current_user.id == obituary.mosque_id or current_user.id == obituary.submitter_id) %}
+        <div class="actions">
+            {% if not obituary.is_approved and current_user.id == obituary.mosque_id %}
+            <form action="{{ url_for('obituaries.verify_obituary', obituary_id=obituary.id) }}" method="POST" class="d-inline">
+                <button type="submit" class="btn btn-success btn-sm">
+                    <i class="fas fa-check me-1"></i>{{ _('Verifiëren') }}
+                </button>
+            </form>
+            {% endif %}
+
+            <a href="{{ url_for('obituaries.edit_obituary', obituary_id=obituary.id) }}" class="btn btn-primary btn-sm">
+                <i class="fas fa-edit me-1"></i>{{ _('Bewerken') }}
+            </a>
+
+            {% if current_user.is_admin %}
+            <form action="{{ url_for('obituaries.delete_obituary', obituary_id=obituary.id) }}" method="POST" 
+                  onsubmit="return confirm('{{ _('Weet u zeker dat u dit overlijdensbericht wilt verwijderen?') }}');"
+                  class="d-inline">
+                <button type="submit" class="btn btn-danger btn-sm">
+                    <i class="fas fa-trash me-1"></i>{{ _('Verwijderen') }}
+                </button>
+            </form>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    {% if upcoming_pages > 1 %}
+    <nav aria-label="Upcoming prayers pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% for p in range(1, upcoming_pages + 1) %}
+            <li class="page-item {% if p == upcoming_page %}active{% endif %}">
+                <a class="page-link" href="{{ url_for('obituaries.index', recent_page=recent_page, upcoming_page=p) }}">{{ p }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </nav>
     {% endif %}
 
     <!-- Veelgestelde vragen -->
