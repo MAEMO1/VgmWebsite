@@ -10,58 +10,40 @@ blog = Blueprint('blog', __name__)
 def index():
     # Get categories for the sidebar
     categories = {
-        'maatschappij': {
-            'title': 'Maatschappelijke Thema\'s',
+        'actualiteit': {
+            'title': 'Actualiteit & Nieuws',
             'subtopics': [
-                'Integratie & Burgerschap',
-                'Werk & Economie',
-                'Gezondheid & Welzijn',
-                'Duurzaamheid & Milieu'
+                'Lokaal Nieuws',
+                'Moskee Updates',
+                'Gemeenschap Nieuws',
+                'Aankondigingen'
             ]
         },
         'onderwijs': {
-            'title': 'Onderwijs & Ontwikkeling',
+            'title': 'Onderwijs & Vorming',
             'subtopics': [
                 'Islamitisch Onderwijs',
                 'Taalonderwijs',
-                'Beroepsontwikkeling',
-                'Studiebegeleiding'
+                'Studiebegeleiding',
+                'Opvoeding'
             ]
         },
         'gemeenschap': {
-            'title': 'Gemeenschap & Sociaal',
+            'title': 'Gemeenschap',
             'subtopics': [
+                'Projecten & Initiatieven',
                 'Vrijwilligerswerk',
-                'Sociale Projecten',
-                'Buurtinitiatieven',
-                'Interculturele Dialoog'
+                'Samenwerkingen',
+                'Activiteiten'
             ]
         },
         'spiritualiteit': {
-            'title': 'Spiritualiteit & Bezinning',
+            'title': 'Geloof & Spiritualiteit',
             'subtopics': [
                 'Ramadan & Feestdagen',
-                'Dagelijkse Spiritualiteit',
+                'Bezinning',
                 'Gebedsdiensten',
-                'Religieuze Vieringen'
-            ]
-        },
-        'jeugd': {
-            'title': 'Jeugd & Toekomst',
-            'subtopics': [
-                'Jongerenactiviteiten',
-                'Sportactiviteiten',
-                'Mentoring & Coaching',
-                'Talentontwikkeling'
-            ]
-        },
-        'cultuur': {
-            'title': 'Cultuur & Traditie',
-            'subtopics': [
-                'Culturele Evenementen',
-                'Kunst & Creativiteit',
-                'Culinaire Tradities',
-                'Islamitische Geschiedenis'
+                'Lezingen'
             ]
         }
     }
