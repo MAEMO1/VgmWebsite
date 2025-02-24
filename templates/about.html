@@ -150,8 +150,10 @@
                                             <img src="{{ url_for('static', filename='images/board/' + member.image) }}" 
                                                  alt="Huidige foto" class="current-photo">
                                             {% else %}
-                                            <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" 
-                                                 alt="VGM Logo" class="current-photo logo-placeholder">
+                                                <div class="placeholder-preview">
+                                                    <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" 
+                                                         alt="VGM Logo" class="logo-placeholder">
+                                                </div>
                                             {% endif %}
                                         </div>
                                     </div>
@@ -369,15 +371,15 @@
     align-items: center;
     justify-content: center;
     background: rgba(0, 90, 135, 0.05);
-    padding: 2rem;
+    padding: 3rem;
 }
 
 .logo-placeholder {
-    width: 60%;
+    max-width: 70%;
     height: auto;
     object-fit: contain;
     opacity: 0.7;
-    filter: grayscale(20%) opacity(80%);
+    filter: grayscale(20%);
     transition: all 0.3s ease;
 }
 
@@ -452,23 +454,29 @@
 
 .image-preview {
     max-width: 200px;
-    max-height: 200px;
+    min-height: 200px;
     overflow: hidden;
     border-radius: 8px;
     margin-top: 1rem;
+    background: rgba(0, 90, 135, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.image-preview img {
+.placeholder-preview {
     width: 100%;
-    height: auto;
-    object-fit: cover;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
 }
 
 .current-photo {
-    max-width: 100%;
+    width: 100%;
     height: auto;
     border-radius: 8px;
-    margin-bottom: 1rem;
 }
 
 .remove-member {
@@ -545,15 +553,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (input.type === 'file') {
                     const preview = input.nextElementSibling;
                     if (preview) {
-                        preview.innerHTML = `<img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" 
-                                               alt="VGM Logo" class="current-photo logo-placeholder">`;
+                        preview.innerHTML = `
+                            <div class="placeholder-preview">
+                                <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" 
+                                     alt="VGM Logo" class="logo-placeholder">
+                            </div>`;
                     }
                 }
             });
-            template.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
 
-            // Reset member ID
+            // Reset member ID and select
             template.querySelector('input[name="member_ids[]"]').value = '';
+            template.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
 
             boardMembersForm.appendChild(template);
         });
