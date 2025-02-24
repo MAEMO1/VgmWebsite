@@ -5,10 +5,10 @@
 {% block styles %}
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
 <style>
-/* Calendar Legend Styles */
-.calendar-legend {
+/* Filter Styles */
+.calendar-filters {
     display: flex;
-    gap: 1.5rem;
+    gap: 1rem;
     margin-bottom: 1.5rem;
     padding: 1.2rem;
     background: white;
@@ -16,48 +16,21 @@
     border: 1px solid var(--border-color);
 }
 
-/* Filter Styles */
-.calendar-filters {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    padding: 1rem;
-    background: white;
+.filter-select {
+    width: 300px;
+    padding: 0.5rem;
     border-radius: 8px;
     border: 1px solid var(--border-color);
+    font-size: 1rem;
 }
 
-.filter-button {
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    border: 2px solid transparent;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+.filter-select optgroup {
+    font-weight: bold;
+    color: var(--text-primary);
 }
 
-.filter-button.vgm {
-    background-color: #FF4154;
-    color: white;
-}
-
-.filter-button.collab {
-    background-color: #41B7AC;
-    color: white;
-}
-
-.filter-button.individual {
-    background-color: #0066FF;
-    color: white;
-}
-
-.filter-button.disabled {
-    opacity: 0.5;
-    background-color: #f0f0f0;
-    color: #666;
+.filter-select option {
+    padding: 0.5rem;
 }
 
 /* Calendar Styles */
@@ -67,11 +40,11 @@
     border-radius: 12px;
     border: 1px solid var(--border-color);
     margin-bottom: 2rem;
-    height: 800px; /* Fixed height for better visibility */
+    height: 800px;
 }
 
 .fc {
-    height: 100%; /* Make calendar fill container */
+    height: 100%;
 }
 
 .fc-header-toolbar {
@@ -231,57 +204,26 @@
 
 {% block content %}
 <div class="container">
-    <!-- Calendar Legend in new order -->
-    <div class="calendar-legend">
-        <div class="legend-item">
-            <div class="legend-title">
-                <div class="legend-color legend-vgm"></div>
-                <span>VGM</span>
-            </div>
-            <div class="legend-description">
-                ({{ _('Evenementen georganiseerd door de Vereniging van Gentse Moskeeën') }})
-            </div>
-        </div>
-        <div class="legend-item">
-            <div class="legend-title">
-                <div class="legend-color legend-collab"></div>
-                <span>Co-Moskee</span>
-            </div>
-            <div class="legend-description">
-                ({{ _('Evenementen waarin meerdere moskeeën samenwerken') }})
-            </div>
-        </div>
-        <div class="legend-item">
-            <div class="legend-title">
-                <div class="legend-color legend-individual"></div>
-                <span>Solo Moskee</span>
-            </div>
-            <div class="legend-description">
-                ({{ _('Evenementen van een individuele moskee') }})
-            </div>
-        </div>
-    </div>
-
     <!-- Calendar Filters -->
     <div class="calendar-filters">
-        <button class="filter-button vgm" data-type="vgm">
-            <div class="legend-color legend-vgm"></div>
-            VGM
-        </button>
-        <button class="filter-button collab" data-type="collab">
-            <div class="legend-color legend-collab"></div>
-            Co-Moskee
-        </button>
-        <button class="filter-button individual" data-type="individual">
-            <div class="legend-color legend-individual"></div>
-            Solo Moskee
-        </button>
+        <select class="filter-select" id="eventFilter">
+            <option value="all">Alle evenementen</option>
+            <optgroup label="VGM & Co-Moskee">
+                <option value="vgm">VGM</option>
+                <option value="collab">Co-Moskee</option>
+            </optgroup>
+            <optgroup label="Individuele Moskeeën">
+                {% for mosque in mosques %}
+                <option value="mosque-{{ mosque.id }}">{{ mosque.username }}</option>
+                {% endfor %}
+            </optgroup>
+        </select>
     </div>
 
     <!-- Calendar View -->
     <div id="calendar"></div>
 
-    <!-- Event sections in new order -->
+    <!-- Event sections -->
     {% if vgm_events %}
     <div class="section">
         <h2 class="section-title">VGM</h2>
@@ -383,12 +325,6 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
-    var activeFilters = {
-        vgm: true,
-        collab: true,
-        individual: true
-    };
-
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         height: 'auto',
@@ -410,14 +346,6 @@ document.addEventListener('DOMContentLoaded', function() {
         eventClick: function(info) {
             window.location.href = '/events/' + info.event.id;
         },
-        eventDidMount: function(info) {
-            // Hide events based on filters
-            const eventType = info.event.extendedProps.eventType === 'vgm' ? 'vgm' :
-                info.event.extendedProps.eventType === 'collaboration' ? 'collab' : 'individual';
-            if (!activeFilters[eventType]) {
-                info.el.style.display = 'none';
-            }
-        },
         dayMaxEvents: true,
         locale: 'nl',
         firstDay: 1,
@@ -430,21 +358,23 @@ document.addEventListener('DOMContentLoaded', function() {
     calendar.render();
 
     // Filter functionality
-    document.querySelectorAll('.filter-button').forEach(button => {
-        button.addEventListener('click', function() {
-            const type = this.dataset.type;
-            activeFilters[type] = !activeFilters[type];
+    document.getElementById('eventFilter').addEventListener('change', function() {
+        const value = this.value;
+        let url = '/events/api/calendar-events';
 
-            // Update button appearance
-            if (activeFilters[type]) {
-                this.classList.remove('disabled');
-            } else {
-                this.classList.add('disabled');
-            }
+        if (value === 'all') {
+            // No filter
+        } else if (value === 'vgm') {
+            url += '?event_type=vgm';
+        } else if (value === 'collab') {
+            url += '?event_type=collaboration';
+        } else if (value.startsWith('mosque-')) {
+            const mosqueId = value.split('-')[1];
+            url += '?mosque_id=' + mosqueId;
+        }
 
-            // Rerender calendar with new filters
-            calendar.refetchEvents();
-        });
+        calendar.setOption('events', url);
+        calendar.refetchEvents();
     });
 });
 </script>

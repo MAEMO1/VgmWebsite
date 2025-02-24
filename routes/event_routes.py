@@ -9,6 +9,10 @@ events = Blueprint('events', __name__, url_prefix='/events')
 
 @events.route('/api/calendar-events')
 def calendar_events():
+    # Get filter parameters
+    mosque_id = request.args.get('mosque_id', type=int)
+    event_type = request.args.get('event_type')
+
     start = request.args.get('start', type=str)
     end = request.args.get('end', type=str)
 
@@ -16,11 +20,19 @@ def calendar_events():
     start_date = datetime.fromisoformat(start.replace('Z', '+00:00')) if start else datetime.utcnow()
     end_date = datetime.fromisoformat(end.replace('Z', '+00:00')) if end else datetime.utcnow() + timedelta(days=30)
 
-    # Query all events within the date range
-    events = Event.query.filter(
+    # Build query
+    query = Event.query.filter(
         Event.date >= start_date,
         Event.date <= end_date
-    ).all()
+    )
+
+    # Apply filters if provided
+    if mosque_id:
+        query = query.filter(Event.organizer_id == mosque_id)
+    elif event_type:
+        query = query.filter(Event.event_type == event_type)
+
+    events = query.all()
 
     # Format events for FullCalendar
     event_list = []
@@ -32,7 +44,8 @@ def calendar_events():
             'end': (event.date + timedelta(hours=2)).isoformat(),  # Assuming 2-hour default duration
             'extendedProps': {
                 'eventType': event.event_type,
-                'description': event.description
+                'description': event.description,
+                'organizerId': event.organizer_id
             }
         }
         event_list.append(event_data)
@@ -41,6 +54,9 @@ def calendar_events():
 
 @events.route('/')
 def event_list():
+    # Get all mosques for the filter dropdown
+    mosques = User.query.filter_by(user_type='mosque', is_verified=True).order_by(User.username).all()
+
     # Get VGM events (highest priority)
     vgm_events = Event.query.filter(
         Event.event_type == 'vgm',
@@ -60,6 +76,7 @@ def event_list():
     ).order_by(Event.date).all()
 
     return render_template('events/list.html',
+                         mosques=mosques,
                          vgm_events=vgm_events,
                          collab_events=collab_events,
                          individual_events=individual_events)
