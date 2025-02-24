@@ -170,13 +170,8 @@
                 {% endif %}
             </div>
 
-            {% if current_user.is_authenticated %}
+            {% if current_user.is_authenticated and current_user.is_admin %}
             <div class="actions">
-                <button class="btn btn-outline-primary btn-sm" 
-                        onclick="subscribeToNotifications({{ obituary.id }})">
-                    <i class="fas fa-bell me-2"></i>{{ _('Ontvang Updates') }}
-                </button>
-                {% if current_user.is_admin %}
                 <form action="{{ url_for('obituaries.delete_obituary', obituary_id=obituary.id) }}" method="POST" 
                       onsubmit="return confirm('{{ _('Weet u zeker dat u dit overlijdensbericht wilt verwijderen?') }}');"
                       class="d-inline">
@@ -184,7 +179,6 @@
                         <i class="fas fa-trash me-1"></i>{{ _('Verwijderen') }}
                     </button>
                 </form>
-                {% endif %}
             </div>
             {% endif %}
         </div>
@@ -200,29 +194,4 @@
         <i class="fas fa-plus"></i>
     </a>
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-function subscribeToNotifications(obituaryId) {
-    fetch(`/obituaries/${obituaryId}/subscribe`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('{{ _("U ontvangt nu updates over dit overlijdensbericht.") }}');
-        } else {
-            alert('{{ _("Er is een fout opgetreden. Probeer het later opnieuw.") }}');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('{{ _("Er is een fout opgetreden. Probeer het later opnieuw.") }}');
-    });
-}
-</script>
 {% endblock %}

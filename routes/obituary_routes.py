@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from datetime import datetime
 from app import db
@@ -106,41 +106,6 @@ def verify_obituary(obituary_id):
         flash('U heeft geen toestemming om dit overlijdensbericht te verifiëren.', 'error')
         return redirect(url_for('obituaries.index'))
 
-    # Get modification data
-    new_mosque_id = request.form.get('new_mosque_id')
-    if new_mosque_id and current_user.is_admin:
-        # Handle mosque change
-        old_mosque_id = obituary.mosque_id
-        obituary.mosque_id = int(new_mosque_id)
-
-        # Notify new mosque
-        notification = ObituaryNotification(
-            obituary_id=obituary.id,
-            user_id=new_mosque_id,
-            notification_type='mosque_changed',
-            message=f'U bent aangeduid voor het dodengebed van {obituary.name}'
-        )
-        db.session.add(notification)
-
-        # Notify original mosque if exists
-        if old_mosque_id:
-            notification = ObituaryNotification(
-                obituary_id=obituary.id,
-                user_id=old_mosque_id,
-                notification_type='mosque_changed',
-                message=f'Een andere moskee is aangeduid voor het dodengebed van {obituary.name}'
-            )
-            db.session.add(notification)
-
-        # Notify submitter
-        notification = ObituaryNotification(
-            obituary_id=obituary.id,
-            user_id=obituary.submitter_id,
-            notification_type='mosque_changed',
-            message=f'De moskee voor het dodengebed is gewijzigd'
-        )
-        db.session.add(notification)
-
     try:
         obituary.is_approved = True
         db.session.commit()
@@ -149,52 +114,6 @@ def verify_obituary(obituary_id):
         db.session.rollback()
         flash('Er is een fout opgetreden bij het verifiëren van het overlijdensbericht.', 'error')
 
-    return redirect(url_for('obituaries.index'))
-
-@obituaries.route('/pending')
-@login_required
-def pending_obituaries():
-    if not (current_user.is_admin or current_user.user_type == 'mosque'):
-        flash('U heeft geen toegang tot deze pagina.', 'error')
-        return redirect(url_for('obituaries.index'))
-
-    # If mosque user, show only their pending obituaries
-    if current_user.user_type == 'mosque':
-        pending = Obituary.query.filter_by(
-            is_approved=False,
-            mosque_id=current_user.id
-        ).order_by(Obituary.date_of_death.desc()).all()
-    else:  # Admin sees all pending obituaries
-        pending = Obituary.query.filter_by(
-            is_approved=False
-        ).order_by(Obituary.date_of_death.desc()).all()
-
-    # Get all mosques for the modification form
-    mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
-    return render_template('obituaries/pending.html', obituaries=pending, mosques=mosques)
-
-@obituaries.route('/<int:obituary_id>/subscribe', methods=['POST'])
-@login_required
-def subscribe_notifications(obituary_id):
-    try:
-        notification = ObituaryNotification(
-            obituary_id=obituary_id,
-            user_id=current_user.id,
-            notification_type='subscription',
-            message='Geabonneerd op updates voor dit overlijdensbericht'
-        )
-        db.session.add(notification)
-        db.session.commit()
-        return jsonify({'success': True})
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
-
-@obituaries.route('/preferences', methods=['POST'])
-@login_required
-def update_preferences():
-    current_user.notify_obituaries = bool(request.form.get('notify_obituaries'))
-    db.session.commit()
-    flash('Voorkeuren voor notificaties zijn bijgewerkt.', 'success')
     return redirect(url_for('obituaries.index'))
 
 @obituaries.route('/<int:obituary_id>/delete', methods=['POST'])
