@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Translation Quality Checker') }} - VGM{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">{{ _('Translation Quality Checker') }}</h1>
+            <div class="card">
+                <div class="card-body">
+                    <form id="translationCheckerForm" class="needs-validation" novalidate>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="source_lang" class="form-label">{{ _('Source Language') }}</label>
+                                <select class="form-select" id="source_lang" name="source_lang" required>
+                                    <option value="en">English</option>
+                                    <option value="nl">Nederlands</option>
+                                    <option value="ar">العربية</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="target_lang" class="form-label">{{ _('Target Language') }}</label>
+                                <select class="form-select" id="target_lang" name="target_lang" required>
+                                    <option value="en">English</option>
+                                    <option value="nl">Nederlands</option>
+                                    <option value="ar">العربية</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="source_text" class="form-label">{{ _('Original Text') }}</label>
+                            <textarea class="form-control" id="source_text" name="source_text" rows="4" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="translated_text" class="form-label">{{ _('Translated Text') }}</label>
+                            <textarea class="form-control" id="translated_text" name="translated_text" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">{{ _('Check Translation') }}</button>
+                    </form>
+
+                    <div id="results" class="mt-4" style="display: none;">
+                        <h3>{{ _('Results') }}</h3>
+                        <div class="alert" id="quality-indicator" role="alert"></div>
+                        <div class="card">
+                            <div class="card-body">
+                                <h5>{{ _('Quality Score') }}: <span id="quality-score"></span></h5>
+                                <h5>{{ _('Issues') }}:</h5>
+                                <ul id="issues-list"></ul>
+                                <h5>{{ _('Recommendations') }}:</h5>
+                                <ul id="recommendations-list"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('translationCheckerForm');
+    const results = document.getElementById('results');
+    
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = {
+            source_text: document.getElementById('source_text').value,
+            translated_text: document.getElementById('translated_text').value,
+            source_lang: document.getElementById('source_lang').value,
+            target_lang: document.getElementById('target_lang').value
+        };
+        
+        try {
+            const response = await fetch('/api/check-translation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            const data = await response.json();
+            
+            // Display results
+            results.style.display = 'block';
+            
+            // Update quality indicator
+            const qualityIndicator = document.getElementById('quality-indicator');
+            qualityIndicator.className = 'alert ' + (data.passed ? 'alert-success' : 'alert-warning');
+            qualityIndicator.textContent = data.passed ? 
+                '{{ _("Translation meets quality standards") }}' : 
+                '{{ _("Translation needs improvement") }}';
+            
+            // Update quality score
+            document.getElementById('quality-score').textContent = 
+                (data.results.quality_score * 100).toFixed(1) + '%';
+            
+            // Update issues list
+            const issuesList = document.getElementById('issues-list');
+            issuesList.innerHTML = '';
+            data.results.issues.forEach(issue => {
+                const li = document.createElement('li');
+                li.textContent = issue;
+                issuesList.appendChild(li);
+            });
+            
+            // Update recommendations list
+            const recommendationsList = document.getElementById('recommendations-list');
+            recommendationsList.innerHTML = '';
+            data.results.recommendations.forEach(rec => {
+                const li = document.createElement('li');
+                li.textContent = rec;
+                recommendationsList.appendChild(li);
+            });
+            
+        } catch (error) {
+            console.error('Error:', error);
+            alert('{{ _("An error occurred while checking the translation") }}');
+        }
+    });
+});
+</script>
+{% endblock %}
