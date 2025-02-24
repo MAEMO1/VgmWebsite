@@ -97,6 +97,9 @@ class Event(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    # New field for event flyer
+    flyer_url = db.Column(db.String(500))  # URL to event flyer image
+
     # New fields for event categorization
     event_type = db.Column(db.String(20), nullable=False, default='individual')  # 'vgm', 'collaboration', 'individual'
     is_featured = db.Column(db.Boolean, default=False)  # For highlighting important events
@@ -106,31 +109,12 @@ class Event(db.Model):
     # Relationships
     organizer_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Primary organizer (mosque or VGM)
     collaborating_mosques = db.relationship('User',
-                                          secondary='event_mosque_collaboration',
-                                          backref=db.backref('collaborated_events', lazy='dynamic'))
+                                       secondary='event_mosque_collaboration',
+                                       backref=db.backref('collaborated_events', lazy='dynamic'))
 
     registrations = db.relationship('EventRegistration', backref='event', lazy='dynamic')
     notifications = db.relationship('EventNotification', backref='event', lazy='dynamic')
 
-    @property
-    def is_vgm_event(self):
-        return self.event_type == 'vgm'
-
-    @property
-    def is_collaboration(self):
-        return self.event_type == 'collaboration'
-
-    @property
-    def is_individual(self):
-        return self.event_type == 'individual'
-
-    @property
-    def should_be_featured(self):
-        if not self.is_featured:
-            return False
-        if self.featured_until and datetime.utcnow() > self.featured_until:
-            return False
-        return True
 
 class EventRegistration(db.Model):
     id = db.Column(db.Integer, primary_key=True)

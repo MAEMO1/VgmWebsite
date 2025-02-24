@@ -1,11 +1,17 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta
+from werkzeug.utils import secure_filename
+import os
 from app import db
 from models import Event, EventRegistration, EventNotification, User, EventMosqueCollaboration
 
 # Create blueprint with url_prefix
 events = Blueprint('events', __name__, url_prefix='/events')
+
+def allowed_file(filename):
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @events.route('/api/calendar-events')
 def calendar_events():
@@ -107,6 +113,7 @@ def create_event():
         event_type = request.form.get('event_type')
         collaborating_mosque_ids = request.form.getlist('collaborating_mosques[]')
 
+        # Create event object
         event = Event(
             title=request.form['title'],
             description=request.form['description'],
@@ -119,6 +126,18 @@ def create_event():
             is_featured=bool(request.form.get('is_featured')),
             organizer_id=current_user.id
         )
+
+        # Handle flyer upload
+        if 'flyer' in request.files:
+            flyer = request.files['flyer']
+            if flyer and allowed_file(flyer.filename):
+                filename = secure_filename(flyer.filename)
+                # Save the file to a specific directory
+                upload_folder = os.path.join('static', 'uploads', 'flyers')
+                os.makedirs(upload_folder, exist_ok=True)
+                flyer_path = os.path.join(upload_folder, filename)
+                flyer.save(flyer_path)
+                event.flyer_url = os.path.join('uploads', 'flyers', filename)
 
         if event_type == 'collaboration':
             for mosque_id in collaborating_mosque_ids:
@@ -139,12 +158,12 @@ def create_event():
                 user_id=user.id,
                 event_id=event.id,
                 type='new_event',
-                message=f'New event: {event.title} on {event.date.strftime("%B %d, %Y")}'
+                message=f'Nieuw evenement: {event.title} op {event.date.strftime("%d %B %Y")}'
             )
             db.session.add(notification)
         db.session.commit()
 
-        flash('Event created successfully!', 'success')
+        flash('Evenement succesvol aangemaakt!', 'success')
         return redirect(url_for('events.event_detail', event_id=event.id))
 
     # Get all mosques for collaboration selection

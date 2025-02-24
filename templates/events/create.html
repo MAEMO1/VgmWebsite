@@ -1,57 +1,63 @@
 {% extends "base.html" %}
 
-{% block title %}Create Event - Mosque Management{% endblock %}
+{% block title %}Nieuw Evenement - Mosque Management{% endblock %}
 
 {% block content %}
 <div class="card">
     <div class="card-header">
-        <h2>Create New Event</h2>
+        <h2>Nieuw Evenement Aanmaken</h2>
     </div>
     <div class="card-body">
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             <div class="mb-3">
-                <label for="title" class="form-label">Event Title</label>
+                <label for="title" class="form-label">Titel</label>
                 <input type="text" class="form-control" id="title" name="title" required>
             </div>
-            
+
             <div class="mb-3">
-                <label for="description" class="form-label">Description</label>
+                <label for="description" class="form-label">Beschrijving</label>
                 <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
             </div>
-            
+
             <div class="mb-3">
-                <label for="date" class="form-label">Date and Time</label>
+                <label for="date" class="form-label">Datum en Tijd</label>
                 <input type="datetime-local" class="form-control" id="date" name="date" required>
             </div>
-            
+
             <div class="mb-3">
-                <label for="location" class="form-label">Location</label>
+                <label for="location" class="form-label">Locatie</label>
                 <input type="text" class="form-control" id="location" name="location" required>
             </div>
-            
+
             <div class="mb-3">
-                <label for="max_participants" class="form-label">Maximum Participants (optional)</label>
+                <label for="flyer" class="form-label">Flyer (optioneel)</label>
+                <input type="file" class="form-control" id="flyer" name="flyer" accept="image/*">
+                <div class="form-text">Upload een afbeelding voor de evenement flyer</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="max_participants" class="form-label">Maximum Aantal Deelnemers (optioneel)</label>
                 <input type="number" class="form-control" id="max_participants" name="max_participants" min="1">
             </div>
-            
+
             <div class="mb-3 form-check">
                 <input type="checkbox" class="form-check-input" id="registration_required" name="registration_required">
-                <label class="form-check-label" for="registration_required">Registration Required</label>
+                <label class="form-check-label" for="registration_required">Registratie Vereist</label>
             </div>
-            
+
             <div class="mb-3">
-                <label for="reminder_before" class="form-label">Send Reminder Before (minutes)</label>
+                <label for="reminder_before" class="form-label">Stuur Herinnering Voor (minuten)</label>
                 <select class="form-control" id="reminder_before" name="reminder_before">
-                    <option value="">No reminder</option>
-                    <option value="30">30 minutes</option>
-                    <option value="60">1 hour</option>
-                    <option value="1440">1 day</option>
+                    <option value="">Geen herinnering</option>
+                    <option value="30">30 minuten</option>
+                    <option value="60">1 uur</option>
+                    <option value="1440">1 dag</option>
                     <option value="10080">1 week</option>
                 </select>
             </div>
-            
-            <button type="submit" class="btn btn-primary">Create Event</button>
-            <a href="{{ url_for('events.event_list') }}" class="btn btn-secondary">Cancel</a>
+
+            <button type="submit" class="btn btn-primary">Evenement Aanmaken</button>
+            <a href="{{ url_for('events.event_list') }}" class="btn btn-secondary">Annuleren</a>
         </form>
     </div>
 </div>
