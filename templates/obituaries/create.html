@@ -190,21 +190,25 @@
                 </div>
 
                 <div id="after_prayer_container">
-                    {{ form.prayer_date.label(class="form-label required-field") }}
-                    {{ form.prayer_date(class="form-control" + (" is-invalid" if form.prayer_date.errors else ""), type="date") }}
-                    {% if form.prayer_date.errors %}
-                        {% for error in form.prayer_date.errors %}
-                            <div class="error-message">{{ error }}</div>
-                        {% endfor %}
-                    {% endif %}
+                    <div class="mb-4">
+                        {{ form.prayer_date.label(class="form-label required-field") }}
+                        {{ form.prayer_date(class="form-control" + (" is-invalid" if form.prayer_date.errors else ""), type="date") }}
+                        {% if form.prayer_date.errors %}
+                            {% for error in form.prayer_date.errors %}
+                                <div class="error-message">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
 
-                    {{ form.after_prayer.label(class="form-label required-field mt-3") }}
-                    {{ form.after_prayer(class="form-select" + (" is-invalid" if form.after_prayer.errors else "")) }}
-                    {% if form.after_prayer.errors %}
-                        {% for error in form.after_prayer.errors %}
-                            <div class="error-message">{{ error }}</div>
-                        {% endfor %}
-                    {% endif %}
+                    <div class="mb-4">
+                        {{ form.after_prayer.label(class="form-label required-field") }}
+                        {{ form.after_prayer(class="form-select" + (" is-invalid" if form.after_prayer.errors else "")) }}
+                        {% if form.after_prayer.errors %}
+                            {% for error in form.after_prayer.errors %}
+                                <div class="error-message">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
                 </div>
 
                 <div class="mb-4">
@@ -324,6 +328,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 prayerDate.min = this.value;
             }
         });
+        // Initialize on page load if death date is already set
+        if (dateOfDeath.value) {
+            prayerDate.min = dateOfDeath.value;
+        }
     }
 
     // Ensure prayer time is after death date
@@ -334,6 +342,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 prayerTime.min = this.value + 'T00:00';
             }
         });
+        // Initialize on page load if death date is already set
+        if (dateOfDeath.value) {
+            prayerTime.min = dateOfDeath.value + 'T00:00';
+        }
     }
 });
 </script>
