@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Overlijdensberichten') }} - VGM{% endblock %}
+
+{% block styles %}
+<style>
+:root {
+    --primary-color: #005A87;
+    --secondary-color: #41B7AC;
+    --accent-color: #FF4154;
+    --background-light: #F8F9FA;
+    --text-primary: #2C3E50;
+    --text-secondary: #6C757D;
+    --border-color: #E9ECEF;
+}
+
+.obituaries-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+.obituary-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.obituary-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.obituary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.obituary-title {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.date-badge {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 100px;
+    font-size: 0.875rem;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.detail-item {
+    margin-bottom: 0.5rem;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+.detail-value {
+    color: var(--text-primary);
+}
+
+.actions {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.subscribe-btn {
+    font-size: 0.875rem;
+}
+
+.add-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--primary-color);
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
+.add-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    background: var(--primary-color);
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .obituary-header {
+        flex-direction: column;
+    }
+    
+    .date-badge {
+        margin-top: 0.5rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="obituaries-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ _('Overlijdensberichten') }}</h1>
+        {% if current_user.is_authenticated and current_user.user_type == 'mosque' %}
+        <a href="{{ url_for('obituaries.pending') }}" class="btn btn-outline-primary">
+            <i class="fas fa-clock me-2"></i>{{ _('Te Verifiëren Berichten') }}
+        </a>
+        {% endif %}
+    </div>
+
+    {% if obituaries %}
+        {% for obituary in obituaries %}
+        <div class="obituary-card">
+            <div class="obituary-header">
+                <div>
+                    <h2 class="h4 obituary-title">{{ obituary.name }}</h2>
+                    <div class="text-muted">
+                        {{ _('Leeftijd') }}: {% if obituary.age %}{{ obituary.age }} {{ _('jaar') }}{% else %}{{ _('Niet vermeld') }}{% endif %}
+                    </div>
+                </div>
+                <span class="date-badge">{{ obituary.date_of_death.strftime('%d-%m-%Y') }}</span>
+            </div>
+
+            <div class="details-grid">
+                {% if obituary.birth_place %}
+                <div class="detail-item">
+                    <div class="detail-label">{{ _('Geboorteplaats') }}</div>
+                    <div class="detail-value">{{ obituary.birth_place }}</div>
+                </div>
+                {% endif %}
+
+                {% if obituary.death_place %}
+                <div class="detail-item">
+                    <div class="detail-label">{{ _('Plaats van Overlijden') }}</div>
+                    <div class="detail-value">{{ obituary.death_place }}</div>
+                </div>
+                {% endif %}
+
+                {% if obituary.prayer_time %}
+                <div class="detail-item">
+                    <div class="detail-label">{{ _('Tijd van Dodengebed') }}</div>
+                    <div class="detail-value">{{ obituary.prayer_time.strftime('%d-%m-%Y %H:%M') }}</div>
+                </div>
+                {% endif %}
+
+                {% if obituary.burial_location %}
+                <div class="detail-item">
+                    <div class="detail-label">{{ _('Begraafplaats') }}</div>
+                    <div class="detail-value">{{ obituary.burial_location }}</div>
+                </div>
+                {% endif %}
+            </div>
+
+            {% if obituary.additional_notes %}
+            <div class="detail-item mb-3">
+                <div class="detail-label">{{ _('Aanvullende Informatie') }}</div>
+                <div class="detail-value">{{ obituary.additional_notes }}</div>
+            </div>
+            {% endif %}
+
+            {% if obituary.family_contact %}
+            <div class="detail-item">
+                <div class="detail-label">{{ _('Contact voor Condoleances') }}</div>
+                <div class="detail-value">{{ obituary.family_contact }}</div>
+            </div>
+            {% endif %}
+
+            {% if current_user.is_authenticated %}
+            <div class="actions">
+                <button class="btn btn-outline-primary btn-sm subscribe-btn" 
+                        onclick="subscribeToNotifications({{ obituary.id }})">
+                    <i class="fas fa-bell me-2"></i>{{ _('Ontvang Updates') }}
+                </button>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="text-center py-5">
+            <h2>{{ _('Geen overlijdensberichten') }}</h2>
+            <p class="text-muted">{{ _('Er zijn momenteel geen overlijdensberichten om weer te geven.') }}</p>
+        </div>
+    {% endif %}
+
+    <a href="{{ url_for('obituaries.create') }}" class="add-btn" title="{{ _('Overlijdensbericht Toevoegen') }}">
+        <i class="fas fa-plus"></i>
+    </a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function subscribeToNotifications(obituaryId) {
+    fetch(`/obituaries/${obituaryId}/subscribe`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('{{ _("U ontvangt nu updates over dit overlijdensbericht.") }}');
+        } else {
+            alert('{{ _("Er is een fout opgetreden. Probeer het later opnieuw.") }}');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('{{ _("Er is een fout opgetreden. Probeer het later opnieuw.") }}');
+    });
+}
+</script>
+{% endblock %}
