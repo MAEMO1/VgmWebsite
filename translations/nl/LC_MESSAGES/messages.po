@@ -16,11 +16,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.12.1\n"
 
+msgid "Uniting and serving the Muslim community in Ghent"
+msgstr "Verenigen en dienen van de moslimgemeenschap in Gent"
+
 msgid "Find mosques in the Ghent area"
 msgstr "Vind moskeeën in de regio Gent"
 
 msgid "Mosque List"
-msgstr "Lijst van Moskeeën"
+msgstr "Moskeeënlijst"
 
 msgid "Daily Prayer Times"
 msgstr "Dagelijkse Gebedstijden"
@@ -40,11 +43,11 @@ msgstr "Volgend VGM Evenement"
 msgid "No upcoming events scheduled"
 msgstr "Geen aankomende evenementen gepland"
 
+msgid "+Create Event"
+msgstr "+Evenement Aanmaken"
+
 msgid "New Article"
 msgstr "Nieuw Artikel"
-
-msgid "Uniting and serving the Muslim community in Ghent"
-msgstr "Verenigt en dient de moslimgemeenschap in Gent"
 
 msgid "Support VGM"
 msgstr "Steun VGM"
@@ -53,23 +56,10 @@ msgid "Collaborations"
 msgstr "Samenwerkingen"
 
 msgid "Mosque Events"
-msgstr "Moskee Evenementen"
+msgstr "Moskee-evenementen"
 
-msgid "+Create Event"
-msgstr "+Maak Evenement"
-
-msgid "Notification Preferences"
-msgstr "Notificatie Voorkeuren"
-
-msgid "Receive notifications for new obituaries"
-msgstr "Ontvang meldingen voor nieuwe overlijdensberichten"
-
-msgid "Save Preferences"
-msgstr "Voorkeuren Opslaan"
-
-# Navigation and Common Elements
 msgid "About & Info"
-msgstr "Over & Info"
+msgstr "Over Ons & Info"
 
 msgid "Mosques & Prayer"
 msgstr "Moskeeën & Gebed"
@@ -83,71 +73,25 @@ msgstr "Account"
 msgid "Select language"
 msgstr "Selecteer taal"
 
-# Mosque Pages
-msgid "Support this Mosque"
-msgstr "Steun deze Moskee"
+# Timer labels
+msgid "Days"
+msgstr "Dagen"
 
-msgid "Support Our Mosque"
-msgstr "Steun Onze Moskee"
+msgid "Hours"
+msgstr "Uren"
 
-msgid "Make a Donation"
-msgstr "Doneer"
+msgid "Minutes"
+msgstr "Minuten"
 
-msgid "Current Goal"
-msgstr "Huidig Doel"
+msgid "Seconds"
+msgstr "Seconden"
 
-#: templates/base.html:43
-msgid "Home"
-msgstr "Home"
-
-#: templates/base.html:46
-msgid "About Us"
-msgstr "Over Ons"
-
-#: templates/base.html:49 templates/mosques.html:3 templates/mosques.html:9
-msgid "Mosques in Ghent"
-msgstr "Moskeeën in Gent"
-
-#: templates/base.html:52
-msgid "Blog"
-msgstr "Blog"
-
-#: templates/base.html:55
-msgid "Events"
-msgstr "Evenementen"
-
-#: templates/base.html:58
-msgid "Obituaries"
-msgstr "Overlijdensberichten"
-
-#: templates/base.html:61
-msgid "Memorandum"
-msgstr "Memorandum"
-
-#: templates/base.html:64
-msgid "Contact"
-msgstr "Contact"
-
-#: templates/base.html:68
-msgid "Logout"
-msgstr "Uitloggen"
-
-#: templates/base.html:72 templates/register.html:10
-#: templates/register_admin.html:35
-msgid "Register"
-msgstr "Registreren"
-
-#: templates/base.html:75 templates/login.html:10 templates/login.html:30
-msgid "Login"
-msgstr "Inloggen"
-
-#: templates/base.html:114
-msgid "© 2024 Vereniging van Gentse Moskeeën. All rights reserved."
-msgstr "© 2024 Vereniging van Gentse Moskeeën. Alle rechten voorbehouden."
-
-# Prayers
+# Prayer times
 msgid "Iqama is typically 10-15 minutes after Adhan"
 msgstr "Iqama is meestal 10-15 minuten na Adhan"
+
+msgid "Jumu'ah prayer is held every Friday at 13:30"
+msgstr "Vrijdaggebed wordt elke vrijdag om 13:30 gehouden"
 
 msgid "Prayer times are automatically adjusted based on location"
 msgstr "Gebedstijden worden automatisch aangepast op basis van locatie"
@@ -165,599 +109,72 @@ msgid "Check announcements for details"
 msgstr "Bekijk aankondigingen voor details"
 
 msgid "Eid Prayers"
-msgstr "Eid Gebeden"
+msgstr "Eid-gebeden"
 
 msgid "Eid prayers are held at the main prayer hall"
-msgstr "Eid gebeden worden gehouden in de hoofdgebedsruimte"
+msgstr "Eid-gebeden worden gehouden in de hoofdgebedsruimte"
 
 msgid "Times will be announced"
 msgstr "Tijden worden nog aangekondigd"
 
-#: templates/about.html:3 templates/about.html:10 templates/memorandum.html:19
-msgid "About VGM"
-msgstr "Over VGM"
+# Notifications
+msgid "Notification Preferences"
+msgstr "Notificatie-voorkeuren"
 
-#: templates/about.html:11
-msgid "The Association of Ghent Mosques (VGM)"
-msgstr "De Vereniging van Gentse Moskeeën (VGM)"
+msgid "Receive notifications for new obituaries"
+msgstr "Ontvang meldingen voor nieuwe overlijdensberichten"
 
-#: templates/about.html:14
-msgid ""
-"The Association of Ghent Mosques (VGM) is the umbrella organization of "
-"Ghent mosques (21). Established in 2016, the association aims to:"
-msgstr ""
+msgid "Save Preferences"
+msgstr "Voorkeuren Opslaan"
 
-#: templates/about.html:16
-msgid ""
-"Represent the interests of Muslims and mosques, particularly those in "
-"Ghent"
-msgstr ""
+msgid "Support this Mosque"
+msgstr "Steun deze Moskee"
 
-#: templates/about.html:17
-msgid "Promote cooperation between mosques, especially those in Ghent"
-msgstr ""
+msgid "Support Our Mosque"
+msgstr "Steun Onze Moskee"
 
-#: templates/about.html:18
-msgid ""
-"Provide information about the Islamic faith, without expressing "
-"preferences for specific schools of thought"
-msgstr ""
+msgid "Make a Donation"
+msgstr "Doneer"
 
-#: templates/about.html:28
-msgid "Board Members"
-msgstr "Bestuursleden"
+msgid "Current Goal"
+msgstr "Huidig Doel"
 
-#: templates/about.html:40
-msgid "Manage Board"
-msgstr ""
+msgid "Home"
+msgstr "Home"
 
-#: templates/about.html:75
-msgid "Representing"
-msgstr ""
+msgid "About Us"
+msgstr "Over Ons"
 
-#: templates/about.html:90
-msgid "Manage Board Members"
-msgstr ""
+msgid "Mosques in Ghent"
+msgstr "Moskeeën in Gent"
 
-#: templates/about.html:96
-msgid "Term Period"
-msgstr ""
+msgid "Blog"
+msgstr "Blog"
 
-#: templates/about.html:113
-msgid "Name"
-msgstr ""
+msgid "Events"
+msgstr "Evenementen"
 
-#: templates/about.html:119
-msgid "Role"
-msgstr ""
+msgid "Obituaries"
+msgstr "Overlijdensberichten"
 
-#: templates/about.html:125
-msgid "Mosque"
-msgstr ""
+msgid "Memorandum"
+msgstr "Memorandum"
 
-#: templates/about.html:135
-msgid "Photo"
-msgstr ""
+msgid "Contact"
+msgstr "Contact"
 
-#: templates/about.html:144
-msgid "Add Member"
-msgstr ""
+msgid "Logout"
+msgstr "Uitloggen"
 
-#: templates/about.html:149 templates/edit_mosque.html:188
-msgid "Save Changes"
-msgstr ""
+msgid "Register"
+msgstr "Registreren"
 
-#: templates/edit_mosque.html:3 templates/edit_mosque.html:13
-msgid "Edit"
-msgstr "Bewerken"
+msgid "Login"
+msgstr "Inloggen"
 
-#: templates/edit_mosque.html:11 templates/mosque_detail.html:12
-msgid "Mosques"
-msgstr "Moskeeën"
+msgid "© 2024 Vereniging van Gentse Moskeeën. All rights reserved."
+msgstr "© 2024 Vereniging van Gentse Moskeeën. Alle rechten voorbehouden."
 
-#: templates/edit_mosque.html:23 templates/mosque_detail.html:32
-msgid "Edit Mosque Information"
-msgstr "Moskee Informatie Bewerken"
-
-#: templates/edit_mosque.html:29 templates/mosque_detail.html:64
-msgid "Contact Information"
-msgstr "Contactgegevens"
-
-#: templates/edit_mosque.html:33
-msgid "Public Email"
-msgstr "Openbaar E-mailadres"
-
-#: templates/edit_mosque.html:40
-msgid "Website"
-msgstr "Website"
-
-#: templates/edit_mosque.html:49
-msgid "Phone Number"
-msgstr "Telefoonnummer"
-
-#: templates/edit_mosque.html:56
-msgid "Fax Number"
-msgstr "Faxnummer"
-
-#: templates/edit_mosque.html:65
-msgid "Emergency Contact Name"
-msgstr "Naam Contactpersoon voor Noodgevallen"
-
-#: templates/edit_mosque.html:72 templates/mosque_detail.html:87
-msgid "Emergency Phone"
-msgstr "Noodnummer"
-
-#: templates/edit_mosque.html:82 templates/mosque_detail.html:95
-msgid "Social Media"
-msgstr "Sociale Media"
-
-#: templates/edit_mosque.html:87
-msgid "Facebook"
-msgstr ""
-
-#: templates/edit_mosque.html:96
-msgid "Twitter"
-msgstr ""
-
-#: templates/edit_mosque.html:107
-msgid "Instagram"
-msgstr ""
-
-#: templates/edit_mosque.html:116
-msgid "YouTube"
-msgstr ""
-
-#: templates/edit_mosque.html:125
-msgid "WhatsApp Number"
-msgstr ""
-
-#: templates/edit_mosque.html:134
-msgid "Basic Information"
-msgstr "Basisinformatie"
-
-#: templates/edit_mosque.html:136 templates/mosque_detail.html:50
-msgid "History"
-msgstr "Geschiedenis"
-
-#: templates/edit_mosque.html:138
-msgid "Share the history and background of your mosque"
-msgstr "Deel de geschiedenis en achtergrond van uw moskee"
-
-#: templates/edit_mosque.html:141
-msgid "Year of Establishment"
-msgstr "Oprichtingsjaar"
-
-#: templates/edit_mosque.html:149 templates/index.html:119
-#: templates/mosque_detail.html:131
-msgid "Prayer Times"
-msgstr "Gebedstijden"
-
-#: templates/edit_mosque.html:151
-msgid "Friday Prayer Time"
-msgstr "Vrijdaggebed Tijd"
-
-#: templates/edit_mosque.html:159
-msgid "Media"
-msgstr "Media"
-
-#: templates/edit_mosque.html:162
-msgid "Add Images"
-msgstr "Afbeeldingen Toevoegen"
-
-#: templates/edit_mosque.html:164
-msgid "You can select multiple images"
-msgstr "U kunt meerdere afbeeldingen selecteren"
-
-#: templates/edit_mosque.html:167
-msgid "Image Description"
-msgstr "Afbeeldingsbeschrijving"
-
-#: templates/edit_mosque.html:174
-msgid "Add Videos (YouTube/Vimeo URLs)"
-msgstr "Video's Toevoegen (YouTube/Vimeo URLs)"
-
-#: templates/edit_mosque.html:177 templates/edit_mosque.html:244
-msgid "Video Title"
-msgstr "Video Titel"
-
-#: templates/edit_mosque.html:182
-msgid "Add Another Video"
-msgstr "Nog een Video Toevoegen"
-
-#: templates/edit_mosque.html:191
-msgid "Cancel"
-msgstr "Annuleren"
-
-#: templates/edit_mosque.html:203
-msgid "Current Media"
-msgstr "Huidige Media"
-
-#: templates/edit_mosque.html:207
-msgid "Images"
-msgstr "Afbeeldingen"
-
-#: templates/edit_mosque.html:218 templates/mosque_detail.html:212
-msgid "Videos"
-msgstr "Video's"
-
-#: templates/index.html:3
-msgid "Welcome - VGM"
-msgstr ""
-
-#: templates/index.html:10
-msgid "Welcome to VGM"
-msgstr "Welkom bij VGM"
-
-#: templates/index.html:11
-msgid ""
-"We are the Association of Ghent Mosques (VGM), dedicated to serving our "
-"community and promoting Islamic values."
-msgstr "Wij zijn de Vereniging van Gentse Moskeeën (VGM), toegewijd aan het dienen van onze gemeenschap en het bevorderen van islamitische waarden."
-
-#: templates/index.html:13
-msgid "Find a Mosque"
-msgstr "Vind een Moskee"
-
-#: templates/index.html:24
-msgid "Countdown to Ramadan 1446/2025"
-msgstr ""
-
-#: templates/index.html:31
-msgid "Days"
-msgstr "Dagen"
-
-#: templates/index.html:36
-msgid "Hours"
-msgstr "Uren"
-
-#: templates/index.html:41
-msgid "Minutes"
-msgstr "Minuten"
-
-#: templates/index.html:46
-msgid "Seconds"
-msgstr "Seconden"
-
-#: templates/index.html:56
-msgid "Latest News"
-msgstr "Laatste Nieuws"
-
-#: templates/index.html:58
-msgid "All News"
-msgstr ""
-
-#: templates/blog/index.html:50 templates/index.html:76
-msgid "Read More"
-msgstr "Lees Meer"
-
-#: templates/index.html:91
-msgid "Next VGM Event"
-msgstr ""
-
-#: templates/index.html:107
-msgid "More Info"
-msgstr ""
-
-#: templates/index.html:111
-msgid "No upcoming events scheduled"
-msgstr ""
-
-#: templates/login.html:3
-msgid "Login - Mosque Management"
-msgstr ""
-
-#: templates/login.html:23 templates/register_admin.html:27
-msgid "Email"
-msgstr ""
-
-#: templates/login.html:27 templates/register_admin.html:31
-msgid "Password"
-msgstr ""
-
-#: templates/login.html:34
-msgid "Don't have an account?"
-msgstr ""
-
-#: templates/login.html:34
-msgid "Register here"
-msgstr ""
-
-#: templates/memorandum.html:19
-msgid ""
-"The Association of Ghent Mosques (VGM) is the umbrella organization of "
-"Ghent mosques (21), established in 2016."
-msgstr "De Vereniging van Gentse Moskeeën (VGM) is de koepelorganisatie van Gentse moskeeën (21), opgericht in 2016."
-
-#: templates/memorandum.html:22
-msgid "Download Complete Memorandum"
-msgstr "Download Volledig Memorandum"
-
-#: templates/memorandum.html:36
-msgid "Religious Identity"
-msgstr "Religieuze Identiteit"
-
-#: templates/memorandum.html:38
-msgid ""
-"Focus on accommodating religious identity in public spaces, including "
-"prayer rooms and Mecca-oriented burial grounds. Promoting acceptance of "
-"religious expressions in society."
-msgstr ""
-
-#: templates/memorandum.html:51
-msgid "Education"
-msgstr "Onderwijs"
-
-#: templates/memorandum.html:53
-msgid ""
-"Emphasis on equal educational opportunities, functional use of mother "
-"tongue, combating racism, and respecting religious practices in schools."
-msgstr ""
-
-#: templates/memorandum.html:66
-msgid "Poverty"
-msgstr "Armoede"
-
-#: templates/memorandum.html:68
-msgid ""
-"Collaboration with local organizations and continued investment in "
-"neighborhood operations to combat poverty and provide support."
-msgstr ""
-
-#: templates/memorandum.html:81
-msgid "Housing"
-msgstr "Huisvesting"
-
-#: templates/memorandum.html:83
-msgid ""
-"Addressing discrimination in the housing market, expanding affordable "
-"housing options, and implementing effective anti-discrimination policies."
-msgstr ""
-
-#: templates/memorandum.html:96
-msgid "Work"
-msgstr "Werk"
-
-#: templates/memorandum.html:98
-msgid ""
-"City of Ghent as an example of workplace inclusion, focusing on diversity"
-" in higher positions and employee well-being."
-msgstr ""
-
-#: templates/memorandum.html:111
-msgid "Police"
-msgstr "Politie"
-
-#: templates/memorandum.html:113
-msgid ""
-"Building trust through community engagement, promoting diversity in the "
-"police force, and maintaining high standards of conduct."
-msgstr ""
-
-#: templates/mosque_detail.html:3
-msgid "Mosque Details"
-msgstr "Moskee Details"
-
-#: templates/mosque_detail.html:46
-msgid "About"
-msgstr "Over"
-
-#: templates/mosque_detail.html:55
-msgid "Establishment"
-msgstr "Oprichting"
-
-#: templates/mosque_detail.html:56
-msgid "Established in"
-msgstr "Opgericht in"
-
-#: templates/mosque_detail.html:84
-msgid "Emergency Contact"
-msgstr "Contact voor Noodgevallen"
-
-#: templates/mosque_detail.html:145
-msgid "Prayer times not available"
-msgstr "Gebedstijden niet beschikbaar"
-
-#: templates/mosque_detail.html:151
-msgid "Friday Prayer"
-msgstr "Vrijdaggebed"
-
-#: templates/mosque_detail.html:152
-msgid "Friday prayer is held at"
-msgstr "Vrijdaggebed wordt gehouden om"
-
-#: templates/mosque_detail.html:161
-msgid "Upcoming Events"
-msgstr "Aankomende Evenementen"
-
-#: templates/mosque_detail.html:177
-msgid "No upcoming events"
-msgstr "Geen aankomende evenementen"
-
-#: templates/mosque_detail.html:195
-msgid "Gallery"
-msgstr "Galerij"
-
-#: templates/mosque_detail.html:207
-msgid "No images available"
-msgstr "Geen afbeeldingen beschikbaar"
-
-#: templates/mosques.html:10
-msgid "Find mosques in the Ghent area"
-msgstr ""
-
-#: templates/mosques.html:30
-msgid "Mosque List"
-msgstr ""
-
-#: templates/mosques.html:56
-msgid "No mosques found"
-msgstr ""
-
-#: templates/mosques.html:92
-msgid "Map Currently Unavailable"
-msgstr ""
-
-#: templates/mosques.html:93
-msgid "You can still view all mosques in the list on the right."
-msgstr ""
-
-#: templates/prayer_times.html:3
-msgid "Prayer Times - Mosque Management"
-msgstr ""
-
-#: templates/prayer_times.html:10
-msgid "Daily Prayer Times"
-msgstr ""
-
-#: templates/prayer_times.html:30
-msgid "Prayer times are being updated. Please check back soon."
-msgstr ""
-
-#: templates/prayer_times.html:36
-msgid "Important Notes"
-msgstr ""
-
-#: templates/prayer_times.html:40
-msgid "Iqama is typically 10-15 minutes after Adhan"
-msgstr ""
-
-#: templates/prayer_times.html:44
-msgid "Jumu'ah prayer is held every Friday at 13:30"
-msgstr ""
-
-#: templates/prayer_times.html:48
-msgid "Prayer times are automatically adjusted based on location"
-msgstr ""
-
-#: templates/prayer_times.html:59
-msgid "Monthly Calendar"
-msgstr ""
-
-#: templates/prayer_times.html:68
-msgid "Special Times"
-msgstr ""
-
-#: templates/prayer_times.html:73
-msgid "Ramadan"
-msgstr ""
-
-#: templates/prayer_times.html:74
-msgid "Special prayer schedule during Ramadan"
-msgstr ""
-
-#: templates/prayer_times.html:75
-msgid "Check announcements for details"
-msgstr ""
-
-#: templates/prayer_times.html:78
-msgid "Eid Prayers"
-msgstr ""
-
-#: templates/prayer_times.html:79
-msgid "Eid prayers are held at the main prayer hall"
-msgstr ""
-
-#: templates/prayer_times.html:80
-msgid "Times will be announced"
-msgstr ""
-
-#: templates/register.html:3
-msgid "Register - Mosque Management"
-msgstr ""
-
-#: templates/register.html:22
-msgid "Choose Registration Type:"
-msgstr ""
-
-#: templates/register.html:24
-msgid "Register as Visitor"
-msgstr ""
-
-#: templates/register.html:25
-msgid "Register as Mosque"
-msgstr ""
-
-#: templates/register.html:28 templates/register_admin.html:10
-msgid "Register as Admin"
-msgstr ""
-
-#: templates/register.html:36 templates/register_admin.html:40
-msgid "Already have an account?"
-msgstr ""
-
-#: templates/register.html:37 templates/register_admin.html:41
-msgid "Login here"
-msgstr ""
-
-#: templates/register_admin.html:3
-msgid "Register Admin - Mosque Management"
-msgstr ""
-
-#: templates/register_admin.html:23
-msgid "Username"
-msgstr ""
-
-#: templates/blog/index.html:3
-msgid "Blog - VGM"
-msgstr ""
-
-#: templates/blog/index.html:9
-msgid "VGM Blog"
-msgstr ""
-
-#: templates/blog/index.html:14
-msgid "New Article"
-msgstr ""
-
-#: templates/about.html:15
-msgid "President"
-msgstr "Voorzitter"
-
-#: templates/about.html:16
-msgid "Vice President"
-msgstr "Vice-voorzitter"
-
-#: templates/about.html:17
-msgid "Secretary"
-msgstr "Secretaris"
-
-#: templates/about.html:18
-msgid "Treasurer"
-msgstr "Penningmeester"
-
-#: templates/about.html:19
-msgid "Member"
-msgstr "Lid"
-
-#: templates/mosque_detail.html:25
-msgid "Prayer Times"
-msgstr "Gebedstijden"
-
-#: templates/mosque_detail.html:30
-msgid "Today's Prayer Times"
-msgstr "Gebedstijden Vandaag"
-
-#: templates/mosque_detail.html:35
-msgid "Fajr"
-msgstr "Fajr"
-
-#: templates/mosque_detail.html:36
-msgid "Dhuhr"
-msgstr "Dhuhr"
-
-#: templates/mosque_detail.html:37
-msgid "Asr"
-msgstr "Asr"
-
-#: templates/mosque_detail.html:38
-msgid "Maghrib"
-msgstr "Maghrib"
-
-#: templates/mosque_detail.html:39
-msgid "Isha"
-msgstr "Isha"
-
-# Events
 msgid "Event Registration"
 msgstr "Evenement Registratie"
 
@@ -782,40 +199,24 @@ msgstr "Beschrijving"
 msgid "Organizer"
 msgstr "Organisator"
 
-#: templates/events/list.html:5
 msgid "Upcoming Events"
 msgstr "Aankomende Evenementen"
 
-#: templates/events/list.html:15
 msgid "No upcoming events"
 msgstr "Geen aankomende evenementen"
 
-#: templates/events/detail.html:20
-msgid "Event Details"
-msgstr "Evenement Details"
-
-#: templates/events/detail.html:25
 msgid "Date"
 msgstr "Datum"
 
-#: templates/events/detail.html:26
 msgid "Time"
 msgstr "Tijd"
 
-#: templates/events/detail.html:27
-msgid "Location"
-msgstr "Locatie"
-
-#: templates/events/detail.html:35
 msgid "Register for Event"
 msgstr "Registreer voor Evenement"
 
-#: templates/events/detail.html:37
 msgid "Already Registered"
 msgstr "Al Geregistreerd"
 
-
-# User Interface Elements
 msgid "Loading..."
 msgstr "Laden..."
 
@@ -858,7 +259,6 @@ msgstr "Verwijderen"
 msgid "Confirm"
 msgstr "Bevestigen"
 
-# Error Messages
 msgid "An error occurred"
 msgstr "Er is een fout opgetreden"
 
@@ -892,6 +292,7 @@ msgstr "Functie"
 msgid "Save Changes"
 msgstr "Wijzigingen Opslaan"
 
+
 msgid "Delete"
 msgstr "Verwijderen"
 
@@ -906,3 +307,424 @@ msgstr "Meldingen"
 
 msgid "Logout"
 msgstr "Uitloggen"
+
+msgid "Over VGM"
+msgstr "Over VGM"
+
+msgid "De Vereniging van Gentse Moskeeën (VGM)"
+msgstr "De Vereniging van Gentse Moskeeën (VGM)"
+
+msgid "Representing"
+msgstr "vertegenwoordiging"
+
+msgid "Name"
+msgstr "Naam"
+
+
+msgid "Mosque"
+msgstr "Moskee"
+
+msgid "Photo"
+msgstr "Foto"
+
+msgid "Add Member"
+msgstr "Lid Toevoegen"
+
+msgid "Save Changes"
+msgstr "Wijzigingen Opslaan"
+
+msgid "Edit"
+msgstr "Bewerken"
+
+msgid "Mosques"
+msgstr "Moskeeën"
+
+msgid "Edit Mosque Information"
+msgstr "Moskee Informatie Bewerken"
+
+msgid "Contact Information"
+msgstr "Contactgegevens"
+
+msgid "Public Email"
+msgstr "Openbaar E-mailadres"
+
+msgid "Website"
+msgstr "Website"
+
+msgid "Phone Number"
+msgstr "Telefoonnummer"
+
+msgid "Fax Number"
+msgstr "Faxnummer"
+
+msgid "Emergency Contact Name"
+msgstr "Naam Contactpersoon voor Noodgevallen"
+
+msgid "Emergency Phone"
+msgstr "Noodnummer"
+
+msgid "Social Media"
+msgstr "Sociale Media"
+
+msgid "Facebook"
+msgstr ""
+
+msgid "Twitter"
+msgstr ""
+
+msgid "Instagram"
+msgstr ""
+
+msgid "YouTube"
+msgstr ""
+
+msgid "WhatsApp Number"
+msgstr ""
+
+msgid "Basic Information"
+msgstr "Basisinformatie"
+
+msgid "History"
+msgstr "Geschiedenis"
+
+msgid "Share the history and background of your mosque"
+msgstr "Deel de geschiedenis en achtergrond van uw moskee"
+
+msgid "Year of Establishment"
+msgstr "Oprichtingsjaar"
+
+msgid "Prayer Times"
+msgstr "Gebedstijden"
+
+msgid "Friday Prayer Time"
+msgstr "Vrijdaggebed Tijd"
+
+msgid "Media"
+msgstr "Media"
+
+msgid "Add Images"
+msgstr "Afbeeldingen Toevoegen"
+
+msgid "You can select multiple images"
+msgstr "U kunt meerdere afbeeldingen selecteren"
+
+msgid "Image Description"
+msgstr "Afbeeldingsbeschrijving"
+
+msgid "Add Videos (YouTube/Vimeo URLs)"
+msgstr "Video's Toevoegen (YouTube/Vimeo URLs)"
+
+msgid "Video Title"
+msgstr "Video Titel"
+
+msgid "Add Another Video"
+msgstr "Nog een Video Toevoegen"
+
+msgid "Cancel"
+msgstr "Annuleren"
+
+msgid "Current Media"
+msgstr "Huidige Media"
+
+msgid "Images"
+msgstr "Afbeeldingen"
+
+msgid "Videos"
+msgstr "Video's"
+
+msgid "Welcome - VGM"
+msgstr ""
+
+msgid "Welcome to VGM"
+msgstr "Welkom bij VGM"
+
+msgid "We are the Association of Ghent Mosques (VGM), dedicated to serving our community and promoting Islamic values."
+msgstr "Wij zijn de Vereniging van Gentse Moskeeën (VGM), toegewijd aan het dienen van onze gemeenschap en het bevorderen van islamitische waarden."
+
+msgid "Find a Mosque"
+msgstr "Vind een Moskee"
+
+msgid "Countdown to Ramadan 1446/2025"
+msgstr ""
+
+msgid "Days"
+msgstr "Dagen"
+
+msgid "Hours"
+msgstr "Uren"
+
+msgid "Minutes"
+msgstr "Minuten"
+
+msgid "Seconds"
+msgstr "Seconden"
+
+msgid "Latest News"
+msgstr "Laatste Nieuws"
+
+msgid "All News"
+msgstr ""
+
+msgid "Read More"
+msgstr "Lees Meer"
+
+msgid "Next VGM Event"
+msgstr ""
+
+msgid "More Info"
+msgstr ""
+
+msgid "No upcoming events scheduled"
+msgstr ""
+
+msgid "Login - Mosque Management"
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "Don't have an account?"
+msgstr ""
+
+msgid "Register here"
+msgstr ""
+
+msgid "De Vereniging van Gentse Moskeeën (VGM) is de koepelorganisatie van Gentse moskeeën (21), opgericht in 2016."
+msgstr "De Vereniging van Gentse Moskeeën (VGM) is de koepelorganisatie van Gentse moskeeën (21), opgericht in 2016."
+
+msgid "Download Complete Memorandum"
+msgstr "Download Volledig Memorandum"
+
+msgid "Religious Identity"
+msgstr "Religieuze Identiteit"
+
+msgid "Education"
+msgstr "Onderwijs"
+
+msgid "Poverty"
+msgstr "Armoede"
+
+msgid "Housing"
+msgstr "Huisvesting"
+
+msgid "Work"
+msgstr "Werk"
+
+msgid "Police"
+msgstr "Politie"
+
+msgid "Mosque Details"
+msgstr "Moskee Details"
+
+msgid "About"
+msgstr "Over"
+
+msgid "Establishment"
+msgstr "Oprichting"
+
+msgid "Established in"
+msgstr "Opgericht in"
+
+msgid "Emergency Contact"
+msgstr "Contact voor Noodgevallen"
+
+msgid "Prayer times not available"
+msgstr "Gebedstijden niet beschikbaar"
+
+msgid "Friday Prayer"
+msgstr "Vrijdaggebed"
+
+msgid "Friday prayer is held at"
+msgstr "Vrijdaggebed wordt gehouden om"
+
+msgid "Upcoming Events"
+msgstr "Aankomende Evenementen"
+
+msgid "No upcoming events"
+msgstr "Geen aankomende evenementen"
+
+msgid "Gallery"
+msgstr "Galerij"
+
+msgid "No images available"
+msgstr "Geen afbeeldingen beschikbaar"
+
+msgid "Find mosques in the Ghent area"
+msgstr ""
+
+msgid "Mosque List"
+msgstr ""
+
+msgid "No mosques found"
+msgstr ""
+
+msgid "Map Currently Unavailable"
+msgstr ""
+
+msgid "You can still view all mosques in the list on the right."
+msgstr ""
+
+msgid "Prayer Times - Mosque Management"
+msgstr ""
+
+msgid "Daily Prayer Times"
+msgstr ""
+
+msgid "Prayer times are being updated. Please check back soon."
+msgstr ""
+
+msgid "Important Notes"
+msgstr ""
+
+msgid "Iqama is typically 10-15 minutes after Adhan"
+msgstr ""
+
+msgid "Jumu'ah prayer is held every Friday at 13:30"
+msgstr ""
+
+msgid "Prayer times are automatically adjusted based on location"
+msgstr ""
+
+msgid "Monthly Calendar"
+msgstr ""
+
+msgid "Special Times"
+msgstr ""
+
+msgid "Ramadan"
+msgstr ""
+
+msgid "Special prayer schedule during Ramadan"
+msgstr ""
+
+msgid "Check announcements for details"
+msgstr ""
+
+msgid "Eid Prayers"
+msgstr ""
+
+msgid "Eid prayers are held at the main prayer hall"
+msgstr ""
+
+msgid "Times will be announced"
+msgstr ""
+
+msgid "Register - Mosque Management"
+msgstr ""
+
+msgid "Choose Registration Type:"
+msgstr ""
+
+msgid "Register as Visitor"
+msgstr ""
+
+msgid "Register as Mosque"
+msgstr ""
+
+msgid "Register as Admin"
+msgstr ""
+
+msgid "Already have an account?"
+msgstr ""
+
+msgid "Login here"
+msgstr ""
+
+msgid "Register Admin - Mosque Management"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "President"
+msgstr "Voorzitter"
+
+msgid "Vice President"
+msgstr "Vice-voorzitter"
+
+msgid "Secretary"
+msgstr "Secretaris"
+
+msgid "Treasurer"
+msgstr "Penningmeester"
+
+msgid "Member"
+msgstr "Lid"
+
+msgid "Prayer Times"
+msgstr "Gebedstijden"
+
+msgid "Today's Prayer Times"
+msgstr "Gebedstijden Vandaag"
+
+msgid "Fajr"
+msgstr "Fajr"
+
+msgid "Dhuhr"
+msgstr "Dhuhr"
+
+msgid "Asr"
+msgstr "Asr"
+
+msgid "Maghrib"
+msgstr "Maghrib"
+
+msgid "Isha"
+msgstr "Isha"
+
+msgid "Blog - VGM"
+msgstr ""
+
+msgid "VGM Blog"
+msgstr ""
+
+msgid "New Article"
+msgstr ""
+
+msgid "Focus on accommodating religious identity in public spaces, including prayer rooms and Mecca-oriented burial grounds. Promoting acceptance of religious expressions in society."
+msgstr ""
+
+msgid "Emphasis on equal educational opportunities, functional use of mother tongue, combating racism, and respecting religious practices in schools."
+msgstr ""
+
+msgid "Collaboration with local organizations and continued investment in neighborhood operations to combat poverty and provide support."
+msgstr ""
+
+msgid "Addressing discrimination in the housing market, expanding affordable housing options, and implementing effective anti-discrimination policies."
+msgstr ""
+
+msgid "City of Ghent as an example of workplace inclusion, focusing on diversity in higher positions and employee well-being."
+msgstr ""
+
+msgid "Building trust through community engagement, promoting diversity in the police force, and maintaining high standards of conduct."
+msgstr ""
+
+msgid "The Association of Ghent Mosques (VGM) is the umbrella organization of Ghent mosques (21). Established in 2016, the association aims to:"
+msgstr ""
+
+msgid "Represent the interests of Muslims and mosques, particularly those in Ghent"
+msgstr ""
+
+msgid "Promote cooperation between mosques, especially those in Ghent"
+msgstr ""
+
+msgid "Provide information about the Islamic faith, without expressing preferences for specific schools of thought"
+msgstr ""
+
+msgid "Board Members"
+msgstr "Bestuursleden"
+
+msgid "Manage Board"
+msgstr ""
+
+msgid "Manage Board Members"
+msgstr ""
+
+msgid "Term Period"
+msgstr ""
+
+msgid "Role"
+msgstr ""
