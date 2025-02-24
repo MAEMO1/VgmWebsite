@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/file.svg') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/Ontwerp zonder titel.svg') }}">
 
     <style>
         :root {
@@ -45,6 +45,7 @@
             align-items: center;
             justify-content: center;
             transition: transform 0.3s ease;
+            background: transparent;
         }
 
         .logo-container:hover {
@@ -55,6 +56,7 @@
             width: 100%;
             height: auto;
             display: block;
+            object-fit: contain;
         }
 
         @media (max-width: 992px) {
@@ -169,8 +171,8 @@
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('main.index') }}" aria-label="VGM Home">
                 <div class="logo-container">
-                    <img src="{{ url_for('static', filename='images/file.svg') }}" 
-                         alt="VGM Logo" 
+                    <img src="{{ url_for('static', filename='images/Ontwerp zonder titel.svg') }}"
+                         alt="VGM Logo"
                          class="logo-img"
                          width="120">
                 </div>
