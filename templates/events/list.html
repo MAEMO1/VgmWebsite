@@ -3,7 +3,7 @@
 {% block title %}{{ _('Events - VGM') }}{% endblock %}
 
 {% block styles %}
-<link href='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/main.min.css' rel='stylesheet' />
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
 <style>
 /* Calendar Legend Styles */
 .calendar-legend {
@@ -48,6 +48,61 @@
 .legend-collab { background-color: #41B7AC; }
 .legend-individual { background-color: #0066FF; }
 
+/* Calendar Styles */
+#calendar {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+    height: 800px; /* Fixed height for better visibility */
+}
+
+.fc {
+    height: 100%; /* Make calendar fill container */
+}
+
+.fc-header-toolbar {
+    padding: 1rem;
+    margin-bottom: 1.5rem !important;
+}
+
+.fc-view-harness {
+    background: white;
+}
+
+.fc-scrollgrid-sync-inner {
+    padding: 8px;
+}
+
+.fc-daygrid-day-number {
+    padding: 8px;
+    color: var(--text-primary);
+}
+
+.fc-event {
+    cursor: pointer;
+    border: none !important;
+    padding: 4px 6px;
+    margin: 2px 0;
+    border-radius: 4px;
+}
+
+.fc-event.vgm-event {
+    background-color: #FF4154 !important;
+    border-color: #FF4154 !important;
+}
+
+.fc-event.collab-event {
+    background-color: #41B7AC !important;
+    border-color: #41B7AC !important;
+}
+
+.fc-event.individual-event {
+    background-color: #0066FF !important;
+    border-color: #0066FF !important;
+}
+
 /* Bestaande stijlen behouden */
 .section {
     margin-bottom: 3rem;
@@ -61,14 +116,6 @@
 }
 
 /* Voeg agenda stijlen toe */
-#calendar {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-    margin-bottom: 2rem;
-}
-
 .event-card {
     background: white;
     border: 1px solid var(--border-color);
@@ -166,38 +213,6 @@
     .event-content {
         padding: 1.25rem;
     }
-}
-
-/* Calendar Styles */
-.fc-button-primary {
-    background-color: var(--primary-color) !important;
-    border-color: var(--primary-color) !important;
-}
-
-.fc-button-primary:hover {
-    background-color: #0052cc !important;
-    border-color: #0052cc !important;
-}
-
-.fc-event {
-    cursor: pointer;
-    border: none !important;
-    padding: 2px 4px;
-}
-
-.fc-event.vgm-event {
-    background-color: #FF4154 !important;
-    border-color: #FF4154 !important;
-}
-
-.fc-event.collab-event {
-    background-color: #41B7AC !important;
-    border-color: #41B7AC !important;
-}
-
-.fc-event.individual-event {
-    background-color: #0066FF !important;
-    border-color: #0066FF !important;
 }
 </style>
 {% endblock %}
@@ -336,18 +351,17 @@
 {% endblock %}
 
 {% block scripts %}
-<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/main.min.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.10/main.min.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@6.1.10/main.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
+        height: 'auto',
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            right: 'dayGridMonth,timeGridWeek'
         },
         events: '/events/api/calendar-events',
         eventClassNames: function(arg) {
@@ -361,6 +375,14 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         eventClick: function(info) {
             window.location.href = '/events/' + info.event.id;
+        },
+        dayMaxEvents: true, // allow "more" link when too many events
+        locale: 'nl', // Set Dutch locale
+        firstDay: 1, // Start week on Monday
+        buttonText: {
+            today: 'Vandaag',
+            month: 'Maand',
+            week: 'Week'
         }
     });
     calendar.render();
