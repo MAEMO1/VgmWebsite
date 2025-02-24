@@ -643,6 +643,9 @@ def about():
     term_start_str = request.args.get('term')
     if term_start_str:
         term_start = datetime.strptime(term_start_str, '%Y-%m-%d').date()
+        # Get the corresponding term_end for this term_start
+        term = next((t for t in terms if t[0] == term_start), None)
+        term_end = term[1] if term else None
     else:
         # Default to current or most recent term
         current_date = date.today()
@@ -652,8 +655,10 @@ def about():
 
         if latest_term:
             term_start = latest_term.term_start
+            term_end = latest_term.term_end
         else:
             term_start = date(current_date.year, 1, 1)
+            term_end = date(current_date.year, 12, 31)
 
     # Get board members for the selected term
     board_members = BoardMember.query.filter(
@@ -664,10 +669,11 @@ def about():
     mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
 
     return render_template('about.html',
-                         board_members=board_members,
-                         terms=terms,
-                         current_term_start=term_start,
-                         mosques=mosques)
+                       board_members=board_members,
+                       terms=terms,
+                       current_term_start=term_start,
+                       current_term_end=term_end,
+                       mosques=mosques)
 
 @routes.route('/memorandum')
 def memorandum():
