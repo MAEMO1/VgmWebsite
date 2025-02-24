@@ -117,7 +117,7 @@
 
                 <div id="specific_time_container">
                     {{ form.prayer_time.label(class="form-label required-field") }}
-                    {{ form.prayer_time(class="form-control" + (" is-invalid" if form.prayer_time.errors else ""), type="datetime-local") }}
+                    {{ form.prayer_time(class="form-control" + (" is-invalid" if form.prayer_time.errors else ""), type="datetime-local", step="60") }}
                     {% if form.prayer_time.errors %}
                         {% for error in form.prayer_time.errors %}
                             <div class="error-message">{{ error }}</div>

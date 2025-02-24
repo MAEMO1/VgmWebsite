@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, TextAreaField, DateField, DateTimeField, SelectField
+from wtforms import StringField, IntegerField, TextAreaField, DateField, DateTimeLocalField, SelectField
 from wtforms.validators import DataRequired, Optional, Length, Email, ValidationError
 
 class ObituaryForm(FlaskForm):
@@ -20,7 +20,7 @@ class ObituaryForm(FlaskForm):
         ],
         validators=[DataRequired()]
     )
-    prayer_time = DateTimeField('Tijdstip Dodengebed', validators=[Optional()])
+    prayer_time = DateTimeLocalField('Tijdstip Dodengebed', format='%Y-%m-%dT%H:%M', validators=[Optional()])
     prayer_date = DateField('Datum Dodengebed', validators=[Optional()])
     after_prayer = SelectField('Na welk Gebed',
         choices=[
