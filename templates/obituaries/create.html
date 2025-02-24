@@ -24,18 +24,18 @@
 }
 
 .form-section {
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.form-section:last-child {
-    border-bottom: none;
+    margin-bottom: 2.5rem;
+    padding: 1.5rem;
+    background: var(--background-light);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
 }
 
 .section-title {
     color: var(--primary-color);
     margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary-color);
 }
 
 .required-field::after {
@@ -56,41 +56,65 @@
     margin-top: 0.25rem;
 }
 
-#specific_time_container,
-#after_prayer_container,
-#other_location_container {
-    display: none;
-    margin-top: 1rem;
+.time-selection-container {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.time-type-options {
+    margin-bottom: 1.5rem;
+}
+
+.time-type-options .form-check {
     padding: 1rem;
-    background: var(--background-light);
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+}
+
+.time-type-options .form-check-input {
+    margin-right: 1rem;
+}
+
+.time-type-options .form-check-label {
+    font-weight: 500;
+}
+
+#specific_time_container,
+#after_prayer_container {
+    display: none;
+    padding: 1rem;
+    margin-top: 1rem;
+    background: white;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
 }
 
 #specific_time_container.visible,
-#after_prayer_container.visible,
-#other_location_container.visible {
+#after_prayer_container.visible {
     display: block;
 }
 
-.time-type-options {
-    margin-bottom: 1rem;
-    border: 1px solid var(--border-color);
-    padding: 1rem;
+.location-container {
+    background: white;
+    padding: 1.5rem;
     border-radius: 8px;
+    margin-top: 1.5rem;
+}
+
+#other_location_container {
+    display: none;
+    padding: 1rem;
+    margin-top: 1rem;
     background: var(--background-light);
+    border-radius: 8px;
 }
 
-.time-type-options .form-check {
-    margin-bottom: 0.75rem;
-    padding-left: 2rem;
-}
-
-.time-type-options .form-check:last-child {
-    margin-bottom: 0;
-}
-
-.form-check-input {
-    margin-left: -2rem;
+#other_location_container.visible {
+    display: block;
 }
 </style>
 {% endblock %}
@@ -114,9 +138,9 @@
         <form method="POST">
             {{ form.csrf_token }}
 
+            <!-- Persoonlijke Informatie -->
             <div class="form-section">
                 <h3 class="section-title">{{ _('Persoonlijke Informatie') }}</h3>
-
                 <div class="mb-3">
                     {{ form.name.label(class="form-label required-field") }}
                     {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else "")) }}
@@ -159,10 +183,11 @@
                 </div>
             </div>
 
+            <!-- Overlijdensdetails -->
             <div class="form-section">
                 <h3 class="section-title">{{ _('Overlijdensdetails') }}</h3>
 
-                <div class="mb-3">
+                <div class="mb-4">
                     {{ form.date_of_death.label(class="form-label required-field") }}
                     {{ form.date_of_death(class="form-control" + (" is-invalid" if form.date_of_death.errors else ""), type="date") }}
                     {% if form.date_of_death.errors %}
@@ -173,11 +198,12 @@
                 </div>
             </div>
 
+            <!-- Gebedsdienst Details -->
             <div class="form-section">
                 <h3 class="section-title">{{ _('Gebedsdienst Details') }}</h3>
 
-                <div class="mb-4">
-                    {{ form.time_type.label(class="form-label required-field") }}
+                <div class="time-selection-container">
+                    <h4 class="mb-3">{{ _('Tijdstip Dodengebed') }}</h4>
                     <div class="time-type-options">
                         {% for value, label in form.time_type.choices %}
                         <div class="form-check">
@@ -193,59 +219,63 @@
                             <div class="error-message">{{ error }}</div>
                         {% endfor %}
                     {% endif %}
+
+                    <div id="specific_time_container">
+                        {{ form.prayer_time.label(class="form-label required-field") }}
+                        {{ form.prayer_time(class="form-control" + (" is-invalid" if form.prayer_time.errors else ""), type="datetime-local") }}
+                        {% if form.prayer_time.errors %}
+                            {% for error in form.prayer_time.errors %}
+                                <div class="error-message">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <div id="after_prayer_container">
+                        {{ form.after_prayer.label(class="form-label required-field") }}
+                        {{ form.after_prayer(class="form-control" + (" is-invalid" if form.after_prayer.errors else "")) }}
+                        {% if form.after_prayer.errors %}
+                            {% for error in form.after_prayer.errors %}
+                                <div class="error-message">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
                 </div>
 
-                <div id="specific_time_container">
-                    {{ form.prayer_time.label(class="form-label required-field") }}
-                    {{ form.prayer_time(class="form-control" + (" is-invalid" if form.prayer_time.errors else ""), type="datetime-local") }}
-                    {% if form.prayer_time.errors %}
-                        {% for error in form.prayer_time.errors %}
-                            <div class="error-message">{{ error }}</div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
+                <div class="location-container">
+                    <h4 class="mb-3">{{ _('Locatie Details') }}</h4>
+                    <div class="mb-3">
+                        {{ form.death_prayer_location.label(class="form-label required-field") }}
+                        {{ form.death_prayer_location(class="form-control" + (" is-invalid" if form.death_prayer_location.errors else "")) }}
+                        {% if form.death_prayer_location.errors %}
+                            {% for error in form.death_prayer_location.errors %}
+                                <div class="error-message">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
 
-                <div id="after_prayer_container">
-                    {{ form.after_prayer.label(class="form-label required-field") }}
-                    {{ form.after_prayer(class="form-control" + (" is-invalid" if form.after_prayer.errors else "")) }}
-                    {% if form.after_prayer.errors %}
-                        {% for error in form.after_prayer.errors %}
-                            <div class="error-message">{{ error }}</div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
+                    <div id="other_location_container">
+                        {{ form.other_location_address.label(class="form-label required-field") }}
+                        {{ form.other_location_address(class="form-control" + (" is-invalid" if form.other_location_address.errors else "")) }}
+                        {% if form.other_location_address.errors %}
+                            {% for error in form.other_location_address.errors %}
+                                <div class="error-message">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
 
-                <div class="mb-3 mt-4">
-                    {{ form.death_prayer_location.label(class="form-label required-field") }}
-                    {{ form.death_prayer_location(class="form-control" + (" is-invalid" if form.death_prayer_location.errors else "")) }}
-                    {% if form.death_prayer_location.errors %}
-                        {% for error in form.death_prayer_location.errors %}
-                            <div class="error-message">{{ error }}</div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-
-                <div id="other_location_container">
-                    {{ form.other_location_address.label(class="form-label required-field") }}
-                    {{ form.other_location_address(class="form-control" + (" is-invalid" if form.other_location_address.errors else "")) }}
-                    {% if form.other_location_address.errors %}
-                        {% for error in form.other_location_address.errors %}
-                            <div class="error-message">{{ error }}</div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-
-                <div class="mb-3 mt-4">
-                    {{ form.burial_location.label(class="form-label") }}
-                    {{ form.burial_location(class="form-control" + (" is-invalid" if form.burial_location.errors else "")) }}
-                    {% if form.burial_location.errors %}
-                        {% for error in form.burial_location.errors %}
-                            <div class="error-message">{{ error }}</div>
-                        {% endfor %}
-                    {% endif %}
+                    <div class="mb-3">
+                        {{ form.burial_location.label(class="form-label") }}
+                        {{ form.burial_location(class="form-control" + (" is-invalid" if form.burial_location.errors else "")) }}
+                        {% if form.burial_location.errors %}
+                            {% for error in form.burial_location.errors %}
+                                <div class="error-message">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
                 </div>
             </div>
 
+            <!-- Extra Informatie -->
             <div class="form-section">
                 <h3 class="section-title">{{ _('Extra Informatie') }}</h3>
 
