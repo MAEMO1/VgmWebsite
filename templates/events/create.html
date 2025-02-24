@@ -2,63 +2,206 @@
 
 {% block title %}Nieuw Evenement - Mosque Management{% endblock %}
 
+{% block styles %}
+<style>
+:root {
+    --primary-color: #005A87;
+    --secondary-color: #41B7AC;
+    --accent-color: #FF4154;
+    --background-light: #f8f9fa;
+    --text-primary: #2c3e50;
+    --text-secondary: #6c757d;
+    --border-color: #e9ecef;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --transition: all 0.3s ease;
+}
+
+.container {
+    max-width: 800px;
+    padding: 2rem 1rem;
+}
+
+.card {
+    background: white;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    border: none;
+    overflow: hidden;
+}
+
+.card-header {
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+    padding: 2rem;
+}
+
+.card-header h2 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    letter-spacing: -0.03em;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+}
+
+.form-control {
+    padding: 0.875rem 1rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0,90,135,0.1);
+}
+
+.form-text {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+.form-check-input {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.25rem;
+}
+
+.form-check-label {
+    font-size: 1rem;
+    color: var(--text-primary);
+    padding-left: 0.5rem;
+}
+
+.btn {
+    padding: 0.875rem 1.75rem;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background-color: var(--text-secondary);
+    border-color: var(--text-secondary);
+}
+
+.btn-secondary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.mb-3 {
+    margin-bottom: 1.5rem;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.gap-3 {
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
+    .card-header h2 {
+        font-size: 1.75rem;
+    }
+
+    .card-header, .card-body {
+        padding: 1.5rem;
+    }
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="card">
-    <div class="card-header">
-        <h2>Nieuw Evenement Aanmaken</h2>
-    </div>
-    <div class="card-body">
-        <form method="POST" enctype="multipart/form-data">
-            <div class="mb-3">
-                <label for="title" class="form-label">Titel</label>
-                <input type="text" class="form-control" id="title" name="title" required>
-            </div>
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>Nieuw Evenement Aanmaken</h2>
+        </div>
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Titel</label>
+                    <input type="text" class="form-control" id="title" name="title" required>
+                </div>
 
-            <div class="mb-3">
-                <label for="description" class="form-label">Beschrijving</label>
-                <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
-            </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Beschrijving</label>
+                    <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+                </div>
 
-            <div class="mb-3">
-                <label for="date" class="form-label">Datum en Tijd</label>
-                <input type="datetime-local" class="form-control" id="date" name="date" required>
-            </div>
+                <div class="mb-3">
+                    <label for="date" class="form-label">Datum en Tijd</label>
+                    <input type="datetime-local" class="form-control" id="date" name="date" required>
+                </div>
 
-            <div class="mb-3">
-                <label for="location" class="form-label">Locatie</label>
-                <input type="text" class="form-control" id="location" name="location" required>
-            </div>
+                <div class="mb-3">
+                    <label for="location" class="form-label">Locatie</label>
+                    <input type="text" class="form-control" id="location" name="location" required>
+                </div>
 
-            <div class="mb-3">
-                <label for="flyer" class="form-label">Flyer (optioneel)</label>
-                <input type="file" class="form-control" id="flyer" name="flyer" accept="image/*">
-                <div class="form-text">Upload een afbeelding voor de evenement flyer</div>
-            </div>
+                <div class="mb-3">
+                    <label for="flyer" class="form-label">Flyer (optioneel)</label>
+                    <input type="file" class="form-control" id="flyer" name="flyer" accept="image/*">
+                    <div class="form-text">Upload een afbeelding voor de evenement flyer (PNG, JPG of GIF)</div>
+                </div>
 
-            <div class="mb-3">
-                <label for="max_participants" class="form-label">Maximum Aantal Deelnemers (optioneel)</label>
-                <input type="number" class="form-control" id="max_participants" name="max_participants" min="1">
-            </div>
+                <div class="mb-3">
+                    <label for="max_participants" class="form-label">Maximum Aantal Deelnemers (optioneel)</label>
+                    <input type="number" class="form-control" id="max_participants" name="max_participants" min="1">
+                </div>
 
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="registration_required" name="registration_required">
-                <label class="form-check-label" for="registration_required">Registratie Vereist</label>
-            </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="registration_required" name="registration_required">
+                    <label class="form-check-label" for="registration_required">Registratie Vereist</label>
+                </div>
 
-            <div class="mb-3">
-                <label for="reminder_before" class="form-label">Stuur Herinnering Voor (minuten)</label>
-                <select class="form-control" id="reminder_before" name="reminder_before">
-                    <option value="">Geen herinnering</option>
-                    <option value="30">30 minuten</option>
-                    <option value="60">1 uur</option>
-                    <option value="1440">1 dag</option>
-                    <option value="10080">1 week</option>
-                </select>
-            </div>
+                <div class="mb-3">
+                    <label for="reminder_before" class="form-label">Stuur Herinnering Voor (minuten)</label>
+                    <select class="form-control" id="reminder_before" name="reminder_before">
+                        <option value="">Geen herinnering</option>
+                        <option value="30">30 minuten</option>
+                        <option value="60">1 uur</option>
+                        <option value="1440">1 dag</option>
+                        <option value="10080">1 week</option>
+                    </select>
+                </div>
 
-            <button type="submit" class="btn btn-primary">Evenement Aanmaken</button>
-            <a href="{{ url_for('events.event_list') }}" class="btn btn-secondary">Annuleren</a>
-        </form>
+                <div class="d-flex gap-3">
+                    <button type="submit" class="btn btn-primary">Evenement Aanmaken</button>
+                    <a href="{{ url_for('events.event_list') }}" class="btn btn-secondary">Annuleren</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}
