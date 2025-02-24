@@ -44,8 +44,12 @@ def index():
             )
         )
     ).order_by(
-        Obituary.prayer_time.asc().nullslast(),
-        Obituary.prayer_date.asc().nullslast()
+        case(
+            # First show specific times
+            (Obituary.prayer_time.isnot(None), Obituary.prayer_time),
+            # Then show prayer dates
+            else_=Obituary.prayer_date
+        ).asc()
     )
 
     # Get total counts for pagination

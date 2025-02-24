@@ -155,7 +155,9 @@
                 </div>
                 {% endif %}
             </div>
-            <span class="date-badge">{{ obituary.date_of_death.strftime('%d-%m-%Y') if obituary.date_of_death else '' }}</span>
+            <span class="date-badge">
+                {{ _('Overleden') }}: {{ obituary.date_of_death.strftime('%d-%m-%Y') if obituary.date_of_death else '' }}
+            </span>
         </div>
 
         <div class="prayer-info">
@@ -239,7 +241,20 @@
                 </div>
                 {% endif %}
             </div>
-            <span class="date-badge">{{ obituary.date_of_death.strftime('%d-%m-%Y') if obituary.date_of_death else '' }}</span>
+            <span class="date-badge">
+                {% if obituary.prayer_time %}
+                    {{ obituary.prayer_time.strftime('%d-%m-%Y %H:%M') }}
+                {% elif obituary.prayer_after and obituary.prayer_date %}
+                    {{ obituary.prayer_date.strftime('%d-%m-%Y') }} {{ {
+                        'fajr': _('Na Fajr'),
+                        'dhuhr': _('Na Dhuhr'),
+                        'asr': _('Na Asr'),
+                        'maghrib': _('Na Maghrib'),
+                        'isha': _('Na Isha'),
+                        'jumuah': _('Na Jumuah')
+                    }[obituary.prayer_after] }}
+                {% endif %}
+            </span>
         </div>
 
         <div class="prayer-info">
@@ -248,9 +263,9 @@
                 <div class="detail-value">
                     {{ obituary.death_prayer_location }}
                     {% if obituary.prayer_time %}
-                        - {{ obituary.prayer_time.strftime('%d-%m-%Y %H:%M') }}
+                        - {{ obituary.prayer_time.strftime('%H:%M') }} {{ _('uur') }}
                     {% elif obituary.prayer_after and obituary.prayer_date %}
-                        - {{ obituary.prayer_date.strftime('%d-%m-%Y') }} {{ {
+                        - {{ {
                             'fajr': _('Na Fajr (Ochtendgebed)'),
                             'dhuhr': _('Na Dhuhr (Middaggebed)'),
                             'asr': _('Na Asr (Namiddaggebed)'),
