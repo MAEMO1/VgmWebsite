@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Overlijdensbericht Toevoegen') }} - VGM{% endblock %}
+
+{% block styles %}
+<style>
+:root {
+    --primary-color: #005A87;
+    --secondary-color: #41B7AC;
+    --accent-color: #FF4154;
+    --background-light: #F8F9FA;
+    --text-primary: #2C3E50;
+    --text-secondary: #6C757D;
+    --border-color: #E9ECEF;
+}
+
+.obituary-form {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.form-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.form-section:last-child {
+    border-bottom: none;
+}
+
+.section-title {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+}
+
+.required-field::after {
+    content: "*";
+    color: var(--accent-color);
+    margin-left: 4px;
+}
+
+.help-text {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="obituary-form">
+        <h1 class="mb-4">{{ _('Overlijdensbericht Toevoegen') }}</h1>
+        
+        <form method="POST">
+            {{ form.csrf_token }}
+            
+            <div class="form-section">
+                <h3 class="section-title">{{ _('Persoonlijke Informatie') }}</h3>
+                
+                <div class="mb-3">
+                    <label for="name" class="form-label required-field">{{ _('Naam Overledene') }}</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="age" class="form-label">{{ _('Leeftijd') }}</label>
+                    <input type="number" class="form-control" id="age" name="age">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="birth_place" class="form-label">{{ _('Geboorteplaats') }}</label>
+                        <input type="text" class="form-control" id="birth_place" name="birth_place">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="death_place" class="form-label">{{ _('Plaats van Overlijden') }}</label>
+                        <input type="text" class="form-control" id="death_place" name="death_place">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">{{ _('Overlijdensdetails') }}</h3>
+                
+                <div class="mb-3">
+                    <label for="date_of_death" class="form-label required-field">{{ _('Datum van Overlijden') }}</label>
+                    <input type="date" class="form-control" id="date_of_death" name="date_of_death" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="cause_of_death" class="form-label">{{ _('Oorzaak van Overlijden') }}</label>
+                    <input type="text" class="form-control" id="cause_of_death" name="cause_of_death">
+                    <div class="help-text">{{ _('Optioneel') }}</div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">{{ _('Gebedsdienst Details') }}</h3>
+                
+                <div class="mb-3">
+                    <label for="mosque_id" class="form-label required-field">{{ _('Moskee voor Dodengebed') }}</label>
+                    <select class="form-control" id="mosque_id" name="mosque_id" required>
+                        <option value="">{{ _('Selecteer een moskee') }}</option>
+                        {% for mosque in mosques %}
+                        <option value="{{ mosque.id }}">{{ mosque.mosque_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="help-text">{{ _('Dit bericht zal worden geverifieerd door de geselecteerde moskee') }}</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="prayer_time" class="form-label">{{ _('Tijd van Dodengebed') }}</label>
+                    <input type="datetime-local" class="form-control" id="prayer_time" name="prayer_time">
+                </div>
+
+                <div class="mb-3">
+                    <label for="burial_location" class="form-label">{{ _('Begraafplaats') }}</label>
+                    <input type="text" class="form-control" id="burial_location" name="burial_location">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">{{ _('Extra Informatie') }}</h3>
+                
+                <div class="mb-3">
+                    <label for="family_contact" class="form-label">{{ _('Contact voor Condoleances') }}</label>
+                    <input type="text" class="form-control" id="family_contact" name="family_contact">
+                    <div class="help-text">{{ _('Naam en telefoonnummer voor condoleances') }}</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="additional_notes" class="form-label">{{ _('Aanvullende Opmerkingen') }}</label>
+                    <textarea class="form-control" id="additional_notes" name="additional_notes" rows="3"></textarea>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">
+                    {{ _('Overlijdensbericht Toevoegen') }}
+                </button>
+                <a href="{{ url_for('obituaries.index') }}" class="btn btn-outline-secondary">
+                    {{ _('Annuleren') }}
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Set minimum date for death date to 30 days ago
+    const dateOfDeath = document.getElementById('date_of_death');
+    const today = new Date();
+    const thirtyDaysAgo = new Date(today.setDate(today.getDate() - 30));
+    dateOfDeath.min = thirtyDaysAgo.toISOString().split('T')[0];
+    dateOfDeath.max = new Date().toISOString().split('T')[0];
+});
+</script>
+{% endblock %}

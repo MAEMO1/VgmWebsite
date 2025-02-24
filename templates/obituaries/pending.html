@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Te Verifiëren Overlijdensberichten') }} - VGM{% endblock %}
+
+{% block styles %}
+<style>
+:root {
+    --primary-color: #005A87;
+    --secondary-color: #41B7AC;
+    --accent-color: #FF4154;
+    --background-light: #F8F9FA;
+    --text-primary: #2C3E50;
+    --text-secondary: #6C757D;
+    --border-color: #E9ECEF;
+}
+
+.pending-obituaries {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+.obituary-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+}
+
+.obituary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.pending-badge {
+    background: var(--accent-color);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 100px;
+    font-size: 0.875rem;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.detail-item {
+    margin-bottom: 0.5rem;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+.detail-value {
+    color: var(--text-primary);
+}
+
+.actions {
+    border-top: 1px solid var(--border-color);
+    padding-top: 1rem;
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pending-obituaries">
+    <h1 class="mb-4">{{ _('Te Verifiëren Overlijdensberichten') }}</h1>
+
+    {% if obituaries %}
+        {% for obituary in obituaries %}
+        <div class="obituary-card">
+            <div class="obituary-header">
+                <div>
+                    <h2 class="h4 mb-1">{{ obituary.name }}</h2>
+                    <div class="text-muted">
+                        {{ _('Ingediend op') }}: {{ obituary.created_at.strftime('%d-%m-%Y') }}
+                    </div>
+                </div>
+                <span class="pending-badge">{{ _('Wacht op Verificatie') }}</span>
+            </div>
+
+            <div class="details-grid">
+                <div class="detail-item">
+                    <div class="detail-label">{{ _('Datum van Overlijden') }}</div>
+                    <div class="detail-value">{{ obituary.date_of_death.strftime('%d-%m-%Y') }}</div>
+                </div>
+
+                {% if obituary.age %}
+                <div class="detail-item">
+                    <div class="detail-label">{{ _('Leeftijd') }}</div>
+                    <div class="detail-value">{{ obituary.age }} {{ _('jaar') }}</div>
+                </div>
+                {% endif %}
+
+                {% if obituary.birth_place %}
+                <div class="detail-item">
+                    <div class="detail-label">{{ _('Geboorteplaats') }}</div>
+                    <div class="detail-value">{{ obituary.birth_place }}</div>
+                </div>
+                {% endif %}
+
+                {% if obituary.death_place %}
+                <div class="detail-item">
+                    <div class="detail-label">{{ _('Plaats van Overlijden') }}</div>
+                    <div class="detail-value">{{ obituary.death_place }}</div>
+                </div>
+                {% endif %}
+            </div>
+
+            {% if obituary.prayer_time %}
+            <div class="detail-item mb-3">
+                <div class="detail-label">{{ _('Tijd van Dodengebed') }}</div>
+                <div class="detail-value">{{ obituary.prayer_time.strftime('%d-%m-%Y %H:%M') }}</div>
+            </div>
+            {% endif %}
+
+            {% if obituary.additional_notes %}
+            <div class="detail-item mb-3">
+                <div class="detail-label">{{ _('Aanvullende Opmerkingen') }}</div>
+                <div class="detail-value">{{ obituary.additional_notes }}</div>
+            </div>
+            {% endif %}
+
+            <div class="actions">
+                <form method="POST" action="{{ url_for('obituaries.verify_obituary', obituary_id=obituary.id) }}">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check me-2"></i>{{ _('Verifiëren') }}
+                    </button>
+                </form>
+                <a href="#" class="btn btn-outline-danger">
+                    <i class="fas fa-times me-2"></i>{{ _('Afwijzen') }}
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="text-center py-5">
+            <h2>{{ _('Geen overlijdensberichten ter verificatie') }}</h2>
+            <p class="text-muted">{{ _('Er zijn momenteel geen overlijdensberichten die verificatie nodig hebben.') }}</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
