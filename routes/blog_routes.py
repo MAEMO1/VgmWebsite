@@ -32,7 +32,7 @@ def learning_center():
         },
         'geloofsleer': {
             'title': 'Geloofsleer',
-            'subtopics': ['Allah', 'Engelen', 'Koran', 'Profeten']
+            'subtopics': ['Allah', 'Engelen', 'Koran', 'Profeten', 'De Laatste Dag', 'Het Lot']
         },
         'karaktervorming': {
             'title': 'Karaktervorming',
