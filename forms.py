@@ -21,6 +21,7 @@ class ObituaryForm(FlaskForm):
         validators=[DataRequired()]
     )
     prayer_time = DateTimeField('Tijdstip Dodengebed', validators=[Optional()])
+    prayer_date = DateField('Datum Dodengebed', validators=[Optional()])
     after_prayer = SelectField('Na welk Gebed',
         choices=[
             ('fajr', 'Na Fajr (Ochtendgebed)'),
@@ -44,6 +45,10 @@ class ObituaryForm(FlaskForm):
     def validate_prayer_time(self, field):
         if self.time_type.data == 'specific' and not field.data:
             raise ValidationError('Tijdstip is verplicht wanneer "Specifiek Tijdstip" is geselecteerd')
+
+    def validate_prayer_date(self, field):
+        if self.time_type.data == 'after_prayer' and not field.data:
+            raise ValidationError('Datum is verplicht wanneer "Na een Gebed" is geselecteerd')
 
     def validate_after_prayer(self, field):
         if self.time_type.data == 'after_prayer' and not field.data:

@@ -190,7 +190,15 @@
                 </div>
 
                 <div id="after_prayer_container">
-                    {{ form.after_prayer.label(class="form-label required-field") }}
+                    {{ form.prayer_date.label(class="form-label required-field") }}
+                    {{ form.prayer_date(class="form-control" + (" is-invalid" if form.prayer_date.errors else ""), type="date") }}
+                    {% if form.prayer_date.errors %}
+                        {% for error in form.prayer_date.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+
+                    {{ form.after_prayer.label(class="form-label required-field mt-3") }}
                     {{ form.after_prayer(class="form-select" + (" is-invalid" if form.after_prayer.errors else "")) }}
                     {% if form.after_prayer.errors %}
                         {% for error in form.after_prayer.errors %}
@@ -253,7 +261,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Set minimum date for death date to 30 days ago and maximum to today
-    const dateOfDeath = document.querySelector('input[type="date"]');
+    const dateOfDeath = document.querySelector('input[name="date_of_death"]');
     if (dateOfDeath) {
         const today = new Date();
         const thirtyDaysAgo = new Date(today.setDate(today.getDate() - 30));
@@ -271,11 +279,13 @@ document.addEventListener('DOMContentLoaded', function() {
             specificTimeContainer.classList.add('visible');
             afterPrayerContainer.classList.remove('visible');
             document.getElementById('prayer_time').required = true;
+            document.getElementById('prayer_date').required = false;
             document.getElementById('after_prayer').required = false;
         } else if (timeType.value === 'after_prayer') {
             specificTimeContainer.classList.remove('visible');
             afterPrayerContainer.classList.add('visible');
             document.getElementById('prayer_time').required = false;
+            document.getElementById('prayer_date').required = true;
             document.getElementById('after_prayer').required = true;
         }
     }
@@ -306,8 +316,18 @@ document.addEventListener('DOMContentLoaded', function() {
         updateLocationContainer();
     }
 
+    // Set minimum date for prayer date to death date
+    const prayerDate = document.querySelector('input[name="prayer_date"]');
+    if (prayerDate && dateOfDeath) {
+        dateOfDeath.addEventListener('change', function() {
+            if (this.value) {
+                prayerDate.min = this.value;
+            }
+        });
+    }
+
     // Ensure prayer time is after death date
-    const prayerTime = document.querySelector('input[type="datetime-local"]');
+    const prayerTime = document.querySelector('input[name="prayer_time"]');
     if (prayerTime && dateOfDeath) {
         dateOfDeath.addEventListener('change', function() {
             if (this.value) {
