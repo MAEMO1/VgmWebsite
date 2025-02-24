@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
      width="100%" viewBox="0 0 1536 1532" enable-background="new 0 0 1536 1532" xml:space="preserve">
-<defs>
-    <style type="text/css">
-        path[fill="#F7F7F6"] { fill: none !important; opacity: 0 !important; }
-        path[fill="#E8AE26"] { fill: #E8AE26 !important; }
-        path[fill="#41B7AC"] { fill: #41B7AC !important; }
-    </style>
-</defs>
+<style type="text/css">
+    .background { fill: #808285; }
+    .accent { fill: #E8AE26; }
+    .highlight { fill: #41B7AC; }
+</style>
 
-<!-- Original paths with fills that will be overridden by the CSS -->
-<path fill="#F7F7F6" opacity="1.000000" stroke="none" 
-    d="M771.000000,0.999990 
+<path class="background" d="M771.000000,0.999990 
     C1026.264404,1.000000 1281.528809,1.000000 1537.000000,1.000000 
     C1537.000000,259.361328 1537.000000,517.722717 1536.612793,776.542725 
     C1528.660767,777.203735 1526.964844,784.247375 1523.560791,788.718323 
@@ -19,16 +15,11 @@
     C1520.012695,785.630310 1528.431152,777.604492 1536.375366,770.030640 
     C1529.956177,763.168457 1524.756714,757.147034 1519.078857,751.616638"/>
 
-<path fill="#E8AE26" opacity="1.000000" stroke="none" 
-    d="M966.327698,1331.987305 
+<path class="accent" d="M966.327698,1331.987305 
     C973.007019,1324.709473 979.955505,1317.314575 987.273682,1310.305786 
     C988.670166,1308.968262 991.524963,1308.706665 993.708191,1308.703003"/>
 
-<path fill="#41B7AC" opacity="1.000000" stroke="none" 
-    d="M1285.224487,297.500000 
+<path class="highlight" d="M1285.224487,297.500000 
     C1285.224976,281.832153 1285.054932,266.161316 1285.330444,250.498306 
     C1285.412720,245.823639 1283.947632,244.626572 1279.383423,244.632126"/>
-
-<!-- Additional paths kept in original order with their original fills,
-     which will be made transparent or colored via CSS -->
 </svg>
