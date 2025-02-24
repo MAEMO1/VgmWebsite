@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Gemeenschap - VGM') }}{% endblock %}
+
+{% block styles %}
+<style>
+:root {
+    --primary-color: #005A87;
+    --secondary-color: #41B7AC;
+    --accent-color: #FF4154;
+    --background-light: #F8F9FA;
+    --text-primary: #2C3E50;
+    --text-secondary: #6C757D;
+    --border-color: #E9ECEF;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --transition: all 0.3s ease;
+}
+
+.community-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.video-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+
+.video-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+.video-thumbnail {
+    position: relative;
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+    background: var(--background-light);
+}
+
+.video-thumbnail iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.video-content {
+    padding: 1.5rem;
+}
+
+.video-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.video-excerpt {
+    color: var(--text-secondary);
+    font-size: 0.925rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.video-meta {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.section-header {
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.section-description {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    max-width: 800px;
+}
+
+@media (max-width: 768px) {
+    .video-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="community-container">
+    <header class="section-header">
+        <h1 class="section-title">{{ _('VGM Gemeenschap') }}</h1>
+        <p class="section-description">
+            {{ _('Ontdek inspirerende verhalen en leermomenten uit onze gemeenschap door middel van video\'s en documentaires.') }}
+        </p>
+    </header>
+
+    <div class="video-grid">
+        {% for post in posts %}
+        <article class="video-card">
+            <div class="video-thumbnail">
+                {% if post.video_platform == 'youtube' %}
+                <iframe src="https://www.youtube.com/embed/{{ post.video_url.split('v=')[-1] }}" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen></iframe>
+                {% elif post.video_platform == 'vimeo' %}
+                <iframe src="https://player.vimeo.com/video/{{ post.video_url.split('/')[-1] }}" 
+                        allow="autoplay; fullscreen; picture-in-picture" 
+                        allowfullscreen></iframe>
+                {% endif %}
+            </div>
+            <div class="video-content">
+                <h2 class="video-title">{{ post.title }}</h2>
+                <p class="video-excerpt">{{ post.excerpt or post.content[:150] + '...' }}</p>
+                <div class="video-meta">
+                    <span><i class="fas fa-user me-1"></i>{{ post.author.username }}</span>
+                    <span><i class="far fa-calendar me-1"></i>{{ post.created_at.strftime('%d-%m-%Y') }}</span>
+                </div>
+                <a href="{{ url_for('blog.view', slug=post.slug) }}" class="btn btn-outline-primary mt-3">
+                    {{ _('Lees Meer') }}
+                </a>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

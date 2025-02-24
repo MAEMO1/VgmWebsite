@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Leercentrum - VGM') }}{% endblock %}
+
+{% block styles %}
+<style>
+:root {
+    --primary-color: #005A87;
+    --secondary-color: #41B7AC;
+    --accent-color: #FF4154;
+    --background-light: #F8F9FA;
+    --text-primary: #2C3E50;
+    --text-secondary: #6C757D;
+    --border-color: #E9ECEF;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --transition: all 0.3s ease;
+}
+
+.learning-container {
+    display: flex;
+    max-width: 1400px;
+    margin: 0 auto;
+    min-height: calc(100vh - 200px);
+}
+
+.sidebar {
+    width: 300px;
+    background: white;
+    padding: 2rem;
+    border-right: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.main-content {
+    flex: 1;
+    padding: 2rem;
+    background: var(--background-light);
+}
+
+.topic-section {
+    margin-bottom: 2rem;
+}
+
+.topic-header {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.topic-header:hover {
+    color: var(--secondary-color);
+}
+
+.topic-header i {
+    transition: transform 0.3s ease;
+}
+
+.topic-header.active i {
+    transform: rotate(180deg);
+}
+
+.subtopics {
+    margin-left: 1rem;
+    display: none;
+}
+
+.subtopics.active {
+    display: block;
+}
+
+.subtopic-link {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: 4px;
+    transition: var(--transition);
+}
+
+.subtopic-link:hover {
+    background: var(--background-light);
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.subtopic-link.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.welcome-section {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-md);
+}
+
+.welcome-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.welcome-text {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .learning-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="learning-container">
+    <aside class="sidebar">
+        <h2 class="mb-4">{{ _('Onderwerpen') }}</h2>
+        {% for topic_key, topic in topics.items() %}
+        <div class="topic-section">
+            <div class="topic-header" data-topic="{{ topic_key }}">
+                {{ topic.title }}
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="subtopics" id="{{ topic_key }}-subtopics">
+                {% for subtopic in topic.subtopics %}
+                <a href="#{{ topic_key }}/{{ subtopic|lower }}" class="subtopic-link">
+                    {{ subtopic }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </aside>
+
+    <main class="main-content">
+        <section class="welcome-section">
+            <h1 class="welcome-title">{{ _('Welkom bij het VGM Leercentrum') }}</h1>
+            <p class="welcome-text">
+                {{ _('Ontdek een schat aan islamitische kennis en wijsheid. Kies een onderwerp uit het menu om te beginnen met leren.') }}
+            </p>
+        </section>
+
+        <div id="content-area">
+            <!-- Dynamic content will be loaded here -->
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle topic expansion
+    const topicHeaders = document.querySelectorAll('.topic-header');
+    
+    topicHeaders.forEach(header => {
+        header.addEventListener('click', function() {
+            const topicKey = this.dataset.topic;
+            const subtopics = document.getElementById(`${topicKey}-subtopics`);
+            
+            // Toggle active class
+            this.classList.toggle('active');
+            subtopics.classList.toggle('active');
+            
+            // Close other topics
+            topicHeaders.forEach(otherHeader => {
+                if (otherHeader !== header) {
+                    const otherTopicKey = otherHeader.dataset.topic;
+                    const otherSubtopics = document.getElementById(`${otherTopicKey}-subtopics`);
+                    otherHeader.classList.remove('active');
+                    otherSubtopics.classList.remove('active');
+                }
+            });
+        });
+    });
+
+    // Handle subtopic navigation
+    const subtopicLinks = document.querySelectorAll('.subtopic-link');
+    subtopicLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Remove active class from all links
+            subtopicLinks.forEach(l => l.classList.remove('active'));
+            
+            // Add active class to clicked link
+            this.classList.add('active');
+            
+            // Here you would typically load the content for the selected topic
+            // For now, we'll just update the content area with a placeholder
+            const contentArea = document.getElementById('content-area');
+            const topic = this.textContent.trim();
+            contentArea.innerHTML = `<h2>${topic}</h2><p>Content for ${topic} will be loaded here.</p>`;
+        });
+    });
+});
+</script>
+{% endblock %}

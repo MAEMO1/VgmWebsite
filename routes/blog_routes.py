@@ -13,6 +13,38 @@ def index():
     ).order_by(BlogPost.created_at.desc()).all()
     return render_template('blog/index.html', posts=posts)
 
+@blog.route('/gemeenschap')
+def community():
+    # Get video posts for the community section
+    video_posts = BlogPost.query.filter_by(
+        published=True,
+        has_video=True,
+        category='Gemeenschap'
+    ).order_by(BlogPost.created_at.desc()).all()
+    return render_template('blog/community.html', posts=video_posts)
+
+@blog.route('/leercentrum')
+def learning_center():
+    topics = {
+        'plichtenleer': {
+            'title': 'Plichtenleer',
+            'subtopics': ['Shahada', 'Gebed', 'Zakat', 'Vasten', 'Hadj']
+        },
+        'geloofsleer': {
+            'title': 'Geloofsleer',
+            'subtopics': ['Allah', 'Engelen', 'Koran', 'Profeten']
+        },
+        'karaktervorming': {
+            'title': 'Karaktervorming',
+            'subtopics': ['Ethiek', 'Manieren', 'Omgang']
+        },
+        'geschiedenis': {
+            'title': 'Islamitische Geschiedenis',
+            'subtopics': ['Profeet Mohammed ﷺ', 'Sahaba', 'Islamitische Beschaving']
+        }
+    }
+    return render_template('blog/learning_center.html', topics=topics)
+
 @blog.route('/<slug>')
 def view(slug):
     post = BlogPost.query.filter_by(slug=slug).first_or_404()
