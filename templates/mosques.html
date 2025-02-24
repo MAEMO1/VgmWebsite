@@ -5,7 +5,6 @@
 {% block content %}
 <div class="mosque-hero">
     <div class="hero-overlay"></div>
-    <div class="light-path"></div>
     <div class="container">
         <div class="hero-content text-center">
             <h1 class="display-4 mb-4">{{ _('Mosques in Ghent') }}</h1>
@@ -90,10 +89,7 @@
 
 /* Hero Section */
 .mosque-hero {
-    background-image: url("{{ url_for('static', filename='images/mosque-dawn.svg') }}");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     color: white;
     padding: 8rem 0;
     position: relative;
@@ -107,30 +103,13 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, 
-        rgba(0, 90, 135, 0.85), 
-        rgba(65, 183, 172, 0.85));
+    background: rgba(0, 0, 0, 0.2);
     z-index: 1;
-}
-
-.light-path {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(
-        ellipse at bottom,
-        rgba(255, 255, 255, 0.2) 0%,
-        rgba(255, 255, 255, 0) 70%
-    );
-    z-index: 2;
 }
 
 .hero-content {
     position: relative;
-    z-index: 3;
+    z-index: 2;
     max-width: 800px;
     margin: 0 auto;
 }
@@ -138,7 +117,7 @@
 .hero-content h1 {
     font-weight: 700;
     margin-bottom: 2rem;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .quote-container {
@@ -147,10 +126,7 @@
     border-radius: 1.5rem;
     padding: 3rem;
     margin-top: 2rem;
-    box-shadow: 
-        0 4px 6px rgba(0, 0, 0, 0.1),
-        0 0 20px rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .hadith-quote {
@@ -165,7 +141,7 @@
     margin-bottom: 2rem;
     line-height: 1.2;
     color: white;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .quote-text {
@@ -173,15 +149,14 @@
     line-height: 1.8;
     margin-bottom: 1.5rem;
     font-weight: 300;
-    color: rgba(255, 255, 255, 0.95);
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .quote-source {
     font-size: 1rem;
-    opacity: 0.9;
+    opacity: 0.8;
     font-weight: 500;
     font-style: italic;
-    color: rgba(255, 255, 255, 0.9);
 }
 
 /* Map Styles */
