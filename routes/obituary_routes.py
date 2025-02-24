@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from datetime import datetime
 from app import db
 from models import Obituary, ObituaryNotification, User
+from forms import ObituaryForm
 
 obituaries = Blueprint('obituaries', __name__)
 
@@ -14,30 +15,33 @@ def index():
 @obituaries.route('/create', methods=['GET', 'POST'])
 @login_required
 def create():
-    # Get all mosques for the selection dropdown
+    # Get all mosques for the form dropdown
     mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
+    form = ObituaryForm()
+    form.mosque_id.choices = [(mosque.id, mosque.username) for mosque in mosques]
 
-    if request.method == 'POST':
+    if form.validate_on_submit():
         try:
             obituary = Obituary(
-                name=request.form['name'],
-                age=int(request.form['age']) if request.form['age'] else None,
-                birth_place=request.form['birth_place'],
-                death_place=request.form['death_place'],
-                date_of_death=datetime.strptime(request.form['date_of_death'], '%Y-%m-%d'),
-                prayer_time=datetime.strptime(request.form['prayer_time'], '%Y-%m-%dT%H:%M') if request.form['prayer_time'] else None,
-                death_prayer_location=request.form.get('death_prayer_location'),
-                burial_location=request.form['burial_location'],
-                family_contact=request.form['family_contact'],
-                additional_notes=request.form['additional_notes'],
-                mosque_id=int(request.form['mosque_id']),
-                is_approved=current_user.is_admin or (current_user.user_type == 'mosque' and current_user.id == int(request.form['mosque_id']))
+                name=form.name.data,
+                age=form.age.data,
+                birth_place=form.birth_place.data,
+                death_place=form.death_place.data,
+                date_of_death=form.date_of_death.data,
+                prayer_time=form.prayer_time.data,
+                death_prayer_location=form.death_prayer_location.data,
+                burial_location=form.burial_location.data,
+                family_contact=form.family_contact.data,
+                additional_notes=form.additional_notes.data,
+                mosque_id=form.mosque_id.data,
+                submitter_id=current_user.id,
+                is_approved=current_user.is_admin or (current_user.user_type == 'mosque' and current_user.id == form.mosque_id.data)
             )
 
             db.session.add(obituary)
             db.session.commit()
 
-            # Send notification to the selected mosque for verification
+            # Send notification to the selected mosque for verification if needed
             if not obituary.is_approved:
                 notification = ObituaryNotification(
                     obituary_id=obituary.id,
@@ -58,7 +62,7 @@ def create():
             flash('Er is een fout opgetreden bij het toevoegen van het overlijdensbericht. Probeer het opnieuw.', 'error')
             print(f"Error: {str(e)}")  # For debugging
 
-    return render_template('obituaries/create.html', mosques=mosques)
+    return render_template('obituaries/create.html', form=form)
 
 @obituaries.route('/<int:obituary_id>/verify', methods=['POST'])
 @login_required
@@ -81,7 +85,7 @@ def verify_obituary(obituary_id):
         # Send notification to the submitter
         notification = ObituaryNotification(
             obituary_id=obituary.id,
-            user_id=current_user.id,
+            user_id=obituary.submitter_id,  # Send to the person who submitted the obituary
             notification_type='verified',
             message=f'Uw overlijdensbericht voor {obituary.name} is geverifieerd.'
         )
@@ -136,5 +140,5 @@ def subscribe_notifications(obituary_id):
 def update_preferences():
     current_user.notify_obituaries = bool(request.form.get('notify_obituaries'))
     db.session.commit()
-    flash('Notification preferences updated successfully.', 'success')
+    flash('Voorkeuren voor notificaties zijn bijgewerkt.', 'success')
     return redirect(url_for('obituaries.index'))
