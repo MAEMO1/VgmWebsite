@@ -26,9 +26,9 @@
         }
 
         .navbar {
-            background: var(--light-bg);
+            background: var(--white);
             padding: 0.5rem 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: none;
         }
 
         .navbar-brand {
@@ -52,8 +52,7 @@
             justify-content: center;
             transition: transform 0.3s ease;
             background: transparent;
-            padding: 0.25rem;
-            border-radius: 4px;
+            padding: 0;
         }
 
         .logo-container:hover {
@@ -65,12 +64,6 @@
             height: auto;
             display: block;
             object-fit: contain;
-            mix-blend-mode: multiply;
-        }
-        @media (max-width: 992px) {
-            .logo-container {
-                width: 80px;
-            }
         }
         .nav-link {
             color: var(--text-color);
