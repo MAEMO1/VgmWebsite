@@ -13,36 +13,32 @@ def index():
         'actualiteit': {
             'title': 'Actualiteit & Nieuws',
             'subtopics': [
-                'Lokaal Nieuws',
-                'Moskee Updates',
-                'Gemeenschap Nieuws',
-                'Aankondigingen'
+                'Maatschappij',
+                'Gemeenschap',
+                'Aankondigingen',
+                'Vorming & Educatie'
             ]
         },
         'onderwijs': {
-            'title': 'Onderwijs & Vorming',
+            'title': 'Onderwijs & Onderzoek',
             'subtopics': [
-                'Islamitisch Onderwijs',
-                'Taalonderwijs',
-                'Studiebegeleiding',
-                'Opvoeding'
+                'Opvoeding & Jeugd',
+                'Workshops & Cursussen',
+                'Gemeenschapsleven'
             ]
         },
         'gemeenschap': {
-            'title': 'Gemeenschap',
+            'title': 'Projecten & Initiatieven',
             'subtopics': [
-                'Projecten & Initiatieven',
-                'Vrijwilligerswerk',
-                'Samenwerkingen',
-                'Activiteiten'
+                'Vrijwilligers & Samenwerkingen',
+                'Geloof & Inspiratie'
             ]
         },
         'spiritualiteit': {
-            'title': 'Geloof & Spiritualiteit',
+            'title': 'Geloof & Inspiratie',
             'subtopics': [
-                'Ramadan & Feestdagen',
-                'Bezinning',
-                'Gebedsdiensten',
+                'Aanbiddingen',
+                'Reflecties & Inspiratie',
                 'Lezingen'
             ]
         }
