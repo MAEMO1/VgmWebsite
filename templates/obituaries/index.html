@@ -4,16 +4,6 @@
 
 {% block styles %}
 <style>
-::root {
-    --primary-color: #005A87;
-    --secondary-color: #41B7AC;
-    --accent-color: #FF4154;
-    --background-light: #F8F9FA;
-    --text-primary: #2C3E50;
-    --text-secondary: #6C757D;
-    --border-color: #E9ECEF;
-}
-
 .obituaries-container {
     max-width: 1000px;
     margin: 2rem auto;
@@ -29,25 +19,23 @@
     transition: all 0.3s ease;
 }
 
-.obituary-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
 .obituary-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 1rem;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 1rem;
 }
 
 .obituary-title {
-    color: var(--primary-color);
-    margin-bottom: 0.5rem;
+    color: #005A87;
+    margin: 0;
+    font-size: 1.25rem;
 }
 
 .date-badge {
-    background: var(--primary-color);
+    background: #005A87;
     color: white;
     padding: 0.25rem 0.75rem;
     border-radius: 100px;
@@ -62,35 +50,43 @@
 }
 
 .detail-item {
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
 }
 
 .detail-label {
     font-weight: 600;
-    color: var(--text-secondary);
+    color: #6c757d;
     font-size: 0.875rem;
     margin-bottom: 0.25rem;
 }
 
 .detail-value {
-    color: var(--text-primary);
+    color: #2c3e50;
+}
+
+.prayer-info {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    border-left: 4px solid #005A87;
+}
+
+.prayer-info .detail-label {
+    color: #005A87;
 }
 
 .actions {
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 1px solid var(--border-color);
-}
-
-.subscribe-btn {
-    font-size: 0.875rem;
+    border-top: 1px solid #e9ecef;
 }
 
 .add-btn {
     position: fixed;
     bottom: 2rem;
     right: 2rem;
-    background: var(--primary-color);
+    background: #005A87;
     color: white;
     width: 60px;
     height: 60px;
@@ -105,18 +101,8 @@
 .add-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-    background: var(--primary-color);
+    background: #004a70;
     color: white;
-}
-
-@media (max-width: 768px) {
-    .obituary-header {
-        flex-direction: column;
-    }
-    
-    .date-badge {
-        margin-top: 0.5rem;
-    }
 }
 </style>
 {% endblock %}
@@ -137,74 +123,67 @@
         <div class="obituary-card">
             <div class="obituary-header">
                 <div>
-                    <h2 class="h4 obituary-title">{{ obituary.name }}</h2>
-                    <div class="text-muted">
-                        {{ _('Leeftijd') }}: {% if obituary.age %}{{ obituary.age }} {{ _('jaar') }}{% else %}{{ _('Niet vermeld') }}{% endif %}
+                    <h2 class="obituary-title">{{ obituary.name }}</h2>
+                    {% if obituary.age %}
+                    <div class="text-muted mt-1">
+                        {{ obituary.age }} {{ _('jaar') }}
                     </div>
+                    {% endif %}
                 </div>
                 <span class="date-badge">{{ obituary.date_of_death.strftime('%d-%m-%Y') }}</span>
             </div>
 
             <div class="details-grid">
-                {% if obituary.birth_place %}
-                <div class="detail-item">
-                    <div class="detail-label">{{ _('Geboorteplaats') }}</div>
-                    <div class="detail-value">{{ obituary.birth_place }}</div>
-                </div>
-                {% endif %}
-
                 {% if obituary.death_place %}
                 <div class="detail-item">
                     <div class="detail-label">{{ _('Plaats van Overlijden') }}</div>
                     <div class="detail-value">{{ obituary.death_place }}</div>
                 </div>
                 {% endif %}
+            </div>
 
-                {% if obituary.prayer_time %}
+            <div class="prayer-info">
                 <div class="detail-item">
-                    <div class="detail-label">{{ _('Tijd van Dodengebed') }}</div>
-                    <div class="detail-value">{{ obituary.prayer_time.strftime('%d-%m-%Y %H:%M') }}</div>
+                    <div class="detail-label">{{ _('Dodengebed') }}</div>
+                    <div class="detail-value">
+                        {{ obituary.death_prayer_location }}
+                        {% if obituary.prayer_time %}
+                            - {{ obituary.prayer_time.strftime('%d-%m-%Y %H:%M') }}
+                        {% elif obituary.prayer_after %}
+                            - {{ {
+                                'fajr': _('Na Fajr (Ochtendgebed)'),
+                                'dhuhr': _('Na Dhuhr (Middaggebed)'),
+                                'asr': _('Na Asr (Namiddaggebed)'),
+                                'maghrib': _('Na Maghrib (Zonsonderganggebed)'),
+                                'isha': _('Na Isha (Avondgebed)'),
+                                'jumuah': _('Na Jumuah (Vrijdaggebed)')
+                            }[obituary.prayer_after] }}
+                        {% endif %}
+                    </div>
                 </div>
-                {% endif %}
 
                 {% if obituary.burial_location %}
-                <div class="detail-item">
+                <div class="detail-item mt-2">
                     <div class="detail-label">{{ _('Begraafplaats') }}</div>
                     <div class="detail-value">{{ obituary.burial_location }}</div>
                 </div>
                 {% endif %}
             </div>
 
-            {% if obituary.additional_notes %}
-            <div class="detail-item mb-3">
-                <div class="detail-label">{{ _('Aanvullende Informatie') }}</div>
-                <div class="detail-value">{{ obituary.additional_notes }}</div>
-            </div>
-            {% endif %}
-
-            {% if obituary.family_contact %}
-            <div class="detail-item">
-                <div class="detail-label">{{ _('Contact voor Condoleances') }}</div>
-                <div class="detail-value">{{ obituary.family_contact }}</div>
-            </div>
-            {% endif %}
-
             {% if current_user.is_authenticated %}
             <div class="actions">
-                <button class="btn btn-outline-primary btn-sm subscribe-btn" 
+                <button class="btn btn-outline-primary btn-sm" 
                         onclick="subscribeToNotifications({{ obituary.id }})">
                     <i class="fas fa-bell me-2"></i>{{ _('Ontvang Updates') }}
                 </button>
                 {% if current_user.is_admin %}
-                <div class="actions">
-                    <form action="{{ url_for('obituaries.delete_obituary', obituary_id=obituary.id) }}" method="POST" 
-                          onsubmit="return confirm('{{ _('Weet u zeker dat u dit overlijdensbericht wilt verwijderen?') }}');"
-                          class="d-inline">
-                        <button type="submit" class="btn btn-danger btn-sm">
-                            <i class="fas fa-trash me-1"></i>{{ _('Verwijderen') }}
-                        </button>
-                    </form>
-                </div>
+                <form action="{{ url_for('obituaries.delete_obituary', obituary_id=obituary.id) }}" method="POST" 
+                      onsubmit="return confirm('{{ _('Weet u zeker dat u dit overlijdensbericht wilt verwijderen?') }}');"
+                      class="d-inline">
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash me-1"></i>{{ _('Verwijderen') }}
+                    </button>
+                </form>
                 {% endif %}
             </div>
             {% endif %}
