@@ -1,40 +1,200 @@
 {% extends "base.html" %}
 
-{% block title %}Notification Settings - Mosque Management{% endblock %}
+{% block title %}{{ _('Notificatie Instellingen - VGM') }}{% endblock %}
+
+{% block styles %}
+<style>
+:root {
+    --primary-color: #005A87;
+    --secondary-color: #41B7AC;
+    --accent-color: #FF4154;
+    --background-light: #f8f9fa;
+    --text-primary: #2c3e50;
+    --text-secondary: #6c757d;
+    --border-color: #e9ecef;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --transition: all 0.3s ease;
+}
+
+.container {
+    max-width: 800px;
+    padding: 2rem 1rem;
+}
+
+.card {
+    background: white;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    border: none;
+    overflow: hidden;
+}
+
+.card-header {
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+    padding: 2rem;
+}
+
+.card-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.notification-section {
+    margin-bottom: 2.5rem;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+}
+
+.form-check {
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+}
+
+.form-check-input {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.25rem;
+    margin-left: -2rem;
+    border: 2px solid var(--border-color);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.form-check-label {
+    font-size: 1rem;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.form-text {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    margin-left: 2rem;
+}
+
+.btn {
+    padding: 0.875rem 1.75rem;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.alert {
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="card">
-    <div class="card-header">
-        <h2>Notification Settings</h2>
-    </div>
-    <div class="card-body">
-        <form method="POST">
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="notify_new_events" 
-                       name="notify_new_events" {% if current_user.notify_new_events %}checked{% endif %}>
-                <label class="form-check-label" for="notify_new_events">
-                    Notify me about new events
-                </label>
-            </div>
-            
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="notify_event_changes" 
-                       name="notify_event_changes" {% if current_user.notify_event_changes %}checked{% endif %}>
-                <label class="form-check-label" for="notify_event_changes">
-                    Notify me about changes to events I'm registered for
-                </label>
-            </div>
-            
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="notify_event_reminders" 
-                       name="notify_event_reminders" {% if current_user.notify_event_reminders %}checked{% endif %}>
-                <label class="form-check-label" for="notify_event_reminders">
-                    Send me event reminders
-                </label>
-            </div>
-            
-            <button type="submit" class="btn btn-primary">Save Settings</button>
-        </form>
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>{{ _('Notificatie Instellingen') }}</h2>
+        </div>
+        <div class="card-body">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="{{ url_for('events.update_notification_settings') }}">
+                <!-- Evenementen Notificaties -->
+                <div class="notification-section">
+                    <h3 class="section-title">{{ _('Evenementen') }}</h3>
+
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="notify_new_events" 
+                               name="notify_new_events" {% if current_user.notify_new_events %}checked{% endif %}>
+                        <label class="form-check-label" for="notify_new_events">
+                            {{ _('Ontvang meldingen over nieuwe evenementen') }}
+                        </label>
+                        <div class="form-text">{{ _('Word op de hoogte gehouden wanneer er nieuwe evenementen worden toegevoegd') }}</div>
+                    </div>
+
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="notify_event_changes" 
+                               name="notify_event_changes" {% if current_user.notify_event_changes %}checked{% endif %}>
+                        <label class="form-check-label" for="notify_event_changes">
+                            {{ _('Ontvang meldingen over wijzigingen in evenementen waarvoor je bent aangemeld') }}
+                        </label>
+                        <div class="form-text">{{ _('Word gewaarschuwd bij wijzigingen in datum, tijd of locatie') }}</div>
+                    </div>
+
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="notify_event_reminders" 
+                               name="notify_event_reminders" {% if current_user.notify_event_reminders %}checked{% endif %}>
+                        <label class="form-check-label" for="notify_event_reminders">
+                            {{ _('Ontvang herinneringen voor evenementen') }}
+                        </label>
+                        <div class="form-text">{{ _('Krijg een herinnering voordat het evenement begint') }}</div>
+                    </div>
+                </div>
+
+                <!-- Overlijdensberichten Notificaties -->
+                <div class="notification-section">
+                    <h3 class="section-title">{{ _('Overlijdensberichten') }}</h3>
+
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="notify_obituaries" 
+                               name="notify_obituaries" {% if current_user.notify_obituaries %}checked{% endif %}>
+                        <label class="form-check-label" for="notify_obituaries">
+                            {{ _('Ontvang meldingen over nieuwe overlijdensberichten') }}
+                        </label>
+                        <div class="form-text">{{ _('Word op de hoogte gebracht wanneer er een overlijdensbericht wordt geplaatst') }}</div>
+                    </div>
+
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="notify_funeral_updates" 
+                               name="notify_funeral_updates" {% if current_user.notify_funeral_updates %}checked{% endif %}>
+                        <label class="form-check-label" for="notify_funeral_updates">
+                            {{ _('Ontvang meldingen over wijzigingen in begrafenisdetails') }}
+                        </label>
+                        <div class="form-text">{{ _('Word gewaarschuwd bij wijzigingen in tijden of locaties van gebeden en begrafenissen') }}</div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    {{ _('Instellingen Opslaan') }}
+                </button>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

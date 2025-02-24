@@ -219,12 +219,25 @@ def user_notifications():
 @login_required
 def notification_settings():
     if request.method == 'POST':
-        current_user.notify_new_events = bool(request.form.get('notify_new_events'))
-        current_user.notify_event_changes = bool(request.form.get('notify_event_changes'))
-        current_user.notify_event_reminders = bool(request.form.get('notify_event_reminders'))
-        db.session.commit()
-        flash('Notification settings updated successfully!', 'success')
+        try:
+            # Event notifications
+            current_user.notify_new_events = bool(request.form.get('notify_new_events'))
+            current_user.notify_event_changes = bool(request.form.get('notify_event_changes'))
+            current_user.notify_event_reminders = bool(request.form.get('notify_event_reminders'))
+
+            # Obituary notifications
+            current_user.notify_obituaries = bool(request.form.get('notify_obituaries'))
+            current_user.notify_funeral_updates = bool(request.form.get('notify_funeral_updates'))
+
+            db.session.commit()
+            flash('Notificatie instellingen succesvol bijgewerkt!', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash('Er is een fout opgetreden bij het opslaan van uw instellingen.', 'error')
+            print(f"Error updating notification settings: {e}")
+
         return redirect(url_for('events.notification_settings'))
+
     return render_template('events/notification_settings.html')
 
 

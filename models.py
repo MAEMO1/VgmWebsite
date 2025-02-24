@@ -10,6 +10,15 @@ class User(UserMixin, db.Model):
     is_admin = db.Column(db.Boolean, default=False)
     user_type = db.Column(db.String(20), nullable=False)  # 'visitor' or 'mosque'
 
+    # Event notification settings
+    notify_new_events = db.Column(db.Boolean, default=False)
+    notify_event_changes = db.Column(db.Boolean, default=False)
+    notify_event_reminders = db.Column(db.Boolean, default=False)
+
+    # Obituary notification settings
+    notify_obituaries = db.Column(db.Boolean, default=False)
+    notify_funeral_updates = db.Column(db.Boolean, default=False)
+
     # Mosque-specific fields
     mosque_name = db.Column(db.String(200))
     mosque_street = db.Column(db.String(100))  # Street name
@@ -109,8 +118,8 @@ class Event(db.Model):
     # Relationships
     organizer_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Primary organizer (mosque or VGM)
     collaborating_mosques = db.relationship('User',
-                                       secondary='event_mosque_collaboration',
-                                       backref=db.backref('collaborated_events', lazy='dynamic'))
+                                          secondary='event_mosque_collaboration',
+                                          backref=db.backref('collaborated_events', lazy='dynamic'))
 
     registrations = db.relationship('EventRegistration', backref='event', lazy='dynamic')
     notifications = db.relationship('EventNotification', backref='event', lazy='dynamic')
