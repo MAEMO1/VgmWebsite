@@ -75,7 +75,8 @@
                             <div class="image-placeholder">
                                 <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" 
                                      alt="VGM Logo"
-                                     loading="lazy">
+                                     loading="lazy"
+                                     class="logo-placeholder">
                             </div>
                         {% endif %}
                     </div>
@@ -148,6 +149,9 @@
                                             {% if member.image %}
                                             <img src="{{ url_for('static', filename='images/board/' + member.image) }}" 
                                                  alt="Huidige foto" class="current-photo">
+                                            {% else %}
+                                            <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" 
+                                                 alt="VGM Logo" class="current-photo logo-placeholder">
                                             {% endif %}
                                         </div>
                                     </div>
@@ -368,11 +372,18 @@
     padding: 2rem;
 }
 
-.image-placeholder img {
+.logo-placeholder {
     width: 60%;
     height: auto;
     object-fit: contain;
     opacity: 0.7;
+    filter: grayscale(20%) opacity(80%);
+    transition: all 0.3s ease;
+}
+
+.leader-card:hover .logo-placeholder {
+    opacity: 0.9;
+    filter: grayscale(0%);
 }
 
 .leader-info {
@@ -453,17 +464,17 @@
     object-fit: cover;
 }
 
-.remove-member {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-}
-
 .current-photo {
     max-width: 100%;
     height: auto;
     border-radius: 8px;
     margin-bottom: 1rem;
+}
+
+.remove-member {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
 }
 
 @media (max-width: 768px) {
@@ -525,17 +536,25 @@ document.addEventListener('DOMContentLoaded', function() {
     if (addMemberBtn && boardMembersForm) {
         addMemberBtn.addEventListener('click', function() {
             const template = boardMembersForm.querySelector('.board-member-entry').cloneNode(true);
+
             // Reset form values
             template.querySelectorAll('input').forEach(input => {
-                input.value = '';
+                if (input.type !== 'hidden') {
+                    input.value = '';
+                }
                 if (input.type === 'file') {
                     const preview = input.nextElementSibling;
                     if (preview) {
-                        preview.innerHTML = ''; // Clear preview
+                        preview.innerHTML = `<img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" 
+                                               alt="VGM Logo" class="current-photo logo-placeholder">`;
                     }
                 }
             });
             template.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+
+            // Reset member ID
+            template.querySelector('input[name="member_ids[]"]').value = '';
+
             boardMembersForm.appendChild(template);
         });
     }
@@ -547,7 +566,7 @@ function previewImage(input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+            preview.innerHTML = `<img src="${e.target.result}" alt="Preview" class="current-photo">`;
         }
         reader.readAsDataURL(input.files[0]);
     }
