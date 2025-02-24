@@ -4,12 +4,13 @@
 
 {% block content %}
 <div class="mosque-hero">
+    <div class="hero-overlay"></div>
     <div class="container">
         <div class="hero-content text-center">
             <h1 class="display-4 mb-4">{{ _('Mosques in Ghent') }}</h1>
             <div class="quote-container">
                 <blockquote class="hadith-quote">
-                    <p class="mb-4">"Stap binnen, stijg hoger"</p>
+                    <p class="lead-quote">Stap binnen, stijg hoger</p>
                     <p class="quote-text">Wie zich thuis reinigt en daarna naar een van de huizen van Allah loopt om er één van zijn verplichtingen te verrichten, zal voor elke stap die hij zet, een zonde laten vallen en een graad in rang verhogen.</p>
                     <footer class="quote-source">Sahih Muslim 666</footer>
                 </blockquote>
@@ -72,6 +73,9 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block styles %}
 <style>
 :root {
     --primary-color: #005A87;
@@ -87,21 +91,42 @@
 .mosque-hero {
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     color: white;
-    padding: 6rem 0;
+    padding: 8rem 0;
+    position: relative;
+    overflow: hidden;
     margin-bottom: 2rem;
 }
 
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
 .hero-content {
+    position: relative;
+    z-index: 2;
     max-width: 800px;
     margin: 0 auto;
+}
+
+.hero-content h1 {
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .quote-container {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
-    border-radius: 1rem;
-    padding: 2rem;
+    border-radius: 1.5rem;
+    padding: 3rem;
     margin-top: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .hadith-quote {
@@ -110,20 +135,28 @@
     margin: 0;
 }
 
-.hadith-quote p:first-child {
-    font-size: 2rem;
-    font-weight: 600;
+.lead-quote {
+    font-size: 2.5rem;
+    font-weight: 300;
+    margin-bottom: 2rem;
+    line-height: 1.2;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .quote-text {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     line-height: 1.8;
-    margin: 1rem 0;
+    margin-bottom: 1.5rem;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .quote-source {
     font-size: 1rem;
     opacity: 0.8;
+    font-weight: 500;
+    font-style: italic;
 }
 
 /* Map Styles */
@@ -201,19 +234,21 @@
 
 @media (max-width: 768px) {
     .mosque-hero {
-        padding: 4rem 0;
+        padding: 6rem 0;
     }
 
     .quote-container {
-        padding: 1.5rem;
+        padding: 2rem;
+        margin-top: 1.5rem;
     }
 
-    .hadith-quote p:first-child {
-        font-size: 1.5rem;
+    .lead-quote {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
     }
 
     .quote-text {
-        font-size: 1rem;
+        font-size: 1.1rem;
     }
 }
 </style>
