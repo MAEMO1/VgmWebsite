@@ -724,5 +724,101 @@ msgstr ""
 msgid "Recent Obituaries"
 msgstr "Recente Overlijdensberichten"
 
+msgid "Submit an Obituary"
+msgstr "Overlijdensbericht Indienen"
+
+msgid "Name of Deceased"
+msgstr "Naam van Overledene"
+
+msgid "Age"
+msgstr "Leeftijd"
+
+msgid "Place of Birth"
+msgstr "Geboorteplaats"
+
+msgid "Place of Death"
+msgstr "Plaats van Overlijden"
+
+msgid "Date of Death"
+msgstr "Datum van Overlijden"
+
+msgid "Funeral Date & Time"
+msgstr "Datum & Tijd van de Uitvaart"
+
+msgid "Prayer Time"
+msgstr "Gebedsmoment"
+
+msgid "Place of Death Prayer"
+msgstr "Locatie van het Dodengebed"
+
+msgid "Burial Location"
+msgstr "Begraafplaats"
+
+msgid "Family Contact Information"
+msgstr "Contactgegevens Familie"
+
+msgid "Details"
+msgstr "Details"
+
+msgid "Additional Notes"
+msgstr "Aanvullende Opmerkingen"
+
+msgid "Submit for Approval"
+msgstr "Ter Goedkeuring Indienen"
+
+msgid "Subscribe to Updates"
+msgstr "Abonneren op Updates"
+
+msgid "Successfully subscribed to notifications"
+msgstr "Succesvol geabonneerd op meldingen"
+
+msgid "Subscribed"
+msgstr "Geabonneerd"
+
 msgid "No obituaries to display."
 msgstr "Geen overlijdensberichten om weer te geven."
+
+msgid "Obituary Approval"
+msgstr "Goedkeuring Overlijdensbericht"
+
+msgid "Pending Obituaries"
+msgstr "Wachtende Overlijdensberichten"
+
+msgid "Name"
+msgstr "Naam"
+
+msgid "Date of Death"
+msgstr "Datum van Overlijden"
+
+msgid "Funeral Date"
+msgstr "Datum Uitvaart"
+
+msgid "Submitted"
+msgstr "Ingediend"
+
+msgid "Actions"
+msgstr "Acties"
+
+msgid "Approve"
+msgstr "Goedkeuren"
+
+msgid "Delete"
+msgstr "Verwijderen"
+
+msgid "No pending obituaries to approve."
+msgstr "Geen wachtende overlijdensberichten ter goedkeuring."
+
+msgid "Enter the location where the death prayer will be held"
+msgstr "Voer de locatie in waar het dodengebed zal worden gehouden"
+
+msgid "Only mosque administrators can submit obituaries."
+msgstr "Alleen moskee-beheerders kunnen overlijdensberichten indienen."
+
+msgid "Obituary submitted successfully."
+msgstr "Overlijdensbericht succesvol ingediend."
+
+msgid "Error submitting obituary. Please try again."
+msgstr "Fout bij het indienen van het overlijdensbericht. Probeer het opnieuw."
+
+msgid "Notification preferences updated successfully."
+msgstr "Notificatie-voorkeuren succesvol bijgewerkt."
