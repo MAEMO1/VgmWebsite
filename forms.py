@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, TextAreaField, DateField, DateTimeField, SelectField, RadioField
+from wtforms import StringField, IntegerField, TextAreaField, DateField, DateTimeField, SelectField
 from wtforms.validators import DataRequired, Optional, Length, Email, ValidationError
 
 class ObituaryForm(FlaskForm):
@@ -10,7 +10,7 @@ class ObituaryForm(FlaskForm):
     date_of_death = DateField('Datum van Overlijden', validators=[DataRequired()])
 
     # Nieuwe velden voor tijd selectie
-    time_type = RadioField('Type Tijdsaanduiding',
+    time_type = SelectField('Type Tijdsaanduiding',
         choices=[
             ('specific', 'Specifiek Tijdstip'),
             ('after_prayer', 'Na een Gebed')

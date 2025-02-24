@@ -21,6 +21,10 @@
     border: 1px solid #dee2e6;
 }
 
+.form-section:last-child {
+    margin-bottom: 1.5rem;
+}
+
 .section-title {
     font-size: 1.5rem;
     color: #005A87;
@@ -29,30 +33,10 @@
     border-bottom: 2px solid #005A87;
 }
 
-.subsection {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
-    border: 1px solid #dee2e6;
-}
-
-.subsection-title {
-    font-size: 1.2rem;
-    color: #2C3E50;
-    margin-bottom: 1rem;
-}
-
 .required-field::after {
     content: "*";
     color: #dc3545;
     margin-left: 4px;
-}
-
-.help-text {
-    font-size: 0.875rem;
-    color: #6c757d;
-    margin-top: 0.25rem;
 }
 
 .error-message {
@@ -61,39 +45,17 @@
     margin-top: 0.25rem;
 }
 
-.time-type-options {
-    margin-bottom: 1.5rem;
-}
-
-.time-type-options .form-check {
-    background: white;
-    padding: 1rem;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-}
-
-.time-type-options .form-check:last-child {
-    margin-bottom: 0;
-}
-
-.time-type-options .form-check-input {
-    margin-right: 1rem;
-}
-
-.time-type-options .form-check-label {
-    font-weight: 500;
+.help-text {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
 }
 
 #specific_time_container,
 #after_prayer_container,
 #other_location_container {
     display: none;
-    padding: 1.5rem;
     margin-top: 1rem;
-    background: white;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
 }
 
 #specific_time_container.visible,
@@ -138,7 +100,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-4 mb-4">
+                    <div class="col-md-4">
                         {{ form.age.label(class="form-label") }}
                         {{ form.age(class="form-control" + (" is-invalid" if form.age.errors else "")) }}
                         {% if form.age.errors %}
@@ -147,7 +109,7 @@
                             {% endfor %}
                         {% endif %}
                     </div>
-                    <div class="col-md-4 mb-4">
+                    <div class="col-md-4">
                         {{ form.birth_place.label(class="form-label") }}
                         {{ form.birth_place(class="form-control" + (" is-invalid" if form.birth_place.errors else "")) }}
                         {% if form.birth_place.errors %}
@@ -156,7 +118,7 @@
                             {% endfor %}
                         {% endif %}
                     </div>
-                    <div class="col-md-4 mb-4">
+                    <div class="col-md-4">
                         {{ form.death_place.label(class="form-label required-field") }}
                         {{ form.death_place(class="form-control" + (" is-invalid" if form.death_place.errors else "")) }}
                         {% if form.death_place.errors %}
@@ -172,96 +134,79 @@
             <div class="form-section">
                 <h2 class="section-title">{{ _('Overlijdensdetails') }}</h2>
 
-                <div class="subsection">
-                    <div class="mb-4">
-                        {{ form.date_of_death.label(class="form-label required-field") }}
-                        {{ form.date_of_death(class="form-control" + (" is-invalid" if form.date_of_death.errors else ""), type="date") }}
-                        {% if form.date_of_death.errors %}
-                            {% for error in form.date_of_death.errors %}
-                                <div class="error-message">{{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Gebedsdienst Details -->
-            <div class="form-section">
-                <h2 class="section-title">{{ _('Gebedsdienst Details') }}</h2>
-
-                <!-- Tijdstip selectie -->
-                <div class="subsection">
-                    <h3 class="subsection-title">{{ _('Tijdstip Dodengebed') }}</h3>
-                    <div class="time-type-options">
-                        {% for value, label in form.time_type.choices %}
-                        <div class="form-check">
-                            {{ form.time_type(class="form-check-input", value=value, id="time_type_" + value) }}
-                            <label class="form-check-label" for="time_type_{{ value }}">
-                                {{ _(label) }}
-                            </label>
-                        </div>
+                <div class="mb-4">
+                    {{ form.date_of_death.label(class="form-label required-field") }}
+                    {{ form.date_of_death(class="form-control" + (" is-invalid" if form.date_of_death.errors else ""), type="date") }}
+                    {% if form.date_of_death.errors %}
+                        {% for error in form.date_of_death.errors %}
+                            <div class="error-message">{{ error }}</div>
                         {% endfor %}
-                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    {{ form.time_type.label(class="form-label required-field") }}
+                    {{ form.time_type(class="form-select" + (" is-invalid" if form.time_type.errors else "")) }}
                     {% if form.time_type.errors %}
                         {% for error in form.time_type.errors %}
                             <div class="error-message">{{ error }}</div>
                         {% endfor %}
                     {% endif %}
-
-                    <div id="specific_time_container">
-                        {{ form.prayer_time.label(class="form-label required-field") }}
-                        {{ form.prayer_time(class="form-control" + (" is-invalid" if form.prayer_time.errors else ""), type="datetime-local") }}
-                        {% if form.prayer_time.errors %}
-                            {% for error in form.prayer_time.errors %}
-                                <div class="error-message">{{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-
-                    <div id="after_prayer_container">
-                        {{ form.after_prayer.label(class="form-label required-field") }}
-                        {{ form.after_prayer(class="form-control" + (" is-invalid" if form.after_prayer.errors else "")) }}
-                        {% if form.after_prayer.errors %}
-                            {% for error in form.after_prayer.errors %}
-                                <div class="error-message">{{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
                 </div>
 
-                <!-- Locatie Details -->
-                <div class="subsection">
-                    <h3 class="subsection-title">{{ _('Locatie Details') }}</h3>
+                <div id="specific_time_container">
+                    {{ form.prayer_time.label(class="form-label required-field") }}
+                    {{ form.prayer_time(class="form-control" + (" is-invalid" if form.prayer_time.errors else ""), type="datetime-local") }}
+                    {% if form.prayer_time.errors %}
+                        {% for error in form.prayer_time.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
 
-                    <div class="mb-4">
-                        {{ form.death_prayer_location.label(class="form-label required-field") }}
-                        {{ form.death_prayer_location(class="form-control" + (" is-invalid" if form.death_prayer_location.errors else "")) }}
-                        {% if form.death_prayer_location.errors %}
-                            {% for error in form.death_prayer_location.errors %}
-                                <div class="error-message">{{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
+                <div id="after_prayer_container">
+                    {{ form.after_prayer.label(class="form-label required-field") }}
+                    {{ form.after_prayer(class="form-select" + (" is-invalid" if form.after_prayer.errors else "")) }}
+                    {% if form.after_prayer.errors %}
+                        {% for error in form.after_prayer.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
 
-                    <div id="other_location_container">
-                        {{ form.other_location_address.label(class="form-label required-field") }}
-                        {{ form.other_location_address(class="form-control" + (" is-invalid" if form.other_location_address.errors else "")) }}
-                        {% if form.other_location_address.errors %}
-                            {% for error in form.other_location_address.errors %}
-                                <div class="error-message">{{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
+            <!-- Locatie Details -->
+            <div class="form-section">
+                <h2 class="section-title">{{ _('Locatie Details') }}</h2>
 
-                    <div class="mb-4">
-                        {{ form.burial_location.label(class="form-label") }}
-                        {{ form.burial_location(class="form-control" + (" is-invalid" if form.burial_location.errors else "")) }}
-                        {% if form.burial_location.errors %}
-                            {% for error in form.burial_location.errors %}
-                                <div class="error-message">{{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
+                <div class="mb-4">
+                    {{ form.death_prayer_location.label(class="form-label required-field") }}
+                    {{ form.death_prayer_location(class="form-select" + (" is-invalid" if form.death_prayer_location.errors else "")) }}
+                    {% if form.death_prayer_location.errors %}
+                        {% for error in form.death_prayer_location.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div id="other_location_container">
+                    {{ form.other_location_address.label(class="form-label required-field") }}
+                    {{ form.other_location_address(class="form-control" + (" is-invalid" if form.other_location_address.errors else "")) }}
+                    {% if form.other_location_address.errors %}
+                        {% for error in form.other_location_address.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    {{ form.burial_location.label(class="form-label") }}
+                    {{ form.burial_location(class="form-control" + (" is-invalid" if form.burial_location.errors else "")) }}
+                    {% if form.burial_location.errors %}
+                        {% for error in form.burial_location.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
                 </div>
             </div>
 
@@ -269,27 +214,25 @@
             <div class="form-section">
                 <h2 class="section-title">{{ _('Extra Informatie') }}</h2>
 
-                <div class="subsection">
-                    <div class="mb-4">
-                        {{ form.family_contact.label(class="form-label") }}
-                        {{ form.family_contact(class="form-control" + (" is-invalid" if form.family_contact.errors else "")) }}
-                        {% if form.family_contact.errors %}
-                            {% for error in form.family_contact.errors %}
-                                <div class="error-message">{{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
-                        <div class="help-text">{{ _('Naam en telefoonnummer voor condoleances') }}</div>
-                    </div>
+                <div class="mb-4">
+                    {{ form.family_contact.label(class="form-label") }}
+                    {{ form.family_contact(class="form-control" + (" is-invalid" if form.family_contact.errors else "")) }}
+                    {% if form.family_contact.errors %}
+                        {% for error in form.family_contact.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    <div class="help-text">{{ _('Naam en telefoonnummer voor condoleances') }}</div>
+                </div>
 
-                    <div class="mb-4">
-                        {{ form.additional_notes.label(class="form-label") }}
-                        {{ form.additional_notes(class="form-control" + (" is-invalid" if form.additional_notes.errors else ""), rows=3) }}
-                        {% if form.additional_notes.errors %}
-                            {% for error in form.additional_notes.errors %}
-                                <div class="error-message">{{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
+                <div class="mb-4">
+                    {{ form.additional_notes.label(class="form-label") }}
+                    {{ form.additional_notes(class="form-control" + (" is-invalid" if form.additional_notes.errors else ""), rows=3) }}
+                    {% if form.additional_notes.errors %}
+                        {% for error in form.additional_notes.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
                 </div>
             </div>
 
@@ -318,6 +261,51 @@ document.addEventListener('DOMContentLoaded', function() {
         dateOfDeath.max = new Date().toISOString().split('T')[0];
     }
 
+    // Handle time type selection
+    const timeType = document.getElementById('time_type');
+    const specificTimeContainer = document.getElementById('specific_time_container');
+    const afterPrayerContainer = document.getElementById('after_prayer_container');
+
+    function updateTimeContainers() {
+        if (timeType.value === 'specific') {
+            specificTimeContainer.classList.add('visible');
+            afterPrayerContainer.classList.remove('visible');
+            document.getElementById('prayer_time').required = true;
+            document.getElementById('after_prayer').required = false;
+        } else if (timeType.value === 'after_prayer') {
+            specificTimeContainer.classList.remove('visible');
+            afterPrayerContainer.classList.add('visible');
+            document.getElementById('prayer_time').required = false;
+            document.getElementById('after_prayer').required = true;
+        }
+    }
+
+    if (timeType) {
+        timeType.addEventListener('change', updateTimeContainers);
+        // Initialize on page load
+        updateTimeContainers();
+    }
+
+    // Handle location selection
+    const locationSelect = document.getElementById('death_prayer_location');
+    const otherLocationContainer = document.getElementById('other_location_container');
+
+    function updateLocationContainer() {
+        if (locationSelect.value === 'andere') {
+            otherLocationContainer.classList.add('visible');
+            document.getElementById('other_location_address').required = true;
+        } else {
+            otherLocationContainer.classList.remove('visible');
+            document.getElementById('other_location_address').required = false;
+        }
+    }
+
+    if (locationSelect) {
+        locationSelect.addEventListener('change', updateLocationContainer);
+        // Initialize on page load
+        updateLocationContainer();
+    }
+
     // Ensure prayer time is after death date
     const prayerTime = document.querySelector('input[type="datetime-local"]');
     if (prayerTime && dateOfDeath) {
@@ -326,59 +314,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 prayerTime.min = this.value + 'T00:00';
             }
         });
-    }
-
-    // Handle showing/hiding other location address field
-    const locationSelect = document.getElementById('death_prayer_location');
-    const otherLocationContainer = document.getElementById('other_location_container');
-
-    if (locationSelect && otherLocationContainer) {
-        locationSelect.addEventListener('change', function() {
-            if (this.value === 'andere') {
-                otherLocationContainer.classList.add('visible');
-                document.getElementById('other_location_address').required = true;
-            } else {
-                otherLocationContainer.classList.remove('visible');
-                document.getElementById('other_location_address').required = false;
-            }
-        });
-
-        // Check initial value
-        if (locationSelect.value === 'andere') {
-            otherLocationContainer.classList.add('visible');
-            document.getElementById('other_location_address').required = true;
-        }
-    }
-
-    // Time type selection handling
-    const timeTypeInputs = document.querySelectorAll('input[name="time_type"]');
-    const specificTimeContainer = document.getElementById('specific_time_container');
-    const afterPrayerContainer = document.getElementById('after_prayer_container');
-
-    function updateTimeContainers(selectedValue) {
-        if (selectedValue === 'specific') {
-            specificTimeContainer.classList.add('visible');
-            afterPrayerContainer.classList.remove('visible');
-            document.getElementById('prayer_time').required = true;
-            document.getElementById('after_prayer').required = false;
-        } else if (selectedValue === 'after_prayer') {
-            specificTimeContainer.classList.remove('visible');
-            afterPrayerContainer.classList.add('visible');
-            document.getElementById('prayer_time').required = false;
-            document.getElementById('after_prayer').required = true;
-        }
-    }
-
-    timeTypeInputs.forEach(input => {
-        input.addEventListener('change', function() {
-            updateTimeContainers(this.value);
-        });
-    });
-
-    // Initialize the correct container visibility
-    const selectedTimeType = document.querySelector('input[name="time_type"]:checked');
-    if (selectedTimeType) {
-        updateTimeContainers(selectedTimeType.value);
     }
 });
 </script>
