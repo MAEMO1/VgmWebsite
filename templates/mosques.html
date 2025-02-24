@@ -5,8 +5,6 @@
 {% block content %}
 <div class="mosque-hero">
     <div class="hero-overlay"></div>
-    <div class="hero-pattern"></div>
-    <div class="hero-light"></div>
     <div class="container">
         <div class="hero-content text-center">
             <h1 class="display-4 mb-4">{{ _('Mosques in Ghent') }}</h1>
@@ -83,9 +81,6 @@
     --primary-color: #005A87;
     --secondary-color: #41B7AC;
     --accent-color: #FF4154;
-    --gold: #D4AF37;
-    --deep-blue: #1B264F;
-    --soft-green: #7AB800;
     --background-light: #F8F9FA;
     --text-color: #2C3E50;
     --text-secondary: #6C757D;
@@ -94,7 +89,7 @@
 
 /* Hero Section */
 .mosque-hero {
-    background: linear-gradient(135deg, var(--deep-blue), var(--primary-color));
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     color: white;
     padding: 8rem 0;
     position: relative;
@@ -108,44 +103,13 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(
-        rgba(27, 38, 79, 0.9),
-        rgba(27, 38, 79, 0.7)
-    );
+    background: rgba(0, 0, 0, 0.2);
     z-index: 1;
-}
-
-.hero-pattern {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 50l30-30M50 50l-30 30M50 50l30 30M50 50l-30-30' stroke='%23ffffff' stroke-width='0.5' stroke-opacity='0.1' fill='none'/%3E%3C/svg%3E");
-    background-size: 50px 50px;
-    opacity: 0.1;
-    z-index: 2;
-}
-
-.hero-light {
-    position: absolute;
-    top: -50%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(
-        circle at center,
-        rgba(212, 175, 55, 0.15) 0%,
-        rgba(212, 175, 55, 0) 70%
-    );
-    z-index: 3;
-    pointer-events: none;
 }
 
 .hero-content {
     position: relative;
-    z-index: 4;
+    z-index: 2;
     max-width: 800px;
     margin: 0 auto;
 }
@@ -153,19 +117,16 @@
 .hero-content h1 {
     font-weight: 700;
     margin-bottom: 2rem;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    color: var(--gold);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .quote-container {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     border-radius: 1.5rem;
     padding: 3rem;
     margin-top: 2rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .hadith-quote {
@@ -179,9 +140,8 @@
     font-weight: 300;
     margin-bottom: 2rem;
     line-height: 1.2;
-    color: var(--gold);
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    letter-spacing: 0.5px;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .quote-text {
@@ -190,15 +150,13 @@
     margin-bottom: 1.5rem;
     font-weight: 300;
     color: rgba(255, 255, 255, 0.9);
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .quote-source {
     font-size: 1rem;
-    color: var(--gold);
+    opacity: 0.8;
     font-weight: 500;
     font-style: italic;
-    opacity: 0.8;
 }
 
 /* Map Styles */
