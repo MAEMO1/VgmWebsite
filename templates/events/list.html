@@ -204,7 +204,7 @@
 
 {% block content %}
 <div class="container">
-    <!-- Calendar Legend -->
+    <!-- Calendar Legend in new order -->
     <div class="calendar-legend">
         <div class="legend-item">
             <div class="legend-title">
@@ -217,15 +217,6 @@
         </div>
         <div class="legend-item">
             <div class="legend-title">
-                <div class="legend-color legend-individual"></div>
-                <span>Solo Moskee</span>
-            </div>
-            <div class="legend-description">
-                ({{ _('Evenementen van een individuele moskee') }})
-            </div>
-        </div>
-        <div class="legend-item">
-            <div class="legend-title">
                 <div class="legend-color legend-collab"></div>
                 <span>Co-Moskee</span>
             </div>
@@ -233,11 +224,21 @@
                 ({{ _('Evenementen waarin meerdere moskeeën samenwerken') }})
             </div>
         </div>
+        <div class="legend-item">
+            <div class="legend-title">
+                <div class="legend-color legend-individual"></div>
+                <span>Solo Moskee</span>
+            </div>
+            <div class="legend-description">
+                ({{ _('Evenementen van een individuele moskee') }})
+            </div>
+        </div>
     </div>
 
     <!-- Calendar View -->
     <div id="calendar"></div>
 
+    <!-- Event sections in new order -->
     {% if vgm_events %}
     <div class="section">
         <h2 class="section-title">VGM</h2>
