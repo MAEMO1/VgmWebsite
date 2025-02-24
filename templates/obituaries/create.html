@@ -4,7 +4,7 @@
 
 {% block styles %}
 <style>
-:root {
+::root {
     --primary-color: #005A87;
     --secondary-color: #41B7AC;
     --accent-color: #FF4154;
@@ -62,6 +62,24 @@
 
 #other_location_container.visible {
     display: block;
+}
+
+#specific_time_container,
+#after_prayer_container {
+    display: none;
+}
+
+#specific_time_container.visible,
+#after_prayer_container.visible {
+    display: block;
+}
+
+.time-type-options {
+    margin-bottom: 1rem;
+}
+
+.time-type-options .form-check {
+    margin-bottom: 0.5rem;
 }
 </style>
 {% endblock %}
@@ -147,6 +165,45 @@
             <div class="form-section">
                 <h3 class="section-title">{{ _('Gebedsdienst Details') }}</h3>
 
+                <div class="mb-4">
+                    {{ form.time_type.label(class="form-label required-field") }}
+                    <div class="time-type-options">
+                        {% for value, label in form.time_type.choices %}
+                        <div class="form-check">
+                            {{ form.time_type(class="form-check-input", value=value, id="time_type_" + value) }}
+                            <label class="form-check-label" for="time_type_{{ value }}">
+                                {{ _(label) }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% if form.time_type.errors %}
+                        {% for error in form.time_type.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div id="specific_time_container" class="mb-3">
+                    {{ form.prayer_time.label(class="form-label required-field") }}
+                    {{ form.prayer_time(class="form-control" + (" is-invalid" if form.prayer_time.errors else ""), type="datetime-local") }}
+                    {% if form.prayer_time.errors %}
+                        {% for error in form.prayer_time.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div id="after_prayer_container" class="mb-3">
+                    {{ form.after_prayer.label(class="form-label required-field") }}
+                    {{ form.after_prayer(class="form-control" + (" is-invalid" if form.after_prayer.errors else "")) }}
+                    {% if form.after_prayer.errors %}
+                        {% for error in form.after_prayer.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
                 <div class="mb-3">
                     {{ form.death_prayer_location.label(class="form-label required-field") }}
                     {{ form.death_prayer_location(class="form-control" + (" is-invalid" if form.death_prayer_location.errors else "")) }}
@@ -162,16 +219,6 @@
                     {{ form.other_location_address(class="form-control" + (" is-invalid" if form.other_location_address.errors else "")) }}
                     {% if form.other_location_address.errors %}
                         {% for error in form.other_location_address.errors %}
-                            <div class="error-message">{{ error }}</div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-
-                <div class="mb-3">
-                    {{ form.prayer_time.label(class="form-label") }}
-                    {{ form.prayer_time(class="form-control" + (" is-invalid" if form.prayer_time.errors else ""), type="datetime-local") }}
-                    {% if form.prayer_time.errors %}
-                        {% for error in form.prayer_time.errors %}
                             <div class="error-message">{{ error }}</div>
                         {% endfor %}
                     {% endif %}
@@ -268,6 +315,37 @@ document.addEventListener('DOMContentLoaded', function() {
             otherLocationContainer.classList.add('visible');
             document.getElementById('other_location_address').required = true;
         }
+    }
+
+    // Time type selection handling
+    const timeTypeInputs = document.querySelectorAll('input[name="time_type"]');
+    const specificTimeContainer = document.getElementById('specific_time_container');
+    const afterPrayerContainer = document.getElementById('after_prayer_container');
+
+    function updateTimeContainers(selectedValue) {
+        if (selectedValue === 'specific') {
+            specificTimeContainer.classList.add('visible');
+            afterPrayerContainer.classList.remove('visible');
+            document.getElementById('prayer_time').required = true;
+            document.getElementById('after_prayer').required = false;
+        } else if (selectedValue === 'after_prayer') {
+            specificTimeContainer.classList.remove('visible');
+            afterPrayerContainer.classList.add('visible');
+            document.getElementById('prayer_time').required = false;
+            document.getElementById('after_prayer').required = true;
+        }
+    }
+
+    timeTypeInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            updateTimeContainers(this.value);
+        });
+    });
+
+    // Initialize the correct container visibility
+    const selectedTimeType = document.querySelector('input[name="time_type"]:checked');
+    if (selectedTimeType) {
+        updateTimeContainers(selectedTimeType.value);
     }
 });
 </script>

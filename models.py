@@ -154,20 +154,19 @@ class Obituary(db.Model):
     date_of_death = db.Column(db.Date, nullable=False)
     funeral_date = db.Column(db.DateTime)
     details = db.Column(db.Text)
-    is_approved = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Link to mosque user for verification
-
     age = db.Column(db.Integer)
     birth_place = db.Column(db.String(200))
     death_place = db.Column(db.String(200))
+    prayer_time = db.Column(db.DateTime)
+    prayer_after = db.Column(db.String(20))  # stores which prayer: fajr, dhuhr, asr, etc.
+    death_prayer_location = db.Column(db.String(200))  # Place of death prayer
     burial_location = db.Column(db.String(200))
     family_contact = db.Column(db.String(200))
-    prayer_time = db.Column(db.DateTime)
-    death_prayer_location = db.Column(db.String(200))  # Place of death prayer
-    cause_of_death = db.Column(db.String(200))
     additional_notes = db.Column(db.Text)
-
+    mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Link to mosque user for verification
+    submitter_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Link to user who submitted
+    is_approved = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
     notifications_sent = db.Column(db.Boolean, default=False)
     reminder_sent = db.Column(db.Boolean, default=False)
 
