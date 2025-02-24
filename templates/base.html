@@ -17,34 +17,40 @@
 
     <style>
         :root {
-            --primary-color: #41B7AC;     /* VGM Logo turquoise */
-            --accent-color: #E8AE26;      /* VGM Logo gold */
-            --text-color: #333333;        /* Dark gray for text */
-            --light-bg: #F8F9FA;          /* Very light gray for backgrounds */
-            --border-color: #E9ECEF;      /* Light gray for borders */
-            --white: #FFFFFF;             /* Pure white */
+            --primary-color: #005A87;
+            --secondary-color: #41B7AC;
+            --accent-color: #FF4154;
+            --background-light: #F8F9FA;
+            --text-primary: #2C3E50;
+            --text-secondary: #6C757D;
+            --border-color: #E9ECEF;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
         }
 
+        /* Header & Navigation */
         .navbar {
             background: var(--white);
-            padding: 0.5rem 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 0.75rem 0;
+            box-shadow: var(--shadow-sm);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
         }
 
         .navbar-brand {
             display: flex;
             align-items: center;
             gap: 1.5rem;
-            padding: 0.5rem 0;
         }
 
         .logo-container {
-            width: 240px;  /* Increased from 180px to 240px */
+            width: 200px;
             height: auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.3s ease;
+            transition: var(--transition);
         }
 
         .logo-container:hover {
@@ -57,105 +63,152 @@
             display: block;
         }
 
-        @media (max-width: 992px) {
-            .logo-container {
-                width: 160px;  /* Increased from 120px to 160px for mobile */
-            }
+        /* Navigation Links */
+        .nav-item {
+            position: relative;
+            margin: 0 0.25rem;
         }
 
         .nav-link {
-            color: var(--text-color);
+            color: var(--text-primary);
             font-weight: 500;
-            padding: 0.8rem 1.2rem;
-            transition: all 0.3s ease;
-            position: relative;
+            padding: 0.75rem 1rem;
+            transition: var(--transition);
+            font-size: 1rem;
         }
 
         .nav-link:hover {
             color: var(--primary-color);
         }
 
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            width: 0;
-            height: 2px;
-            background: var(--primary-color);
-            transition: all 0.3s ease;
-            transform: translateX(-50%);
-        }
-
-        .nav-link:hover::after {
-            width: 80%;
-        }
-
+        /* Dropdown Styling */
         .dropdown-menu {
-            border: 1px solid var(--border-color);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: none;
+            box-shadow: var(--shadow-md);
             border-radius: 8px;
             padding: 0.5rem;
+            min-width: 220px;
         }
 
         .dropdown-item {
             padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            font-weight: 500;
             border-radius: 6px;
-            transition: all 0.3s ease;
+            transition: var(--transition);
         }
 
         .dropdown-item:hover {
-            background-color: var(--light-bg);
+            background-color: var(--background-light);
             color: var(--primary-color);
             transform: translateX(4px);
         }
 
-        main {
-            min-height: calc(100vh - 180px);
-            padding: 2rem 0;
+        /* Search Bar */
+        .search-container {
+            position: relative;
+            max-width: 300px;
+            margin-right: 1rem;
         }
 
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 100px;
+            font-size: 0.925rem;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0,90,135,0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        /* Account Menu */
+        .account-menu {
+            padding: 0.5rem;
+            min-width: 260px;
+        }
+
+        .account-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .account-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .account-email {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Language Selector */
+        .btn-language {
+            padding: 0.75rem;
+            border-radius: 100px;
+            transition: var(--transition);
+        }
+
+        .btn-language:hover {
+            background-color: var(--background-light);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 992px) {
+            .logo-container {
+                width: 160px;
+            }
+
+            .navbar-collapse {
+                background: white;
+                padding: 1rem;
+                border-radius: 12px;
+                box-shadow: var(--shadow-md);
+                margin-top: 1rem;
+            }
+
+            .search-container {
+                max-width: 100%;
+                margin: 1rem 0;
+            }
+
+            .nav-item {
+                margin: 0;
+            }
+
+            .nav-link {
+                padding: 0.75rem 0;
+            }
+        }
+
+        /* Main Content */
+        main {
+            padding-top: 6rem;
+            min-height: calc(100vh - 80px);
+        }
+
+        /* Footer */
         .footer {
             background: var(--white);
             border-top: 1px solid var(--border-color);
             padding: 2rem 0;
             margin-top: 4rem;
-        }
-
-        @media (max-width: 992px) {
-            .navbar-collapse {
-                background: white;
-                padding: 1rem;
-                border-radius: 8px;
-                margin-top: 1rem;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            }
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            color: var(--white);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-            border-color: var(--primary-dark);
-            color: var(--white);
-        }
-
-        .section-title {
-            color: var(--primary-color);
-            font-weight: 700;
-        }
-
-        :focus {
-            outline: 2px solid var(--primary-color);
-            outline-offset: 2px;
-        }
-
-        :focus:not(:focus-visible) {
-            outline: none;
         }
     </style>
     {% block styles %}{% endblock %}
@@ -172,7 +225,7 @@
                     <img src="{{ url_for('static', filename='images/image_1740398210906.png') }}" 
                          alt="VGM Logo" 
                          class="logo-img"
-                         width="120">
+                         width="200">
                 </div>
             </a>
 
@@ -182,7 +235,13 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="search" class="search-input" placeholder="{{ _('Zoeken...') }}" aria-label="Search">
+                </div>
+
+                <ul class="navbar-nav ms-auto align-items-center">
                     {% block navbar_content %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('main.index') }}">{{ _('Home') }}</a>
@@ -192,10 +251,10 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                            aria-expanded="false" aria-haspopup="true">
-                            {{ _('About & Info') }}
+                            {{ _('Over Ons') }}
                         </a>
                         <ul class="dropdown-menu" aria-label="About & Info submenu">
-                            <li><a class="dropdown-item" href="{{ url_for('main.about') }}">{{ _('About Us') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.about') }}">{{ _('Over VGM') }}</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('main.memorandum') }}">{{ _('Memorandum') }}</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('main.contact') }}">{{ _('Contact') }}</a></li>
                         </ul>
@@ -205,11 +264,11 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                            aria-expanded="false" aria-haspopup="true">
-                            {{ _('Mosques & Prayer') }}
+                            {{ _('Moskeeën & Gebed') }}
                         </a>
                         <ul class="dropdown-menu" aria-label="Mosques & Prayer submenu">
-                            <li><a class="dropdown-item" href="{{ url_for('main.mosques') }}">{{ _('Mosques in Ghent') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.prayer_times') }}">{{ _('Prayer Times') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.mosques') }}">{{ _('Moskeeën in Gent') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.prayer_times') }}">{{ _('Gebedstijden') }}</a></li>
                         </ul>
                     </li>
 
@@ -217,29 +276,49 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                            aria-expanded="false" aria-haspopup="true">
-                            {{ _('Community') }}
+                            {{ _('Gemeenschap') }}
                         </a>
                         <ul class="dropdown-menu" aria-label="Community submenu">
                             <li><a class="dropdown-item" href="{{ url_for('blog.index') }}">{{ _('Blog') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('events.event_list') }}">{{ _('Events') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('obituaries.obituary_list') }}">{{ _('Obituaries') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('events.event_list') }}">{{ _('Evenementen') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('obituaries.obituary_list') }}">{{ _('Overlijdensberichten') }}</a></li>
                         </ul>
                     </li>
 
                     {% if current_user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.logout') }}">{{ _('Logout') }}</a>
-                    </li>
-                    {% else %}
+                    <!-- Account Dropdown when logged in -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                            aria-expanded="false" aria-haspopup="true">
+                            <i class="fas fa-user-circle me-1"></i>
                             {{ _('Account') }}
                         </a>
-                        <ul class="dropdown-menu" aria-label="Account submenu">
-                            <li><a class="dropdown-item" href="{{ url_for('main.register') }}">{{ _('Register') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.login') }}">{{ _('Login') }}</a></li>
+                        <ul class="dropdown-menu account-menu" aria-label="Account submenu">
+                            <div class="account-header">
+                                <div class="account-name">{{ current_user.username }}</div>
+                                <div class="account-email">{{ current_user.email }}</div>
+                            </div>
+                            <li><a class="dropdown-item" href="{{ url_for('main.profile') }}">
+                                <i class="fas fa-user me-2"></i>{{ _('Profiel') }}
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('events.notification_settings') }}">
+                                <i class="fas fa-bell me-2"></i>{{ _('Notificaties') }}
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i>{{ _('Uitloggen') }}
+                            </a></li>
                         </ul>
+                    </li>
+                    {% else %}
+                    <!-- Login/Register buttons when not logged in -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.login') }}">{{ _('Inloggen') }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-primary text-white px-3" href="{{ url_for('main.register') }}">
+                            {{ _('Registreren') }}
+                        </a>
                     </li>
                     {% endif %}
 
@@ -287,7 +366,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-12 text-center">
-                    <p class="mb-0">{{ _('© 2024 Vereniging van Gentse Moskeeën. All rights reserved.') }}</p>
+                    <p class="mb-0">{{ _('© 2024 Vereniging van Gentse Moskeeën. Alle rechten voorbehouden.') }}</p>
                 </div>
             </div>
         </div>
