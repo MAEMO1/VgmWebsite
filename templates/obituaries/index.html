@@ -111,11 +111,6 @@
 <div class="obituaries-container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>{{ _('Overlijdensberichten') }}</h1>
-        {% if current_user.is_authenticated and current_user.user_type == 'mosque' %}
-        <a href="{{ url_for('obituaries.pending') }}" class="btn btn-outline-primary">
-            <i class="fas fa-clock me-2"></i>{{ _('Te Verifiëren Berichten') }}
-        </a>
-        {% endif %}
     </div>
 
     {% if obituaries %}
@@ -170,8 +165,21 @@
                 {% endif %}
             </div>
 
-            {% if current_user.is_authenticated and current_user.is_admin %}
+            {% if current_user.is_authenticated and (current_user.is_admin or current_user.id == obituary.mosque_id or current_user.id == obituary.submitter_id) %}
             <div class="actions">
+                {% if not obituary.is_approved and current_user.id == obituary.mosque_id %}
+                <form action="{{ url_for('obituaries.verify_obituary', obituary_id=obituary.id) }}" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-success btn-sm">
+                        <i class="fas fa-check me-1"></i>{{ _('Verifiëren') }}
+                    </button>
+                </form>
+                {% endif %}
+
+                <a href="{{ url_for('obituaries.edit_obituary', obituary_id=obituary.id) }}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-edit me-1"></i>{{ _('Bewerken') }}
+                </a>
+
+                {% if current_user.is_admin %}
                 <form action="{{ url_for('obituaries.delete_obituary', obituary_id=obituary.id) }}" method="POST" 
                       onsubmit="return confirm('{{ _('Weet u zeker dat u dit overlijdensbericht wilt verwijderen?') }}');"
                       class="d-inline">
@@ -179,6 +187,7 @@
                         <i class="fas fa-trash me-1"></i>{{ _('Verwijderen') }}
                     </button>
                 </form>
+                {% endif %}
             </div>
             {% endif %}
         </div>

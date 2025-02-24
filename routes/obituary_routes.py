@@ -39,49 +39,37 @@ def create():
                 family_contact=form.family_contact.data,
                 additional_notes=form.additional_notes.data,
                 submitter_id=current_user.id,
-                is_approved=current_user.is_admin  # Direct goedkeuring voor admins
             )
 
             # Handle location
             if form.death_prayer_location.data == 'andere':
                 obituary.death_prayer_location = form.other_location_address.data
-                obituary.mosque_id = None  # No mosque associated
+                obituary.mosque_id = None
+                obituary.is_approved = True  # Auto-approve if no mosque involved
             else:
                 mosque_id = int(form.death_prayer_location.data)
                 obituary.mosque_id = mosque_id
                 obituary.death_prayer_location = User.query.get(mosque_id).username.replace('_', ' ').title()
+                obituary.is_approved = current_user.is_admin  # Only admin submissions are auto-approved
 
             db.session.add(obituary)
 
-            # Alleen notificaties versturen als het geen admin is
-            if not current_user.is_admin:
-                # To mosques
-                if obituary.mosque_id:
-                    notification = ObituaryNotification(
-                        obituary_id=obituary.id,
-                        user_id=obituary.mosque_id,
-                        notification_type='verification_needed',
-                        message=f'Nieuw overlijdensbericht ter verificatie: {obituary.name}'
-                    )
-                    db.session.add(notification)
-
-                # To admins
-                admins = User.query.filter_by(is_admin=True).all()
-                for admin in admins:
-                    notification = ObituaryNotification(
-                        obituary_id=obituary.id,
-                        user_id=admin.id,
-                        notification_type='verification_needed',
-                        message=f'Nieuw overlijdensbericht ter verificatie: {obituary.name}'
-                    )
-                    db.session.add(notification)
+            # Send notification to mosque if needed
+            if obituary.mosque_id and not current_user.is_admin:
+                notification = ObituaryNotification(
+                    obituary_id=obituary.id,
+                    user_id=obituary.mosque_id,
+                    notification_type='verification_needed',
+                    message=f'Nieuw overlijdensbericht ter verificatie: {obituary.name}'
+                )
+                db.session.add(notification)
 
             db.session.commit()
 
-            if current_user.is_admin:
+            if obituary.is_approved:
                 flash('Overlijdensbericht is succesvol toegevoegd.', 'success')
             else:
-                flash('Overlijdensbericht is ingediend en wacht op verificatie.', 'info')
+                flash('Overlijdensbericht is ingediend en wacht op verificatie van de moskee.', 'info')
 
             return redirect(url_for('obituaries.index'))
 
@@ -92,16 +80,85 @@ def create():
 
     return render_template('obituaries/create.html', form=form)
 
+@obituaries.route('/<int:obituary_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_obituary(obituary_id):
+    obituary = Obituary.query.get_or_404(obituary_id)
+
+    # Check if user has permission to edit
+    if not (current_user.is_admin or current_user.id == obituary.mosque_id or current_user.id == obituary.submitter_id):
+        flash('U heeft geen toestemming om dit overlijdensbericht te bewerken.', 'error')
+        return redirect(url_for('obituaries.index'))
+
+    mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
+    form = ObituaryForm(obj=obituary)
+
+    # Format mosque names and add "Andere" option
+    mosque_choices = [(str(mosque.id), mosque.username.replace('_', ' ').title()) for mosque in mosques]
+    mosque_choices.append(('andere', 'Andere'))
+    form.death_prayer_location.choices = mosque_choices
+
+    if form.validate_on_submit():
+        try:
+            # Update obituary details
+            obituary.name = form.name.data
+            obituary.age = form.age.data
+            obituary.birth_place = form.birth_place.data
+            obituary.death_place = form.death_place.data
+            obituary.date_of_death = form.date_of_death.data
+            obituary.prayer_time = form.prayer_time.data if form.time_type.data == 'specific' else None
+            obituary.prayer_after = form.after_prayer.data if form.time_type.data == 'after_prayer' else None
+            obituary.burial_location = form.burial_location.data
+            obituary.family_contact = form.family_contact.data
+            obituary.additional_notes = form.additional_notes.data
+
+            # Handle location changes
+            old_mosque_id = obituary.mosque_id
+            if form.death_prayer_location.data == 'andere':
+                obituary.death_prayer_location = form.other_location_address.data
+                obituary.mosque_id = None
+                obituary.is_approved = True
+            else:
+                new_mosque_id = int(form.death_prayer_location.data)
+                if new_mosque_id != old_mosque_id:
+                    obituary.mosque_id = new_mosque_id
+                    obituary.death_prayer_location = User.query.get(new_mosque_id).username.replace('_', ' ').title()
+                    # Only require new approval if changed to different mosque and editor is not admin
+                    if not current_user.is_admin:
+                        obituary.is_approved = False
+                        # Notify new mosque
+                        notification = ObituaryNotification(
+                            obituary_id=obituary.id,
+                            user_id=new_mosque_id,
+                            notification_type='verification_needed',
+                            message=f'Overlijdensbericht ter verificatie: {obituary.name}'
+                        )
+                        db.session.add(notification)
+
+            db.session.commit()
+            flash('Overlijdensbericht is succesvol bijgewerkt.', 'success')
+            return redirect(url_for('obituaries.index'))
+
+        except Exception as e:
+            db.session.rollback()
+            flash('Er is een fout opgetreden bij het bijwerken van het overlijdensbericht.', 'error')
+            print(f"Error: {str(e)}")
+
+    # Pre-fill the form with current values
+    if obituary.mosque_id:
+        form.death_prayer_location.data = str(obituary.mosque_id)
+    else:
+        form.death_prayer_location.data = 'andere'
+        form.other_location_address.data = obituary.death_prayer_location
+
+    return render_template('obituaries/edit.html', form=form, obituary=obituary)
+
 @obituaries.route('/<int:obituary_id>/verify', methods=['POST'])
 @login_required
 def verify_obituary(obituary_id):
-    if not (current_user.is_admin or current_user.user_type == 'mosque'):
-        flash('U heeft geen toestemming om overlijdensberichten te verifiëren.', 'error')
-        return redirect(url_for('obituaries.index'))
-
     obituary = Obituary.query.get_or_404(obituary_id)
 
-    # Check if user has permission to verify this obituary
+    # Check if user has permission to verify
     if not (current_user.is_admin or current_user.id == obituary.mosque_id):
         flash('U heeft geen toestemming om dit overlijdensbericht te verifiëren.', 'error')
         return redirect(url_for('obituaries.index'))
@@ -126,24 +183,6 @@ def delete_obituary(obituary_id):
     obituary = Obituary.query.get_or_404(obituary_id)
 
     try:
-        # Notify related parties about deletion
-        if obituary.mosque_id:
-            notification = ObituaryNotification(
-                user_id=obituary.mosque_id,
-                notification_type='deletion',
-                message=f'Overlijdensbericht voor {obituary.name} is verwijderd door een administrator'
-            )
-            db.session.add(notification)
-
-        # Notify submitter
-        if obituary.submitter_id:
-            notification = ObituaryNotification(
-                user_id=obituary.submitter_id,
-                notification_type='deletion',
-                message=f'Uw overlijdensbericht voor {obituary.name} is verwijderd door een administrator'
-            )
-            db.session.add(notification)
-
         # Delete the obituary
         db.session.delete(obituary)
         db.session.commit()
