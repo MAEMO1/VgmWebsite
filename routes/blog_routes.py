@@ -40,7 +40,7 @@ def learning_center():
         },
         'geschiedenis': {
             'title': 'Islamitische Geschiedenis',
-            'subtopics': ['Profeet Mohammed ﷺ', 'Sahaba', 'Islamitische Beschaving']
+            'subtopics': ['Profeet Mohammed ﷺ', 'Sahaba', 'Islamitische Beschaving', 'Islamitische geschiedenis in België']
         }
     }
     return render_template('blog/learning_center.html', topics=topics)
