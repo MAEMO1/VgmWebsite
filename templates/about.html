@@ -371,10 +371,11 @@
     height: 360px;
     overflow: hidden;
     position: relative;
-    background: rgba(0, 90, 135, 0.05);
+    background: var(--background-light);
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
 
 .leader-image img {
@@ -390,52 +391,22 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 90, 135, 0.05);
-    padding: 2rem;
-    border-radius: var(--radius-sm);
+    padding: 3rem;
+    background: var(--background-light);
 }
 
 .logo-placeholder {
-    max-width: 85%;
+    width: auto;
     height: auto;
+    max-width: 70%;
+    max-height: 70%;
     object-fit: contain;
-    opacity: 1;
-    transition: var(--transition);
 }
-
 
 .leader-info {
     padding: 2rem;
     background: white;
-    border-top: 1px solid #eee;
-}
-
-.leader-name {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #005A87;
-    margin-bottom: 0.5rem;
-}
-
-.leader-role {
-    color: #666;
-    font-size: 1.1rem;
-    margin-bottom: 1rem;
-    font-weight: 500;
-}
-
-.leader-mosque {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    color: #666;
-    font-size: 1rem;
-    margin: 0;
-}
-
-.leader-mosque i {
-    color: #005A87;
-    font-size: 1.1rem;
+    border-top: 1px solid var(--border-color);
 }
 
 /* Modal Styles */
