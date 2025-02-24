@@ -16,6 +16,36 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.12.1\n"
 
+# Navigation and Common Elements
+msgid "About & Info"
+msgstr "Over & Info"
+
+msgid "Mosques & Prayer"
+msgstr "Moskeeën & Gebed"
+
+msgid "Community"
+msgstr "Gemeenschap"
+
+msgid "Account"
+msgstr "Account"
+
+msgid "Select language"
+msgstr "Selecteer taal"
+
+
+# Mosque Pages
+msgid "Support this Mosque"
+msgstr "Steun deze Moskee"
+
+msgid "Support Our Mosque"
+msgstr "Steun Onze Moskee"
+
+msgid "Make a Donation"
+msgstr "Doneer"
+
+msgid "Current Goal"
+msgstr "Huidig Doel"
+
 #: templates/base.html:43
 msgid "Home"
 msgstr "Home"
@@ -64,6 +94,34 @@ msgstr "Inloggen"
 #: templates/base.html:114
 msgid "© 2024 Vereniging van Gentse Moskeeën. All rights reserved."
 msgstr "© 2024 Vereniging van Gentse Moskeeën. Alle rechten voorbehouden."
+
+# Prayers
+msgid "Iqama is typically 10-15 minutes after Adhan"
+msgstr "Iqama is meestal 10-15 minuten na Adhan"
+
+msgid "Prayer times are automatically adjusted based on location"
+msgstr "Gebedstijden worden automatisch aangepast op basis van locatie"
+
+msgid "Special Times"
+msgstr "Speciale Tijden"
+
+msgid "Ramadan"
+msgstr "Ramadan"
+
+msgid "Special prayer schedule during Ramadan"
+msgstr "Speciaal gebedsschema tijdens Ramadan"
+
+msgid "Check announcements for details"
+msgstr "Bekijk aankondigingen voor details"
+
+msgid "Eid Prayers"
+msgstr "Eid Gebeden"
+
+msgid "Eid prayers are held at the main prayer hall"
+msgstr "Eid gebeden worden gehouden in de hoofdgebedsruimte"
+
+msgid "Times will be announced"
+msgstr "Tijden worden nog aangekondigd"
 
 #: templates/about.html:3 templates/about.html:10 templates/memorandum.html:19
 msgid "About VGM"
@@ -649,6 +707,32 @@ msgstr "Maghrib"
 msgid "Isha"
 msgstr "Isha"
 
+# Events
+msgid "Event Registration"
+msgstr "Evenement Registratie"
+
+msgid "Register for this Event"
+msgstr "Registreer voor dit Evenement"
+
+msgid "Event Details"
+msgstr "Evenement Details"
+
+msgid "Start Time"
+msgstr "Starttijd"
+
+msgid "End Time"
+msgstr "Eindtijd"
+
+msgid "Location"
+msgstr "Locatie"
+
+msgid "Description"
+msgstr "Beschrijving"
+
+msgid "Organizer"
+msgstr "Organisator"
+
+
 #: templates/events/list.html:5
 msgid "Upcoming Events"
 msgstr "Aankomende Evenementen"
@@ -681,9 +765,68 @@ msgstr "Registreer voor Evenement"
 msgid "Already Registered"
 msgstr "Al Geregistreerd"
 
+
+# User Interface Elements
+msgid "Loading..."
+msgstr "Laden..."
+
+msgid "No results found"
+msgstr "Geen resultaten gevonden"
+
+msgid "Search"
+msgstr "Zoeken"
+
+msgid "Filter"
+msgstr "Filter"
+
+msgid "Sort by"
+msgstr "Sorteer op"
+
+msgid "Show more"
+msgstr "Toon meer"
+
+msgid "Show less"
+msgstr "Toon minder"
+
+msgid "Close"
+msgstr "Sluiten"
+
+msgid "Cancel"
+msgstr "Annuleren"
+
+msgid "Submit"
+msgstr "Versturen"
+
+msgid "Save"
+msgstr "Opslaan"
+
+msgid "Edit"
+msgstr "Bewerken"
+
+msgid "Delete"
+msgstr "Verwijderen"
+
+msgid "Confirm"
+msgstr "Bevestigen"
+
+# Error Messages
+msgid "An error occurred"
+msgstr "Er is een fout opgetreden"
+
+msgid "Please try again"
+msgstr "Probeer het opnieuw"
+
+msgid "This field is required"
+msgstr "Dit veld is verplicht"
+
+msgid "Invalid input"
+msgstr "Ongeldige invoer"
+
+msgid "Changes saved successfully"
+msgstr "Wijzigingen succesvol opgeslagen"
+
 msgid "Confirm Password"
 msgstr "Bevestig Wachtwoord"
-
 
 msgid "Manage Board Members"
 msgstr "Beheer Bestuursleden"
