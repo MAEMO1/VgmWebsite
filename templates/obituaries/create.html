@@ -56,30 +56,41 @@
     margin-top: 0.25rem;
 }
 
+#specific_time_container,
+#after_prayer_container,
 #other_location_container {
     display: none;
-}
-
-#other_location_container.visible {
-    display: block;
-}
-
-#specific_time_container,
-#after_prayer_container {
-    display: none;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--background-light);
+    border-radius: 8px;
 }
 
 #specific_time_container.visible,
-#after_prayer_container.visible {
+#after_prayer_container.visible,
+#other_location_container.visible {
     display: block;
 }
 
 .time-type-options {
     margin-bottom: 1rem;
+    border: 1px solid var(--border-color);
+    padding: 1rem;
+    border-radius: 8px;
+    background: var(--background-light);
 }
 
 .time-type-options .form-check {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    padding-left: 2rem;
+}
+
+.time-type-options .form-check:last-child {
+    margin-bottom: 0;
+}
+
+.form-check-input {
+    margin-left: -2rem;
 }
 </style>
 {% endblock %}
@@ -184,7 +195,7 @@
                     {% endif %}
                 </div>
 
-                <div id="specific_time_container" class="mb-3">
+                <div id="specific_time_container">
                     {{ form.prayer_time.label(class="form-label required-field") }}
                     {{ form.prayer_time(class="form-control" + (" is-invalid" if form.prayer_time.errors else ""), type="datetime-local") }}
                     {% if form.prayer_time.errors %}
@@ -194,7 +205,7 @@
                     {% endif %}
                 </div>
 
-                <div id="after_prayer_container" class="mb-3">
+                <div id="after_prayer_container">
                     {{ form.after_prayer.label(class="form-label required-field") }}
                     {{ form.after_prayer(class="form-control" + (" is-invalid" if form.after_prayer.errors else "")) }}
                     {% if form.after_prayer.errors %}
@@ -204,7 +215,7 @@
                     {% endif %}
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3 mt-4">
                     {{ form.death_prayer_location.label(class="form-label required-field") }}
                     {{ form.death_prayer_location(class="form-control" + (" is-invalid" if form.death_prayer_location.errors else "")) }}
                     {% if form.death_prayer_location.errors %}
@@ -214,7 +225,7 @@
                     {% endif %}
                 </div>
 
-                <div id="other_location_container" class="mb-3">
+                <div id="other_location_container">
                     {{ form.other_location_address.label(class="form-label required-field") }}
                     {{ form.other_location_address(class="form-control" + (" is-invalid" if form.other_location_address.errors else "")) }}
                     {% if form.other_location_address.errors %}
@@ -224,7 +235,7 @@
                     {% endif %}
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3 mt-4">
                     {{ form.burial_location.label(class="form-label") }}
                     {{ form.burial_location(class="form-control" + (" is-invalid" if form.burial_location.errors else "")) }}
                     {% if form.burial_location.errors %}
