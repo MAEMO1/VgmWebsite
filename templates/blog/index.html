@@ -2,134 +2,271 @@
 
 {% block title %}{{ _('Blog - VGM') }}{% endblock %}
 
-{% block content %}
-<div class="container py-5">
-    <div class="row">
-        <div class="col-12">
-            <h1 class="display-4 mb-4">{{ _('VGM Blog') }}</h1>
-
-            {% if current_user.is_authenticated and current_user.is_admin %}
-            <div class="mb-4">
-                <a href="{{ url_for('blog.create') }}" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>{{ _('New Article') }}
-                </a>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        {% for post in posts %}
-        <div class="col">
-            <div class="card h-100 blog-card">
-                <div class="card-img-wrapper">
-                    {% if post.image_url %}
-                    <img src="{{ post.image_url }}" 
-                         class="card-img-top" 
-                         alt="{{ post.title }}"
-                         loading="lazy">
-                    {% else %}
-                    <div class="placeholder-img">
-                        <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" 
-                             class="card-img-top"
-                             alt="VGM Logo">
-                    </div>
-                    {% endif %}
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">{{ post.title }}</h5>
-                    <p class="card-text text-muted small">
-                        <i class="fas fa-user me-1"></i> {{ post.author.username }} 
-                        <span class="mx-2">|</span>
-                        <i class="far fa-calendar me-1"></i> {{ post.created_at.strftime('%d-%m-%Y') }}
-                    </p>
-                    <p class="card-text excerpt">{{ post.excerpt or post.content[:200] + '...' }}</p>
-                </div>
-                <div class="card-footer bg-transparent border-0">
-                    <a href="{{ url_for('blog.view', slug=post.slug) }}" class="btn btn-outline-primary">
-                        {{ _('Read More') }} <i class="fas fa-arrow-right ms-1"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-{% endblock %}
-
 {% block styles %}
 <style>
-.blog-card {
-    transition: transform 0.2s, box-shadow 0.2s;
-    border: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+:root {
+    --primary-color: #005A87;
+    --secondary-color: #41B7AC;
+    --accent-color: #FF4154;
+    --background-light: #F8F9FA;
+    --text-primary: #2C3E50;
+    --text-secondary: #6C757D;
+    --border-color: #E9ECEF;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --transition: all 0.3s ease;
 }
 
-.blog-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+.blog-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
 }
 
-.card-img-wrapper {
-    height: 200px;
+/* Featured Article */
+.featured-article {
+    margin-bottom: 3rem;
+    background: white;
+    border-radius: 12px;
     overflow: hidden;
-    position: relative;
+    box-shadow: var(--shadow-md);
 }
 
-.card-img-top {
+.featured-article .row {
+    min-height: 400px;
+}
+
+.featured-image {
+    height: 100%;
+    min-height: 400px;
+    object-fit: cover;
+}
+
+.featured-content {
+    padding: 2.5rem;
+}
+
+.featured-category {
+    display: inline-block;
+    background: var(--primary-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 100px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 1.25rem;
+}
+
+.featured-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.featured-excerpt {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+/* Article Grid */
+.article-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.article-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.article-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+.article-image-wrapper {
+    position: relative;
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+}
+
+.article-image {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.placeholder-img {
-    height: 100%;
-    background-color: #f8f9fa;
+.article-content {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.article-category {
+    font-size: 0.875rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.article-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+}
+
+.article-excerpt {
+    font-size: 0.925rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    flex-grow: 1;
+}
+
+.article-meta {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 2rem;
+    gap: 1rem;
 }
 
-.placeholder-img img {
-    max-height: 100%;
-    width: auto;
-    object-fit: contain;
+.admin-controls {
+    margin-bottom: 2rem;
 }
 
-.card-title {
-    font-size: 1.25rem;
-    margin-bottom: 0.75rem;
-    line-height: 1.4;
-}
+/* Responsive Design */
+@media (max-width: 992px) {
+    .featured-article .row {
+        flex-direction: column;
+    }
 
-.excerpt {
-    color: #6c757d;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    line-height: 1.5;
-}
+    .featured-image {
+        min-height: 300px;
+    }
 
-.card-footer {
-    padding-top: 0;
+    .featured-content {
+        padding: 2rem;
+    }
+
+    .featured-title {
+        font-size: 2rem;
+    }
 }
 
 @media (max-width: 768px) {
-    .card-img-wrapper {
-        height: 180px;
-    }
-}
-
-@media (max-width: 576px) {
-    .blog-card {
-        margin-bottom: 1.5rem;
+    .article-grid {
+        grid-template-columns: 1fr;
     }
 
-    .card-img-wrapper {
-        height: 160px;
+    .featured-title {
+        font-size: 1.75rem;
+    }
+
+    .featured-excerpt {
+        font-size: 1rem;
     }
 }
 </style>
+{% endblock %}
+
+{% block content %}
+<div class="blog-container">
+    {% if current_user.is_authenticated and current_user.is_admin %}
+    <div class="admin-controls">
+        <a href="{{ url_for('blog.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>{{ _('Nieuw Artikel') }}
+        </a>
+    </div>
+    {% endif %}
+
+    {% if posts %}
+    <!-- Featured Article (Latest Post) -->
+    {% set featured = posts[0] %}
+    <div class="featured-article">
+        <div class="row g-0">
+            <div class="col-lg-6">
+                {% if featured.image_url %}
+                <img src="{{ featured.image_url }}" 
+                     class="featured-image" 
+                     alt="{{ featured.title }}"
+                     loading="lazy">
+                {% else %}
+                <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}"
+                     class="featured-image"
+                     alt="VGM Logo">
+                {% endif %}
+            </div>
+            <div class="col-lg-6">
+                <div class="featured-content">
+                    <span class="featured-category">{{ _('Uitgelicht') }}</span>
+                    <h1 class="featured-title">{{ featured.title }}</h1>
+                    <p class="featured-excerpt">{{ featured.excerpt or featured.content[:300] + '...' }}</p>
+                    <div class="article-meta">
+                        <span><i class="fas fa-user me-2"></i>{{ featured.author.username }}</span>
+                        <span><i class="far fa-calendar me-2"></i>{{ featured.created_at.strftime('%d-%m-%Y') }}</span>
+                    </div>
+                    <a href="{{ url_for('blog.view', slug=featured.slug) }}" class="btn btn-primary mt-4">
+                        {{ _('Lees Meer') }} <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Article Grid (Remaining Posts) -->
+    <div class="article-grid">
+        {% for post in posts[1:] %}
+        <article class="article-card">
+            <div class="article-image-wrapper">
+                {% if post.image_url %}
+                <img src="{{ post.image_url }}" 
+                     class="article-image" 
+                     alt="{{ post.title }}"
+                     loading="lazy">
+                {% else %}
+                <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}"
+                     class="article-image"
+                     alt="VGM Logo">
+                {% endif %}
+            </div>
+            <div class="article-content">
+                <div class="article-category">{{ _('Nieuws') }}</div>
+                <h2 class="article-title">{{ post.title }}</h2>
+                <p class="article-excerpt">{{ post.excerpt or post.content[:150] + '...' }}</p>
+                <div class="article-meta">
+                    <span><i class="fas fa-user me-1"></i>{{ post.author.username }}</span>
+                    <span><i class="far fa-calendar me-1"></i>{{ post.created_at.strftime('%d-%m-%Y') }}</span>
+                </div>
+                <a href="{{ url_for('blog.view', slug=post.slug) }}" class="btn btn-outline-primary mt-3">
+                    {{ _('Lees Meer') }}
+                </a>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <h2>{{ _('Nog geen blogartikelen beschikbaar') }}</h2>
+        <p class="text-muted">{{ _('Kom later terug voor nieuwe artikelen') }}</p>
+    </div>
+    {% endif %}
+</div>
 {% endblock %}

@@ -208,12 +208,22 @@ class BlogPost(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     published = db.Column(db.Boolean, default=True)
-    image_url = db.Column(db.String(500))  # Optional featured image
+    image_url = db.Column(db.String(500))  # Featured image
     slug = db.Column(db.String(200), unique=True, nullable=False)
     excerpt = db.Column(db.Text)  # Short description for preview
+    is_featured = db.Column(db.Boolean, default=False)  # For highlighting important articles
+    category = db.Column(db.String(50), default='Nieuws')  # Article category
+    reading_time = db.Column(db.Integer)  # Estimated reading time in minutes
 
     def __repr__(self):
         return f'<BlogPost {self.title}>'
+
+    def calculate_reading_time(self):
+        """Calculate estimated reading time based on content length"""
+        words_per_minute = 200
+        word_count = len(self.content.split())
+        minutes = round(word_count / words_per_minute)
+        return max(1, minutes)  # Minimum 1 minute reading time
 
 class Donation(db.Model):
     id = db.Column(db.Integer, primary_key=True)

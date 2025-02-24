@@ -6,23 +6,23 @@ from datetime import datetime
 
 blog = Blueprint('blog', __name__)
 
-@blog.route('/blog')
+@blog.route('/')
 def index():
     posts = BlogPost.query.filter_by(
         published=True
     ).order_by(BlogPost.created_at.desc()).all()
     return render_template('blog/index.html', posts=posts)
 
-@blog.route('/blog/<slug>')
+@blog.route('/<slug>')
 def view(slug):
     post = BlogPost.query.filter_by(slug=slug).first_or_404()
     return render_template('blog/view.html', post=post)
 
-@blog.route('/blog/create', methods=['GET', 'POST'])
+@blog.route('/create', methods=['GET', 'POST'])
 @login_required
 def create():
     if not current_user.is_admin:
-        flash('Only administrators can create blog posts.', 'error')
+        flash('Alleen administrators kunnen blog posts aanmaken.', 'error')
         return redirect(url_for('blog.index'))
 
     if request.method == 'POST':
@@ -30,23 +30,25 @@ def create():
         content = request.form.get('content')
         excerpt = request.form.get('excerpt')
         image_url = request.form.get('image_url')
-        
+        is_featured = bool(request.form.get('is_featured', False))
+
         # Create URL-friendly slug from title
         slug = title.lower().replace(' ', '-')
-        
+
         post = BlogPost(
             title=title,
             content=content,
             excerpt=excerpt,
             image_url=image_url,
             slug=slug,
-            author_id=current_user.id
+            author_id=current_user.id,
+            is_featured=is_featured
         )
-        
+
         db.session.add(post)
         db.session.commit()
-        
-        flash('Blog post created successfully!', 'success')
+
+        flash('Blog post succesvol aangemaakt!', 'success')
         return redirect(url_for('blog.view', slug=post.slug))
-        
+
     return render_template('blog/create.html')
