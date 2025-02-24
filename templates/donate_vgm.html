@@ -4,11 +4,13 @@
 
 {% block content %}
 <div class="donate-hero">
+    <div class="hero-overlay"></div>
     <div class="container">
         <div class="hero-content text-center">
+            <h1 class="hero-title">Steun de gemeenschap vandaag,<br>zie haar morgen bloeien</h1>
             <div class="quran-quote">
                 <p class="quote-text">
-                    "Degenen die hun bezittingen 's nachts en overdag, in het geheim en openlijk uitgeven, voor hen is hun beloning bij hun Heer. Geen vrees zal over hen komen, noch zullen zij treuren."
+                    [Degenen die hun bezittingen 's nachts en overdag, in het geheim en openlijk uitgeven, voor hen is hun beloning bij hun Heer. Geen vrees zal over hen komen, noch zullen zij treuren.]
                 </p>
                 <p class="quote-source">Koran, 2:274</p>
             </div>
@@ -159,19 +161,41 @@
     padding: 8rem 0;
     position: relative;
     overflow: hidden;
+    margin-bottom: -4rem;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 1;
 }
 
 .hero-content {
+    position: relative;
+    z-index: 2;
     max-width: 800px;
     margin: 0 auto;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 3rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .quran-quote {
     background: rgba(255, 255, 255, 0.1);
     padding: 3rem;
-    border-radius: 1rem;
+    border-radius: 1.5rem;
     backdrop-filter: blur(10px);
     margin: 0 auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .quote-text {
@@ -306,6 +330,11 @@
 @media (max-width: 768px) {
     .donate-hero {
         padding: 4rem 0;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+        margin-bottom: 2rem;
     }
 
     .quran-quote {
