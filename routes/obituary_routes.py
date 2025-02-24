@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from datetime import datetime
+from sqlalchemy import or_, case
 from app import db
 from models import Obituary, ObituaryNotification, User
 from forms import ObituaryForm
@@ -9,7 +10,28 @@ obituaries = Blueprint('obituaries', __name__)
 
 @obituaries.route('/')
 def index():
-    obituaries = Obituary.query.filter_by(is_approved=True).order_by(Obituary.date_of_death.desc()).all()
+    # Get current datetime
+    now = datetime.now()
+
+    # Query obituaries with custom ordering
+    obituaries = Obituary.query.filter_by(is_approved=True)\
+        .order_by(
+            # First, sort by future dates (both specific times and prayer dates)
+            case(
+                # For specific times, use prayer_time
+                (Obituary.prayer_time >= now, 1),
+                # For prayer dates, use prayer_date
+                (Obituary.prayer_date >= now.date(), 1),
+                # Past events come last
+                else_=2
+            ),
+            # Then sort by the actual datetime
+            Obituary.prayer_time.asc().nullslast(),
+            Obituary.prayer_date.asc().nullslast(),
+            # Finally sort by date of death for items without prayer times
+            Obituary.date_of_death.desc()
+        ).all()
+
     return render_template('obituaries/index.html', obituaries=obituaries)
 
 @obituaries.route('/create', methods=['GET', 'POST'])
