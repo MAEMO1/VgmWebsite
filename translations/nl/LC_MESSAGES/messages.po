@@ -59,7 +59,7 @@ msgid "Mosque Events"
 msgstr "Moskee-evenementen"
 
 msgid "About & Info"
-msgstr "Over Ons & Info"
+msgstr "Over & Info"
 
 msgid "Mosques & Prayer"
 msgstr "Moskeeën & Gebed"
@@ -73,7 +73,6 @@ msgstr "Account"
 msgid "Select language"
 msgstr "Selecteer taal"
 
-# Timer labels
 msgid "Days"
 msgstr "Dagen"
 
@@ -86,7 +85,6 @@ msgstr "Minuten"
 msgid "Seconds"
 msgstr "Seconden"
 
-# Prayer times
 msgid "Iqama is typically 10-15 minutes after Adhan"
 msgstr "Iqama is meestal 10-15 minuten na Adhan"
 
@@ -117,7 +115,6 @@ msgstr "Eid-gebeden worden gehouden in de hoofdgebedsruimte"
 msgid "Times will be announced"
 msgstr "Tijden worden nog aangekondigd"
 
-# Notifications
 msgid "Notification Preferences"
 msgstr "Notificatie-voorkeuren"
 
@@ -292,10 +289,6 @@ msgstr "Functie"
 msgid "Save Changes"
 msgstr "Wijzigingen Opslaan"
 
-
-msgid "Delete"
-msgstr "Verwijderen"
-
 msgid "Edit Profile"
 msgstr "Profiel Bewerken"
 
@@ -319,7 +312,6 @@ msgstr "vertegenwoordiging"
 
 msgid "Name"
 msgstr "Naam"
-
 
 msgid "Mosque"
 msgstr "Moskee"
@@ -445,7 +437,7 @@ msgid "Find a Mosque"
 msgstr "Vind een Moskee"
 
 msgid "Countdown to Ramadan 1446/2025"
-msgstr ""
+msgstr "Aftellen naar Ramadan 1446/2025"
 
 msgid "Days"
 msgstr "Dagen"
@@ -728,3 +720,9 @@ msgstr ""
 
 msgid "Role"
 msgstr ""
+
+msgid "Recent Obituaries"
+msgstr "Recente Overlijdensberichten"
+
+msgid "No obituaries to display."
+msgstr "Geen overlijdensberichten om weer te geven."
