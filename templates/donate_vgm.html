@@ -7,12 +7,12 @@
     <div class="hero-overlay"></div>
     <div class="container">
         <div class="hero-content text-center">
-            <h1 class="hero-title">Steun de gemeenschap vandaag,<br>zie haar morgen bloeien</h1>
-            <div class="quran-quote">
-                <p class="quote-text">
-                    [Degenen die hun bezittingen 's nachts en overdag, in het geheim en openlijk uitgeven, voor hen is hun beloning bij hun Heer. Geen vrees zal over hen komen, noch zullen zij treuren.]
-                </p>
-                <p class="quote-source">Koran, 2:274</p>
+            <h1 class="display-4 mb-4">{{ _('Steun VGM') }}</h1>
+            <div class="quote-container">
+                <blockquote class="hadith-quote">
+                    <p class="quote-text">[Degenen die hun bezittingen 's nachts en overdag, in het geheim en openlijk uitgeven, voor hen is hun beloning bij hun Heer. Geen vrees zal over hen komen, noch zullen zij treuren.]</p>
+                    <footer class="quote-source">Koran, 2:274</footer>
+                </blockquote>
             </div>
         </div>
     </div>
@@ -181,34 +181,40 @@
     margin: 0 auto;
 }
 
-.hero-title {
-    font-size: 3rem;
+.hero-content h1 {
     font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.quran-quote {
+.quote-container {
     background: rgba(255, 255, 255, 0.1);
-    padding: 3rem;
-    border-radius: 1.5rem;
     backdrop-filter: blur(10px);
-    margin: 0 auto;
+    border-radius: 1.5rem;
+    padding: 3rem;
+    margin-top: 2rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.hadith-quote {
+    border-left: none;
+    padding: 0;
+    margin: 0;
+}
+
 .quote-text {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     line-height: 1.8;
     margin-bottom: 1.5rem;
     font-weight: 300;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .quote-source {
-    font-size: 1.1rem;
-    opacity: 0.9;
+    font-size: 1rem;
+    opacity: 0.8;
     font-weight: 500;
+    font-style: italic;
 }
 
 /* Donation Section */
@@ -216,13 +222,6 @@
     padding: 6rem 0;
     background-color: var(--background-light);
     margin-top: -4rem;
-}
-
-.donation-card {
-    background: white;
-    border-radius: 1rem;
-    padding: 2rem;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 /* Amount Grid */
@@ -329,22 +328,22 @@
 /* Responsive Design */
 @media (max-width: 768px) {
     .donate-hero {
-        padding: 4rem 0;
+        padding: 6rem 0;
     }
 
-    .hero-title {
+    .hero-content h1 {
         font-size: 2rem;
         margin-bottom: 2rem;
     }
 
-    .quran-quote {
+    .quote-container {
         padding: 2rem;
+        margin-top: 1.5rem;
     }
 
     .quote-text {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
-
     .amount-grid,
     .payment-grid,
     .impact-grid {
