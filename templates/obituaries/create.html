@@ -52,15 +52,13 @@
 }
 
 #specific_time_container,
-#after_prayer_container,
-#other_location_container {
+#after_prayer_container {
     display: none;
     margin-top: 1rem;
 }
 
 #specific_time_container.visible,
-#after_prayer_container.visible,
-#other_location_container.visible {
+#after_prayer_container.visible {
     display: block;
 }
 </style>
@@ -154,16 +152,6 @@
                     {{ form.death_prayer_location(class="form-select" + (" is-invalid" if form.death_prayer_location.errors else "")) }}
                     {% if form.death_prayer_location.errors %}
                         {% for error in form.death_prayer_location.errors %}
-                            <div class="error-message">{{ error }}</div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-
-                <div id="other_location_container">
-                    {{ form.other_location_address.label(class="form-label required-field") }}
-                    {{ form.other_location_address(class="form-control" + (" is-invalid" if form.other_location_address.errors else "")) }}
-                    {% if form.other_location_address.errors %}
-                        {% for error in form.other_location_address.errors %}
                             <div class="error-message">{{ error }}</div>
                         {% endfor %}
                     {% endif %}
@@ -286,25 +274,6 @@ document.addEventListener('DOMContentLoaded', function() {
         updateTimeContainers();
     }
 
-    // Handle location selection
-    const locationSelect = document.getElementById('death_prayer_location');
-    const otherLocationContainer = document.getElementById('other_location_container');
-
-    function updateLocationContainer() {
-        if (locationSelect.value === 'andere') {
-            otherLocationContainer.classList.add('visible');
-            document.getElementById('other_location_address').required = true;
-        } else {
-            otherLocationContainer.classList.remove('visible');
-            document.getElementById('other_location_address').required = false;
-        }
-    }
-
-    if (locationSelect) {
-        locationSelect.addEventListener('change', updateLocationContainer);
-        // Initialize on page load
-        updateLocationContainer();
-    }
 
     // Ensure prayer time is after death date
     const prayerTime = document.querySelector('input[type="datetime-local"]');

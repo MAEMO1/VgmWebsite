@@ -19,9 +19,9 @@ def create():
     mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
     form = ObituaryForm()
 
-    # Format mosque names and add "Andere" option
+    # Format mosque choices
     mosque_choices = [(str(mosque.id), mosque.username.replace('_', ' ').title()) for mosque in mosques]
-    mosque_choices.append(('andere', 'Andere'))
+    mosque_choices.append(('0', 'Andere locatie'))
     form.death_prayer_location.choices = mosque_choices
 
     if form.validate_on_submit():
@@ -33,6 +33,7 @@ def create():
                 birth_place=form.birth_place.data,
                 death_place=form.death_place.data,
                 date_of_death=form.date_of_death.data,
+                death_prayer_location=form.death_prayer_location.data,
                 prayer_time=form.prayer_time.data if form.time_type.data == 'specific' else None,
                 prayer_after=form.after_prayer.data if form.time_type.data == 'after_prayer' else None,
                 burial_location=form.burial_location.data,
@@ -42,15 +43,14 @@ def create():
             )
 
             # Handle location
-            if form.death_prayer_location.data == 'andere':
-                obituary.death_prayer_location = form.other_location_address.data
+            if form.death_prayer_location.data == '0':
                 obituary.mosque_id = None
                 obituary.is_approved = True  # Auto-approve if no mosque involved
             else:
                 mosque_id = int(form.death_prayer_location.data)
                 obituary.mosque_id = mosque_id
                 obituary.death_prayer_location = User.query.get(mosque_id).username.replace('_', ' ').title()
-                obituary.is_approved = current_user.is_admin  # Only admin submissions are auto-approved
+                obituary.is_approved = current_user.is_admin  # Direct goedkeuring voor admins
 
             db.session.add(obituary)
 
@@ -95,7 +95,7 @@ def edit_obituary(obituary_id):
 
     # Format mosque names and add "Andere" option
     mosque_choices = [(str(mosque.id), mosque.username.replace('_', ' ').title()) for mosque in mosques]
-    mosque_choices.append(('andere', 'Andere'))
+    mosque_choices.append(('0', 'Andere locatie'))
     form.death_prayer_location.choices = mosque_choices
 
     if form.validate_on_submit():
@@ -114,8 +114,8 @@ def edit_obituary(obituary_id):
 
             # Handle location changes
             old_mosque_id = obituary.mosque_id
-            if form.death_prayer_location.data == 'andere':
-                obituary.death_prayer_location = form.other_location_address.data
+            if form.death_prayer_location.data == '0':
+                obituary.death_prayer_location = 'Andere locatie'
                 obituary.mosque_id = None
                 obituary.is_approved = True
             else:
@@ -148,8 +148,8 @@ def edit_obituary(obituary_id):
     if obituary.mosque_id:
         form.death_prayer_location.data = str(obituary.mosque_id)
     else:
-        form.death_prayer_location.data = 'andere'
-        form.other_location_address.data = obituary.death_prayer_location
+        form.death_prayer_location.data = '0'
+        
 
     return render_template('obituaries/edit.html', form=form, obituary=obituary)
 

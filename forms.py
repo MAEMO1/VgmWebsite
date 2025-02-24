@@ -10,8 +10,7 @@ class ObituaryForm(FlaskForm):
     date_of_death = DateField('Datum van Overlijden', validators=[DataRequired()])
 
     # Dodengebed velden
-    death_prayer_location = SelectField('Moskee', validators=[DataRequired()])
-    other_location_address = StringField('Andere Locatie', validators=[Length(max=200)])
+    death_prayer_location = SelectField('Locatie', validators=[DataRequired()])
 
     time_type = SelectField('Type Tijdsaanduiding',
         choices=[
@@ -36,10 +35,6 @@ class ObituaryForm(FlaskForm):
     burial_location = StringField('Begraafplaats', validators=[Optional(), Length(max=200)])
     family_contact = StringField('Contact voor Condoleances', validators=[Optional(), Length(max=200)])
     additional_notes = TextAreaField('Aanvullende Opmerkingen', validators=[Optional(), Length(max=1000)])
-
-    def validate_other_location_address(self, field):
-        if self.death_prayer_location.data == 'andere' and not field.data:
-            raise ValidationError('Adres is verplicht wanneer "Andere" is geselecteerd')
 
     def validate_prayer_time(self, field):
         if self.time_type.data == 'specific' and not field.data:
