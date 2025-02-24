@@ -822,3 +822,27 @@ msgstr "Fout bij het indienen van het overlijdensbericht. Probeer het opnieuw."
 
 msgid "Notification preferences updated successfully."
 msgstr "Notificatie-voorkeuren succesvol bijgewerkt."
+
+msgid "VGM Events"
+msgstr "Evenementen georganiseerd door de Vereniging van Gentse Moskeeën"
+
+msgid "Mosque Events"
+msgstr "Solo Moskee (Evenementen van een individuele moskee)"
+
+msgid "Mosque Collaborations"
+msgstr "Co-Moskee (Evenementen waarin meerdere moskeeën samenwerken)"
+
+msgid "Calendar"
+msgstr "Agenda"
+
+msgid "View Details"
+msgstr "Bekijk Details"
+
+msgid "Create Event"
+msgstr "Evenement Aanmaken"
+
+msgid "VGM"
+msgstr "VGM"
+
+msgid "Collaboration"
+msgstr "Co-Moskee"
