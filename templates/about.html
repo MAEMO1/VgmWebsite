@@ -3,91 +3,94 @@
 {% block title %}Over VGM{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <!-- Association Description -->
-    <div class="row mb-5">
-        <div class="col-12">
-            <div class="about-header text-center mb-5">
-                <h1 class="display-4 text-primary mb-4">Over VGM</h1>
-                <p class="lead mb-4">Vereniging van Gentse Moskeeën (VGM)</p>
-                <div class="separator"></div>
-            </div>
-            <div class="about-content">
-                <p class="mb-4">De Vereniging van Gentse Moskeeën (VGM) is de koepelvereniging van de Gentse moskeeën (21). Opgericht in 2016 heeft de vereniging tot doel:</p>
-                <div class="objectives">
-                    <div class="objective-item">
-                        <i class="fas fa-mosque text-primary me-3"></i>
-                        <span>De belangen van de moslims en moskeeën te behartigen</span>
-                    </div>
-                    <div class="objective-item">
-                        <i class="fas fa-handshake-angle text-primary me-3"></i>
-                        <span>De onderlinge samenwerking tussen de moskeeën te bevorderen</span>
-                    </div>
-                    <div class="objective-item">
-                        <i class="fas fa-book-quran text-primary me-3"></i>
-                        <span>Informeren over het Islamitisch geloof, zonder zich uit te spreken over mogelijke verschillen tussen rechtsscholen</span>
-                    </div>
-                </div>
-            </div>
+<div class="about-container">
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">Vereniging van Gentse Moskeeën</h1>
+            <p class="hero-subtitle">Verbinding, Samenwerking, Gemeenschap</p>
         </div>
     </div>
 
-    <!-- Board Members Section -->
-    <div class="board-section">
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="section-title">Bestuursleden</h2>
-                    <div class="d-flex gap-3">
-                        <select class="form-select custom-select" id="termSelect">
-                            {% for term in terms %}
-                            <option value="{{ term[0].strftime('%Y-%m-%d') }}" 
-                                    {% if term[0] == current_term_start %}selected{% endif %}>
-                                {{ term[0].strftime('%Y') }} - {{ term[1].strftime('%Y') }}
-                            </option>
-                            {% endfor %}
-                        </select>
-                        {% if current_user.is_authenticated and current_user.is_admin %}
-                        <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#manageBoardModal">
-                            <i class="fas fa-edit me-2"></i>Bestuur Beheren
-                        </button>
-                        {% endif %}
+    <!-- Mission Section -->
+    <section class="mission-section">
+        <div class="container">
+            <div class="mission-content">
+                <h2 class="section-title">Onze Missie</h2>
+                <p class="section-text">De Vereniging van Gentse Moskeeën (VGM) is de koepelvereniging van de Gentse moskeeën (21). Opgericht in 2016 heeft de vereniging tot doel:</p>
+
+                <div class="mission-grid">
+                    <div class="mission-card">
+                        <i class="fas fa-mosque"></i>
+                        <h3>Belangenbehartiging</h3>
+                        <p>De belangen van de moslims en moskeeën behartigen</p>
+                    </div>
+                    <div class="mission-card">
+                        <i class="fas fa-handshake-angle"></i>
+                        <h3>Samenwerking</h3>
+                        <p>De onderlinge samenwerking tussen de moskeeën bevorderen</p>
+                    </div>
+                    <div class="mission-card">
+                        <i class="fas fa-book-quran"></i>
+                        <h3>Informeren</h3>
+                        <p>Informeren over het Islamitisch geloof, zonder zich uit te spreken over mogelijke verschillen tussen rechtsscholen</p>
                     </div>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- Board Members Grid -->
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="boardMembersGrid">
-            {% for member in board_members %}
-            <div class="col">
-                <div class="board-member-card">
-                    <div class="member-image">
+    <!-- Leadership Section -->
+    <section class="leadership-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Ons Bestuur</h2>
+                <div class="section-controls">
+                    <select class="form-select custom-select" id="termSelect">
+                        {% for term in terms %}
+                        <option value="{{ term[0].strftime('%Y-%m-%d') }}" 
+                                {% if term[0] == current_term_start %}selected{% endif %}>
+                            {{ term[0].strftime('%Y') }} - {{ term[1].strftime('%Y') }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    {% if current_user.is_authenticated and current_user.is_admin %}
+                    <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#manageBoardModal">
+                        <i class="fas fa-edit me-2"></i>Bestuur Beheren
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="leadership-grid">
+                {% for member in board_members %}
+                <div class="leader-card">
+                    <div class="leader-image">
                         {% if member.image and member.image.startswith('member_') %}
                             <img src="{{ url_for('static', filename='images/board/' + member.image) }}" 
                                  alt="{{ member.name }}"
                                  loading="lazy">
                         {% else %}
-                            <div class="placeholder-image">
+                            <div class="image-placeholder">
                                 <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}" 
                                      alt="VGM Logo"
                                      loading="lazy">
                             </div>
                         {% endif %}
                     </div>
-                    <div class="member-info">
-                        <h3 class="member-name">{{ member.name }}</h3>
-                        <p class="member-role">{{ member.role }}</p>
-                        <p class="member-mosque">
-                            <i class="fas fa-mosque text-primary"></i>
-                            Vertegenwoordigt: {{ member.mosque.mosque_name if member.mosque else '' }}
+                    <div class="leader-info">
+                        <h3 class="leader-name">{{ member.name }}</h3>
+                        <p class="leader-role">{{ member.role }}</p>
+                        <p class="leader-mosque">
+                            <i class="fas fa-mosque"></i>
+                            {{ member.mosque.mosque_name if member.mosque else '' }}
                         </p>
                     </div>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
-    </div>
+    </section>
 </div>
 
 {% if current_user.is_authenticated and current_user.is_admin %}
@@ -158,186 +161,248 @@
 </div>
 {% endif %}
 
+{% endblock %}
+
+{% block styles %}
 <style>
-/* About Page Specific Styles */
-.about-header {
+/* General Styles */
+.about-container {
+    overflow: hidden;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #005A87 0%, #41B7AC 100%);
+    color: white;
+    padding: 6rem 0;
+    text-align: center;
     position: relative;
-    margin-bottom: 4rem;
 }
 
-.about-header .display-4 {
-    color: var(--primary-color);
+.hero-section::after {
+    content: '';
+    position: absolute;
+    bottom: -50px;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: white;
+    transform: skewY(-3deg);
+}
+
+.hero-title {
+    font-size: 3.5rem;
     font-weight: 700;
+    margin-bottom: 1.5rem;
 }
 
-.separator {
-    width: 80px;
-    height: 4px;
-    background: var(--primary-color);
-    margin: 2rem auto;
-    border-radius: 2px;
+.hero-subtitle {
+    font-size: 1.5rem;
+    opacity: 0.9;
 }
 
-.about-content {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    color: var(--text-color);
+/* Mission Section */
+.mission-section {
+    padding: 8rem 0 6rem;
+    background: white;
 }
 
-.objectives {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    margin: 2rem 0;
-}
-
-.objective-item {
-    display: flex;
-    align-items: center;
-    padding: 1.25rem;
-    background: var(--white);
-    border-radius: 12px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 1px solid var(--border-color);
-}
-
-.objective-item:hover {
-    transform: translateX(10px);
-    box-shadow: 0 4px 12px rgba(65, 183, 172, 0.1);
-    border-color: var(--primary-color);
-}
-
-.objective-item i {
-    font-size: 1.75rem;
-    color: var(--primary-color);
-}
-
-/* Board Members Section */
-.board-section {
-    margin-top: 4rem;
+.mission-content {
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 .section-title {
-    color: var(--primary-color);
+    font-size: 2.5rem;
     font-weight: 700;
-    position: relative;
-    display: inline-block;
-    font-size: 2rem;
-    margin-bottom: 0;
+    color: #005A87;
+    margin-bottom: 2rem;
+    text-align: center;
 }
 
-.board-member-card {
-    background: var(--white);
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 1px solid var(--border-color);
+.section-text {
+    font-size: 1.2rem;
+    color: #666;
+    text-align: center;
+    margin-bottom: 4rem;
 }
 
-.board-member-card:hover {
+.mission-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.mission-card {
+    text-align: center;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.mission-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 8px 16px rgba(65, 183, 172, 0.2);
-    border-color: var(--primary-color);
 }
 
-.member-image {
-    height: 280px;
+.mission-card i {
+    font-size: 2.5rem;
+    color: #005A87;
+    margin-bottom: 1.5rem;
+}
+
+.mission-card h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.mission-card p {
+    color: #666;
+    line-height: 1.6;
+}
+
+/* Leadership Section */
+.leadership-section {
+    padding: 6rem 0;
+    background: #f8f9fa;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4rem;
+}
+
+.section-controls {
+    display: flex;
+    gap: 1rem;
+}
+
+.leadership-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.leader-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.leader-card:hover {
+    transform: translateY(-10px);
+}
+
+.leader-image {
+    width: 100%;
+    height: 300px;
     overflow: hidden;
     position: relative;
 }
 
-.member-image img {
+.leader-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.3s ease;
 }
 
-.board-member-card:hover .member-image img {
+.leader-card:hover .leader-image img {
     transform: scale(1.05);
 }
 
-.placeholder-image {
+.image-placeholder {
     width: 100%;
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--light-bg);
+    background: rgba(0, 90, 135, 0.05);
     padding: 2rem;
 }
 
-.placeholder-image img {
-    width: 70%;
+.image-placeholder img {
+    width: 60%;
     height: auto;
     object-fit: contain;
-    opacity: 0.8;
+    opacity: 0.7;
 }
 
-.member-info {
-    padding: 1.75rem;
-    background: var(--white);
-    position: relative;
+.leader-info {
+    padding: 1.5rem;
 }
 
-.member-name {
-    font-size: 1.35rem;
-    color: var(--primary-color);
-    margin-bottom: 0.75rem;
+.leader-name {
+    font-size: 1.25rem;
     font-weight: 600;
+    color: #005A87;
+    margin-bottom: 0.5rem;
 }
 
-.member-role {
-    color: var(--light-text);
+.leader-role {
+    color: #666;
     font-size: 1rem;
     margin-bottom: 1rem;
-    font-style: italic;
 }
 
-.member-mosque {
-    font-size: 0.95rem;
-    color: var(--text-color);
+.leader-mosque {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    margin: 0;
+    gap: 0.5rem;
+    color: #666;
+    font-size: 0.9rem;
 }
 
-/* Form Styling */
-.custom-select {
-    min-width: 200px;
-    border-color: var(--border-color);
-    padding: 0.75rem;
-    border-radius: 8px;
+.leader-mosque i {
+    color: #005A87;
+}
+
+/* Modal Styles */
+.modal-content {
+    border-radius: 12px;
 }
 
 .board-member-entry {
-    background: var(--light-bg);
-    padding: 1.75rem;
-    border-radius: 12px;
-    margin-bottom: 1.5rem;
-    border: 1px solid var(--border-color);
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid #dee2e6;
 }
 
 @media (max-width: 768px) {
-    .objective-item {
-        padding: 1rem;
+    .hero-title {
+        font-size: 2.5rem;
     }
 
-    .member-image {
-        height: 240px;
-    }
-
-    .member-info {
-        padding: 1.25rem;
+    .hero-subtitle {
+        font-size: 1.2rem;
     }
 
     .section-title {
-        font-size: 1.75rem;
+        font-size: 2rem;
+    }
+
+    .section-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .section-controls {
+        width: 100%;
+        justify-content: center;
     }
 }
 </style>
+{% endblock %}
 
 {% block scripts %}
 <script>
@@ -363,5 +428,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-{% endblock %}
 {% endblock %}
