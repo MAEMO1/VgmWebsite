@@ -38,7 +38,8 @@ def index():
             'subtopics': [
                 'Aanbiddingen',
                 'Reflecties & Inspiratie',
-                'Lezingen'
+                'Lezingen',
+                'Interlevensbeschouwelijk'
             ]
         }
     }
@@ -127,7 +128,8 @@ def create():
             'subtopics': [
                 'Aanbiddingen',
                 'Reflecties & Inspiratie',
-                'Lezingen'
+                'Lezingen',
+                'Interlevensbeschouwelijk'
             ]
         }
     }
