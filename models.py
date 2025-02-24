@@ -158,6 +158,7 @@ class Obituary(db.Model):
     birth_place = db.Column(db.String(200))
     death_place = db.Column(db.String(200))
     prayer_time = db.Column(db.DateTime)
+    prayer_date = db.Column(db.Date)  # New field for storing the date when prayer is after a specific prayer
     prayer_after = db.Column(db.String(20))  # stores which prayer: fajr, dhuhr, asr, etc.
     death_prayer_location = db.Column(db.String(200))  # Place of death prayer
     burial_location = db.Column(db.String(200))
