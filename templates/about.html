@@ -35,7 +35,7 @@
                              alt="Huidige foto" class="current-photo">
                     {% else %}
                         <div class="placeholder-preview">
-                            <img src="{{ url_for('static', filename='images/image_1740420347783.png') }}" 
+                            <img src="/static/images/image_1740420347783.png" 
                                  alt="VGM Logo" class="logo-placeholder">
                         </div>
                     {% endif %}
@@ -120,7 +120,7 @@
                                  loading="lazy">
                         {% else %}
                             <div class="image-placeholder">
-                                <img src="{{ url_for('static', filename='images/image_1740420347783.png') }}" 
+                                <img src="/static/images/image_1740420347783.png" 
                                      alt="VGM Logo"
                                      loading="lazy"
                                      class="logo-placeholder">
@@ -156,11 +156,11 @@
                     <div class="row mb-4">
                         <div class="col-md-6">
                             <label class="form-label">Bestuursperiode Start</label>
-                            <input type="date" class="form-control" name="term_start" required>
+                            <input type="date" class="form-control" name="term_start" value="{{ current_term_start.strftime('%Y-%m-%d') if current_term_start }}" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Bestuursperiode Eind</label>
-                            <input type="date" class="form-control" name="term_end" required>
+                            <input type="date" class="form-control" name="term_end" value="{{ current_term_end.strftime('%Y-%m-%d') if current_term_end }}" required>
                         </div>
                     </div>
 
@@ -208,162 +208,19 @@
     --transition: all 0.3s ease;
 }
 
-/* General Styles */
-.about-container {
-    overflow: hidden;
-}
-
-/* Hero Section */
-.hero-section {
-    background: linear-gradient(135deg, #005A87 0%, #41B7AC 100%);
-    color: white;
-    padding: 8rem 0;
-    text-align: center;
-    position: relative;
-}
-
-.hero-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    opacity: 0.1;
-}
-
-.hero-title {
-    font-size: 4rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    position: relative;
-}
-
-.hero-subtitle {
-    font-size: 1.5rem;
-    opacity: 0.9;
-    position: relative;
-}
-
-/* Mission Section */
-.mission-section {
-    padding: 8rem 0;
-    background: white;
-    position: relative;
-}
-
-.mission-section::before {
-    content: '';
-    position: absolute;
-    top: -50px;
-    left: 0;
-    right: 0;
-    height: 100px;
-    background: white;
-    transform: skewY(-3deg);
-}
-
-.mission-content {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.section-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #005A87;
-    margin-bottom: 2rem;
-    text-align: center;
-}
-
-.section-text {
-    font-size: 1.2rem;
-    color: #666;
-    text-align: center;
-    margin-bottom: 4rem;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.mission-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    margin-top: 3rem;
-}
-
-.mission-card {
-    text-align: center;
-    padding: 3rem 2rem;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
-    border: 1px solid #eee;
-}
-
-.mission-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 8px 30px rgba(0, 90, 135, 0.1);
-    border-color: #005A87;
-}
-
-.mission-card i {
-    font-size: 3rem;
-    color: #005A87;
-    margin-bottom: 1.5rem;
-}
-
-.mission-card h3 {
-    font-size: 1.5rem;
-    color: #333;
-    margin-bottom: 1rem;
-    font-weight: 600;
-}
-
-.mission-card p {
-    color: #666;
-    line-height: 1.6;
-}
-
-/* Leadership Section */
+/* Leadership Section Styles */
 .leadership-section {
     padding: 6rem 0;
-    background: #f8f9fa;
-}
-
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 4rem;
-}
-
-.section-controls {
-    display: flex;
-    gap: 1rem;
-}
-
-.leadership-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2rem;
+    background: var(--background-light);
 }
 
 .leader-card {
     background: white;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
-    border: 1px solid #eee;
-}
-
-.leader-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 8px 30px rgba(0, 90, 135, 0.1);
-    border-color: #005A87;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    border: 1px solid var(--border-color);
 }
 
 .leader-image {
@@ -371,18 +228,16 @@
     height: 360px;
     overflow: hidden;
     position: relative;
-    background: var(--background-light);
+    background: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
 
 .leader-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease;
 }
 
 .image-placeholder {
@@ -391,15 +246,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 3rem;
-    background: var(--background-light);
+    padding: 2rem;
+    background: white;
 }
 
 .logo-placeholder {
     width: auto;
     height: auto;
-    max-width: 70%;
-    max-height: 70%;
+    max-width: 60%;
+    max-height: 60%;
     object-fit: contain;
 }
 
@@ -409,30 +264,39 @@
     border-top: 1px solid var(--border-color);
 }
 
-/* Modal Styles */
-.modal-content {
-    border-radius: 12px;
-    border: none;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+.leader-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
 }
 
-.modal-header {
-    background: #f8f9fa;
-    border-bottom: 1px solid #eee;
-    padding: 1.5rem;
+.leader-role {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
 }
 
-.modal-body {
-    padding: 2rem;
+.leader-mosque {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--text-secondary);
+    margin: 0;
 }
 
+.leader-mosque i {
+    color: var(--primary-color);
+}
+
+/* Form Styles */
 .board-member-entry {
-    background: #f8f9fa;
+    background: var(--background-light);
     padding: 2rem;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     margin-bottom: 1.5rem;
-    border: 1px solid #eee;
     position: relative;
+    border: 1px solid var(--border-color);
 }
 
 .image-upload-container {
@@ -443,9 +307,9 @@
     max-width: 200px;
     min-height: 200px;
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     margin-top: 1rem;
-    background: rgba(0, 90, 135, 0.05);
+    background: white;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -458,15 +322,13 @@
     align-items: center;
     justify-content: center;
     padding: 1.5rem;
-    background: rgba(0, 90, 135, 0.05);
-    border-radius: 8px;
+    background: white;
 }
 
 .current-photo {
     width: 100%;
     height: auto;
-    border-radius: 8px;
-    object-fit: cover;
+    border-radius: var(--radius-sm);
 }
 
 .remove-member {
@@ -475,29 +337,10 @@
     right: 1rem;
 }
 
+/* Responsive Styles */
 @media (max-width: 768px) {
-    .hero-title {
-        font-size: 2.5rem;
-    }
-
-    .hero-subtitle {
-        font-size: 1.2rem;
-    }
-
-    .section-title {
-        font-size: 2rem;
-    }
-
-    .section-header {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-    }
-
-    .section-controls {
-        width: 100%;
-        justify-content: center;
-        flex-direction: column;
+    .leadership-section {
+        padding: 4rem 0;
     }
 
     .leader-image {
@@ -505,6 +348,10 @@
     }
 
     .leader-info {
+        padding: 1.5rem;
+    }
+
+    .board-member-entry {
         padding: 1.5rem;
     }
 }
@@ -522,12 +369,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Initialize form with current board data if available
-    {% if current_term_start %}
-    document.querySelector('input[name="term_start"]').value = "{{ current_term_start.strftime('%Y-%m-%d') }}";
-    document.querySelector('input[name="term_end"]').value = "{{ current_term_end.strftime('%Y-%m-%d') }}";
-    {% endif %}
-
     // Add member button handling
     const addMemberBtn = document.getElementById('addMemberBtn');
     const boardMembersForm = document.getElementById('boardMembersForm');
@@ -535,7 +376,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (addMemberBtn && boardMembersForm) {
         addMemberBtn.addEventListener('click', function() {
-            // Insert the template HTML
             boardMembersForm.insertAdjacentHTML('beforeend', memberTemplate);
         });
     }
