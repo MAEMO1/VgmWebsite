@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+    <!-- Sky gradient -->
+    <defs>
+        <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#1a4a6e;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#4a90a8;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#98c1d9;stop-opacity:1" />
+        </linearGradient>
+        <!-- Morning light glow -->
+        <radialGradient id="sunGlow" cx="50%" cy="100%" r="70%">
+            <stop offset="0%" style="stop-color:#ffd700;stop-opacity:0.3" />
+            <stop offset="100%" style="stop-color:#ffd700;stop-opacity:0" />
+        </radialGradient>
+    </defs>
+
+    <!-- Background -->
+    <rect width="100%" height="100%" fill="url(#skyGradient)" />
+    
+    <!-- Morning glow -->
+    <circle cx="960" cy="1080" r="800" fill="url(#sunGlow)" />
+
+    <!-- Mosque silhouette -->
+    <path d="M760 500 L760 800 L1160 800 L1160 500 Q960 300 760 500 Z" 
+          fill="#0a2a3f" />
+    <path d="M900 300 Q960 200 1020 300 L1020 500 L900 500 Z" 
+          fill="#0a2a3f" />
+    <circle cx="960" cy="250" r="30" fill="#0a2a3f" />
+    
+    <!-- Minarets -->
+    <path d="M700 300 L720 300 L720 800 L700 800 Z" fill="#0a2a3f" />
+    <path d="M1200 300 L1220 300 L1220 800 L1200 800 Z" fill="#0a2a3f" />
+    
+    <!-- Dome details -->
+    <path d="M900 300 Q960 200 1020 300" 
+          stroke="#1a4a6e" 
+          stroke-width="2" 
+          fill="none" />
+</svg>
