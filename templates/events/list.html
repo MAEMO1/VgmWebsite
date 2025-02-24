@@ -39,54 +39,54 @@
     padding: 1.5rem;
     border-radius: 12px;
     border: 1px solid var(--border-color);
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     height: 800px;
 }
 
-.fc {
-    height: 100%;
-}
-
-.fc-header-toolbar {
-    padding: 1rem;
-    margin-bottom: 1.5rem !important;
-}
-
-.fc-view-harness {
+/* Calendar Legend Styles */
+.calendar-legend {
+    display: flex;
+    gap: 2rem;
+    margin: 1rem 0 2rem;
+    padding: 1.2rem;
     background: white;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
 }
 
-.fc-scrollgrid-sync-inner {
-    padding: 8px;
+.legend-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
 }
 
-.fc-daygrid-day-number {
-    padding: 8px;
-    color: var(--text-primary);
+.legend-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-.fc-event {
-    cursor: pointer;
-    border: none !important;
-    padding: 4px 6px;
-    margin: 2px 0;
+.legend-color {
+    width: 16px;
+    height: 16px;
     border-radius: 4px;
 }
 
-.fc-event.vgm-event {
-    background-color: #FF4154 !important;
-    border-color: #FF4154 !important;
+.legend-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
 }
 
-.fc-event.collab-event {
-    background-color: #41B7AC !important;
-    border-color: #41B7AC !important;
+.legend-description {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-left: 1.5rem;
 }
 
-.fc-event.individual-event {
-    background-color: #0066FF !important;
-    border-color: #0066FF !important;
-}
+.legend-vgm { background-color: #FF4154; }
+.legend-collab { background-color: #41B7AC; }
+.legend-individual { background-color: #0066FF; }
 
 /* Bestaande stijlen behouden */
 .section {
@@ -222,6 +222,37 @@
 
     <!-- Calendar View -->
     <div id="calendar"></div>
+
+    <!-- Calendar Legend -->
+    <div class="calendar-legend">
+        <div class="legend-item">
+            <div class="legend-header">
+                <div class="legend-color legend-vgm"></div>
+                <span class="legend-title">VGM</span>
+            </div>
+            <div class="legend-description">
+                ({{ _('Evenementen georganiseerd door de Vereniging van Gentse Moskeeën') }})
+            </div>
+        </div>
+        <div class="legend-item">
+            <div class="legend-header">
+                <div class="legend-color legend-collab"></div>
+                <span class="legend-title">Co-Moskee</span>
+            </div>
+            <div class="legend-description">
+                ({{ _('Evenementen waarin meerdere moskeeën samenwerken') }})
+            </div>
+        </div>
+        <div class="legend-item">
+            <div class="legend-header">
+                <div class="legend-color legend-individual"></div>
+                <span class="legend-title">Solo Moskee</span>
+            </div>
+            <div class="legend-description">
+                ({{ _('Evenementen van een individuele moskee') }})
+            </div>
+        </div>
+    </div>
 
     <!-- Event sections -->
     {% if vgm_events %}
