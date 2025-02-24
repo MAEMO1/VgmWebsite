@@ -10,6 +10,7 @@
             <h1 class="hero-title">Vereniging van Gentse Moskeeën</h1>
             <p class="hero-subtitle">Verbinding, Samenwerking, Gemeenschap</p>
         </div>
+        <div class="hero-overlay"></div>
     </div>
 
     <!-- Mission Section -->
@@ -46,7 +47,7 @@
             <div class="section-header">
                 <h2 class="section-title">Ons Bestuur</h2>
                 <div class="section-controls">
-                    <select class="form-select custom-select" id="termSelect">
+                    <select class="form-select" id="termSelect">
                         {% for term in terms %}
                         <option value="{{ term[0].strftime('%Y-%m-%d') }}" 
                                 {% if term[0] == current_term_start %}selected{% endif %}>
@@ -96,23 +97,22 @@
 {% if current_user.is_authenticated and current_user.is_admin %}
 <!-- Manage Board Modal -->
 <div class="modal fade" id="manageBoardModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Bestuur Beheren</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ url_for('main.manage_board_members') }}" method="POST" enctype="multipart/form-data">
-                    <div class="mb-4">
-                        <label class="form-label">Bestuursperiode</label>
-                        <div class="row g-3">
-                            <div class="col">
-                                <input type="date" class="form-control" name="term_start" required>
-                            </div>
-                            <div class="col">
-                                <input type="date" class="form-control" name="term_end" required>
-                            </div>
+                <form action="{{ url_for('main.manage_board_members') }}" method="POST" enctype="multipart/form-data" id="boardForm">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Bestuursperiode Start</label>
+                            <input type="date" class="form-control" name="term_start" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Bestuursperiode Eind</label>
+                            <input type="date" class="form-control" name="term_end" required>
                         </div>
                     </div>
 
@@ -137,19 +137,27 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Foto</label>
-                                    <input type="file" class="form-control" name="photos[]" accept="image/*">
+                                    <div class="image-upload-container">
+                                        <input type="file" class="form-control" name="photos[]" accept="image/*" 
+                                               onchange="previewImage(this)">
+                                        <div class="image-preview mt-2"></div>
+                                    </div>
                                 </div>
                             </div>
+                            <button type="button" class="btn btn-outline-danger btn-sm mt-3 remove-member" onclick="removeMember(this)">
+                                <i class="fas fa-trash me-1"></i>Verwijderen
+                            </button>
                         </div>
                     </div>
 
                     <div class="mt-4">
-                        <button type="button" class="btn btn-secondary" id="addMemberBtn">
+                        <button type="button" class="btn btn-success" id="addMemberBtn">
                             <i class="fas fa-plus me-2"></i>Lid Toevoegen
                         </button>
                     </div>
 
                     <div class="mt-4 text-end">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save me-2"></i>Wijzigingen Opslaan
                         </button>
@@ -174,15 +182,45 @@
 .hero-section {
     background: linear-gradient(135deg, #005A87 0%, #41B7AC 100%);
     color: white;
-    padding: 6rem 0;
+    padding: 8rem 0;
     text-align: center;
     position: relative;
 }
 
-.hero-section::after {
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.1;
+}
+
+.hero-title {
+    font-size: 4rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    opacity: 0.9;
+    position: relative;
+}
+
+/* Mission Section */
+.mission-section {
+    padding: 8rem 0;
+    background: white;
+    position: relative;
+}
+
+.mission-section::before {
     content: '';
     position: absolute;
-    bottom: -50px;
+    top: -50px;
     left: 0;
     right: 0;
     height: 100px;
@@ -190,25 +228,8 @@
     transform: skewY(-3deg);
 }
 
-.hero-title {
-    font-size: 3.5rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-}
-
-.hero-subtitle {
-    font-size: 1.5rem;
-    opacity: 0.9;
-}
-
-/* Mission Section */
-.mission-section {
-    padding: 8rem 0 6rem;
-    background: white;
-}
-
 .mission-content {
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
@@ -225,6 +246,9 @@
     color: #666;
     text-align: center;
     margin-bottom: 4rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .mission-grid {
@@ -236,19 +260,22 @@
 
 .mission-card {
     text-align: center;
-    padding: 2rem;
+    padding: 3rem 2rem;
     background: white;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease;
+    transition: all 0.3s ease;
+    border: 1px solid #eee;
 }
 
 .mission-card:hover {
     transform: translateY(-10px);
+    box-shadow: 0 8px 30px rgba(0, 90, 135, 0.1);
+    border-color: #005A87;
 }
 
 .mission-card i {
-    font-size: 2.5rem;
+    font-size: 3rem;
     color: #005A87;
     margin-bottom: 1.5rem;
 }
@@ -257,6 +284,7 @@
     font-size: 1.5rem;
     color: #333;
     margin-bottom: 1rem;
+    font-weight: 600;
 }
 
 .mission-card p {
@@ -293,16 +321,19 @@
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease;
+    transition: all 0.3s ease;
+    border: 1px solid #eee;
 }
 
 .leader-card:hover {
     transform: translateY(-10px);
+    box-shadow: 0 8px 30px rgba(0, 90, 135, 0.1);
+    border-color: #005A87;
 }
 
 .leader-image {
     width: 100%;
-    height: 300px;
+    height: 360px;
     overflow: hidden;
     position: relative;
 }
@@ -336,11 +367,13 @@
 }
 
 .leader-info {
-    padding: 1.5rem;
+    padding: 2rem;
+    background: white;
+    border-top: 1px solid #eee;
 }
 
 .leader-name {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     font-weight: 600;
     color: #005A87;
     margin-bottom: 0.5rem;
@@ -348,33 +381,73 @@
 
 .leader-role {
     color: #666;
-    font-size: 1rem;
+    font-size: 1.1rem;
     margin-bottom: 1rem;
+    font-weight: 500;
 }
 
 .leader-mosque {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
     color: #666;
-    font-size: 0.9rem;
+    font-size: 1rem;
+    margin: 0;
 }
 
 .leader-mosque i {
     color: #005A87;
+    font-size: 1.1rem;
 }
 
 /* Modal Styles */
 .modal-content {
     border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #eee;
+    padding: 1.5rem;
+}
+
+.modal-body {
+    padding: 2rem;
 }
 
 .board-member-entry {
     background: #f8f9fa;
-    padding: 1.5rem;
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    border: 1px solid #eee;
+    position: relative;
+}
+
+.image-upload-container {
+    position: relative;
+}
+
+.image-preview {
+    max-width: 200px;
+    max-height: 200px;
+    overflow: hidden;
     border-radius: 8px;
-    margin-bottom: 1rem;
-    border: 1px solid #dee2e6;
+    margin-top: 1rem;
+}
+
+.image-preview img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.remove-member {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
 }
 
 @media (max-width: 768px) {
@@ -399,6 +472,15 @@
     .section-controls {
         width: 100%;
         justify-content: center;
+        flex-direction: column;
+    }
+
+    .leader-image {
+        height: 280px;
+    }
+
+    .leader-info {
+        padding: 1.5rem;
     }
 }
 </style>
@@ -415,17 +497,51 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Initialize form with current board data if available
+    {% if current_term_start %}
+    document.querySelector('input[name="term_start"]').value = "{{ current_term_start.strftime('%Y-%m-%d') }}";
+    document.querySelector('input[name="term_end"]').value = "{{ current_term_end.strftime('%Y-%m-%d') }}";
+    {% endif %}
+
     // Add member button handling
     const addMemberBtn = document.getElementById('addMemberBtn');
     const boardMembersForm = document.getElementById('boardMembersForm');
     if (addMemberBtn && boardMembersForm) {
         addMemberBtn.addEventListener('click', function() {
             const template = boardMembersForm.querySelector('.board-member-entry').cloneNode(true);
-            template.querySelectorAll('input').forEach(input => input.value = '');
+            // Reset form values
+            template.querySelectorAll('input').forEach(input => {
+                input.value = '';
+                if (input.type === 'file') {
+                    input.nextElementSibling.innerHTML = ''; // Clear preview
+                }
+            });
             template.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
             boardMembersForm.appendChild(template);
         });
     }
 });
+
+// Image preview functionality
+function previewImage(input) {
+    const preview = input.nextElementSibling;
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// Remove member functionality
+function removeMember(button) {
+    const entries = document.querySelectorAll('.board-member-entry');
+    if (entries.length > 1) {
+        button.closest('.board-member-entry').remove();
+    } else {
+        alert('Er moet minimaal één bestuurslid zijn.');
+    }
+}
 </script>
 {% endblock %}
