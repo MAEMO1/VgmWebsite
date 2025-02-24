@@ -99,34 +99,24 @@
                     {% endif %}
                 </div>
 
-                <div class="row">
-                    <div class="col-md-4">
-                        {{ form.age.label(class="form-label") }}
-                        {{ form.age(class="form-control" + (" is-invalid" if form.age.errors else "")) }}
-                        {% if form.age.errors %}
-                            {% for error in form.age.errors %}
-                                <div class="error-message">{{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-                    <div class="col-md-4">
-                        {{ form.birth_place.label(class="form-label") }}
-                        {{ form.birth_place(class="form-control" + (" is-invalid" if form.birth_place.errors else "")) }}
-                        {% if form.birth_place.errors %}
-                            {% for error in form.birth_place.errors %}
-                                <div class="error-message">{{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-                    <div class="col-md-4">
-                        {{ form.death_place.label(class="form-label required-field") }}
-                        {{ form.death_place(class="form-control" + (" is-invalid" if form.death_place.errors else "")) }}
-                        {% if form.death_place.errors %}
-                            {% for error in form.death_place.errors %}
-                                <div class="error-message">{{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
+                <div class="mb-4">
+                    {{ form.age.label(class="form-label") }}
+                    {{ form.age(class="form-control" + (" is-invalid" if form.age.errors else "")) }}
+                    {% if form.age.errors %}
+                        {% for error in form.age.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    {{ form.birth_place.label(class="form-label") }}
+                    {{ form.birth_place(class="form-control" + (" is-invalid" if form.birth_place.errors else "")) }}
+                    {% if form.birth_place.errors %}
+                        {% for error in form.birth_place.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
                 </div>
             </div>
 
@@ -139,6 +129,41 @@
                     {{ form.date_of_death(class="form-control" + (" is-invalid" if form.date_of_death.errors else ""), type="date") }}
                     {% if form.date_of_death.errors %}
                         {% for error in form.date_of_death.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    {{ form.death_place.label(class="form-label required-field") }}
+                    {{ form.death_place(class="form-control" + (" is-invalid" if form.death_place.errors else "")) }}
+                    {% if form.death_place.errors %}
+                        {% for error in form.death_place.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Dodengebed -->
+            <div class="form-section">
+                <h2 class="section-title">{{ _('Dodengebed') }}</h2>
+
+                <div class="mb-4">
+                    {{ form.death_prayer_location.label(class="form-label required-field") }}
+                    {{ form.death_prayer_location(class="form-select" + (" is-invalid" if form.death_prayer_location.errors else "")) }}
+                    {% if form.death_prayer_location.errors %}
+                        {% for error in form.death_prayer_location.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div id="other_location_container">
+                    {{ form.other_location_address.label(class="form-label required-field") }}
+                    {{ form.other_location_address(class="form-control" + (" is-invalid" if form.other_location_address.errors else "")) }}
+                    {% if form.other_location_address.errors %}
+                        {% for error in form.other_location_address.errors %}
                             <div class="error-message">{{ error }}</div>
                         {% endfor %}
                     {% endif %}
@@ -169,31 +194,6 @@
                     {{ form.after_prayer(class="form-select" + (" is-invalid" if form.after_prayer.errors else "")) }}
                     {% if form.after_prayer.errors %}
                         {% for error in form.after_prayer.errors %}
-                            <div class="error-message">{{ error }}</div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Locatie Details -->
-            <div class="form-section">
-                <h2 class="section-title">{{ _('Locatie Details') }}</h2>
-
-                <div class="mb-4">
-                    {{ form.death_prayer_location.label(class="form-label required-field") }}
-                    {{ form.death_prayer_location(class="form-select" + (" is-invalid" if form.death_prayer_location.errors else "")) }}
-                    {% if form.death_prayer_location.errors %}
-                        {% for error in form.death_prayer_location.errors %}
-                            <div class="error-message">{{ error }}</div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-
-                <div id="other_location_container">
-                    {{ form.other_location_address.label(class="form-label required-field") }}
-                    {{ form.other_location_address(class="form-control" + (" is-invalid" if form.other_location_address.errors else "")) }}
-                    {% if form.other_location_address.errors %}
-                        {% for error in form.other_location_address.errors %}
                             <div class="error-message">{{ error }}</div>
                         {% endfor %}
                     {% endif %}

@@ -9,7 +9,10 @@ class ObituaryForm(FlaskForm):
     death_place = StringField('Plaats van Overlijden', validators=[DataRequired(), Length(max=100)])
     date_of_death = DateField('Datum van Overlijden', validators=[DataRequired()])
 
-    # Tijdselectie velden
+    # Dodengebed velden
+    death_prayer_location = SelectField('Moskee', validators=[DataRequired()])
+    other_location_address = StringField('Andere Locatie', validators=[Length(max=200)])
+
     time_type = SelectField('Type Tijdsaanduiding',
         choices=[
             ('specific', 'Specifiek Tijdstip'),
@@ -17,7 +20,7 @@ class ObituaryForm(FlaskForm):
         ],
         validators=[DataRequired()]
     )
-    prayer_time = DateTimeField('Specifiek Tijdstip', validators=[Optional()])
+    prayer_time = DateTimeField('Tijdstip Dodengebed', validators=[Optional()])
     after_prayer = SelectField('Na welk Gebed',
         choices=[
             ('fajr', 'Na Fajr (Ochtendgebed)'),
@@ -30,8 +33,6 @@ class ObituaryForm(FlaskForm):
         validators=[Optional()]
     )
 
-    death_prayer_location = SelectField('Locatie Dodengebed', validators=[DataRequired()])
-    other_location_address = StringField('Adres', validators=[Length(max=200)])
     burial_location = StringField('Begraafplaats', validators=[Optional(), Length(max=200)])
     family_contact = StringField('Contact voor Condoleances', validators=[Optional(), Length(max=200)])
     additional_notes = TextAreaField('Aanvullende Opmerkingen', validators=[Optional(), Length(max=1000)])
