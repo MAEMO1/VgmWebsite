@@ -39,7 +39,7 @@ def create():
                 family_contact=form.family_contact.data,
                 additional_notes=form.additional_notes.data,
                 submitter_id=current_user.id,
-                is_approved=False  # Always require verification
+                is_approved=current_user.is_admin  # Direct goedkeuring voor admins
             )
 
             # Handle location
@@ -52,32 +52,37 @@ def create():
                 obituary.death_prayer_location = User.query.get(mosque_id).username.replace('_', ' ').title()
 
             db.session.add(obituary)
+
+            # Alleen notificaties versturen als het geen admin is
+            if not current_user.is_admin:
+                # To mosques
+                if obituary.mosque_id:
+                    notification = ObituaryNotification(
+                        obituary_id=obituary.id,
+                        user_id=obituary.mosque_id,
+                        notification_type='verification_needed',
+                        message=f'Nieuw overlijdensbericht ter verificatie: {obituary.name}'
+                    )
+                    db.session.add(notification)
+
+                # To admins
+                admins = User.query.filter_by(is_admin=True).all()
+                for admin in admins:
+                    notification = ObituaryNotification(
+                        obituary_id=obituary.id,
+                        user_id=admin.id,
+                        notification_type='verification_needed',
+                        message=f'Nieuw overlijdensbericht ter verificatie: {obituary.name}'
+                    )
+                    db.session.add(notification)
+
             db.session.commit()
 
-            # Send notifications
-            # To mosques
-            if obituary.mosque_id:
-                notification = ObituaryNotification(
-                    obituary_id=obituary.id,
-                    user_id=obituary.mosque_id,
-                    notification_type='verification_needed',
-                    message=f'Nieuw overlijdensbericht ter verificatie: {obituary.name}'
-                )
-                db.session.add(notification)
+            if current_user.is_admin:
+                flash('Overlijdensbericht is succesvol toegevoegd.', 'success')
+            else:
+                flash('Overlijdensbericht is ingediend en wacht op verificatie.', 'info')
 
-            # To admins
-            admins = User.query.filter_by(is_admin=True).all()
-            for admin in admins:
-                notification = ObituaryNotification(
-                    obituary_id=obituary.id,
-                    user_id=admin.id,
-                    notification_type='verification_needed',
-                    message=f'Nieuw overlijdensbericht ter verificatie: {obituary.name}'
-                )
-                db.session.add(notification)
-
-            db.session.commit()
-            flash('Overlijdensbericht is ingediend en wacht op verificatie.', 'info')
             return redirect(url_for('obituaries.index'))
 
         except Exception as e:
