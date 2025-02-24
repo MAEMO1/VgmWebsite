@@ -455,7 +455,7 @@ msgid "Latest News"
 msgstr "Laatste Nieuws"
 
 msgid "All News"
-msgstr ""
+msgstr "Alle Nieuws"
 
 msgid "Read More"
 msgstr "Lees Meer"
