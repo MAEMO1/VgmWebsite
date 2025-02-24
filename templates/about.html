@@ -178,6 +178,7 @@
     </div>
 </div>
 {% endif %}
+{% endblock %}
 
 {% block styles %}
 <style>
@@ -528,7 +529,10 @@ document.addEventListener('DOMContentLoaded', function() {
             template.querySelectorAll('input').forEach(input => {
                 input.value = '';
                 if (input.type === 'file') {
-                    input.nextElementSibling.innerHTML = ''; // Clear preview
+                    const preview = input.nextElementSibling;
+                    if (preview) {
+                        preview.innerHTML = ''; // Clear preview
+                    }
                 }
             });
             template.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
