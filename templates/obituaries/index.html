@@ -180,7 +180,7 @@
                         {{ obituary.death_prayer_location }}
                         {% if obituary.prayer_time %}
                             - {{ obituary.prayer_time.strftime('%d-%m-%Y %H:%M') }}
-                        {% elif obituary.prayer_after %}
+                        {% elif obituary.prayer_after and obituary.prayer_date %}
                             - {{ obituary.prayer_date.strftime('%d-%m-%Y') }} {{ {
                                 'fajr': _('Na Fajr (Ochtendgebed)'),
                                 'dhuhr': _('Na Dhuhr (Middaggebed)'),
@@ -260,7 +260,7 @@
                         {{ obituary.death_prayer_location }}
                         {% if obituary.prayer_time %}
                             - {{ obituary.prayer_time.strftime('%d-%m-%Y %H:%M') }}
-                        {% elif obituary.prayer_after %}
+                        {% elif obituary.prayer_after and obituary.prayer_date %}
                             - {{ obituary.prayer_date.strftime('%d-%m-%Y') }} {{ {
                                 'fajr': _('Na Fajr (Ochtendgebed)'),
                                 'dhuhr': _('Na Dhuhr (Middaggebed)'),
