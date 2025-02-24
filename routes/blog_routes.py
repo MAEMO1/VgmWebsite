@@ -55,11 +55,12 @@ def index():
 @blog.route('/gemeenschap')
 def community():
     # Get video posts for the community section
-    video_posts = BlogPost.query.filter_by(
-        published=True,
-        has_video=True,
-        category='Gemeenschap'
-    ).order_by(BlogPost.created_at.desc()).all()
+    video_posts = BlogPost.query.join(BlogPost.categories)\
+        .filter(
+            BlogPost.published == True,
+            BlogPost.has_video == True,
+            BlogCategory.name == 'Gemeenschap'
+        ).order_by(BlogPost.created_at.desc()).all()
     return render_template('blog/community.html', posts=video_posts)
 
 @blog.route('/leercentrum')
