@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from datetime import datetime
 from app import db
@@ -23,6 +23,22 @@ def create():
     mosque_choices = [(str(mosque.id), mosque.username.replace('_', ' ').title()) for mosque in mosques]
     mosque_choices.append(('andere', 'Andere'))
     form.death_prayer_location.choices = mosque_choices
+
+    # Set choices for after prayer selection
+    form.after_prayer.choices = [
+        ('fajr', 'Na Fajr (Ochtendgebed)'),
+        ('dhuhr', 'Na Dhuhr (Middaggebed)'),
+        ('asr', 'Na Asr (Namiddaggebed)'),
+        ('maghrib', 'Na Maghrib (Zonsonderganggebed)'),
+        ('isha', 'Na Isha (Avondgebed)'),
+        ('jumuah', 'Na Jumuah (Vrijdaggebed)')
+    ]
+
+    # Set choices for time type
+    form.time_type.choices = [
+        ('specific', 'Specifiek Tijdstip'),
+        ('after_prayer', 'Na een Gebed')
+    ]
 
     if form.validate_on_submit():
         try:
