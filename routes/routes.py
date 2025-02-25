@@ -153,7 +153,7 @@ def index():
         # Get active campaigns
         active_campaigns = FundraisingCampaign.query.filter_by(
             is_active=True
-        ).order_by(FundraisingCampaign.start_date.desc()).all()
+        ).order_by(FundraisingCampaign.start_date.desc()).limit(3).all()
 
         return render_template('index.html', 
                             next_event=next_event,

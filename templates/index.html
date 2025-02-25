@@ -523,10 +523,10 @@
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
                 <h2 class="section-title">
-                    {{ _('Actuele Projecten') }}
+                    {{ _('Lopende Projecten') }}
                 </h2>
                 <p class="section-description">
-                    {{ _('Samen maken we het verschil. Bekijk onze lopende projecten en help ons deze doelen te bereiken.') }}
+                    {{ _('Samen maken we het verschil. Bekijk onze actuele projecten en help ons deze doelen te bereiken.') }}
                 </p>
             </div>
         </div>
@@ -539,17 +539,17 @@
                 </div>
                 {% endif %}
                 <div class="campaign-content">
-                    <div class="campaign-badge">Lopend Project</div>
+                    <div class="campaign-badge">{{ _('Lopend Project') }}</div>
                     <h3 class="campaign-title">{{ campaign.title }}</h3>
                     <p class="campaign-description">{{ campaign.description }}</p>
                     <div class="progress-container">
                         <div class="progress-stats">
                             <div class="progress-stat">
-                                <span class="stat-label">Opgehaald</span>
+                                <span class="stat-label">{{ _('Opgehaald') }}</span>
                                 <span class="stat-value progress-amount">€{{ "%.2f"|format(campaign.current_amount) }}</span>
                             </div>
                             <div class="progress-stat text-end">
-                                <span class="stat-label">Doel</span>
+                                <span class="stat-label">{{ _('Doel') }}</span>
                                 <span class="stat-value progress-goal">€{{ "%.2f"|format(campaign.goal_amount) }}</span>
                             </div>
                         </div>
@@ -563,12 +563,14 @@
                         </div>
                         <div class="progress-percentage">{{ "%.1f"|format(campaign.calculate_progress()) }}% van het doel bereikt</div>
                     </div>
-                    <a href="{{ url_for('donations.donate_vgm') }}" class="btn btn-primary btn-support w-100 mt-4" data-campaign-id="{{campaign.id}}">
-                        <i class="fas fa-heart me-2"></i>{{ _('Steun dit Project') }}
-                    </a>
                 </div>
             </div>
             {% endfor %}
+        </div>
+        <div class="text-center mt-5">
+            <a href="{{ url_for('donations.donate_vgm') }}" class="btn btn-primary btn-lg btn-support px-5 py-3">
+                <i class="fas fa-heart me-2"></i>{{ _('Steun een Project') }}
+            </a>
         </div>
     </div>
 </section>
