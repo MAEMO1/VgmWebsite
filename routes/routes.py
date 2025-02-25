@@ -1389,12 +1389,12 @@ def iftar_map():
 
     # Calculate map center (average of all mosque coordinates)
     if iftar_events:
-        lats = [event.mosque.latitude for event in iftar_events]
-        lngs = [event.mosque.longitude for event in iftar_events]
-        center_lat = sum(lats) / len(lats)
-        center_lng = sum(lngs) / len(lngs)
+        mosque_lats = [event.mosque.latitude for event in iftar_events]
+        mosque_lngs = [event.mosque.longitude for event in iftar_events]
+        center_lat = sum(mosque_lats) / len(mosque_lats)
+        center_lng = sum(mosque_lngs) / len(mosque_lngs)
     else:
-        # Default to Gent center if no events
+        # Default to Gent center coordinates
         center_lat = 51.0543
         center_lng = 3.7174
 
@@ -1407,4 +1407,5 @@ def iftar_map():
                          view=view,
                          center_lat=center_lat,
                          center_lng=center_lng,
+                         timedelta=timedelta,
                          google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'))
