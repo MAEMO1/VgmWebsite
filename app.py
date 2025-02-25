@@ -59,6 +59,7 @@ def create_app():
         from routes.obituary_routes import obituaries
         from routes.blog_routes import blog
         from routes.translation_routes import translation_bp
+        from routes.message_routes import messages  # Import the new messages blueprint
 
         # Register blueprints
         app.register_blueprint(main_routes)
@@ -66,9 +67,10 @@ def create_app():
         app.register_blueprint(obituaries, url_prefix='/obituaries')
         app.register_blueprint(blog, url_prefix='/blog')
         app.register_blueprint(translation_bp)
+        app.register_blueprint(messages, url_prefix='/messages')  # Register the messages blueprint
 
         # Import models to ensure they're registered with SQLAlchemy
-        from models import User, Event, EventRegistration, EventNotification, PrayerTime, Obituary, ObituaryNotification, BlogPost
+        from models import User, Event, EventRegistration, EventNotification, PrayerTime, Obituary, ObituaryNotification, BlogPost, Message
         db.create_all()
         logging.info("Database tables created successfully")
 
