@@ -3,122 +3,338 @@
 {% block title %}{{ _('Obituaries - Mosque Management') }}{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h2>{{ _('Recent Obituaries') }}</h2>
-            </div>
-            <div class="card-body">
-                {% for obituary in obituaries %}
-                <div class="obituary-card p-3 mb-3">
-                    <h4>{{ obituary.name }}</h4>
-                    <div class="obituary-details">
-                        <p class="text-muted">
-                            {{ _('Date of Death') }}: {{ obituary.date_of_death.strftime('%d %B %Y') }}
-                            {% if obituary.age %}
-                                <span class="ms-2">{{ _('Age') }}: {{ obituary.age }}</span>
-                            {% endif %}
-                        </p>
-                        {% if obituary.birth_place %}
-                            <p><strong>{{ _('Place of Birth') }}:</strong> {{ obituary.birth_place }}</p>
-                        {% endif %}
-                        {% if obituary.death_place %}
-                            <p><strong>{{ _('Place of Death') }}:</strong> {{ obituary.death_place }}</p>
-                        {% endif %}
-                        {% if obituary.funeral_date %}
-                            <p>
-                                <strong>{{ _('Funeral Date & Time') }}:</strong> 
-                                {{ obituary.funeral_date.strftime('%d %B %Y at %H:%M') }}
-                            </p>
-                        {% endif %}
-                        {% if obituary.prayer_time %}
-                            <p>
-                                <strong>{{ _('Prayer Time') }}:</strong>
-                                {{ obituary.prayer_time.strftime('%d %B %Y at %H:%M') }}
-                            </p>
-                        {% endif %}
-                        {% if obituary.death_prayer_location %}
-                            <p>
-                                <strong>{{ _('Place of Death Prayer') }}:</strong>
-                                {{ obituary.death_prayer_location }}
-                            </p>
-                        {% endif %}
-                        {% if obituary.burial_location %}
-                            <p><strong>{{ _('Burial Location') }}:</strong> {{ obituary.burial_location }}</p>
-                        {% endif %}
-                        <p>{{ obituary.details }}</p>
-                        {% if obituary.additional_notes %}
-                            <p class="font-italic">{{ obituary.additional_notes }}</p>
-                        {% endif %}
-                    </div>
-                </div>
-                {% else %}
-                <p class="text-center">{{ _('No obituaries to display.') }}</p>
-                {% endfor %}
+<div class="obituaries-hero">
+    <div class="hero-overlay"></div>
+    <div class="container">
+        <div class="hero-content text-center">
+            <h1 class="display-4 mb-4">
+                {{ _('Overlijdensberichten') }}
+                <span class="crescent-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="currentColor" class="moon"/>
+                        <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" fill="currentColor" class="star"/>
+                    </svg>
+                </span>
+            </h1>
+            <div class="quote-container">
+                <blockquote class="hadith-quote">
+                    <p class="lead-quote">{{ _('Inna lillahi wa inna ilayhi raji\'un') }}</p>
+                    <p class="quote-text">{{ _('Voorwaar, wij behoren toe aan Allah en tot Hem zullen wij terugkeren') }}</p>
+                    <footer class="quote-source">Koran 2:156</footer>
+                </blockquote>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        {% if current_user.is_authenticated and current_user.user_type == 'mosque' %}
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    <h3>{{ _('Submit an Obituary') }}</h3>
+                    <h2>{{ _('Recent Obituaries') }}</h2>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ url_for('obituaries.submit_obituary') }}">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">{{ _('Name of Deceased') }}</label>
-                            <input type="text" class="form-control" id="name" name="name" required>
+                    {% for obituary in obituaries %}
+                    <div class="obituary-card p-3 mb-3">
+                        <h4>{{ obituary.name }}</h4>
+                        <div class="obituary-details">
+                            <p class="text-muted">
+                                {{ _('Date of Death') }}: {{ obituary.date_of_death.strftime('%d %B %Y') }}
+                                {% if obituary.age %}
+                                    <span class="ms-2">{{ _('Age') }}: {{ obituary.age }}</span>
+                                {% endif %}
+                            </p>
+                            {% if obituary.birth_place %}
+                                <p><strong>{{ _('Place of Birth') }}:</strong> {{ obituary.birth_place }}</p>
+                            {% endif %}
+                            {% if obituary.death_place %}
+                                <p><strong>{{ _('Place of Death') }}:</strong> {{ obituary.death_place }}</p>
+                            {% endif %}
+                            {% if obituary.funeral_date %}
+                                <p>
+                                    <strong>{{ _('Funeral Date & Time') }}:</strong> 
+                                    {{ obituary.funeral_date.strftime('%d %B %Y at %H:%M') }}
+                                </p>
+                            {% endif %}
+                            {% if obituary.prayer_time %}
+                                <p>
+                                    <strong>{{ _('Prayer Time') }}:</strong>
+                                    {{ obituary.prayer_time.strftime('%d %B %Y at %H:%M') }}
+                                </p>
+                            {% endif %}
+                            {% if obituary.death_prayer_location %}
+                                <p>
+                                    <strong>{{ _('Place of Death Prayer') }}:</strong>
+                                    {{ obituary.death_prayer_location }}
+                                </p>
+                            {% endif %}
+                            {% if obituary.burial_location %}
+                                <p><strong>{{ _('Burial Location') }}:</strong> {{ obituary.burial_location }}</p>
+                            {% endif %}
+                            <p>{{ obituary.details }}</p>
+                            {% if obituary.additional_notes %}
+                                <p class="font-italic">{{ obituary.additional_notes }}</p>
+                            {% endif %}
                         </div>
-                        <div class="mb-3">
-                            <label for="age" class="form-label">{{ _('Age') }}</label>
-                            <input type="number" class="form-control" id="age" name="age">
-                        </div>
-                        <div class="mb-3">
-                            <label for="birth_place" class="form-label">{{ _('Place of Birth') }}</label>
-                            <input type="text" class="form-control" id="birth_place" name="birth_place">
-                        </div>
-                        <div class="mb-3">
-                            <label for="death_place" class="form-label">{{ _('Place of Death') }}</label>
-                            <input type="text" class="form-control" id="death_place" name="death_place">
-                        </div>
-                        <div class="mb-3">
-                            <label for="date_of_death" class="form-label">{{ _('Date of Death') }}</label>
-                            <input type="date" class="form-control" id="date_of_death" name="date_of_death" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="funeral_date" class="form-label">{{ _('Funeral Date & Time') }}</label>
-                            <input type="datetime-local" class="form-control" id="funeral_date" name="funeral_date">
-                        </div>
-                        <div class="mb-3">
-                            <label for="prayer_time" class="form-label">{{ _('Prayer Time') }}</label>
-                            <input type="datetime-local" class="form-control" id="prayer_time" name="prayer_time">
-                        </div>
-                        <div class="mb-3">
-                            <label for="death_prayer_location" class="form-label">{{ _('Place of Death Prayer') }}</label>
-                            <input type="text" class="form-control" id="death_prayer_location" name="death_prayer_location" 
-                                   placeholder="{{ _('Enter the location where the death prayer will be held') }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="burial_location" class="form-label">{{ _('Burial Location') }}</label>
-                            <input type="text" class="form-control" id="burial_location" name="burial_location">
-                        </div>
-                        <div class="mb-3">
-                            <label for="details" class="form-label">{{ _('Details') }}</label>
-                            <textarea class="form-control" id="details" name="details" rows="3"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="additional_notes" class="form-label">{{ _('Additional Notes') }}</label>
-                            <textarea class="form-control" id="additional_notes" name="additional_notes" rows="2"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">{{ _('Submit for Approval') }}</button>
-                    </form>
+                    </div>
+                    {% else %}
+                    <p class="text-center">{{ _('No obituaries to display.') }}</p>
+                    {% endfor %}
                 </div>
             </div>
-        {% endif %}
+        </div>
+        <div class="col-md-4">
+            {% if current_user.is_authenticated and current_user.user_type == 'mosque' %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3>{{ _('Submit an Obituary') }}</h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="{{ url_for('obituaries.submit_obituary') }}">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">{{ _('Name of Deceased') }}</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="age" class="form-label">{{ _('Age') }}</label>
+                                <input type="number" class="form-control" id="age" name="age">
+                            </div>
+                            <div class="mb-3">
+                                <label for="birth_place" class="form-label">{{ _('Place of Birth') }}</label>
+                                <input type="text" class="form-control" id="birth_place" name="birth_place">
+                            </div>
+                            <div class="mb-3">
+                                <label for="death_place" class="form-label">{{ _('Place of Death') }}</label>
+                                <input type="text" class="form-control" id="death_place" name="death_place">
+                            </div>
+                            <div class="mb-3">
+                                <label for="date_of_death" class="form-label">{{ _('Date of Death') }}</label>
+                                <input type="date" class="form-control" id="date_of_death" name="date_of_death" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="funeral_date" class="form-label">{{ _('Funeral Date & Time') }}</label>
+                                <input type="datetime-local" class="form-control" id="funeral_date" name="funeral_date">
+                            </div>
+                            <div class="mb-3">
+                                <label for="prayer_time" class="form-label">{{ _('Prayer Time') }}</label>
+                                <input type="datetime-local" class="form-control" id="prayer_time" name="prayer_time">
+                            </div>
+                            <div class="mb-3">
+                                <label for="death_prayer_location" class="form-label">{{ _('Place of Death Prayer') }}</label>
+                                <input type="text" class="form-control" id="death_prayer_location" name="death_prayer_location" 
+                                       placeholder="{{ _('Enter the location where the death prayer will be held') }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="burial_location" class="form-label">{{ _('Burial Location') }}</label>
+                                <input type="text" class="form-control" id="burial_location" name="burial_location">
+                            </div>
+                            <div class="mb-3">
+                                <label for="details" class="form-label">{{ _('Details') }}</label>
+                                <textarea class="form-control" id="details" name="details" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="additional_notes" class="form-label">{{ _('Additional Notes') }}</label>
+                                <textarea class="form-control" id="additional_notes" name="additional_notes" rows="2"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">{{ _('Submit for Approval') }}</button>
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
     </div>
 </div>
+{% endblock %}
+
+{% block styles %}
+<style>
+:root {
+    --primary-color: #005A87;
+    --secondary-color: #41B7AC;
+    --accent-color: #FF4154;
+    --background-light: #F8F9FA;
+    --text-primary: #2C3E50;
+    --text-secondary: #6C757D;
+    --border-color: #E9ECEF;
+}
+
+/* Hero Section */
+.obituaries-hero {
+    background: linear-gradient(135deg, #1a365d, #2c5282);
+    color: white;
+    padding: 8rem 0;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: -4rem;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero-content h1 {
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.quote-container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 1.5rem;
+    padding: 3rem;
+    margin-top: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.hadith-quote {
+    border-left: none;
+    padding: 0;
+    margin: 0;
+}
+
+.lead-quote {
+    font-size: 1.5rem;
+    font-weight: 300;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.quote-text {
+    font-size: 1.25rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.quote-source {
+    font-size: 1rem;
+    opacity: 0.8;
+    font-weight: 500;
+    font-style: italic;
+}
+
+.crescent-icon {
+    display: inline-block;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.crescent-icon .moon {
+    transform-origin: center;
+    animation: rotateMoon 20s linear infinite;
+}
+
+.crescent-icon .star {
+    transform-origin: center;
+    animation: twinkleStar 3s ease-in-out infinite;
+}
+
+@keyframes rotateMoon {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes twinkleStar {
+    0%, 100% {
+        opacity: 0.5;
+        transform: scale(0.8);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+/* Card Styles */
+.obituary-card {
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+    border: 1px solid var(--border-color);
+}
+
+.obituary-card:hover {
+    transform: translateY(-2px);
+}
+
+.obituary-details {
+    color: var(--text-secondary);
+}
+
+/* Form Styles */
+.form-control {
+    border: 2px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0, 90, 135, 0.1);
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .obituaries-hero {
+        padding: 6rem 0;
+    }
+
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .quote-container {
+        padding: 2rem;
+        margin-top: 1.5rem;
+    }
+
+    .lead-quote {
+        font-size: 1.25rem;
+    }
+
+    .quote-text {
+        font-size: 1.1rem;
+    }
+}
+</style>
 {% endblock %}
 
 {% block scripts %}
