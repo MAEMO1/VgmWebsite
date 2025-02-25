@@ -2,7 +2,7 @@
 
 {% block title %}{{ _('VGM Iftarkaart - Ramadan 1445/2024') }}{% endblock %}
 
-{% block styles %}
+{% block content %}
 <style>
 .iftar-container {
     padding: 2rem 0;
@@ -40,7 +40,6 @@
     text-decoration: none;
 }
 
-/* Calendar styling */
 .calendar-section {
     background: white;
     border-radius: 1rem;
@@ -87,6 +86,7 @@
     flex-direction: column;
     gap: 0.5rem;
     transition: all 0.2s ease;
+    background: white;
 }
 
 .calendar-day:not(:empty) {
@@ -105,7 +105,7 @@
 
 .day-events {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: 0.25rem;
 }
 
@@ -241,42 +241,8 @@
     background: #fff3e0;
     border-left: 5px solid #f57c00;
 }
-
-.iftar-actions {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    display: flex;
-    gap: 0.5rem;
-}
-
-.edit-iftar, .delete-iftar {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    transition: color 0.2s ease;
-}
-
-.edit-iftar {
-    color: #0d6efd;
-}
-
-.edit-iftar:hover {
-    color: #0a58ca;
-}
-
-.delete-iftar {
-    color: #dc3545;
-}
-
-.delete-iftar:hover {
-    color: #b02a37;
-}
 </style>
-{% endblock %}
 
-{% block content %}
 <div class="container iftar-container">
     <h1 class="mb-4">{{ _('VGM Iftarkaart') }}</h1>
 
@@ -340,32 +306,20 @@
             <!-- Days of the month -->
             {% for day in range(1, (current_date.replace(day=28) + timedelta(days=4)).day + 1) %}
                 {% set current_day = current_date.replace(day=day) %}
-                {% set day_iftars = {'daily': [], 'weekly': [], 'single': []} %}
-
-                {% for iftar in iftar_events %}
-                    {% if iftar.date == current_day %}
-                        {% if iftar.is_recurring and iftar.recurrence_type == 'daily' %}
-                            {% do day_iftars.daily.append(iftar) %}
-                        {% elif iftar.is_recurring and iftar.recurrence_type == 'weekly' %}
-                            {% do day_iftars.weekly.append(iftar) %}
-                        {% else %}
-                            {% do day_iftars.single.append(iftar) %}
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
+                {% set day_events = calendar_events[current_day] %}
 
                 <div class="calendar-day {% if current_day == today %}today{% endif %}"
                      onclick="showDayDetails('{{ current_day.strftime('%Y-%m-%d') }}')">
                     <div class="day-number">{{ day }}</div>
-                    {% if day_iftars.daily or day_iftars.weekly or day_iftars.single %}
+                    {% if day_events and (day_events.daily or day_events.weekly or day_events.single) %}
                         <div class="day-events">
-                            {% if day_iftars.daily %}
+                            {% if day_events.daily %}
                                 <span class="event-dot daily" title="{{ _('Dagelijkse iftars') }}"></span>
                             {% endif %}
-                            {% if day_iftars.weekly %}
+                            {% if day_events.weekly %}
                                 <span class="event-dot weekly" title="{{ _('Wekelijkse iftars') }}"></span>
                             {% endif %}
-                            {% if day_iftars.single %}
+                            {% if day_events.single %}
                                 <span class="event-dot single" title="{{ _('Eenmalige iftars') }}"></span>
                             {% endif %}
                         </div>
@@ -398,38 +352,49 @@ function showDayDetails(date) {
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     title.textContent = dateObj.toLocaleDateString('nl-NL', options);
 
-    // Get iftars for this date
-    let dayIftars = [];
-    {% for iftar in iftar_events %}
-        if ('{{ iftar.date }}' === date) {
-            dayIftars.push({
-                type: '{{ "daily" if iftar.is_recurring and iftar.recurrence_type == "daily" else "weekly" if iftar.is_recurring and iftar.recurrence_type == "weekly" else "single" }}',
-                mosque: '{{ iftar.mosque.mosque_name }}',
-                startTime: '{{ iftar.start_time.strftime("%H:%M") }}',
-                endTime: '{{ iftar.end_time.strftime("%H:%M") if iftar.end_time else "" }}',
-                location: '{{ iftar.mosque.mosque_street }} {{ iftar.mosque.mosque_number }}, {{ iftar.mosque.mosque_postal }} {{ iftar.mosque.mosque_city }}',
-                isFamilyFriendly: {{ 'true' if iftar.is_family_friendly else 'false' }},
-                id: '{{ iftar.id }}'
-            });
+    // Generate content
+    let html = '';
+    {% for current_day, day_events in calendar_events.items() %}
+        if ('{{ current_day.strftime("%Y-%m-%d") }}' === date) {
+            // Daily iftars
+            {% if day_events.daily %}
+                html += '<h4 class="mb-3">{{ _("Dagelijkse Iftars") }}</h4>';
+                {% for iftar in day_events.daily %}
+                    html += `
+                        <div class="iftar-card daily">
+                            {% include 'ramadan/includes/iftar_card.html' %}
+                        </div>
+                    `;
+                {% endfor %}
+            {% endif %}
+
+            // Weekly iftars
+            {% if day_events.weekly %}
+                html += '<h4 class="mb-3">{{ _("Wekelijkse Iftars") }}</h4>';
+                {% for iftar in day_events.weekly %}
+                    html += `
+                        <div class="iftar-card weekly">
+                            {% include 'ramadan/includes/iftar_card.html' %}
+                        </div>
+                    `;
+                {% endfor %}
+            {% endif %}
+
+            // Single iftars
+            {% if day_events.single %}
+                html += '<h4 class="mb-3">{{ _("Eenmalige Iftars") }}</h4>';
+                {% for iftar in day_events.single %}
+                    html += `
+                        <div class="iftar-card single">
+                            {% include 'ramadan/includes/iftar_card.html' %}
+                        </div>
+                    `;
+                {% endfor %}
+            {% endif %}
         }
     {% endfor %}
 
-    // Generate content
-    if (dayIftars.length === 0) {
-        content.innerHTML = '<p class="text-muted">{{ _("Geen iftars gevonden voor deze dag.") }}</p>';
-    } else {
-        content.innerHTML = dayIftars.map(iftar => `
-            <div class="iftar-card ${iftar.type}">
-                <div class="iftar-time">
-                    ${iftar.startTime}${iftar.endTime ? ` - ${iftar.endTime}` : ''}
-                </div>
-                <div class="iftar-mosque">${iftar.mosque}</div>
-                <div class="iftar-location">${iftar.location}</div>
-                ${iftar.isFamilyFriendly ? '<span class="badge-family"><i class="fas fa-users"></i> {{ _("Gezinsvriendelijk") }}</span>' : ''}
-            </div>
-        `).join('');
-    }
-
+    content.innerHTML = html || '<p class="text-muted">{{ _("Geen iftars gevonden voor deze dag.") }}</p>';
     modal.classList.add('active');
 }
 

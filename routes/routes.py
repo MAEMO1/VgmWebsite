@@ -775,11 +775,11 @@ def about():
         # Get the corresponding term_end for this term_start
         term = next((t for t in terms if t[0] == term_start), None)
         term_end = term[1] if term else None
-    else:  # Default to current ormost recent term
+    else:  # Default to current or most recent term
         current_date = date.today()
-        latest_term = BoardMember.query.query.filter(
+        latest_term = BoardMember.query.filter(
             BoardMember.term_end >= current_date
-                ).order_by(BoardMember.term_start.desc()).first()
+        ).order_by(BoardMember.term_start.desc()).first()
 
         if latest_term:
             term_start = latest_term.term_start
@@ -1390,15 +1390,37 @@ def iftar_map():
         query = query.filter(IfterEvent.is_family_friendly == True)
 
     # Get all events sorted by date and time
-    iftar_events = query.order_by(
+    all_iftar_events = query.order_by(
         IfterEvent.date,
         IfterEvent.start_time,
         IfterEvent.is_recurring.desc(),
         IfterEvent.recurrence_type
     ).all()
 
+    # Pre-process events by day and type
+    calendar_events = {}
+    current_month_days = (end_date - start_date).days + 1
+
+    for day in range(current_month_days):
+        current_day = start_date + timedelta(days=day)
+        calendar_events[current_day] = {
+            'daily': [],
+            'weekly': [],
+            'single': []
+        }
+
+        for iftar in all_iftar_events:
+            if iftar.date == current_day:
+                if iftar.is_recurring and iftar.recurrence_type == 'daily':
+                    calendar_events[current_day]['daily'].append(iftar)
+                elif iftar.is_recurring and iftar.recurrence_type == 'weekly':
+                    calendar_events[current_day]['weekly'].append(iftar)
+                else:
+                    calendar_events[current_day]['single'].append(iftar)
+
     return render_template('ramadan/iftar_map.html',
-                         iftar_events=iftar_events,
+                         calendar_events=calendar_events,
+                         iftar_events=all_iftar_events,
                          family_only=family_only,
                          current_date=current_date,
                          prev_month=prev_month,
