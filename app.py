@@ -46,7 +46,11 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
     babel.init_app(app, locale_selector=get_locale)
-    login_manager.login_view = 'login'
+
+    # Configure login manager
+    login_manager.login_view = 'main.login'  # Updated to use Blueprint route
+    login_manager.login_message = 'Log in om deze pagina te bekijken.'
+    login_manager.login_message_category = 'info'
 
     with app.app_context():
         # Import routes after app context is created
@@ -54,14 +58,14 @@ def create_app():
         from routes.event_routes import events
         from routes.obituary_routes import obituaries
         from routes.blog_routes import blog
-        from routes.translation_routes import translation_bp  # Add translation routes
+        from routes.translation_routes import translation_bp
 
         # Register blueprints
         app.register_blueprint(main_routes)
         app.register_blueprint(events, url_prefix='/events')
         app.register_blueprint(obituaries, url_prefix='/obituaries')
         app.register_blueprint(blog, url_prefix='/blog')
-        app.register_blueprint(translation_bp)  # Register translation blueprint
+        app.register_blueprint(translation_bp)
 
         # Import models to ensure they're registered with SQLAlchemy
         from models import User, Event, EventRegistration, EventNotification, PrayerTime, Obituary, ObituaryNotification, BlogPost

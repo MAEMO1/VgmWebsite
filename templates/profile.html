@@ -4,7 +4,7 @@
 
 {% block styles %}
 <style>
-:root {
+::root {
     --primary-color: #005A87;
     --secondary-color: #41B7AC;
     --accent-color: #FF4154;
@@ -105,6 +105,60 @@
     background: var(--border-color);
     margin: 2rem 0;
 }
+
+.notification-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.mosque-select {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+}
+
+.notification-option {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: var(--background-light);
+    border-radius: var(--radius-sm);
+}
+
+.notification-option input[type="checkbox"] {
+    margin-right: 1rem;
+}
+
+.notification-list {
+    margin-top: 1rem;
+}
+
+.followed-mosque {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    margin-bottom: 0.5rem;
+}
+
+.followed-mosque .remove-btn {
+    color: var(--accent-color);
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0.5rem;
+}
+
+.followed-mosque .remove-btn:hover {
+    opacity: 0.8;
+}
 </style>
 {% endblock %}
 
@@ -115,7 +169,7 @@
             <h1 class="profile-title">{{ _('Mijn Profiel') }}</h1>
             <p class="profile-subtitle">{{ _('Beheer je accountinstellingen') }}</p>
         </div>
-        
+
         <div class="profile-body">
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
@@ -138,15 +192,58 @@
                            value="{{ current_user.email }}" required>
                 </div>
 
-                <div class="divider"></div>
-
                 <div class="mb-4">
                     <label for="new_password" class="form-label">{{ _('Nieuw Wachtwoord') }}</label>
                     <input type="password" class="form-control" id="new_password" name="new_password"
                            placeholder="{{ _('Laat leeg om het huidige wachtwoord te behouden') }}">
                 </div>
 
-                <button type="submit" class="btn btn-primary">
+                <div class="notification-section">
+                    <h2>{{ _('Notificatie Voorkeuren') }}</h2>
+
+                    <!-- Mosque Selection -->
+                    <div class="mb-4">
+                        <label for="mosque_id" class="form-label">{{ _('Volg een Moskee') }}</label>
+                        <select name="mosque_id" id="mosque_id" class="mosque-select">
+                            <option value="">{{ _('Selecteer een moskee...') }}</option>
+                            {% for mosque in mosques %}
+                                <option value="{{ mosque.id }}">{{ mosque.mosque_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" name="action" value="follow_mosque" class="btn btn-primary">
+                            {{ _('Volgen') }}
+                        </button>
+                    </div>
+
+                    <!-- Global Notification Settings -->
+                    <div class="notification-option">
+                        <input type="checkbox" id="notify_events" name="notify_events" 
+                               {% if current_user.notify_new_events %}checked{% endif %}>
+                        <label for="notify_events">{{ _('Stuur mij notificaties over nieuwe evenementen') }}</label>
+                    </div>
+
+                    <div class="notification-option">
+                        <input type="checkbox" id="notify_obituaries" name="notify_obituaries"
+                               {% if current_user.notify_obituaries %}checked{% endif %}>
+                        <label for="notify_obituaries">{{ _('Stuur mij notificaties over begrafenisgebeden') }}</label>
+                    </div>
+
+                    <!-- Followed Mosques List -->
+                    <div class="notification-list">
+                        <h3>{{ _('Gevolgde Moskeeën') }}</h3>
+                        {% for pref in current_user.mosque_preferences %}
+                            <div class="followed-mosque">
+                                <span>{{ pref.mosque.mosque_name }}</span>
+                                <button type="submit" name="unfollow_mosque" value="{{ pref.mosque_id }}" 
+                                        class="remove-btn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" name="action" value="update_profile">
                     {{ _('Profiel Bijwerken') }}
                 </button>
             </form>

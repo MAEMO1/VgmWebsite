@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from app import db
-from models import User, BoardMember, Event, PrayerTime, BlogPost, MosqueImage, MosqueVideo, Donation # Added Donation model
+from models import User, BoardMember, Event, PrayerTime, BlogPost, MosqueImage, MosqueVideo, Donation, MosqueNotificationPreference # Added MosqueNotificationPreference model
 from datetime import datetime, date
 import os
 
@@ -933,21 +933,60 @@ def donate_mosque(mosque_id):
 @login_required
 def profile():
     if request.method == 'POST':
-        try:
+        action = request.form.get('action')
+
+        if action == 'follow_mosque':
+            mosque_id = request.form.get('mosque_id')
+            if mosque_id:
+                # Check if already following
+                existing = MosqueNotificationPreference.query.filter_by(
+                    user_id=current_user.id,
+                    mosque_id=mosque_id
+                ).first()
+
+                if not existing:
+                    pref = MosqueNotificationPreference(
+                        user_id=current_user.id,
+                        mosque_id=mosque_id
+                    )
+                    db.session.add(pref)
+                    flash('Je volgt nu deze moskee.', 'success')
+                else:
+                    flash('Je volgt deze moskee al.', 'info')
+
+        elif action == 'update_profile':
+            # Update notification preferences
+            current_user.notify_new_events = bool(request.form.get('notify_events'))
+            current_user.notify_obituaries = bool(request.form.get('notify_obituaries'))
+
+            # Update profile info
             current_user.username = request.form.get('username')
             current_user.email = request.form.get('email')
 
-            # Update password if provided
             new_password = request.form.get('new_password')
             if new_password:
                 current_user.password_hash = generate_password_hash(new_password)
 
+            flash('Profiel succesvol bijgewerkt.', 'success')
+
+        elif 'unfollow_mosque' in request.form:
+            mosque_id = request.form.get('unfollow_mosque')
+            pref = MosqueNotificationPreference.query.filter_by(
+                user_id=current_user.id,
+                mosque_id=mosque_id
+            ).first()
+
+            if pref:
+                db.session.delete(pref)
+                flash('Je volgt deze moskee niet meer.', 'success')
+
+        try:
             db.session.commit()
-            flash('Profiel succesvol bijgewerkt!', 'success')
-            return redirect(url_for('main.profile'))
         except Exception as e:
             db.session.rollback()
-            flash('Er is een fout opgetreden bij het bijwerken van uw profiel.', 'error')
+            flash('Er is een fout opgetreden bij het bijwerken van je profiel.', 'error')
             print(f"Error updating profile: {e}")
 
-    return render_template('profile.html')
+    # Get all verified mosques for the dropdown
+    mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
+    return render_template('profile.html', mosques=mosques)
