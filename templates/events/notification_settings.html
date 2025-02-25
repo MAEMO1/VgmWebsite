@@ -4,7 +4,7 @@
 
 {% block styles %}
 <style>
-::root {
+:root {
     --primary-color: #005A87;
     --secondary-color: #41B7AC;
     --accent-color: #FF4154;
@@ -176,18 +176,18 @@
                     <div class="form-text mb-3">{{ _('Kies van welke organisaties u berichten wilt ontvangen') }}</div>
 
                     <select class="form-select" name="mosque_notification_type" id="mosque_notification_type" onchange="handleNotificationTypeChange()">
-                        <option value="all" selected>
+                        <option value="all" {% if current_user.notify_all_mosques or (not current_user.notify_vgm_only and not user_mosque_preferences) %}selected{% endif %}>
                             {{ _('Alle berichten (VGM en alle moskeeën)') }}
                         </option>
                         <option value="vgm_only" {% if current_user.notify_vgm_only %}selected{% endif %}>
                             {{ _('Alleen VGM berichten') }}
                         </option>
-                        <option value="specific" {% if not current_user.notify_all_mosques and not current_user.notify_vgm_only %}selected{% endif %}>
+                        <option value="specific" {% if user_mosque_preferences and not current_user.notify_all_mosques and not current_user.notify_vgm_only %}selected{% endif %}>
                             {{ _('Specifieke moskeeën selecteren') }}
                         </option>
                     </select>
 
-                    <div id="mosque-selection" class="mosque-selection {% if not current_user.notify_all_mosques and not current_user.notify_vgm_only %}active{% endif %}">
+                    <div id="mosque-selection" class="mosque-selection {% if user_mosque_preferences and not current_user.notify_all_mosques and not current_user.notify_vgm_only %}active{% endif %}">
                         <div class="mosque-list">
                             {% for mosque in mosques %}
                             <div class="mosque-item">
