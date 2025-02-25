@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('Compose Message') }}{% endblock %}
+{% block title %}{{ _('Nieuw Bericht') }}{% endblock %}
 
 {% block content %}
 <div class="container py-4">
@@ -8,18 +8,18 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">{{ _('Compose New Message') }}</h5>
+                    <h5 class="card-title mb-0">{{ _('Nieuw Bericht Opstellen') }}</h5>
                 </div>
                 <div class="card-body">
                     <form method="POST">
                         <div class="mb-3">
-                            <label for="recipient_id" class="form-label">{{ _('To') }}</label>
+                            <label for="recipient_id" class="form-label">{{ _('Aan') }}</label>
                             <select class="form-select" id="recipient_id" name="recipient_id" required>
-                                <option value="">{{ _('Select recipient...') }}</option>
+                                <option value="">{{ _('Selecteer ontvanger...') }}</option>
                                 {% for recipient in recipients %}
                                 <option value="{{ recipient.id }}">
                                     {% if recipient.is_admin %}
-                                    {{ _('VGM Admin:') }} {{ recipient.username }}
+                                    {{ _('VGM Beheerder:') }} {{ recipient.username }}
                                     {% else %}
                                     {{ recipient.mosque_name or recipient.username }}
                                     {% endif %}
@@ -29,21 +29,21 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="subject" class="form-label">{{ _('Subject') }}</label>
+                            <label for="subject" class="form-label">{{ _('Onderwerp') }}</label>
                             <input type="text" class="form-control" id="subject" name="subject" required>
                         </div>
 
                         <div class="mb-3">
-                            <label for="body" class="form-label">{{ _('Message') }}</label>
+                            <label for="body" class="form-label">{{ _('Bericht') }}</label>
                             <textarea class="form-control" id="body" name="body" rows="8" required></textarea>
                         </div>
 
                         <div class="d-flex justify-content-between">
                             <a href="{{ url_for('messages.inbox') }}" class="btn btn-outline-secondary">
-                                <i class="fas fa-arrow-left"></i> {{ _('Back to Inbox') }}
+                                <i class="fas fa-arrow-left"></i> {{ _('Terug naar Postvak IN') }}
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-paper-plane"></i> {{ _('Send Message') }}
+                                <i class="fas fa-paper-plane"></i> {{ _('Verstuur Bericht') }}
                             </button>
                         </div>
                     </form>

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('Messages') }}{% endblock %}
+{% block title %}{{ _('Berichten') }}{% endblock %}
 
 {% block content %}
 <div class="container py-4">
@@ -10,17 +10,17 @@
             <div class="card">
                 <div class="card-body">
                     <a href="{{ url_for('messages.compose') }}" class="btn btn-primary w-100 mb-3">
-                        <i class="fas fa-pen"></i> {{ _('Compose Message') }}
+                        <i class="fas fa-pen"></i> {{ _('Nieuw Bericht') }}
                     </a>
                     <div class="list-group">
                         <a href="#inbox" class="list-group-item list-group-item-action active" data-bs-toggle="list">
-                            {{ _('Inbox') }}
+                            {{ _('Postvak IN') }}
                             {% if unread_count > 0 %}
                             <span class="badge bg-primary float-end">{{ unread_count }}</span>
                             {% endif %}
                         </a>
                         <a href="#sent" class="list-group-item list-group-item-action" data-bs-toggle="list">
-                            {{ _('Sent Messages') }}
+                            {{ _('Verzonden Berichten') }}
                         </a>
                     </div>
                 </div>
@@ -34,7 +34,7 @@
                 <div class="tab-pane fade show active" id="inbox">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title mb-0">{{ _('Inbox') }}</h5>
+                            <h5 class="card-title mb-0">{{ _('Postvak IN') }}</h5>
                         </div>
                         <div class="card-body">
                             {% if received_messages %}
@@ -44,15 +44,15 @@
                                    class="list-group-item list-group-item-action {% if not message.is_read %}unread{% endif %}">
                                     <div class="d-flex w-100 justify-content-between">
                                         <h6 class="mb-1">{{ message.subject }}</h6>
-                                        <small>{{ message.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                        <small>{{ message.created_at.strftime('%d-%m-%Y %H:%M') }}</small>
                                     </div>
-                                    <p class="mb-1">{{ _('From:') }} {{ message.sender.username }}</p>
+                                    <p class="mb-1">{{ _('Van:') }} {{ message.sender.username }}</p>
                                     <small class="text-muted">{{ message.body[:100] }}{% if message.body|length > 100 %}...{% endif %}</small>
                                 </a>
                                 {% endfor %}
                             </div>
                             {% else %}
-                            <p class="text-muted text-center py-4">{{ _('No messages in your inbox') }}</p>
+                            <p class="text-muted text-center py-4">{{ _('Geen berichten in uw postvak IN') }}</p>
                             {% endif %}
                         </div>
                     </div>
@@ -62,7 +62,7 @@
                 <div class="tab-pane fade" id="sent">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title mb-0">{{ _('Sent Messages') }}</h5>
+                            <h5 class="card-title mb-0">{{ _('Verzonden Berichten') }}</h5>
                         </div>
                         <div class="card-body">
                             {% if sent_messages %}
@@ -72,15 +72,15 @@
                                    class="list-group-item list-group-item-action">
                                     <div class="d-flex w-100 justify-content-between">
                                         <h6 class="mb-1">{{ message.subject }}</h6>
-                                        <small>{{ message.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                        <small>{{ message.created_at.strftime('%d-%m-%Y %H:%M') }}</small>
                                     </div>
-                                    <p class="mb-1">{{ _('To:') }} {{ message.recipient.username }}</p>
+                                    <p class="mb-1">{{ _('Aan:') }} {{ message.recipient.username }}</p>
                                     <small class="text-muted">{{ message.body[:100] }}{% if message.body|length > 100 %}...{% endif %}</small>
                                 </a>
                                 {% endfor %}
                             </div>
                             {% else %}
-                            <p class="text-muted text-center py-4">{{ _('No sent messages') }}</p>
+                            <p class="text-muted text-center py-4">{{ _('Geen verzonden berichten') }}</p>
                             {% endif %}
                         </div>
                     </div>
