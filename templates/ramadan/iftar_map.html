@@ -161,6 +161,14 @@
     text-decoration: none;
 }
 
+.day-view, .week-view, .month-view {
+    display: none;
+}
+
+.day-view.active, .week-view.active, .month-view.active {
+    display: block;
+}
+
 .calendar-view {
     background: white;
     border-radius: 1rem;
@@ -188,6 +196,7 @@
     border: 1px solid #eee;
     border-radius: 0.5rem;
     position: relative;
+    text-align: center;
 }
 
 .calendar-day.has-iftar {
@@ -198,30 +207,6 @@
 .calendar-day.today {
     border-color: var(--primary-color);
     font-weight: bold;
-}
-
-.week-view {
-    display: none;
-}
-
-.week-view.active {
-    display: block;
-}
-
-.month-view {
-    display: none;
-}
-
-.month-view.active {
-    display: block;
-}
-
-.day-view {
-    display: none;
-}
-
-.day-view.active {
-    display: block;
 }
 </style>
 {% endblock %}
@@ -245,22 +230,24 @@
             </div>
 
             <div class="date-navigation">
-                <a href="?date={{ prev_date }}&view={{ view }}" class="btn btn-outline-primary">
+                <a href="{{ url_for('main.iftar_map', date=prev_date, view=view, filter='family' if family_only else 'all') }}" class="btn btn-outline-primary">
                     <i class="fas fa-chevron-left"></i>
                 </a>
                 <div class="current-date">{{ current_date.strftime('%d %B %Y') }}</div>
-                <a href="?date={{ next_date }}&view={{ view }}" class="btn btn-outline-primary">
+                <a href="{{ url_for('main.iftar_map', date=next_date, view=view, filter='family' if family_only else 'all') }}" class="btn btn-outline-primary">
                     <i class="fas fa-chevron-right"></i>
                 </a>
             </div>
 
             <div class="filters">
-                <button class="filter-option {% if not family_only %}active{% endif %}" data-filter="all">
+                <a href="{{ url_for('main.iftar_map', date=current_date.strftime('%Y-%m-%d'), view=view, filter='all') }}" 
+                   class="filter-option {% if not family_only %}active{% endif %}">
                     {{ _('Alle Iftars') }}
-                </button>
-                <button class="filter-option {% if family_only %}active{% endif %}" data-filter="family">
+                </a>
+                <a href="{{ url_for('main.iftar_map', date=current_date.strftime('%Y-%m-%d'), view=view, filter='family') }}"
+                   class="filter-option {% if family_only %}active{% endif %}">
                     <i class="fas fa-users"></i> {{ _('Gezinsvriendelijk') }}
-                </button>
+                </a>
             </div>
         </div>
     </div>
@@ -270,38 +257,129 @@
             <div id="map" class="iftar-map-container"></div>
         </div>
         <div class="col-md-5">
-            <div class="iftar-list">
-                {% if iftar_events %}
-                    {% for iftar in iftar_events %}
-                        <div class="iftar-card" data-mosque-id="{{ iftar.mosque_id }}">
-                            <div class="iftar-date">
-                                {{ iftar.start_time.strftime('%H:%M') }}
-                                {% if iftar.end_time %}
-                                    - {{ iftar.end_time.strftime('%H:%M') }}
-                                {% endif %}
-                            </div>
-                            <div class="iftar-mosque">{{ iftar.mosque.mosque_name }}</div>
-                            <div class="iftar-details">
-                                <div>{{ iftar.mosque.mosque_street }} {{ iftar.mosque.mosque_number }}</div>
-                                <div>{{ iftar.mosque.mosque_postal }} {{ iftar.mosque.mosque_city }}</div>
-                            </div>
-                            {% if iftar.is_family_friendly %}
-                                <span class="badge-family">
-                                    <i class="fas fa-users"></i> {{ _('Gezinsvriendelijk') }}
-                                </span>
-                            {% endif %}
-                            {% if iftar.registration_required and current_user.is_authenticated %}
-                                <div class="mt-2">
-                                    <form action="{{ url_for('main.register_iftar', iftar_id=iftar.id) }}" method="POST" class="d-inline">
-                                        <button type="submit" class="btn btn-sm btn-primary">{{ _('Registreer') }}</button>
-                                    </form>
+            <div class="day-view {% if view == 'day' %}active{% endif %}">
+                <div class="iftar-list">
+                    {% if iftar_events %}
+                        {% for iftar in iftar_events %}
+                            {% if iftar.date == current_date %}
+                                <div class="iftar-card" data-mosque-id="{{ iftar.mosque_id }}">
+                                    <div class="iftar-date">
+                                        {{ iftar.start_time.strftime('%H:%M') }}
+                                        {% if iftar.end_time %}
+                                            - {{ iftar.end_time.strftime('%H:%M') }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="iftar-mosque">{{ iftar.mosque.mosque_name }}</div>
+                                    <div class="iftar-details">
+                                        <div>{{ iftar.mosque.mosque_street }} {{ iftar.mosque.mosque_number }}</div>
+                                        <div>{{ iftar.mosque.mosque_postal }} {{ iftar.mosque.mosque_city }}</div>
+                                    </div>
+                                    {% if iftar.is_family_friendly %}
+                                        <span class="badge-family">
+                                            <i class="fas fa-users"></i> {{ _('Gezinsvriendelijk') }}
+                                        </span>
+                                    {% endif %}
                                 </div>
                             {% endif %}
-                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-center text-muted">{{ _('Er zijn geen iftar evenementen gevonden voor deze datum.') }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="week-view {% if view == 'week' %}active{% endif %}">
+                <div class="iftar-list">
+                    {% for i in range(7) %}
+                        {% set current_date_offset = current_date - current_date.weekday() * timedelta(days=1) + timedelta(days=i) %}
+                        <h4 class="mb-3">{{ current_date_offset.strftime('%A %d %B') }}</h4>
+                        {% set day_has_events = false %}
+                        {% for iftar in iftar_events %}
+                            {% if iftar.date == current_date_offset %}
+                                {% set day_has_events = true %}
+                                <div class="iftar-card" data-mosque-id="{{ iftar.mosque_id }}">
+                                    <div class="iftar-date">
+                                        {{ iftar.start_time.strftime('%H:%M') }}
+                                        {% if iftar.end_time %}
+                                            - {{ iftar.end_time.strftime('%H:%M') }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="iftar-mosque">{{ iftar.mosque.mosque_name }}</div>
+                                    <div class="iftar-details">
+                                        <div>{{ iftar.mosque.mosque_street }} {{ iftar.mosque.mosque_number }}</div>
+                                        <div>{{ iftar.mosque.mosque_postal }} {{ iftar.mosque.mosque_city }}</div>
+                                    </div>
+                                    {% if iftar.is_family_friendly %}
+                                        <span class="badge-family">
+                                            <i class="fas fa-users"></i> {{ _('Gezinsvriendelijk') }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        {% if not day_has_events %}
+                            <p class="text-center text-muted mb-4">{{ _('Geen iftar evenementen op deze dag.') }}</p>
+                        {% endif %}
                     {% endfor %}
-                {% else %}
-                    <p class="text-center text-muted">{{ _('Er zijn geen iftar evenementen gevonden voor deze datum.') }}</p>
-                {% endif %}
+                </div>
+            </div>
+
+            <div class="month-view {% if view == 'month' %}active{% endif %}">
+                <div class="calendar-view">
+                    <div class="calendar-header">
+                        <div>{{ _('Ma') }}</div>
+                        <div>{{ _('Di') }}</div>
+                        <div>{{ _('Wo') }}</div>
+                        <div>{{ _('Do') }}</div>
+                        <div>{{ _('Vr') }}</div>
+                        <div>{{ _('Za') }}</div>
+                        <div>{{ _('Zo') }}</div>
+                    </div>
+                    <div class="calendar-grid">
+                        {% for day in range((current_date.replace(day=1).weekday() + 7) % 7) %}
+                            <div class="calendar-day"></div>
+                        {% endfor %}
+
+                        {% for day in range(1, (current_date.replace(day=28) + timedelta(days=4)).day + 1) %}
+                            {% set current_date_day = current_date.replace(day=day) %}
+                            {% set has_iftar = false %}
+                            {% for iftar in iftar_events %}
+                                {% if iftar.date == current_date_day %}
+                                    {% set has_iftar = true %}
+                                {% endif %}
+                            {% endfor %}
+                            <div class="calendar-day {% if has_iftar %}has-iftar{% endif %} {% if current_date_day == current_date %}today{% endif %}">
+                                {{ day }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="iftar-list">
+                    {% if iftar_events %}
+                        {% for iftar in iftar_events %}
+                            <div class="iftar-card" data-mosque-id="{{ iftar.mosque_id }}">
+                                <div class="iftar-date">
+                                    {{ iftar.date.strftime('%d %B') }} {{ iftar.start_time.strftime('%H:%M') }}
+                                    {% if iftar.end_time %}
+                                        - {{ iftar.end_time.strftime('%H:%M') }}
+                                    {% endif %}
+                                </div>
+                                <div class="iftar-mosque">{{ iftar.mosque.mosque_name }}</div>
+                                <div class="iftar-details">
+                                    <div>{{ iftar.mosque.mosque_street }} {{ iftar.mosque.mosque_number }}</div>
+                                    <div>{{ iftar.mosque.mosque_postal }} {{ iftar.mosque.mosque_city }}</div>
+                                </div>
+                                {% if iftar.is_family_friendly %}
+                                    <span class="badge-family">
+                                        <i class="fas fa-users"></i> {{ _('Gezinsvriendelijk') }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-center text-muted">{{ _('Er zijn geen iftar evenementen gevonden voor deze maand.') }}</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
@@ -364,44 +442,6 @@ function initMap() {
 
         markers.push(marker);
     {% endfor %}
-
-    // View options functionality
-    document.querySelectorAll('.view-option').forEach(button => {
-        button.addEventListener('click', function() {
-            const view = this.dataset.view;
-
-            // Update active state of buttons
-            document.querySelectorAll('.view-option').forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-
-            // Update URL with view parameter
-            const url = new URL(window.location.href);
-            url.searchParams.set('view', view);
-            window.history.pushState({}, '', url);
-
-            // Reload page with new view
-            window.location.reload();
-        });
-    });
-
-    // Filter buttons functionality
-    document.querySelectorAll('.filter-option').forEach(button => {
-        button.addEventListener('click', function() {
-            const filter = this.dataset.filter;
-
-            // Update active state of buttons
-            document.querySelectorAll('.filter-option').forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-
-            // Update URL with filter parameter
-            const url = new URL(window.location.href);
-            url.searchParams.set('filter', filter);
-            window.history.pushState({}, '', url);
-
-            // Reload page with new filter
-            window.location.reload();
-        });
-    });
 }
 </script>
 {% endblock %}
