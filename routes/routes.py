@@ -4,7 +4,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from app import db
 from models import User, BoardMember, Event, PrayerTime, BlogPost, MosqueImage, MosqueVideo, Donation, MosqueNotificationPreference, MosqueBoardMember, MosqueHistory, MosquePhoto, ContentChangeLog, EventMosqueCollaboration, FundraisingCampaign, IfterEvent, IfterRegistration, RamadanQuranResource, RamadanVideo, RamadanProgram # Added Ramadan models
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import os
 from utils.canva_client import canva_client # Added import statement
 
@@ -777,15 +777,14 @@ def about():
         # Get the corresponding term_end for this term_start
         term = next((t for t in terms if t[0] == term_start), None)
         term_end = term[1] if term else None
-    else:
-        # Default to current or mostrecent term
+    else:  # Default to current or most recent term
         current_date = date.today()
         latest_term = BoardMember.query.filter(
-                        BoardMember.term_end >= current_date        ).orderby(BoardMember.term_start.desc()).first()
-        
+            BoardMember.term_end >= current_date
+        ).order_by(BoardMember.term_start.desc()).first()
 
         if latest_term:
-            term_start= latest_term.term_start
+            term_start = latest_term.term_start
             term_end = latest_term.term_end
         else:
             term_start = date(current_date.year, 1, 1)
@@ -1190,21 +1189,56 @@ def add_iftar():
 
     if request.method == 'POST':
         try:
-            # Create the iftar event with the form data
-            iftar = IfterEvent(
-                mosque_id=current_user.id,
-                date=datetime.strptime(request.form['date'], '%Y-%m-%d').date(),
-                start_time=datetime.strptime(request.form['start_time'], '%H:%M').time(),
-                end_time=datetime.strptime(request.form['end_time'], '%H:%M').time() if request.form.get('end_time') else None,
-                capacity=int(request.form['capacity']) if request.form.get('capacity') else None,
-                is_family_friendly=bool(request.form.get('is_family_friendly')),
-                registration_required=bool(request.form.get('registration_required')),
-                notes=request.form.get('notes')
-            )
-            db.session.add(iftar)
+            start_date = datetime.strptime(request.form['date'], '%Y-%m-%d').date()
+            is_recurring = 'is_recurring' in request.form
+
+            # Base iftar event data
+            iftar_data = {
+                'mosque_id': current_user.id,
+                'start_time': datetime.strptime(request.form['start_time'], '%H:%M').time(),
+                'end_time': datetime.strptime(request.form['end_time'], '%H:%M').time() if request.form.get('end_time') else None,
+                'location': request.form['location'],
+                'capacity': int(request.form['capacity']) if request.form.get('capacity') else None,
+                'is_family_friendly': 'is_family_friendly' in request.form,
+                'registration_required': 'registration_required' in request.form,
+                'registration_deadline': datetime.strptime(request.form['registration_deadline'], '%Y-%m-%dT%H:%M') if request.form.get('registration_deadline') else None,
+                'dietary_options': 'dietary_options' in request.form,
+                'notes': request.form.get('notes'),
+                'is_recurring': is_recurring
+            }
+
+            if is_recurring:
+                recurrence_type = request.form['recurrence_type']
+                end_date = datetime.strptime(request.form['recurrence_end_date'], '%Y-%m-%d').date()
+                iftar_data['recurrence_type'] = recurrence_type
+                iftar_data['recurrence_end_date'] = end_date
+
+                current_date = start_date
+                while current_date <= end_date:
+                    # Create an iftar event for this date
+                    iftar = IfterEvent(
+                        **iftar_data,
+                        date=current_date
+                    )
+                    db.session.add(iftar)
+
+                    # Calculate next date based on recurrence type
+                    if recurrence_type == 'daily':
+                        current_date += timedelta(days=1)
+                    elif recurrence_type == 'weekly':
+                        current_date += timedelta(weeks=1)
+            else:
+                # Create a single iftar event
+                iftar = IfterEvent(
+                    **iftar_data,
+                    date=start_date
+                )
+                db.session.add(iftar)
+
             db.session.commit()
-            flash('Iftar evenement succesvol toegevoegd.', 'success')
+            flash('Iftar evenement(en) succesvol toegevoegd.', 'success')
             return redirect(url_for('main.ramadan'))
+
         except Exception as e:
             db.session.rollback()
             flash('Er is een fout opgetreden bij het toevoegen van het iftar evenement.', 'error')

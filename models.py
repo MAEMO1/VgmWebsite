@@ -439,10 +439,19 @@ class IfterEvent(db.Model):
     date = db.Column(db.Date, nullable=False)
     start_time = db.Column(db.Time, nullable=False)
     end_time = db.Column(db.Time)
+    location = db.Column(db.String(200))
     capacity = db.Column(db.Integer)
     is_family_friendly = db.Column(db.Boolean, default=True)
     registration_required = db.Column(db.Boolean, default=False)
+    registration_deadline = db.Column(db.DateTime)
+    dietary_options = db.Column(db.Boolean, default=False)
     notes = db.Column(db.Text)
+
+    # New fields for recurring events
+    is_recurring = db.Column(db.Boolean, default=False)
+    recurrence_type = db.Column(db.String(20))  # 'daily' or 'weekly'
+    recurrence_end_date = db.Column(db.Date)  # When the recurring event ends
+
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
