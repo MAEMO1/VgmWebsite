@@ -779,11 +779,11 @@ def about():
             term_start = latest_term.term_start
             term_end = latest_term.term_end
         else:
-            term_start = date(current_date.year, 1, 1)
+            term_start = date(current_date.year, 1, 1, 1)
             term_end = date(current_date.year, 12, 31)
 
     # Get board members for the selected term
-    board_members = BoardMember.query.query.filter(
+    board_members = BoardMember.query.filter(
         BoardMember.term_start == term_start
     ).all()
 
