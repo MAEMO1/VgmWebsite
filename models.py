@@ -17,8 +17,11 @@ class User(UserMixin, db.Model):
     is_admin = db.Column(db.Boolean, default=False)
     user_type = db.Column(db.String(20), nullable=False)  # 'visitor' or 'mosque'
 
-    # Basic notification settings
-    notify_new_events = db.Column(db.Boolean, default=False)
+    # Notification preferences for mosques
+    notify_all_mosques = db.Column(db.Boolean, default=False)
+    notify_vgm_only = db.Column(db.Boolean, default=False)
+
+    # Event notification settings
     notify_event_changes = db.Column(db.Boolean, default=False)
     notify_event_reminders = db.Column(db.Boolean, default=False)
     notify_obituaries = db.Column(db.Boolean, default=False)

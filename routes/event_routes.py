@@ -4,7 +4,8 @@ from datetime import datetime, timedelta
 from werkzeug.utils import secure_filename
 import os
 from app import db
-from models import Event, EventRegistration, EventNotification, User, EventMosqueCollaboration
+from models import Event, EventRegistration, EventNotification, User, EventMosqueCollaboration, MosqueNotificationPreference # Added import for MosqueNotificationPreference
+
 
 # Create blueprint with url_prefix
 events = Blueprint('events', __name__, url_prefix='/events')
@@ -218,17 +219,45 @@ def user_notifications():
 @events.route('/notification-settings', methods=['GET', 'POST'])
 @login_required
 def notification_settings():
-    if request.method == 'POST':
-        return redirect(url_for('events.update_notification_settings')) #redirect to the new route
+    # Get all mosques for the selection
+    mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
 
-    return render_template('events/notification_settings.html')
+    # Get user's current mosque preferences
+    user_mosque_preferences = [pref.mosque_id for pref in current_user.mosque_preferences] if current_user.mosque_preferences else []
+
+    return render_template('events/notification_settings.html',
+                         mosques=mosques,
+                         user_mosque_preferences=user_mosque_preferences)
 
 @events.route('/notification-settings/update', methods=['POST'])
 @login_required
 def update_notification_settings():
     try:
+        # Get notification type preference
+        notification_type = request.form.get('mosque_notification_type')
+
+        # Update mosque notification preferences
+        current_user.notify_all_mosques = (notification_type == 'all')
+        current_user.notify_vgm_only = (notification_type == 'vgm_only')
+
+        # Handle specific mosque selections
+        if notification_type == 'specific':
+            # Remove existing preferences
+            MosqueNotificationPreference.query.filter_by(user_id=current_user.id).delete()
+
+            # Add new preferences
+            selected_mosques = request.form.getlist('selected_mosques')
+            for mosque_id in selected_mosques:
+                pref = MosqueNotificationPreference(
+                    user_id=current_user.id,
+                    mosque_id=int(mosque_id)
+                )
+                db.session.add(pref)
+        else:
+            # Clear specific mosque preferences if not using them
+            MosqueNotificationPreference.query.filter_by(user_id=current_user.id).delete()
+
         # Event notifications
-        current_user.notify_new_events = bool(request.form.get('notify_new_events'))
         current_user.notify_event_changes = bool(request.form.get('notify_event_changes'))
         current_user.notify_event_reminders = bool(request.form.get('notify_event_reminders'))
 
