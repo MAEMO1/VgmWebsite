@@ -99,197 +99,7 @@
     color: white;
 }
 
-@keyframes patternMove {
-    0% {
-        background-position: 0 0;
-    }
-    100% {
-        background-position: 100% 100%;
-    }
-}
-
-@media (max-width: 768px) {
-    .hero-section {
-        min-height: 50vh;
-        padding: 3rem 1rem;
-    }
-
-    .hero-section h1 {
-        font-size: 2.5rem;
-    }
-
-    .hero-tagline {
-        font-size: 1.25rem;
-    }
-
-    .hero-buttons {
-        flex-direction: column;
-    }
-
-    .hero-btn {
-        width: 100%;
-    }
-}
-
-.card {
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    background: white;
-    overflow: hidden;
-}
-
-.card-header {
-    background: white;
-    border-bottom: 1px solid var(--border-color);
-    padding: 1.25rem 1.5rem;
-}
-
-.card-header h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin: 0;
-}
-
-.card-body {
-    padding: 1.5rem;
-}
-
-.countdown-timer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    margin: 1.5rem 0;
-}
-
-.timer-block {
-    background: var(--background-light);
-    border-radius: 8px;
-    padding: 1rem 1.25rem;
-    text-align: center;
-    min-width: 90px;
-}
-
-.timer-block .number {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    line-height: 1;
-    margin-bottom: 0.5rem;
-}
-
-.timer-block .label {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.news-card {
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    transition: all 0.2s ease;
-    height: 100%;
-}
-
-.news-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-}
-
-.news-image {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-}
-
-.news-content {
-    padding: 1.25rem;
-}
-
-.news-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-    color: var(--text-primary);
-}
-
-.news-meta {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    margin-bottom: 1rem;
-}
-
-.news-excerpt {
-    color: var(--text-primary);
-    margin-bottom: 1.25rem;
-    line-height: 1.6;
-}
-
-.prayer-times {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.prayer-time {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background: var(--background-light);
-    border-radius: 8px;
-    transition: background-color 0.2s ease;
-}
-
-.prayer-time:hover {
-    background: #EDF0F3;
-}
-
-.prayer-name {
-    font-weight: 500;
-    color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.prayer-time-badge {
-    background: var(--primary-color);
-    color: white;
-    padding: 0.5rem 0.75rem;
-    border-radius: 6px;
-    font-weight: 500;
-    font-size: 0.875rem;
-}
-
-@media (max-width: 992px) {
-    .hero-section {
-        padding: 2rem 1.5rem;
-    }
-    .hero-section h1 {
-        font-size: 2rem;
-    }
-}
-
-@media (max-width: 768px) {
-    .hero-section {
-        padding: 1.5rem;
-    }
-    .hero-section h1 {
-        font-size: 1.75rem;
-    }
-    .countdown-timer {
-        flex-wrap: wrap;
-    }
-    .timer-block {
-        min-width: 80px;
-    }
-}
-
-/* Campaign Section Styles */
+/* Campaigns Section */
 .campaigns-section {
     padding: 6rem 0;
     background-color: var(--background-light);
@@ -303,12 +113,14 @@
     font-weight: 700;
     color: var(--text-primary);
     margin-bottom: 0.5rem;
+    text-align: center;
 }
 
 .section-subtitle {
     font-size: 1.2rem;
     color: var(--text-secondary);
     margin-bottom: 3rem;
+    text-align: center;
 }
 
 .campaigns-grid {
@@ -328,6 +140,7 @@
 
 .campaign-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 .campaign-image {
@@ -411,22 +224,89 @@
     box-shadow: 0 4px 12px rgba(0, 90, 135, 0.2);
 }
 
+/* Info Cards */
+.info-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    height: 100%;
+    transition: transform 0.3s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.info-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.info-card-icon {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
+
+.info-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.info-card-content {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+@media (max-width: 992px) {
+    .hero-section {
+        padding: 2rem 1.5rem;
+    }
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+}
+
 @media (max-width: 768px) {
+    .hero-section {
+        padding: 1.5rem;
+    }
+    .hero-section h1 {
+        font-size: 1.75rem;
+    }
     .campaigns-section {
         padding: 4rem 0;
     }
-
     .section-title {
         font-size: 2rem;
     }
-
     .section-subtitle {
         font-size: 1.1rem;
     }
-
     .campaigns-grid {
         grid-template-columns: 1fr;
     }
+    .hero-buttons {
+        flex-direction: column;
+    }
+    .hero-btn {
+        width: 100%;
+    }
+}
+
+@keyframes progressPulse {
+    0% { opacity: 0.7; }
+    50% { opacity: 1; }
+    100% { opacity: 0.7; }
+}
+
+.progress-updated {
+    animation: progressPulse 1s ease-in-out;
 }
 </style>
 {% endblock %}
@@ -451,7 +331,7 @@
 {% if campaigns %}
 <section class="campaigns-section">
     <div class="container">
-        <h2 class="section-title text-center mb-5">
+        <h2 class="section-title">
             {{ _('Help Ons Deze Doelen Te Bereiken') }}
             <div class="section-subtitle">{{ _('Steun onze actuele projecten') }}</div>
         </h2>
@@ -492,76 +372,16 @@
 </section>
 {% endif %}
 
-<div class="container">
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3>{{ _('Countdown to Ramadan 1446/2025') }}</h3>
-                </div>
-                <div class="card-body">
-                    <div id="ramadanCountdown">
-                        <div class="countdown-timer">
-                            <div class="timer-block">
-                                <span class="number" id="days">00</span>
-                                <span class="label">{{ _('Days') }}</span>
-                            </div>
-                            <div class="timer-block">
-                                <span class="number" id="hours">00</span>
-                                <span class="label">{{ _('Hours') }}</span>
-                            </div>
-                            <div class="timer-block">
-                                <span class="number" id="minutes">00</span>
-                                <span class="label">{{ _('Minutes') }}</span>
-                            </div>
-                            <div class="timer-block">
-                                <span class="number" id="seconds">00</span>
-                                <span class="label">{{ _('Seconds') }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card mb-4">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3>{{ _('Latest News') }}</h3>
-                    <a href="{{ url_for('blog.index') }}" class="btn btn-sm btn-outline-primary">
-                        {{ _('All News') }} <i class="fas fa-arrow-right ms-1"></i>
-                    </a>
-                </div>
-                <div class="card-body">
-                    <div class="row row-cols-1 row-cols-md-2 g-4">
-                        {% for post in latest_posts %}
-                        <div class="col">
-                            <div class="news-card h-100">
-                                {% if post.image_url %}
-                                <img src="{{ post.image_url }}" class="news-image" alt="{{ post.title }}">
-                                {% endif %}
-                                <div class="news-content">
-                                    <h4 class="news-title">{{ post.title }}</h4>
-                                    <p class="news-meta">
-                                        <i class="far fa-calendar-alt me-1"></i>{{ post.created_at.strftime('%d %b %Y') }}
-                                    </p>
-                                    <p class="news-excerpt">{{ post.excerpt or post.content[:100] }}...</p>
-                                    <a href="{{ url_for('blog.view', slug=post.slug) }}" class="btn btn-link p-0">
-                                        {{ _('Read More') }} <i class="fas fa-arrow-right ms-1"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-
+<div class="container my-5">
+    <div class="row g-4">
+        <!-- Next Event Card -->
         <div class="col-lg-4">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3>{{ _('Next VGM Event') }}</h3>
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="fas fa-calendar info-card-icon"></i>
+                    <h3 class="info-card-title">{{ _('Next VGM Event') }}</h3>
                 </div>
-                <div class="card-body">
+                <div class="info-card-content">
                     {% if next_event %}
                     <div class="event-highlight">
                         <h4 class="mb-3">{{ next_event.title }}</h4>
@@ -583,20 +403,52 @@
                     {% endif %}
                 </div>
             </div>
+        </div>
 
-            <div class="card">
-                <div class="card-header">
-                    <h3>{{ _('Prayer Times') }}</h3>
+        <!-- Latest News -->
+        <div class="col-lg-4">
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="fas fa-newspaper info-card-icon"></i>
+                    <h3 class="info-card-title">{{ _('Latest News') }}</h3>
                 </div>
-                <div class="card-body">
+                <div class="info-card-content">
+                    {% if latest_posts %}
+                    {% for post in latest_posts[:2] %}
+                    <div class="mb-4">
+                        <h4 class="h5 mb-2">{{ post.title }}</h4>
+                        <p class="small text-muted mb-2">
+                            <i class="far fa-calendar-alt me-1"></i>{{ post.created_at.strftime('%d %b %Y') }}
+                        </p>
+                        <p class="mb-2">{{ post.excerpt or post.content[:100] }}...</p>
+                        <a href="{{ url_for('blog.view', slug=post.slug) }}" class="btn btn-link p-0">
+                            {{ _('Read More') }} <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <p class="text-center text-muted my-4">{{ _('No news available') }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Prayer Times -->
+        <div class="col-lg-4">
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="fas fa-clock info-card-icon"></i>
+                    <h3 class="info-card-title">{{ _('Prayer Times') }}</h3>
+                </div>
+                <div class="info-card-content">
                     <div class="prayer-times">
                         {% for prayer in prayer_times %}
-                        <div class="prayer-time">
-                            <span class="prayer-name">
-                                <i class="fas fa-sun"></i>
+                        <div class="prayer-time d-flex justify-content-between align-items-center mb-3">
+                            <span class="prayer-name d-flex align-items-center">
+                                <i class="fas fa-sun me-2"></i>
                                 {{ prayer.prayer_name }}
                             </span>
-                            <span class="prayer-time-badge">
+                            <span class="badge bg-primary">
                                 {{ prayer.time.strftime('%H:%M') }}
                             </span>
                         </div>
@@ -611,44 +463,22 @@
 
 {% block scripts %}
 <script>
-function updateRamadanCountdown() {
-    const ramadanStart = new Date('2025-03-01T00:00:00');
-    const now = new Date();
-    const diff = ramadanStart - now;
-
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-    document.getElementById('days').textContent = String(days).padStart(2, '0');
-    document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-    document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-    document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
-}
-
-setInterval(updateRamadanCountdown, 1000);
-updateRamadanCountdown();
-
 // Real-time campaign progress updates
 function updateCampaignProgress(campaignId) {
     fetch(`/api/campaigns/${campaignId}/status`)
         .then(response => response.json())
         .then(data => {
-            const card = document.querySelector(`[data-campaign-id="${campaignId}"]`).closest('.campaign-card');
+            const card = document.querySelector(`[data-campaign-id="${campaignId}"]`);
             const progressBar = card.querySelector('.progress-bar');
             const progressText = card.querySelector('.progress-percentage');
             const amountText = card.querySelector('.progress-amount');
 
-            // Update progress bar
             progressBar.style.width = `${data.progress}%`;
             progressBar.setAttribute('aria-valuenow', data.progress);
 
-            // Update text
             progressText.textContent = `${data.progress.toFixed(1)}% bereikt`;
             amountText.textContent = `€${data.current_amount.toFixed(2)}`;
 
-            // Add animation class
             progressBar.classList.add('progress-updated');
             setTimeout(() => progressBar.classList.remove('progress-updated'), 1000);
         });
@@ -660,17 +490,4 @@ document.querySelectorAll('.campaign-card').forEach(card => {
     setInterval(() => updateCampaignProgress(campaignId), 30000);
 });
 </script>
-
-<style>
-/* Add animation for progress updates */
-@keyframes progressPulse {
-    0% { opacity: 0.7; }
-    50% { opacity: 1; }
-    100% { opacity: 0.7; }
-}
-
-.progress-updated {
-    animation: progressPulse 1s ease-in-out;
-}
-</style>
 {% endblock %}
