@@ -1,64 +1,215 @@
 {% extends "base.html" %}
 
-{% block title %}Register as Mosque - Mosque Management{% endblock %}
+{% block title %}{{ _('Registreer als Moskee - VGM') }}{% endblock %}
+
+{% block styles %}
+<style>
+.register-form-container {
+    max-width: 720px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.register-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.register-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.register-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.form-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0,90,135,0.1);
+}
+
+.alert {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.alert-info {
+    background: #EFF6FF;
+    color: #1E40AF;
+    border: 1px solid #BFDBFE;
+}
+
+.btn-register {
+    width: 100%;
+    padding: 1rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-register:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+.btn-back {
+    padding: 1rem;
+    color: var(--text-secondary);
+    background: none;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+    border-color: var(--text-secondary);
+    background: var(--background-light);
+}
+
+@media (max-width: 768px) {
+    .register-form-container {
+        padding: 1.5rem;
+    }
+
+    .register-title {
+        font-size: 1.75rem;
+    }
+
+    .form-card {
+        padding: 1.5rem;
+    }
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h2>Register as Mosque</h2>
-            </div>
-            <div class="card-body">
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="alert alert-{{ category }}">{{ message }}</div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
+<div class="register-form-container">
+    <div class="register-header">
+        <h1 class="register-title">{{ _('Registreer uw Moskee') }}</h1>
+        <p class="register-subtitle">
+            {{ _('Word lid van de Vereniging van Gentse Moskeeën en beheer uw moskee online') }}
+        </p>
+    </div>
 
-                <form method="POST">
-                    <div class="mb-3">
-                        <label for="mosque_name" class="form-label">Mosque Name</label>
+    <div class="form-card">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="mosque_name" class="form-label">{{ _('Naam van de Moskee') }}</label>
                         <input type="text" class="form-control" id="mosque_name" name="mosque_name" required>
                     </div>
-
-                    <div class="mb-3">
-                        <label for="mosque_address" class="form-label">Mosque Address</label>
-                        <input type="text" class="form-control" id="mosque_address" name="mosque_address" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="mosque_phone" class="form-label">Phone Number</label>
-                        <input type="tel" class="form-control" id="mosque_phone" name="mosque_phone" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="confirm_password" class="form-label">Confirm Password</label>
-                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                    </div>
-
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i>
-                        Note: Mosque accounts require verification by administrators before full access is granted.
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Register</button>
-                    <a href="{{ url_for('main.register') }}" class="btn btn-secondary">Back</a>
-                </form>
+                </div>
             </div>
-        </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label for="street" class="form-label">{{ _('Straat') }}</label>
+                        <input type="text" class="form-control" id="street" name="street" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="number" class="form-label">{{ _('Nummer') }}</label>
+                        <input type="text" class="form-control" id="number" name="number" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="postal" class="form-label">{{ _('Postcode') }}</label>
+                        <input type="text" class="form-control" id="postal" name="postal" required>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label for="city" class="form-label">{{ _('Gemeente') }}</label>
+                        <input type="text" class="form-control" id="city" name="city" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="phone" class="form-label">{{ _('Telefoonnummer') }}</label>
+                <input type="tel" class="form-control" id="phone" name="phone" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email" class="form-label">{{ _('E-mailadres') }}</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">{{ _('Wachtwoord') }}</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+                <small class="text-muted">{{ _('Kies een sterk wachtwoord van minimaal 8 tekens') }}</small>
+            </div>
+
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                {{ _('Opmerking: Moskee-accounts moeten eerst door beheerders worden geverifieerd voordat volledige toegang wordt verleend.') }}
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-register">
+                    <i class="fas fa-mosque me-2"></i>{{ _('Registreer Moskee') }}
+                </button>
+                <a href="{{ url_for('main.register') }}" class="btn btn-back">
+                    <i class="fas fa-arrow-left me-2"></i>{{ _('Terug naar Registratie') }}
+                </a>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}
