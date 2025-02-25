@@ -142,94 +142,8 @@
 <div class="obituaries-container">
     <h1>{{ _('Overlijdensberichten') }}</h1>
 
-    <!-- Recent Overleden -->
-    <h2 class="section-header">{{ _('Recent Overleden') }}</h2>
-    {% for obituary in recent_obituaries %}
-    <div class="obituary-card">
-        <div class="obituary-header">
-            <div>
-                <h2 class="obituary-title">{{ obituary.name }}</h2>
-                {% if obituary.age %}
-                <div class="text-muted mt-1">
-                    {{ obituary.age }} {{ _('jaar') }}
-                </div>
-                {% endif %}
-            </div>
-            <span class="date-badge">
-                {{ _('Overleden') }}: {{ obituary.date_of_death.strftime('%d-%m-%Y') if obituary.date_of_death else '' }}
-            </span>
-        </div>
-
-        <div class="prayer-info">
-            <div class="detail-item">
-                <div class="detail-label">{{ _('Dodengebed') }}</div>
-                <div class="detail-value">
-                    {{ obituary.death_prayer_location }}
-                    {% if obituary.prayer_time %}
-                        - {{ obituary.prayer_time.strftime('%d-%m-%Y %H:%M') }}
-                    {% elif obituary.prayer_after and obituary.prayer_date %}
-                        - {{ obituary.prayer_date.strftime('%d-%m-%Y') }} {{ {
-                            'fajr': _('Na Fajr (Ochtendgebed)'),
-                            'dhuhr': _('Na Dhuhr (Middaggebed)'),
-                            'asr': _('Na Asr (Namiddaggebed)'),
-                            'maghrib': _('Na Maghrib (Zonsonderganggebed)'),
-                            'isha': _('Na Isha (Avondgebed)'),
-                            'jumuah': _('Na Jumuah (Vrijdaggebed)')
-                        }[obituary.prayer_after] }}
-                    {% endif %}
-                </div>
-            </div>
-
-            {% if obituary.burial_location %}
-            <div class="detail-item mt-2">
-                <div class="detail-label">{{ _('Begraafplaats') }}</div>
-                <div class="detail-value">{{ obituary.burial_location }}</div>
-            </div>
-            {% endif %}
-        </div>
-
-        {% if current_user.is_authenticated and (current_user.is_admin or current_user.id == obituary.mosque_id or current_user.id == obituary.submitter_id) %}
-        <div class="actions">
-            {% if not obituary.is_approved and current_user.id == obituary.mosque_id %}
-            <form action="{{ url_for('obituaries.verify_obituary', obituary_id=obituary.id) }}" method="POST" class="d-inline">
-                <button type="submit" class="btn btn-success btn-sm">
-                    <i class="fas fa-check me-1"></i>{{ _('Verifiëren') }}
-                </button>
-            </form>
-            {% endif %}
-
-            <a href="{{ url_for('obituaries.edit_obituary', obituary_id=obituary.id) }}" class="btn btn-primary btn-sm">
-                <i class="fas fa-edit me-1"></i>{{ _('Bewerken') }}
-            </a>
-
-            {% if current_user.is_admin %}
-            <form action="{{ url_for('obituaries.delete_obituary', obituary_id=obituary.id) }}" method="POST" 
-                  onsubmit="return confirm('{{ _('Weet u zeker dat u dit overlijdensbericht wilt verwijderen?') }}');"
-                  class="d-inline">
-                <button type="submit" class="btn btn-danger btn-sm">
-                    <i class="fas fa-trash me-1"></i>{{ _('Verwijderen') }}
-                </button>
-            </form>
-            {% endif %}
-        </div>
-        {% endif %}
-    </div>
-    {% endfor %}
-
-    {% if recent_pages > 1 %}
-    <nav aria-label="Recent obituaries pagination" class="mt-4">
-        <ul class="pagination justify-content-center">
-            {% for p in range(1, recent_pages + 1) %}
-            <li class="page-item {% if p == recent_page %}active{% endif %}">
-                <a class="page-link" href="{{ url_for('obituaries.index', recent_page=p, upcoming_page=upcoming_page) }}">{{ p }}</a>
-            </li>
-            {% endfor %}
-        </ul>
-    </nav>
-    {% endif %}
-
-    <!-- Eerstvolgende Dodengebeden -->
-    <h2 class="section-header mt-5">{{ _('Eerstvolgende Dodengebeden') }}</h2>
+    <!-- Eerstvolgende Begrafenisgebeden -->
+    <h2 class="section-header">{{ _('Eerstvolgende Begrafenisgebeden (Janazah)') }}</h2>
     {% for obituary in upcoming_obituaries %}
     <div class="obituary-card">
         <div class="obituary-header">
@@ -259,7 +173,7 @@
 
         <div class="prayer-info">
             <div class="detail-item">
-                <div class="detail-label">{{ _('Dodengebed') }}</div>
+                <div class="detail-label">{{ _('Begrafenisgebed (Janazah)') }}</div>
                 <div class="detail-value">
                     {{ obituary.death_prayer_location }}
                     {% if obituary.prayer_time %}
@@ -318,7 +232,7 @@
         <ul class="pagination justify-content-center">
             {% for p in range(1, upcoming_pages + 1) %}
             <li class="page-item {% if p == upcoming_page %}active{% endif %}">
-                <a class="page-link" href="{{ url_for('obituaries.index', recent_page=recent_page, upcoming_page=p) }}">{{ p }}</a>
+                <a class="page-link" href="{{ url_for('obituaries.index', upcoming_page=p) }}">{{ p }}</a>
             </li>
             {% endfor %}
         </ul>
@@ -331,7 +245,7 @@
 
         <div class="faq-item">
             <div class="faq-question">{{ _('Hoe kan ik een overlijdensbericht toevoegen?') }}</div>
-            <div class="faq-answer">{{ _('U kunt een overlijdensbericht toevoegen door op de + knop rechtsonder te klikken. Als u een moskee selecteert voor het dodengebed, moet deze het bericht eerst verifiëren voordat het wordt gepubliceerd.') }}</div>
+            <div class="faq-answer">{{ _('U kunt een overlijdensbericht toevoegen door op de + knop rechtsonder te klikken. Als u een moskee selecteert voor het begrafenisgebed (Janazah), moet deze het bericht eerst verifiëren voordat het wordt gepubliceerd.') }}</div>
         </div>
 
         <div class="faq-item">
@@ -341,12 +255,12 @@
 
         <div class="faq-item">
             <div class="faq-question">{{ _('Wanneer is verificatie nodig?') }}</div>
-            <div class="faq-answer">{{ _('Verificatie is alleen nodig wanneer u een specifieke moskee selecteert voor het dodengebed. Als u "Andere locatie" kiest, wordt het bericht direct gepubliceerd.') }}</div>
+            <div class="faq-answer">{{ _('Verificatie is alleen nodig wanneer u een specifieke moskee selecteert voor het begrafenisgebed (Janazah). Als u "Andere locatie" kiest, wordt het bericht direct gepubliceerd.') }}</div>
         </div>
 
         <div class="faq-item">
             <div class="faq-question">{{ _('Hoe lang blijft een overlijdensbericht zichtbaar?') }}</div>
-            <div class="faq-answer">{{ _('Overlijdensberichten blijven zichtbaar in het archief. Recente overlijdens en aankomende dodengebeden worden prominent weergegeven op de pagina.') }}</div>
+            <div class="faq-answer">{{ _('Overlijdensberichten blijven zichtbaar in het archief. Aankomende begrafenisgebeden (Janazah) worden prominent weergegeven op de pagina.') }}</div>
         </div>
     </div>
 

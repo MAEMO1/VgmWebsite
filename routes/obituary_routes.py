@@ -15,24 +15,7 @@ def index():
     per_page = 3  # Aantal items per pagina
 
     # Get page numbers from query parameters
-    recent_page = request.args.get('recent_page', 1, type=int)
     upcoming_page = request.args.get('upcoming_page', 1, type=int)
-
-    # Get recent obituaries (past 30 days)
-    thirty_days_ago = now - timedelta(days=30)
-    recent_query = Obituary.query.filter(
-        and_(
-            Obituary.is_approved == True,
-            Obituary.date_of_death >= thirty_days_ago
-        )
-    ).order_by(Obituary.date_of_death.desc())
-
-    # Get total counts for pagination
-    total_recent = recent_query.count()
-    recent_pages = (total_recent + per_page - 1) // per_page
-
-    # Get paginated results
-    recent_obituaries = recent_query.offset((recent_page - 1) * per_page).limit(per_page).all()
 
     # Get upcoming obituaries (future prayer times and dates)
     upcoming_query = Obituary.query.filter(
@@ -60,11 +43,8 @@ def index():
     upcoming_obituaries = upcoming_query.offset((upcoming_page - 1) * per_page).limit(per_page).all()
 
     return render_template('obituaries/index.html',
-                         recent_obituaries=recent_obituaries,
                          upcoming_obituaries=upcoming_obituaries,
-                         recent_page=recent_page,
                          upcoming_page=upcoming_page,
-                         recent_pages=recent_pages,
                          upcoming_pages=upcoming_pages)
 
 @obituaries.route('/create', methods=['GET', 'POST'])
