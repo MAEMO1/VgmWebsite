@@ -34,37 +34,28 @@ class User(UserMixin, db.Model):
     verification_status = db.Column(db.String(20), default='pending')  # 'pending', 'approved', 'rejected'
     verification_note = db.Column(db.Text)  # Admin feedback for verification
 
-    # Donation-related fields
-    donation_enabled = db.Column(db.Boolean, default=False)
-    donation_iban = db.Column(db.String(34))  # IBAN number for donations
-    donation_description = db.Column(db.Text)  # Description of what donations are used for
-    donation_goal = db.Column(db.Float)  # Optional donation goal
-    donation_goal_description = db.Column(db.Text)  # Description of the donation goal
-
-    # Contact fields
-    mosque_email = db.Column(db.String(120))   # Public contact email
-    mosque_website = db.Column(db.String(200)) # Mosque website
-    mosque_fax = db.Column(db.String(20))      # Fax number
-    emergency_contact = db.Column(db.String(100)) # Emergency contact name
-    emergency_phone = db.Column(db.String(20))  # Emergency contact number
-
-    # Social media links
-    facebook_url = db.Column(db.String(200))
-    twitter_url = db.Column(db.String(200))
-    instagram_url = db.Column(db.String(200))
-    youtube_url = db.Column(db.String(200))
-    whatsapp_number = db.Column(db.String(20))
-
-    history = db.Column(db.Text)
-    establishment_year = db.Column(db.Integer)
-    friday_prayer_time = db.Column(db.Time)
-
-    # Relationships remain unchanged
+    # Relationships
     images = db.relationship('MosqueImage', backref='mosque', lazy='dynamic')
     videos = db.relationship('MosqueVideo', backref='mosque', lazy='dynamic')
     prayer_times = db.relationship('PrayerTime', backref='mosque', lazy='dynamic')
     events = db.relationship('Event', backref='mosque', lazy='dynamic')
     authored_posts = db.relationship('BlogPost', backref='author', lazy='dynamic')
+
+    # Mosque notification preferences (as user following mosques)
+    mosque_preferences = db.relationship(
+        'MosqueNotificationPreference',
+        foreign_keys='MosqueNotificationPreference.user_id',
+        backref='following_user',
+        lazy='dynamic'
+    )
+
+    # Mosques being followed (as mosque being followed by users)
+    followed_by = db.relationship(
+        'MosqueNotificationPreference',
+        foreign_keys='MosqueNotificationPreference.mosque_id',
+        backref='followed_mosque',
+        lazy='dynamic'
+    )
 
     def get_full_address(self):
         """Return the full formatted address for the mosque"""
@@ -167,6 +158,11 @@ class Obituary(db.Model):
     additional_notes = db.Column(db.Text)
     mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Link to mosque user for verification
     submitter_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Link to user who submitted
+
+    # New required fields for submitter information
+    submitter_name = db.Column(db.String(100), nullable=False)
+    submitter_phone = db.Column(db.String(20), nullable=False)
+
     is_approved = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     notifications_sent = db.Column(db.Boolean, default=False)
@@ -300,3 +296,9 @@ class PaymentConfig(db.Model):
     config = db.Column(db.JSON)  # Store provider-specific configuration
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class MosqueNotificationPreference(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)

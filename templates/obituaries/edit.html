@@ -21,6 +21,29 @@
         <form method="POST">
             {{ form.csrf_token }}
 
+            <!-- Indiener Informatie -->
+            <div class="form-section">
+                <h2 class="section-title">{{ _('Uw Contactgegevens') }}</h2>
+                <div class="mb-4">
+                    {{ form.submitter_name.label(class="form-label required-field") }}
+                    {{ form.submitter_name(class="form-control" + (" is-invalid" if form.submitter_name.errors else "")) }}
+                    {% if form.submitter_name.errors %}
+                        {% for error in form.submitter_name.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="mb-4">
+                    {{ form.submitter_phone.label(class="form-label required-field") }}
+                    {{ form.submitter_phone(class="form-control" + (" is-invalid" if form.submitter_phone.errors else "")) }}
+                    {% if form.submitter_phone.errors %}
+                        {% for error in form.submitter_phone.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+
             <!-- Persoonlijke Informatie -->
             <div class="form-section">
                 <h2 class="section-title">{{ _('Persoonlijke Informatie') }}</h2>

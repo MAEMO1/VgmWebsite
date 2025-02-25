@@ -1,15 +1,23 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, TextAreaField, DateField, DateTimeLocalField, SelectField
-from wtforms.validators import DataRequired, Optional, Length, Email, ValidationError
+from wtforms.validators import DataRequired, Optional, Length, Email, ValidationError, Regexp
 
 class ObituaryForm(FlaskForm):
+    # Indiener (submitter) information
+    submitter_name = StringField('Uw Naam', validators=[DataRequired(), Length(min=2, max=100)])
+    submitter_phone = StringField('Uw GSM Nummer', validators=[
+        DataRequired(),
+        Regexp(r'^\+?[0-9\s-]{8,}$', message='Voer een geldig telefoonnummer in')
+    ])
+
+    # Deceased person information
     name = StringField('Naam', validators=[DataRequired(), Length(min=2, max=100)])
     age = IntegerField('Leeftijd', validators=[Optional()])
     birth_place = StringField('Geboorteplaats', validators=[Optional(), Length(max=100)])
     death_place = StringField('Plaats van Overlijden', validators=[DataRequired(), Length(max=100)])
     date_of_death = DateField('Datum van Overlijden', validators=[DataRequired()])
 
-    # Dodengebed velden
+    # Prayer details
     death_prayer_location = SelectField('Locatie', validators=[DataRequired()])
     other_location_address = StringField('Adres', validators=[Length(max=200)])
 
@@ -20,8 +28,8 @@ class ObituaryForm(FlaskForm):
         ],
         validators=[DataRequired()]
     )
-    prayer_time = DateTimeLocalField('Tijdstip Dodengebed', format='%Y-%m-%dT%H:%M', validators=[Optional()])
-    prayer_date = DateField('Datum Dodengebed', validators=[Optional()])
+    prayer_time = DateTimeLocalField('Tijdstip Begrafenisgebed (Janazah)', format='%Y-%m-%dT%H:%M', validators=[Optional()])
+    prayer_date = DateField('Datum Begrafenisgebed (Janazah)', validators=[Optional()])
     after_prayer = SelectField('Na welk Gebed',
         choices=[
             ('fajr', 'Na Fajr (Ochtendgebed)'),
@@ -35,7 +43,6 @@ class ObituaryForm(FlaskForm):
     )
 
     burial_location = StringField('Begraafplaats', validators=[Optional(), Length(max=200)])
-    family_contact = StringField('Contact voor Condoleances', validators=[Optional(), Length(max=200)])
     additional_notes = TextAreaField('Aanvullende Opmerkingen', validators=[Optional(), Length(max=1000)])
 
     def validate_other_location_address(self, field):

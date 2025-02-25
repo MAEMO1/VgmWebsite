@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from datetime import datetime, timedelta
 from sqlalchemy import or_, case, and_
 from app import db
-from models import Obituary, ObituaryNotification, User
+from models import Obituary, ObituaryNotification, User, MosqueNotificationPreference
 from forms import ObituaryForm
 
 obituaries = Blueprint('obituaries', __name__)
@@ -12,12 +12,16 @@ obituaries = Blueprint('obituaries', __name__)
 def index():
     # Get current datetime
     now = datetime.now()
-    per_page = 3  # Aantal items per pagina
+    per_page = 10  # Aantal items per pagina voor eerdere gebeden
 
-    # Get page numbers from query parameters
-    upcoming_page = request.args.get('upcoming_page', 1, type=int)
+    # Get page number and mosque filter from query parameters
+    page = request.args.get('page', 1, type=int)
+    selected_mosques = request.args.getlist('mosque')  # List of selected mosque IDs
 
-    # Get upcoming obituaries (future prayer times and dates)
+    # Get all mosques for the filter dropdown
+    mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
+
+    # Get upcoming obituaries (future prayer times and dates), limited to 3
     upcoming_query = Obituary.query.filter(
         and_(
             Obituary.is_approved == True,
@@ -28,24 +32,54 @@ def index():
         )
     ).order_by(
         case(
-            # First show specific times
             (Obituary.prayer_time.isnot(None), Obituary.prayer_time),
-            # Then show prayer dates
             else_=Obituary.prayer_date
         ).asc()
+    ).limit(3)
+
+    # Get earlier obituaries (past prayer times and dates)
+    earlier_query = Obituary.query.filter(
+        and_(
+            Obituary.is_approved == True,
+            or_(
+                and_(Obituary.prayer_time.isnot(None), Obituary.prayer_time < now),
+                and_(Obituary.prayer_date.isnot(None), Obituary.prayer_date < now.date())
+            )
+        )
     )
 
-    # Get total counts for pagination
-    total_upcoming = upcoming_query.count()
-    upcoming_pages = (total_upcoming + per_page - 1) // per_page
+    # Apply mosque filter if selected
+    if selected_mosques:
+        earlier_query = earlier_query.filter(Obituary.mosque_id.in_(selected_mosques))
+
+    # Order earlier obituaries by prayer time/date descending
+    earlier_query = earlier_query.order_by(
+        case(
+            (Obituary.prayer_time.isnot(None), Obituary.prayer_time),
+            else_=Obituary.prayer_date
+        ).desc()
+    )
+
+    # Get total count for pagination
+    total_earlier = earlier_query.count()
+    total_pages = (total_earlier + per_page - 1) // per_page
 
     # Get paginated results
-    upcoming_obituaries = upcoming_query.offset((upcoming_page - 1) * per_page).limit(per_page).all()
+    earlier_obituaries = earlier_query.offset((page - 1) * per_page).limit(per_page).all()
+
+    # Get user's mosque preferences if logged in
+    user_mosque_preferences = []
+    if current_user.is_authenticated:
+        user_mosque_preferences = [pref.mosque_id for pref in current_user.mosque_preferences]
 
     return render_template('obituaries/index.html',
-                         upcoming_obituaries=upcoming_obituaries,
-                         upcoming_page=upcoming_page,
-                         upcoming_pages=upcoming_pages)
+                         upcoming_obituaries=upcoming_query.all(),
+                         earlier_obituaries=earlier_obituaries,
+                         mosques=mosques,
+                         selected_mosques=selected_mosques,
+                         user_mosque_preferences=user_mosque_preferences,
+                         page=page,
+                         total_pages=total_pages)
 
 @obituaries.route('/create', methods=['GET', 'POST'])
 @login_required
@@ -85,9 +119,10 @@ def create():
                 prayer_date=form.prayer_date.data if form.time_type.data == 'after_prayer' else None,
                 prayer_after=form.after_prayer.data if form.time_type.data == 'after_prayer' else None,
                 burial_location=form.burial_location.data,
-                family_contact=form.family_contact.data,
                 additional_notes=form.additional_notes.data,
                 submitter_id=current_user.id,
+                submitter_name=form.submitter_name.data,
+                submitter_phone=form.submitter_phone.data,
                 mosque_id=mosque_id,
                 is_approved=is_approved
             )
@@ -119,6 +154,30 @@ def create():
             print(f"Error: {str(e)}")
 
     return render_template('obituaries/create.html', form=form)
+
+@obituaries.route('/mosque-preferences', methods=['POST'])
+@login_required
+def update_mosque_preferences():
+    try:
+        # Get selected mosque IDs from form
+        selected_mosques = request.form.getlist('mosque_preferences')
+
+        # Remove all existing preferences
+        MosqueNotificationPreference.query.filter_by(user_id=current_user.id).delete()
+
+        # Add new preferences
+        for mosque_id in selected_mosques:
+            pref = MosqueNotificationPreference(user_id=current_user.id, mosque_id=int(mosque_id))
+            db.session.add(pref)
+
+        db.session.commit()
+        flash('Uw voorkeuren zijn bijgewerkt.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Er is een fout opgetreden bij het bijwerken van uw voorkeuren.', 'error')
+        print(f"Error: {str(e)}")
+
+    return redirect(url_for('obituaries.index'))
 
 @obituaries.route('/<int:obituary_id>/edit', methods=['GET', 'POST'])
 @login_required
@@ -176,6 +235,9 @@ def edit_obituary(obituary_id):
             obituary.burial_location = form.burial_location.data
             obituary.family_contact = form.family_contact.data
             obituary.additional_notes = form.additional_notes.data
+            obituary.submitter_name = form.submitter_name.data
+            obituary.submitter_phone = form.submitter_phone.data
+
 
             db.session.commit()
             flash('Overlijdensbericht is succesvol bijgewerkt.', 'success')
