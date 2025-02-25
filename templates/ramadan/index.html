@@ -475,10 +475,10 @@
     </section>
 </div>
 
-{% if current_user.is_authenticated and current_user.user_type == 'mosque' %}
-<a href="{{ url_for('main.add_iftar') }}" class="add-iftar-btn" title="{{ _('Voeg Iftar Toe') }}">
-    <i class="fas fa-plus"></i>
-</a>
+{% if current_user.is_authenticated and (current_user.user_type == 'mosque' or current_user.is_admin) %}
+    <a href="{{ url_for('main.add_iftar') }}" class="add-iftar-btn" title="{{ _('Voeg Iftar Toe') }}">
+        <i class="fas fa-plus"></i>
+    </a>
 {% endif %}
 {% endblock %}
 

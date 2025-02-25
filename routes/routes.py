@@ -1154,11 +1154,12 @@ def ramadan():
                          prayer_times=prayer_times,
                          programs=programs)
 
-@routes.route('/ramadan/iftar/add', methods=['GET', 'POST'])
+@routes.route('/ramadan/iftar-add', methods=['GET', 'POST'])
 @login_required
 def add_iftar():
+    # Check if user has permission (admin or mosque)
     if not (current_user.is_admin or current_user.user_type == 'mosque'):
-        flash('Alleen moskeeën en beheerders kunnen iftar evenementen toevoegen.', 'error')
+        flash(_('Alleen moskeeën en beheerders kunnen iftar evenementen toevoegen.'), 'error')
         return redirect(url_for('main.ramadan'))
 
     # Get list of mosques for admin selection
@@ -1172,7 +1173,7 @@ def add_iftar():
             is_recurring = 'is_recurring' in request.form
 
             # Determine mosque_id based on user type
-            mosque_id = current_user.id if current_user.user_type == 'mosque' else request.form.get('mosque_id')
+            mosque_id = int(request.form.get('mosque_id')) if current_user.is_admin else current_user.id
 
             # Base iftar event data
             iftar_data = {
@@ -1218,12 +1219,12 @@ def add_iftar():
                 db.session.add(iftar)
 
             db.session.commit()
-            flash('Iftar evenement(en) succesvol toegevoegd.', 'success')
-            return redirect(url_for('main.ramadan'))
+            flash(_('Iftar evenement(en) succesvol toegevoegd.'), 'success')
+            return redirect(url_for('main.iftar_map'))
 
         except Exception as e:
             db.session.rollback()
-            flash('Er is een fout opgetreden bij het toevoegen van het iftar evenement.', 'error')
+            flash(_('Er is een fout opgetreden bij het toevoegen van het iftar evenement.'), 'error')
             print(f"Error adding iftar event: {e}")
             return redirect(url_for('main.add_iftar'))
 
