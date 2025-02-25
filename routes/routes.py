@@ -777,7 +777,7 @@ def about():
         term_end = term[1] if term else None
     else:  # Default to current ormost recent term
         current_date = date.today()
-        latest_term = BoardMember.query.filter(
+        latest_term = BoardMember.query.query.filter(
             BoardMember.term_end >= current_date
         ).order_by(BoardMember.term_start.desc()).first()
 
@@ -1417,3 +1417,24 @@ def iftar_map():
                          center_lng=center_lng,
                          timedelta=timedelta,
                          google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'))
+
+@routes.route('/ramadan/iftar/<int:iftar_id>/delete', methods=['POST'])
+@login_required
+def delete_iftar(iftar_id):
+    iftar = IfterEvent.query.get_or_404(iftar_id)
+
+    # Check if user has permission to delete (admin or mosque owner)
+    if not (current_user.is_admin or current_user.id == iftar.mosque_id):
+        flash(_('Je hebt geen toestemming om dit iftar evenement te verwijderen.'), 'error')
+        return redirect(url_for('main.iftar_map'))
+
+    try:
+        db.session.delete(iftar)
+        db.session.commit()
+        flash(_('Iftar evenement succesvol verwijderd.'), 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(_('Er is een fout opgetreden bij het verwijderen van het iftar evenement.'), 'error')
+        print(f"Error deleting iftar event: {e}")
+
+    return redirect(url_for('main.iftar_map'))
