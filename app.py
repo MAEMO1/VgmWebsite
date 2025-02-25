@@ -7,7 +7,11 @@ from flask_babel import Babel
 from sqlalchemy.orm import DeclarativeBase
 
 # Configure logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 # Initialize Flask-SQLAlchemy with model class
 class Base(DeclarativeBase):
@@ -18,16 +22,16 @@ login_manager = LoginManager()
 babel = Babel()
 
 def get_locale():
-    # Try to get language from the session
     if 'language' in session:
         return session['language']
-    # Otherwise try to guess the language from the user accept header
     return request.accept_languages.best_match(['en', 'nl', 'ar'])
 
 def create_app():
     # Create Flask app
     app = Flask(__name__)
-    app.secret_key = os.environ.get("SESSION_SECRET", "dev_key_123")  # Default for development
+
+    # Configure secret key
+    app.secret_key = os.environ.get("SESSION_SECRET", "dev_key_123")
 
     # Configure PostgreSQL database
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
@@ -38,9 +42,9 @@ def create_app():
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     # Configure Babel
-    app.config['BABEL_DEFAULT_LOCALE'] = 'en'
+    app.config['BABEL_DEFAULT_LOCALE'] = 'nl'
     app.config['BABEL_SUPPORTED_LOCALES'] = ['en', 'nl', 'ar']
-    app.config['BABEL_DEFAULT_TIMEZONE'] = 'UTC'
+    app.config['BABEL_DEFAULT_TIMEZONE'] = 'Europe/Amsterdam'
 
     # Initialize extensions
     db.init_app(app)
@@ -48,7 +52,7 @@ def create_app():
     babel.init_app(app, locale_selector=get_locale)
 
     # Configure login manager
-    login_manager.login_view = 'main.login'  # Updated to use Blueprint route
+    login_manager.login_view = 'main.login'
     login_manager.login_message = 'Log in om deze pagina te bekijken.'
     login_manager.login_message_category = 'info'
 
@@ -69,17 +73,22 @@ def create_app():
         app.register_blueprint(blog, url_prefix='/blog')
         app.register_blueprint(translation_bp)
         app.register_blueprint(messages, url_prefix='/messages')
-        app.register_blueprint(donations)  # Remove prefix to fix route conflicts
+        app.register_blueprint(donations)
 
-        # Import models to ensure they're registered with SQLAlchemy
-        from models import User, Event, EventRegistration, EventNotification, PrayerTime, Obituary, ObituaryNotification, BlogPost, Message, FundraisingCampaign
-        db.create_all()
-        logging.info("Database tables created successfully")
+        try:
+            # Import models and create tables
+            from models import User, Event, EventRegistration, EventNotification, PrayerTime, Obituary, ObituaryNotification, BlogPost, Message, FundraisingCampaign
+            db.create_all()
+            logger.info("Database tables created successfully")
 
-        # Initialize mosques data
-        from routes.routes import initialize_mosques
-        initialize_mosques()
-        logging.info("Mosques initialized successfully")
+            # Initialize mosques data
+            from routes.routes import initialize_mosques
+            initialize_mosques()
+            logger.info("Mosques initialized successfully")
+
+        except Exception as e:
+            logger.error(f"Error during app initialization: {e}")
+            raise
 
         return app
 
@@ -91,3 +100,8 @@ app = create_app()
 def load_user(user_id):
     from models import User
     return User.query.get(int(user_id))
+
+if __name__ == "__main__":
+    # Always serve on port 5000
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
