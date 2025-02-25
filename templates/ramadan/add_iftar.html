@@ -70,7 +70,13 @@
                 <select class="form-control" id="mosque_id" name="mosque_id" required>
                     <option value="">{{ _('Kies een moskee...') }}</option>
                     {% for mosque in mosques %}
-                        <option value="{{ mosque.id }}">{{ mosque.mosque_name }}</option>
+                        <option value="{{ mosque.id }}" 
+                                data-street="{{ mosque.mosque_street }}"
+                                data-number="{{ mosque.mosque_number }}"
+                                data-postal="{{ mosque.mosque_postal }}"
+                                data-city="{{ mosque.mosque_city }}">
+                            {{ mosque.mosque_name }}
+                        </option>
                     {% endfor %}
                 </select>
             </div>
@@ -97,6 +103,26 @@
                 <label for="location" class="form-label">{{ _('Locatie') }}</label>
                 <input type="text" class="form-control" id="location" name="location" required>
                 <small class="form-text">{{ _('Specifieke locatie binnen de moskee (bijv. Hoofdzaal, Gemeenschapsruimte)') }}</small>
+            </div>
+
+            <div class="form-group">
+                <label for="address" class="form-label">{{ _('Adres') }}</label>
+                <div class="row">
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" id="street" name="street" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" id="number" name="number" readonly>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" id="postal" name="postal" readonly>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" id="city" name="city" readonly>
+                    </div>
+                </div>
             </div>
 
             <div class="form-group">
@@ -174,20 +200,61 @@
 
 {% block scripts %}
 <script>
-document.getElementById('registration_required').addEventListener('change', function() {
+document.addEventListener('DOMContentLoaded', function() {
+    const registration_required = document.getElementById('registration_required');
     const registrationDetails = document.querySelector('.registration-details');
-    registrationDetails.style.display = this.checked ? 'block' : 'none';
-});
-
-document.getElementById('is_recurring').addEventListener('change', function() {
+    const is_recurring = document.getElementById('is_recurring');
     const recurrenceDetails = document.querySelector('.recurrence-details');
-    recurrenceDetails.style.display = this.checked ? 'block' : 'none';
+    const mosque_id = document.getElementById('mosque_id');
 
-    // Make recurrence end date required if recurring is checked
-    const recurrenceEndDate = document.getElementById('recurrence_end_date');
-    recurrenceEndDate.required = this.checked;
-    const recurrenceType = document.getElementById('recurrence_type');
-    recurrenceType.required = this.checked;
+    // Function to fill address fields
+    function fillAddressFields(street, number, postal, city) {
+        document.getElementById('street').value = street;
+        document.getElementById('number').value = number;
+        document.getElementById('postal').value = postal;
+        document.getElementById('city').value = city;
+    }
+
+    // If user is a mosque, fill in the address immediately
+    {% if not current_user.is_admin %}
+        fillAddressFields(
+            '{{ current_user.mosque_street }}',
+            '{{ current_user.mosque_number }}',
+            '{{ current_user.mosque_postal }}',
+            '{{ current_user.mosque_city }}'
+        );
+    {% endif %}
+
+    // For admin users, update address when mosque is selected
+    if (mosque_id) {
+        mosque_id.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            if (selectedOption.value) {
+                fillAddressFields(
+                    selectedOption.dataset.street,
+                    selectedOption.dataset.number,
+                    selectedOption.dataset.postal,
+                    selectedOption.dataset.city
+                );
+            } else {
+                fillAddressFields('', '', '', '');
+            }
+        });
+    }
+
+    registration_required.addEventListener('change', function() {
+        registrationDetails.style.display = this.checked ? 'block' : 'none';
+    });
+
+    is_recurring.addEventListener('change', function() {
+        recurrenceDetails.style.display = this.checked ? 'block' : 'none';
+
+        // Make recurrence end date required if recurring is checked
+        const recurrenceEndDate = document.getElementById('recurrence_end_date');
+        recurrenceEndDate.required = this.checked;
+        const recurrenceType = document.getElementById('recurrence_type');
+        recurrenceType.required = this.checked;
+    });
 });
 </script>
 {% endblock %}
