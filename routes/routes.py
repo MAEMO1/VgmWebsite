@@ -1389,53 +1389,46 @@ def iftar_map():
     if family_only:
         query = query.filter(IfterEvent.is_family_friendly == True)
 
-    # Get all events sorted by date and time
-    all_iftar_events = query.order_by(
-        IfterEvent.date,
-        IfterEvent.start_time,
-        IfterEvent.is_recurring.desc(),
-        IfterEvent.recurrence_type
-    ).all()
+    # Get all events
+    iftar_events = query.all()
 
-    # Get Canva design resources
-    try:
-        brand_resources = canva_client.get_brand_resources()
-        designs = canva_client.get_designs(limit=5)  # Get latest 5 designs
-    except Exception as e:
-        print(f"Error fetching Canva resources: {e}")
-        brand_resources = []
-        designs = []
-
-    # Pre-process events by day and type
+    # Pre-process events by day
     calendar_events = {}
-    for day in range(1, (current_date.replace(day=28) + timedelta(days=4)).day + 1):
-        current_day = current_date.replace(day=day)
+    current_month_days = (end_date - start_date).days + 1
+
+    for day_offset in range(current_month_days):
+        current_day = start_date + timedelta(days=day_offset)
         calendar_events[current_day] = {
             'daily': [],
             'weekly': [],
             'single': []
         }
 
-        for iftar in all_iftar_events:
-            if iftar.date == current_day:
-                if iftar.is_recurring and iftar.recurrence_type == 'daily':
-                    calendar_events[current_day]['daily'].append(iftar)
-                elif iftar.is_recurring and iftar.recurrence_type == 'weekly':
-                    calendar_events[current_day]['weekly'].append(iftar)
+        # Add events for this day
+        for event in iftar_events:
+            if event.date == current_day:
+                if event.is_recurring and event.recurrence_type == 'daily':
+                    calendar_events[current_day]['daily'].append(event)
+                elif event.is_recurring and event.recurrence_type == 'weekly':
+                    calendar_events[current_day]['weekly'].append(event)
                 else:
-                    calendar_events[current_day]['single'].append(iftar)
+                    calendar_events[current_day]['single'].append(event)
+
+    # Debug print
+    print(f"Calendar events for {current_date.strftime('%B %Y')}:")
+    for day, events in calendar_events.items():
+        total_events = len(events['daily']) + len(events['weekly']) + len(events['single'])
+        if total_events > 0:
+            print(f"{day}: {total_events} events")
 
     return render_template('ramadan/iftar_map.html',
                          calendar_events=calendar_events,
-                         iftar_events=all_iftar_events,
                          family_only=family_only,
                          current_date=current_date,
                          prev_month=prev_month,
                          next_month=next_month,
                          today=date.today(),
-                         timedelta=timedelta,
-                         brand_resources=brand_resources,
-                         designs=designs)
+                         timedelta=timedelta)
 
 @routes.route('/ramadan/iftar/<int:iftar_id>/delete', methods=['POST'])
 @login_required
