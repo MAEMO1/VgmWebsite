@@ -779,7 +779,7 @@ def about():
         current_date = date.today()
         latest_term = BoardMember.query.filter(
             BoardMember.term_end >= current_date
-                ).order_by(BoardMember.term_start.desc()).first()
+        ).order_by(BoardMember.term_start.desc()).first()
 
         if latest_term:
             term_start = latest_term.term_start
@@ -1155,77 +1155,84 @@ def ramadan():
 @routes.route('/ramadan/iftar-add', methods=['GET', 'POST'])
 @login_required
 def add_iftar():
-    # Check if user has permission (admin or mosque)
-    if not (current_user.is_admin or current_user.user_type == 'mosque'):
-        flash(_('Alleen moskeeën en beheerders kunnen iftar evenementen toevoegen.'), 'error')
+    if not (current_user.user_type == 'mosque' or current_user.is_admin):
+        flash(_('Je hebt geen toestemming om iftar evenementen toe te voegen.'), 'error')
         return redirect(url_for('main.ramadan'))
-
-    # Get list of mosques for admin selection
-    mosques = None
-    if current_user.is_admin:
-        mosques = User.query.filter_by(user_type='mosque', is_verified=True).order_by(User.mosque_name).all()
 
     if request.method == 'POST':
         try:
-            start_date = datetime.strptime(request.form['date'], '%Y-%m-%d').date()
-            is_recurring = 'is_recurring' in request.form
+            # Get form data
+            date = datetime.strptime(request.form['date'], '%Y-%m-%d').date()
+            start_time = datetime.strptime(request.form['start_time'], '%H:%M').time()
+            end_time = datetime.strptime(request.form['end_time'], '%H:%M').time() if request.form.get('end_time') else None
+            location = request.form.get('location')
+            women_entrance = request.form.get('women_entrance')  # New field
+            capacity = int(request.form['capacity']) if request.form.get('capacity') else None
 
-            # Determine mosque_id based on user type
-            mosque_id = int(request.form.get('mosque_id')) if current_user.is_admin else current_user.id
+            # Get mosque ID based on user type
+            mosque_id = int(request.form['mosque_id']) if current_user.is_admin else current_user.id
 
-            # Base iftar event data
-            iftar_data = {
-                'mosque_id': mosque_id,
-                'start_time': datetime.strptime(request.form['start_time'], '%H:%M').time(),
-                'end_time': datetime.strptime(request.form['end_time'], '%H:%M').time() if request.form.get('end_time') else None,
-                'location': request.form['location'],
-                'capacity': int(request.form['capacity']) if request.form.get('capacity') else None,
-                'is_family_friendly': 'is_family_friendly' in request.form,
-                'registration_required': 'registration_required' in request.form,
-                'registration_deadline': datetime.strptime(request.form['registration_deadline'], '%Y-%m-%dT%H:%M') if request.form.get('registration_deadline') else None,
-                'dietary_options': 'dietary_options' in request.form,
-                'notes': request.form.get('notes'),
-                'is_recurring': is_recurring
-            }
+            # Create base iftar event
+            iftar = IfterEvent(
+                mosque_id=mosque_id,
+                date=date,
+                start_time=start_time,
+                end_time=end_time,
+                location=location,
+                women_entrance=women_entrance,  # Add women's entrance
+                capacity=capacity,
+                is_family_friendly=bool(request.form.get('is_family_friendly')),
+                registration_required=bool(request.form.get('registration_required')),
+                dietary_options=bool(request.form.get('dietary_options')),
+                notes=request.form.get('notes'),
+                is_recurring=bool(request.form.get('is_recurring'))
+            )
 
-            if is_recurring:
-                recurrence_type = request.form['recurrence_type']
-                end_date = datetime.strptime(request.form['recurrence_end_date'], '%Y-%m-%d').date()
-                iftar_data['recurrence_type'] = recurrence_type
-                iftar_data['recurrence_end_date'] = end_date
+            # Handle recurring events
+            if iftar.is_recurring:
+                iftar.recurrence_type = request.form.get('recurrence_type')
+                iftar.recurrence_end_date = datetime.strptime(request.form['recurrence_end_date'], '%Y-%m-%d').date()
 
-                current_date = start_date
-                while current_date <= end_date:
-                    # Create an iftar event for this date
-                    iftar = IfterEvent(
-                        **iftar_data,
-                        date=current_date
-                    )
-                    db.session.add(iftar)
+                # Create recurring events
+                current_date = date
+                while current_date <= iftar.recurrence_end_date:
+                    if current_date != date:  # Skip the first date as it's already created
+                        recurring_iftar = IfterEvent(
+                            mosque_id=mosque_id,
+                            date=current_date,
+                            start_time=start_time,
+                            end_time=end_time,
+                            location=location,
+                            women_entrance=women_entrance,  # Add women's entrance
+                            capacity=capacity,
+                            is_family_friendly=iftar.is_family_friendly,
+                            registration_required=iftar.registration_required,
+                            dietary_options=iftar.dietary_options,
+                            notes=iftar.notes,
+                            is_recurring=True,
+                            recurrence_type=iftar.recurrence_type,
+                            recurrence_end_date=iftar.recurrence_end_date
+                        )
+                        db.session.add(recurring_iftar)
 
-                    # Calculate next date based on recurrence type
-                    if recurrence_type == 'daily':
+                    # Increment date based on recurrence type
+                    if iftar.recurrence_type == 'daily':
                         current_date += timedelta(days=1)
-                    elif recurrence_type == 'weekly':
-                        current_date += timedelta(weeks=1)
-            else:
-                # Create a single iftar event
-                iftar = IfterEvent(
-                    **iftar_data,
-                    date=start_date
-                )
-                db.session.add(iftar)
+                    elif iftar.recurrence_type == 'weekly':
+                        current_date += timedelta(days=7)
 
+            db.session.add(iftar)
             db.session.commit()
-            flash(_('Iftar evenement(en) succesvol toegevoegd.'), 'success')
+            flash(_('Iftar evenement succesvol toegevoegd.'), 'success')
             return redirect(url_for('main.iftar_map'))
 
         except Exception as e:
             db.session.rollback()
             flash(_('Er is een fout opgetreden bij het toevoegen van het iftar evenement.'), 'error')
             print(f"Error adding iftar event: {e}")
-            return redirect(url_for('main.add_iftar'))
 
+    # GET request - render form
+    mosques = User.query.filter_by(user_type='mosque', is_verified=True).all() if current_user.is_admin else None
     return render_template('ramadan/add_iftar.html', mosques=mosques)
 
 @routes.route('/ramadan/iftar/<int:iftar_id>/register', methods=['POST'])
@@ -1380,12 +1387,13 @@ def iftar_map():
     query = IfterEvent.query.filter(
         IfterEvent.date >= start_date,
         IfterEvent.date <= end_date
-    )
+    ).order_by(IfterEvent.date, IfterEvent.start_time)
 
     if family_only:
         query = query.filter(IfterEvent.is_family_friendly == True)
 
-    iftar_events = query.order_by(IfterEvent.date, IfterEvent.start_time).all()
+    # Get unique events (no duplicates)
+    iftar_events = query.distinct().all()
 
     # Calculate map center (average of all mosque coordinates)
     if iftar_events:

@@ -394,6 +394,11 @@
                                 <div class="iftar-details">
                                     <div>{{ iftar.mosque.mosque_street }} {{ iftar.mosque.mosque_number }}</div>
                                     <div>{{ iftar.mosque.mosque_postal }} {{ iftar.mosque.mosque_city }}</div>
+                                    {% if iftar.women_entrance %}
+                                        <div class="text-muted">
+                                            <i class="fas fa-door-open"></i> {{ _('Ingang vrouwen:') }} {{ iftar.women_entrance }}
+                                        </div>
+                                    {% endif %}
                                 </div>
                                 {% if iftar.is_family_friendly %}
                                     <span class="badge-family">
