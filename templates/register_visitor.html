@@ -1,49 +1,204 @@
 {% extends "base.html" %}
 
-{% block title %}Register as Visitor - Mosque Management{% endblock %}
+{% block title %}{{ _('Registreer als Bezoeker - VGM') }}{% endblock %}
+
+{% block styles %}
+<style>
+.register-container {
+    max-width: 480px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.register-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.register-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.register-subtitle {
+    color: #666;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.register-form {
+    background: white;
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+}
+
+.form-group {
+    margin-bottom: 1.75rem;
+}
+
+.form-label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+    color: #1a1a1a;
+    font-size: 0.95rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    color: #1a1a1a;
+    background: #f9fafb;
+}
+
+.form-control:focus {
+    border-color: #2563eb;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
+    outline: none;
+}
+
+.form-text {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.btn-register {
+    width: 100%;
+    padding: 1rem;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    margin-top: 1rem;
+}
+
+.btn-register:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+.login-link {
+    text-align: center;
+    margin-top: 2rem;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.login-link a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+
+.divider {
+    margin: 2rem 0;
+    border: none;
+    height: 1px;
+    background: #e5e7eb;
+}
+
+.alert {
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.alert-danger {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
+}
+
+.alert-success {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #86efac;
+}
+
+@media (max-width: 576px) {
+    .register-container {
+        padding: 1.5rem;
+    }
+
+    .register-title {
+        font-size: 2rem;
+    }
+
+    .register-form {
+        padding: 1.5rem;
+    }
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h2>Register as Visitor</h2>
-            </div>
-            <div class="card-body">
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="alert alert-{{ category }}">{{ message }}</div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-
-                <form method="POST">
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="confirm_password" class="form-label">Confirm Password</label>
-                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Register</button>
-                    <a href="{{ url_for('main.register') }}" class="btn btn-secondary">Back</a>
-                </form>
-            </div>
-        </div>
+<div class="register-container">
+    <div class="register-header">
+        <h1 class="register-title">{{ _('Word lid van VGM') }}</h1>
+        <p class="register-subtitle">
+            {{ _('Maak een account aan om op de hoogte te blijven van evenementen en nieuws van de Gentse moskeeën') }}
+        </p>
     </div>
+
+    <div class="register-form">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="username" class="form-label">{{ _('Gebruikersnaam') }}</label>
+                <input type="text" class="form-control" id="username" name="username" required 
+                       placeholder="{{ _('Kies een gebruikersnaam') }}">
+            </div>
+
+            <div class="form-group">
+                <label for="email" class="form-label">{{ _('E-mailadres') }}</label>
+                <input type="email" class="form-control" id="email" name="email" required
+                       placeholder="{{ _('Vul uw e-mailadres in') }}">
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">{{ _('Wachtwoord') }}</label>
+                <input type="password" class="form-control" id="password" name="password" required
+                       placeholder="{{ _('Kies een sterk wachtwoord') }}">
+                <div class="form-text">{{ _('Gebruik minimaal 8 tekens met letters, cijfers en symbolen') }}</div>
+            </div>
+
+            <button type="submit" class="btn-register">
+                {{ _('Account Aanmaken') }}
+            </button>
+        </form>
+    </div>
+
+    <p class="login-link">
+        {{ _('Al een account?') }}
+        <a href="{{ url_for('main.login') }}">{{ _('Log hier in') }}</a>
+    </p>
 </div>
 {% endblock %}
