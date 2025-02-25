@@ -196,12 +196,15 @@ def contact():
 def mosque_detail(mosque_id):
     mosque = User.query.filter_by(id=mosque_id, user_type='mosque', is_verified=True).first_or_404()
 
-    # Get today's prayer times
+    # Get today's prayer times, handle empty result
     today = datetime.today().date()
-    prayer_times = mosque.prayer_times.filter_by(date=today).all()
+    prayer_times = PrayerTime.query.filter_by(mosque_id=mosque_id, date=today).all()
 
     # Get upcoming events
-    events = mosque.events.filter(Event.date >= datetime.utcnow()).order_by(Event.date).limit(5).all()
+    events = Event.query.filter(
+        Event.mosque_id == mosque_id,
+        Event.date >= datetime.utcnow()
+    ).order_by(Event.date).limit(5).all()
 
     return render_template('mosque_detail.html',
                          mosque=mosque,
@@ -775,7 +778,7 @@ def about():
             term_end = date(current_date.year, 12, 31)
 
     # Get board members for the selected term
-    board_members = BoardMember.query.filter(
+    board_members = BoardMember.query.query.filter(
         BoardMember.term_start == term_start
     ).all()
 

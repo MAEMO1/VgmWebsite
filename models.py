@@ -150,6 +150,12 @@ class PrayerTime(db.Model):
     date = db.Column(db.Date, nullable=False)
     mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Link to mosque user
 
+    # Add backref to User model
+    mosque = db.relationship('User', backref=db.backref('prayer_times', lazy='dynamic'))
+
+    def __repr__(self):
+        return f'<PrayerTime {self.prayer_name} at {self.time}>'
+
 class Obituary(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
