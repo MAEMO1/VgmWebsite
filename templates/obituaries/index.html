@@ -57,13 +57,6 @@
     border-left: 4px solid #005A87;
 }
 
-.notification-section {
-    background: #f8f9fa;
-    padding: 1.5rem;
-    border-radius: 12px;
-    margin-bottom: 2rem;
-}
-
 .prayer-info .detail-label {
     color: #005A87;
     font-weight: 600;
@@ -148,28 +141,6 @@
 {% block content %}
 <div class="obituaries-container">
     <h1>{{ _('Overlijdensberichten') }}</h1>
-
-    {% if current_user.is_authenticated %}
-    <!-- Notification Preferences -->
-    <div class="notification-section">
-        <h4>{{ _('Notificatie Voorkeuren') }}</h4>
-        <form method="POST" action="{{ url_for('obituaries.update_mosque_preferences') }}">
-            <p class="text-muted">{{ _('Selecteer de moskeeën waarvan u begrafenisgebeden wilt volgen:') }}</p>
-            <div class="form-group">
-                <select name="mosque_preferences" class="form-select" multiple>
-                    {% for mosque in mosques %}
-                    <option value="{{ mosque.id }}"
-                            {% if mosque.id in user_mosque_preferences %}selected{% endif %}>
-                        {{ mosque.username.replace('_', ' ').title() }}
-                    </option>
-                    {% endfor %}
-                </select>
-                <div class="form-text">{{ _('Houd Ctrl ingedrukt om meerdere moskeeën te selecteren') }}</div>
-            </div>
-            <button type="submit" class="btn btn-primary mt-3">{{ _('Voorkeuren Opslaan') }}</button>
-        </form>
-    </div>
-    {% endif %}
 
     <!-- Aankomende Begrafenisgebeden -->
     <h2 class="section-header">{{ _('Aankomende Begrafenisgebeden (Janazah)') }}</h2>
@@ -351,7 +322,7 @@
 
     <!-- Veelgestelde vragen -->
     <div class="faq-section">
-        <h2 class="section-header">{{ _('Veelgestelde vragen') }}</h2>
+        <h2 class="section-title">{{ _('Veelgestelde vragen') }}</h2>
 
         <div class="faq-item">
             <div class="faq-question">{{ _('Hoe kan ik een overlijdensbericht toevoegen?') }}</div>
@@ -371,11 +342,6 @@
         <div class="faq-item">
             <div class="faq-question">{{ _('Hoe lang blijft een overlijdensbericht zichtbaar?') }}</div>
             <div class="faq-answer">{{ _('Overlijdensberichten blijven zichtbaar in het archief. Aankomende begrafenisgebeden (Janazah) worden prominent weergegeven op de pagina.') }}</div>
-        </div>
-
-        <div class="faq-item">
-            <div class="faq-question">{{ _('Hoe werken de notificaties?') }}</div>
-            <div class="faq-answer">{{ _('U kunt aangeven van welke moskeeën u notificaties wilt ontvangen voor nieuwe begrafenisgebeden. Selecteer hiervoor de gewenste moskeeën in het notificatie voorkeuren menu bovenaan de pagina.') }}</div>
         </div>
     </div>
 

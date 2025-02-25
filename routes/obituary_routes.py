@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from datetime import datetime, timedelta
 from sqlalchemy import or_, case, and_
 from app import db
-from models import Obituary, ObituaryNotification, User, MosqueNotificationPreference
+from models import Obituary, User
 from forms import ObituaryForm
 
 obituaries = Blueprint('obituaries', __name__)
@@ -17,8 +17,6 @@ def index():
     # Get page number from query parameters
     page = request.args.get('page', 1, type=int)
 
-    # Get all mosques for the notification preferences dropdown
-    mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
 
     # Get upcoming obituaries (future prayer times and dates), limited to 3
     upcoming_query = Obituary.query.filter(
@@ -59,16 +57,9 @@ def index():
     # Get paginated results
     earlier_obituaries = earlier_query.offset((page - 1) * per_page).limit(per_page).all()
 
-    # Get user's mosque preferences if logged in
-    user_mosque_preferences = []
-    if current_user.is_authenticated:
-        user_mosque_preferences = [pref.mosque_id for pref in current_user.mosque_preferences]
-
     return render_template('obituaries/index.html',
                          upcoming_obituaries=upcoming_query.all(),
                          earlier_obituaries=earlier_obituaries,
-                         mosques=mosques,
-                         user_mosque_preferences=user_mosque_preferences,
                          page=page,
                          total_pages=total_pages)
 
@@ -119,17 +110,6 @@ def create():
             )
 
             db.session.add(obituary)
-
-            # Send notification to mosque if needed
-            if mosque_id and not current_user.is_admin:
-                notification = ObituaryNotification(
-                    obituary_id=obituary.id,
-                    user_id=mosque_id,
-                    notification_type='verification_needed',
-                    message=f'Nieuw overlijdensbericht ter verificatie: {obituary.name}'
-                )
-                db.session.add(notification)
-
             db.session.commit()
 
             if is_approved:
@@ -145,30 +125,6 @@ def create():
             print(f"Error: {str(e)}")
 
     return render_template('obituaries/create.html', form=form)
-
-@obituaries.route('/mosque-preferences', methods=['POST'])
-@login_required
-def update_mosque_preferences():
-    try:
-        # Get selected mosque IDs from form
-        selected_mosques = request.form.getlist('mosque_preferences')
-
-        # Remove all existing preferences
-        MosqueNotificationPreference.query.filter_by(user_id=current_user.id).delete()
-
-        # Add new preferences
-        for mosque_id in selected_mosques:
-            pref = MosqueNotificationPreference(user_id=current_user.id, mosque_id=int(mosque_id))
-            db.session.add(pref)
-
-        db.session.commit()
-        flash('Uw voorkeuren zijn bijgewerkt.', 'success')
-    except Exception as e:
-        db.session.rollback()
-        flash('Er is een fout opgetreden bij het bijwerken van uw voorkeuren.', 'error')
-        print(f"Error: {str(e)}")
-
-    return redirect(url_for('obituaries.index'))
 
 @obituaries.route('/<int:obituary_id>/edit', methods=['GET', 'POST'])
 @login_required
@@ -205,14 +161,6 @@ def edit_obituary(obituary_id):
                     obituary.mosque_id = new_mosque_id
                     if not current_user.is_admin:
                         obituary.is_approved = False
-                        # Notify new mosque
-                        notification = ObituaryNotification(
-                            obituary_id=obituary.id,
-                            user_id=new_mosque_id,
-                            notification_type='verification_needed',
-                            message=f'Overlijdensbericht ter verificatie: {obituary.name}'
-                        )
-                        db.session.add(notification)
 
             # Update other fields
             obituary.name = form.name.data
