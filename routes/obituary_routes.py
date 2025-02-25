@@ -14,11 +14,10 @@ def index():
     now = datetime.now()
     per_page = 10  # Aantal items per pagina voor eerdere gebeden
 
-    # Get page number and mosque filter from query parameters
+    # Get page number from query parameters
     page = request.args.get('page', 1, type=int)
-    selected_mosques = request.args.getlist('mosque')  # List of selected mosque IDs
 
-    # Get all mosques for the filter dropdown
+    # Get all mosques for the notification preferences dropdown
     mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
 
     # Get upcoming obituaries (future prayer times and dates), limited to 3
@@ -46,14 +45,7 @@ def index():
                 and_(Obituary.prayer_date.isnot(None), Obituary.prayer_date < now.date())
             )
         )
-    )
-
-    # Apply mosque filter if selected
-    if selected_mosques:
-        earlier_query = earlier_query.filter(Obituary.mosque_id.in_(selected_mosques))
-
-    # Order earlier obituaries by prayer time/date descending
-    earlier_query = earlier_query.order_by(
+    ).order_by(
         case(
             (Obituary.prayer_time.isnot(None), Obituary.prayer_time),
             else_=Obituary.prayer_date
@@ -76,7 +68,6 @@ def index():
                          upcoming_obituaries=upcoming_query.all(),
                          earlier_obituaries=earlier_obituaries,
                          mosques=mosques,
-                         selected_mosques=selected_mosques,
                          user_mosque_preferences=user_mosque_preferences,
                          page=page,
                          total_pages=total_pages)

@@ -57,23 +57,11 @@
     border-left: 4px solid #005A87;
 }
 
-.filter-section {
+.notification-section {
     background: #f8f9fa;
     padding: 1.5rem;
     border-radius: 12px;
     margin-bottom: 2rem;
-}
-
-.mosque-filter {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
-
-.mosque-checkbox {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
 }
 
 .prayer-info .detail-label {
@@ -112,6 +100,35 @@
     color: white;
 }
 
+.faq-section {
+    margin-top: 4rem;
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 12px;
+}
+
+.faq-item {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.faq-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.faq-question {
+    font-weight: 600;
+    color: #005A87;
+    margin-bottom: 0.5rem;
+}
+
+.faq-answer {
+    color: #6c757d;
+}
+
 .pagination {
     margin: 2rem 0;
 }
@@ -132,42 +149,27 @@
 <div class="obituaries-container">
     <h1>{{ _('Overlijdensberichten') }}</h1>
 
-    <!-- Filter Section -->
-    <div class="filter-section">
-        <h3 class="mb-3">{{ _('Filter Begrafenisgebeden') }}</h3>
-        <form method="GET" class="mb-3">
-            <div class="mosque-filter">
-                {% for mosque in mosques %}
-                <div class="mosque-checkbox">
-                    <input type="checkbox" name="mosque" value="{{ mosque.id }}" 
-                           id="mosque-{{ mosque.id }}"
-                           {% if mosque.id|string in selected_mosques %}checked{% endif %}>
-                    <label for="mosque-{{ mosque.id }}">{{ mosque.username.replace('_', ' ').title() }}</label>
-                </div>
-                {% endfor %}
-            </div>
-            <button type="submit" class="btn btn-primary mt-3">{{ _('Filter Toepassen') }}</button>
-        </form>
-
-        {% if current_user.is_authenticated %}
-        <hr>
+    {% if current_user.is_authenticated %}
+    <!-- Notification Preferences -->
+    <div class="notification-section">
         <h4>{{ _('Notificatie Voorkeuren') }}</h4>
         <form method="POST" action="{{ url_for('obituaries.update_mosque_preferences') }}">
             <p class="text-muted">{{ _('Selecteer de moskeeën waarvan u begrafenisgebeden wilt volgen:') }}</p>
-            <div class="mosque-filter">
-                {% for mosque in mosques %}
-                <div class="mosque-checkbox">
-                    <input type="checkbox" name="mosque_preferences" value="{{ mosque.id }}"
-                           id="pref-mosque-{{ mosque.id }}"
-                           {% if mosque.id in user_mosque_preferences %}checked{% endif %}>
-                    <label for="pref-mosque-{{ mosque.id }}">{{ mosque.username.replace('_', ' ').title() }}</label>
-                </div>
-                {% endfor %}
+            <div class="form-group">
+                <select name="mosque_preferences" class="form-select" multiple>
+                    {% for mosque in mosques %}
+                    <option value="{{ mosque.id }}"
+                            {% if mosque.id in user_mosque_preferences %}selected{% endif %}>
+                        {{ mosque.username.replace('_', ' ').title() }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <div class="form-text">{{ _('Houd Ctrl ingedrukt om meerdere moskeeën te selecteren') }}</div>
             </div>
             <button type="submit" class="btn btn-primary mt-3">{{ _('Voorkeuren Opslaan') }}</button>
         </form>
-        {% endif %}
     </div>
+    {% endif %}
 
     <!-- Aankomende Begrafenisgebeden -->
     <h2 class="section-header">{{ _('Aankomende Begrafenisgebeden (Janazah)') }}</h2>
@@ -340,12 +342,42 @@
         <ul class="pagination justify-content-center">
             {% for p in range(1, total_pages + 1) %}
             <li class="page-item {% if p == page %}active{% endif %}">
-                <a class="page-link" href="{{ url_for('obituaries.index', page=p, mosque=selected_mosques) }}">{{ p }}</a>
+                <a class="page-link" href="{{ url_for('obituaries.index', page=p) }}">{{ p }}</a>
             </li>
             {% endfor %}
         </ul>
     </nav>
     {% endif %}
+
+    <!-- Veelgestelde vragen -->
+    <div class="faq-section">
+        <h2 class="section-header">{{ _('Veelgestelde vragen') }}</h2>
+
+        <div class="faq-item">
+            <div class="faq-question">{{ _('Hoe kan ik een overlijdensbericht toevoegen?') }}</div>
+            <div class="faq-answer">{{ _('U kunt een overlijdensbericht toevoegen door op de + knop rechtsonder te klikken. Als u een moskee selecteert voor het begrafenisgebed (Janazah), moet deze het bericht eerst verifiëren voordat het wordt gepubliceerd.') }}</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">{{ _('Wie kan een overlijdensbericht bewerken?') }}</div>
+            <div class="faq-answer">{{ _('Een overlijdensbericht kan bewerkt worden door de persoon die het heeft toegevoegd, de geselecteerde moskee en de beheerders van de website.') }}</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">{{ _('Wanneer is verificatie nodig?') }}</div>
+            <div class="faq-answer">{{ _('Verificatie is alleen nodig wanneer u een specifieke moskee selecteert voor het begrafenisgebed (Janazah). Als u "Andere locatie" kiest, wordt het bericht direct gepubliceerd.') }}</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">{{ _('Hoe lang blijft een overlijdensbericht zichtbaar?') }}</div>
+            <div class="faq-answer">{{ _('Overlijdensberichten blijven zichtbaar in het archief. Aankomende begrafenisgebeden (Janazah) worden prominent weergegeven op de pagina.') }}</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">{{ _('Hoe werken de notificaties?') }}</div>
+            <div class="faq-answer">{{ _('U kunt aangeven van welke moskeeën u notificaties wilt ontvangen voor nieuwe begrafenisgebeden. Selecteer hiervoor de gewenste moskeeën in het notificatie voorkeuren menu bovenaan de pagina.') }}</div>
+        </div>
+    </div>
 
     <a href="{{ url_for('obituaries.create') }}" class="add-btn" title="{{ _('Overlijdensbericht Toevoegen') }}">
         <i class="fas fa-plus"></i>
