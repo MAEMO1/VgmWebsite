@@ -51,12 +51,6 @@
                         {% if obituary.additional_notes %}
                             <p class="font-italic">{{ obituary.additional_notes }}</p>
                         {% endif %}
-                        {% if current_user.is_authenticated %}
-                            <button class="btn btn-sm btn-primary subscribe-notifications" 
-                                    data-obituary-id="{{ obituary.id }}">
-                                <i class="fas fa-bell"></i> {{ _('Subscribe to Updates') }}
-                            </button>
-                        {% endif %}
                     </div>
                 </div>
                 {% else %}
@@ -111,10 +105,6 @@
                             <input type="text" class="form-control" id="burial_location" name="burial_location">
                         </div>
                         <div class="mb-3">
-                            <label for="family_contact" class="form-label">{{ _('Family Contact Information') }}</label>
-                            <input type="text" class="form-control" id="family_contact" name="family_contact">
-                        </div>
-                        <div class="mb-3">
                             <label for="details" class="form-label">{{ _('Details') }}</label>
                             <textarea class="form-control" id="details" name="details" rows="3"></textarea>
                         </div>
@@ -123,25 +113,6 @@
                             <textarea class="form-control" id="additional_notes" name="additional_notes" rows="2"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary">{{ _('Submit for Approval') }}</button>
-                    </form>
-                </div>
-            </div>
-        {% endif %}
-        {% if current_user.is_authenticated %}
-            <div class="card mt-3">
-                <div class="card-header">
-                    <h3>{{ _('Notification Preferences') }}</h3>
-                </div>
-                <div class="card-body">
-                    <form method="POST" action="{{ url_for('obituaries.update_preferences') }}">
-                        <div class="form-check mb-3">
-                            <input type="checkbox" class="form-check-input" id="notify_obituaries" 
-                                   name="notify_obituaries" {% if current_user.notify_obituaries %}checked{% endif %}>
-                            <label class="form-check-label" for="notify_obituaries">
-                                {{ _('Receive notifications for new obituaries') }}
-                            </label>
-                        </div>
-                        <button type="submit" class="btn btn-primary">{{ _('Save Preferences') }}</button>
                     </form>
                 </div>
             </div>
