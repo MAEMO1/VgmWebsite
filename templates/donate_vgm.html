@@ -30,7 +30,31 @@
     </div>
 </div>
 
-<div class="campaigns-section">
+<div class="donation-type-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="donation-type-selector">
+                    <h2 class="text-center mb-4">{{ _('Kies uw donatie type') }}</h2>
+                    <div class="donation-type-grid">
+                        <button class="donation-type-option active" data-type="general">
+                            <i class="fas fa-mosque"></i>
+                            <h3>{{ _('Algemene Donatie') }}</h3>
+                            <p>{{ _('Steun VGM in het algemeen voor diverse activiteiten en projecten') }}</p>
+                        </button>
+                        <button class="donation-type-option" data-type="project">
+                            <i class="fas fa-hands-helping"></i>
+                            <h3>{{ _('Specifiek Project') }}</h3>
+                            <p>{{ _('Kies een specifiek project om te steunen') }}</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="projectSection" class="campaigns-section" style="display: none;">
     <div class="container">
         <h2 class="section-title text-center mb-5">{{ _('Actuele Projecten') }}</h2>
         <div class="campaigns-grid">
@@ -77,7 +101,7 @@
             <div class="col-lg-8">
                 <div class="donation-card">
                     <div class="donation-options mb-4">
-                        <h3 class="text-center mb-4">{{ _('Kies een donatiebedrag') }}</h3>
+                        <h3 class="text-center mb-4" id="donationFormTitle">{{ _('Kies een donatiebedrag') }}</h3>
                         <div class="amount-grid">
                             <button class="amount-option" data-amount="10">€10</button>
                             <button class="amount-option" data-amount="25">€25</button>
@@ -193,12 +217,11 @@
         </div>
     </div>
 </div>
-
 {% endblock %}
 
 {% block styles %}
 <style>
-:root {
+::root {
     --primary-color: #005A87;
     --secondary-color: #41B7AC;
     --accent-color: #FF4154;
@@ -262,7 +285,6 @@
     line-height: 1.8;
     margin-bottom: 1rem;
     color: rgba(255, 255, 255, 0.9);
-
 }
 
 .quote-text {
@@ -581,15 +603,105 @@
     background: var(--primary-color);
     color: white;
 }
+
+
+/* New styles for donation type selector */
+.donation-type-section {
+    padding: 4rem 0;
+    background-color: var(--background-light);
+    margin-top: -4rem;
+}
+
+.donation-type-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.donation-type-option {
+    background: white;
+    border: 2px solid var(--border-color);
+    border-radius: 1rem;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.donation-type-option i {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.donation-type-option h3 {
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.donation-type-option p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.donation-type-option:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-color);
+}
+
+.donation-type-option.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.donation-type-option.active i,
+.donation-type-option.active h3,
+.donation-type-option.active p {
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .donation-type-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
 </style>
 {% endblock %}
 
 {% block scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const donationTypes = document.querySelectorAll('.donation-type-option');
+    const projectSection = document.getElementById('projectSection');
+    const donationFormTitle = document.getElementById('donationFormTitle');
+
+    donationTypes.forEach(option => {
+        option.addEventListener('click', function() {
+            // Remove active class from all options
+            donationTypes.forEach(opt => opt.classList.remove('active'));
+            // Add active class to clicked option
+            this.classList.add('active');
+
+            const type = this.dataset.type;
+            if (type === 'project') {
+                projectSection.style.display = 'block';
+                donationFormTitle.textContent = 'Kies een project en donatiebedrag';
+            } else {
+                projectSection.style.display = 'none';
+                donationFormTitle.textContent = 'Kies een donatiebedrag';
+                // Reset any selected campaign
+                document.querySelector('form').dataset.campaignId = '';
+            }
+        });
+    });
+
     const amountOptions = document.querySelectorAll('.amount-option');
     const customAmountInput = document.querySelector('.custom-amount-input');
-    const donationForm = document.querySelector('.donation-form');
     const customAmountField = document.getElementById('custom_amount');
 
     amountOptions.forEach(option => {
@@ -621,7 +733,7 @@ function selectCampaign(campaignId, campaignTitle) {
     document.querySelector('form').dataset.campaignId = campaignId;
 
     // Update form title/description to reflect selected campaign
-    const formTitle = document.querySelector('.donation-card h3');
+    const formTitle = document.querySelector('#donationFormTitle');
     formTitle.textContent = `Steun: ${campaignTitle}`;
 
     // Scroll to donation form
