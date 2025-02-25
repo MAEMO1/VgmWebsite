@@ -36,8 +36,25 @@
 .ramadan-title {
     font-size: 3.5rem;
     font-weight: 700;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     letter-spacing: -0.02em;
+}
+
+.quran-verse {
+    font-size: 1.25rem;
+    line-height: 1.8;
+    max-width: 800px;
+    margin: 0 auto 2rem;
+    opacity: 0.9;
+    font-style: italic;
+    padding: 1rem 2rem;
+    border-left: 4px solid rgba(255, 255, 255, 0.3);
+}
+
+.verse-reference {
+    font-size: 1rem;
+    opacity: 0.8;
+    margin-top: 0.5rem;
 }
 
 .ramadan-subtitle {
@@ -169,14 +186,19 @@
     .ramadan-title {
         font-size: 2.5rem;
     }
-    
+
     .ramadan-subtitle {
         font-size: 1.25rem;
     }
-    
+
     .times-widget {
         margin-top: -2rem;
         padding: 1.5rem;
+    }
+
+    .quran-verse {
+        font-size: 1.1rem;
+        padding: 1rem;
     }
 }
 </style>
@@ -188,6 +210,10 @@
     <div class="container">
         <div class="ramadan-content">
             <h1 class="ramadan-title">{{ _('Ramadan Mubarak') }}</h1>
+            <div class="quran-verse">
+                "Ramaḍan is de maand waarin de Koran werd geopenbaard als een gids voor de mensheid met duidelijke bewijzen van leiding en de standaard om onderscheid te maken tussen goed en kwaad."
+                <div class="verse-reference">Koran 2:185</div>
+            </div>
             <p class="ramadan-subtitle">{{ _('Moge deze heilige maand gevuld zijn met zegeningen') }}</p>
         </div>
     </div>
@@ -256,7 +282,7 @@
                 <p class="resource-description">{{ _('Dagelijkse Koran-recitaties en duʿāʾ voor tijdens de Ramadan') }}</p>
                 <a href="#" class="btn btn-outline-primary">{{ _('Bekijk Meer') }}</a>
             </div>
-            
+
             <div class="resource-card">
                 <div class="resource-icon">
                     <i class="fas fa-video fa-3x"></i>
@@ -265,7 +291,7 @@
                 <p class="resource-description">{{ _('Inspirerende video\'s en lezingen over de Ramadan') }}</p>
                 <a href="#" class="btn btn-outline-primary">{{ _('Bekijk Video\'s') }}</a>
             </div>
-            
+
             <div class="resource-card">
                 <div class="resource-icon">
                     <i class="fas fa-calendar-alt fa-3x"></i>
