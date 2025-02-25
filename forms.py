@@ -35,6 +35,12 @@ class LearningContentForm(FlaskForm):
     ])
     subtopic = SelectField('Subonderwerp', validators=[DataRequired(message='Selecteer een subonderwerp')])
     order = IntegerField('Volgorde', validators=[Optional()])
+    video_url = URLField('Video URL (Optioneel)', validators=[
+        Optional(),
+        URL(message='Voer een geldige URL in'),
+        Regexp(r'^https?://(www\.)?(youtube\.com|youtu\.be|vimeo\.com)/.+', 
+               message='Alleen YouTube en Vimeo URLs zijn toegestaan')
+    ])
 
     def __init__(self, *args, **kwargs):
         super(LearningContentForm, self).__init__(*args, **kwargs)

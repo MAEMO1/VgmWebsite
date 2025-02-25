@@ -391,6 +391,11 @@ class LearningContent(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    # Video fields
+    video_url = db.Column(db.String(500))  # URL to video (YouTube, Vimeo)
+    video_platform = db.Column(db.String(50))  # 'youtube', 'vimeo', etc.
+    has_video = db.Column(db.Boolean, default=False)
+
     # Relationship with the author
     author = db.relationship('User', backref=db.backref('learning_content', lazy='dynamic'))
 

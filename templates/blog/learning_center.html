@@ -145,6 +145,10 @@
     color: var(--text-primary);
 }
 
+.video-container {
+    margin-bottom: 1rem;
+}
+
 @media (max-width: 768px) {
     .learning-container {
         flex-direction: column;
@@ -234,6 +238,23 @@
                 <span class="mx-2">•</span>
                 <span><i class="far fa-calendar me-1"></i>{{ item.created_at.strftime('%d-%m-%Y') }}</span>
             </div>
+            {% if item.has_video %}
+            <div class="video-container mb-4">
+                {% if item.video_platform == 'youtube' %}
+                    {% set video_id = item.video_url.split('v=')[-1] if 'v=' in item.video_url else item.video_url.split('/')[-1] %}
+                    <iframe src="https://www.youtube.com/embed/{{ video_id }}" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen></iframe>
+                {% elif item.video_platform == 'vimeo' %}
+                    {% set video_id = item.video_url.split('/')[-1] %}
+                    <iframe src="https://player.vimeo.com/video/{{ video_id }}" 
+                            frameborder="0" 
+                            allow="autoplay; fullscreen" 
+                            allowfullscreen></iframe>
+                {% endif %}
+            </div>
+            {% endif %}
             <div class="content-text">
                 {{ item.content|safe }}
             </div>

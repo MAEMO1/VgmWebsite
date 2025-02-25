@@ -267,13 +267,26 @@ def add_learning_content():
     form = LearningContentForm()
 
     if form.validate_on_submit():
+        # Determine video platform if video URL is provided
+        video_platform = None
+        has_video = False
+        if form.video_url.data:
+            has_video = True
+            if 'youtube' in form.video_url.data or 'youtu.be' in form.video_url.data:
+                video_platform = 'youtube'
+            elif 'vimeo' in form.video_url.data:
+                video_platform = 'vimeo'
+
         content = LearningContent(
             title=form.title.data,
             content=form.content.data,
             topic=form.topic.data,
             subtopic=form.subtopic.data,
             order=form.order.data or 0,  # Default to 0 if no order specified
-            author_id=current_user.id
+            author_id=current_user.id,
+            video_url=form.video_url.data,
+            video_platform=video_platform,
+            has_video=has_video
         )
 
         db.session.add(content)
