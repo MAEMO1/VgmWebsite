@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('VGM Iftarkaart - Ramadan 1445/2024') }}{% endblock %}
+
+{% block styles %}
+<style>
+.iftar-map-container {
+    height: 500px;
+    margin-bottom: 2rem;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.iftar-list {
+    margin: 2rem 0;
+}
+
+.iftar-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+}
+
+.iftar-card:hover {
+    transform: translateY(-2px);
+}
+
+.iftar-date {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.iftar-mosque {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.iftar-details {
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.badge-family {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.badge-family i {
+    font-size: 0.75rem;
+}
+
+.filter-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.date-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.date-navigation .btn {
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+}
+
+.current-date {
+    font-size: 1.25rem;
+    font-weight: 600;
+    min-width: 200px;
+    text-align: center;
+}
+
+.filters {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.filter-option {
+    background: var(--background-light);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.filter-option.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.add-iftar-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+.add-iftar-btn:hover {
+    transform: scale(1.1);
+    color: white;
+    text-decoration: none;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">{{ _('VGM Iftarkaart') }}</h1>
+    
+    <div class="filter-section">
+        <div class="date-navigation">
+            <a href="?date={{ prev_date }}" class="btn btn-outline-primary">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+            <div class="current-date">{{ current_date.strftime('%d %B %Y') }}</div>
+            <a href="?date={{ next_date }}" class="btn btn-outline-primary">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+        <div class="filters">
+            <button class="filter-option {% if not family_only %}active{% endif %}" data-filter="all">
+                {{ _('Alle Iftars') }}
+            </button>
+            <button class="filter-option {% if family_only %}active{% endif %}" data-filter="family">
+                <i class="fas fa-users"></i> {{ _('Gezinsvriendelijk') }}
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <div id="map" class="iftar-map-container"></div>
+        </div>
+        <div class="col-md-5">
+            <div class="iftar-list">
+                {% if iftar_events %}
+                    {% for iftar in iftar_events %}
+                        <div class="iftar-card" data-mosque-id="{{ iftar.mosque_id }}">
+                            <div class="iftar-date">
+                                {{ iftar.start_time.strftime('%H:%M') }}
+                                {% if iftar.end_time %}
+                                    - {{ iftar.end_time.strftime('%H:%M') }}
+                                {% endif %}
+                            </div>
+                            <div class="iftar-mosque">{{ iftar.mosque.mosque_name }}</div>
+                            <div class="iftar-details">
+                                <div>{{ iftar.mosque.mosque_street }} {{ iftar.mosque.mosque_number }}</div>
+                                <div>{{ iftar.mosque.mosque_postal }} {{ iftar.mosque.mosque_city }}</div>
+                            </div>
+                            {% if iftar.is_family_friendly %}
+                                <span class="badge-family">
+                                    <i class="fas fa-users"></i> {{ _('Gezinsvriendelijk') }}
+                                </span>
+                            {% endif %}
+                            {% if iftar.registration_required and current_user.is_authenticated %}
+                                <div class="mt-2">
+                                    <form action="{{ url_for('main.register_iftar', iftar_id=iftar.id) }}" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-primary">{{ _('Registreer') }}</button>
+                                    </form>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-center text-muted">{{ _('Er zijn geen iftar evenementen gevonden voor deze datum.') }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if current_user.is_authenticated and current_user.user_type == 'mosque' %}
+<a href="{{ url_for('main.add_iftar') }}" class="add-iftar-btn" title="{{ _('Iftar Toevoegen') }}">
+    <i class="fas fa-plus"></i>
+</a>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap" async defer></script>
+<script>
+function initMap() {
+    const map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 13,
+        center: {lat: {{ center_lat }}, lng: {{ center_lng }}}
+    });
+
+    const markers = [];
+    {% for iftar in iftar_events %}
+        const marker = new google.maps.Marker({
+            position: {
+                lat: {{ iftar.mosque.latitude }},
+                lng: {{ iftar.mosque.longitude }}
+            },
+            map: map,
+            title: '{{ iftar.mosque.mosque_name }}',
+            icon: '{{ iftar.is_family_friendly | tojson }}' === true ? 
+                  '/static/images/marker-family.png' : 
+                  '/static/images/marker.png'
+        });
+
+        const infowindow = new google.maps.InfoWindow({
+            content: `
+                <div style="padding: 1rem;">
+                    <h5>${'{{ iftar.mosque.mosque_name }}'}</h5>
+                    <p>${'{{ iftar.start_time.strftime("%H:%M") }}'}</p>
+                    <p>${'{{ iftar.mosque.mosque_street }} {{ iftar.mosque.mosque_number }}'}<br>
+                    ${'{{ iftar.mosque.mosque_postal }} {{ iftar.mosque.mosque_city }}'}</p>
+                    {% if iftar.is_family_friendly %}
+                    <p><i class="fas fa-users"></i> {{ _('Gezinsvriendelijk') }}</p>
+                    {% endif %}
+                </div>
+            `
+        });
+
+        marker.addListener('click', () => {
+            infowindow.open(map, marker);
+            // Highlight corresponding card in the list
+            const card = document.querySelector(`[data-mosque-id="${'{{ iftar.mosque_id }}'}"]`);
+            if (card) {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                card.style.backgroundColor = '#f8f9fa';
+                setTimeout(() => card.style.backgroundColor = '', 2000);
+            }
+        });
+
+        markers.push(marker);
+    {% endfor %}
+
+    // Filter buttons functionality
+    document.querySelectorAll('.filter-option').forEach(button => {
+        button.addEventListener('click', function() {
+            const filter = this.dataset.filter;
+            
+            // Update active state of buttons
+            document.querySelectorAll('.filter-option').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+
+            // Update URL with filter parameter
+            const url = new URL(window.location.href);
+            url.searchParams.set('filter', filter);
+            window.history.pushState({}, '', url);
+
+            // Reload page with new filter
+            window.location.reload();
+        });
+    });
+}
+</script>
+{% endblock %}

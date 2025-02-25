@@ -777,7 +777,7 @@ def about():
         # Get the corresponding term_end for this term_start
         term = next((t for t in terms if t[0] == term_start), None)
         term_end = term[1] if term else None
-    else:  # Default to current or most recent term
+    else:  # Default to current ormost recent term
         current_date = date.today()
         latest_term = BoardMember.query.filter(
             BoardMember.term_end >= current_date
@@ -1141,44 +1141,18 @@ def test_canva():
 
 @routes.route('/ramadan')
 def ramadan():
-    try:
-        # Get today's prayer times for iftar/suhoor
-        today = datetime.today().date()
-        prayer_times = PrayerTime.query.filter_by(date=today).all()
+    # Get today's prayer times
+    today = date.today()
+    prayer_times = PrayerTime.query.filter_by(date=today).all()
 
-        # Get upcoming Ramadan events - using title matching as fallback
-        from sqlalchemy import or_
-        ramadan_events = Event.query.filter(
-            Event.date >= datetime.utcnow(),
-            or_(
-                Event.title.ilike('%ramadan%'),
-                Event.description.ilike('%ramadan%')
-            )
-        ).order_by(Event.date).limit(5).all()
+    # Get upcoming Ramadan programs
+    programs = RamadanProgram.query.filter(
+        RamadanProgram.start_date >= datetime.now()
+    ).order_by(RamadanProgram.start_date).limit(3).all()
 
-        # Get all upcoming Iftar events
-        iftar_events = IfterEvent.query.filter(
-            IfterEvent.date >= today
-        ).order_by(IfterEvent.date, IfterEvent.start_time).all()
-
-        # Try to get Canva designs if available
-        designs = []
-        try:
-            designs = canva_client.get_designs(limit=3)
-        except Exception as canva_error:
-            print(f"Note: Canva designs could not be loaded: {canva_error}")
-
-        return render_template(
-            'ramadan/index.html',
-            designs=designs,
-            prayer_times=prayer_times,
-            events=ramadan_events,
-            iftar_events=iftar_events
-        )
-    except Exception as e:
-        print(f"Error loading Ramadan page: {e}")
-        flash('Er is een fout opgetreden bij het laden van de Ramadan-pagina.', 'error')
-        return redirect(url_for('main.index'))
+    return render_template('ramadan/index.html',
+                         prayer_times=prayer_times,
+                         programs=programs)
 
 @routes.route('/ramadan/iftar/add', methods=['GET', 'POST'])
 @login_required
@@ -1361,3 +1335,50 @@ def add_program():
             print(f"Error adding program: {e}")
 
     return render_template('ramadan/add_program.html')
+
+@routes.route('/ramadan/iftar-map')
+def iftar_map():
+    # Get query parameters
+    date_str = request.args.get('date')
+    family_only = request.args.get('filter') == 'family'
+
+    # Parse date or use today
+    try:
+        current_date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else date.today()
+    except ValueError:
+        current_date = date.today()
+
+    # Calculate previous and next dates
+    prev_date = (current_date - timedelta(days=1)).strftime('%Y-%m-%d')
+    next_date = (current_date + timedelta(days=1)).strftime('%Y-%m-%d')
+
+    # Build query for iftar events
+    query = IfterEvent.query.filter(
+        IfterEvent.date == current_date
+    )
+
+    if family_only:
+        query = query.filter(IfterEvent.is_family_friendly == True)
+
+    iftar_events = query.order_by(IfterEvent.start_time).all()
+
+    # Calculate map center (average of all mosque coordinates)
+    if iftar_events:
+        lats = [event.mosque.latitude for event in iftar_events]
+        lngs = [event.mosque.longitude for event in iftar_events]
+        center_lat = sum(lats) / len(lats)
+        center_lng = sum(lngs) / len(lngs)
+    else:
+        # Default to Gent center if no events
+        center_lat = 51.0543
+        center_lng = 3.7174
+
+    return render_template('ramadan/iftar_map.html',
+                         iftar_events=iftar_events,
+                         current_date=current_date,
+                         prev_date=prev_date,
+                         next_date=next_date,
+                         family_only=family_only,
+                         center_lat=center_lat,
+                         center_lng=center_lng,
+                         google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'))
