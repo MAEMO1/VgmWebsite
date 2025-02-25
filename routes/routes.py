@@ -779,7 +779,7 @@ def about():
         current_date = date.today()
         latest_term = BoardMember.query.query.filter(
             BoardMember.term_end >= current_date
-        ).order_by(BoardMember.term_start.desc()).first()
+                ).order_by(BoardMember.term_start.desc()).first()
 
         if latest_term:
             term_start = latest_term.term_start
@@ -1353,7 +1353,25 @@ def add_program():
 @routes.route('/ramadan/iftar-map')
 def iftar_map():
     # Get query parameters
+    date_str = request.args.get('date')
     family_only = request.args.get('filter') == 'family'
+
+    # Parse date or use today
+    try:
+        current_date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else date.today()
+    except ValueError:
+        current_date = date.today()
+
+    # Calculate previous and next month
+    if current_date.month == 1:
+        prev_month = f"{current_date.year-1}-12-01"
+    else:
+        prev_month = f"{current_date.year}-{current_date.month-1:02d}-01"
+
+    if current_date.month == 12:
+        next_month = f"{current_date.year+1}-01-01"
+    else:
+        next_month = f"{current_date.year}-{current_date.month+1:02d}-01"
 
     # Build query for iftar events
     query = IfterEvent.query
@@ -1371,7 +1389,12 @@ def iftar_map():
 
     return render_template('ramadan/iftar_map.html',
                          iftar_events=iftar_events,
-                         family_only=family_only)
+                         family_only=family_only,
+                         current_date=current_date,
+                         prev_month=prev_month,
+                         next_month=next_month,
+                         today=date.today(),
+                         timedelta=timedelta)
 
 @routes.route('/ramadan/iftar/<int:iftar_id>/delete', methods=['POST'])
 @login_required

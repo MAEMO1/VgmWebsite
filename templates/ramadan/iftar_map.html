@@ -40,6 +40,79 @@
     text-decoration: none;
 }
 
+/* Calendar styling */
+.calendar-section {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.calendar-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.calendar-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.calendar-nav-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.calendar-header {
+    text-align: center;
+    font-weight: 600;
+    padding: 0.5rem;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    padding: 0.5rem;
+    border: 1px solid #eee;
+    border-radius: 0.5rem;
+    position: relative;
+}
+
+.calendar-day.has-iftar {
+    cursor: pointer;
+}
+
+.calendar-day.has-daily-iftar {
+    background-color: #e8f5e9;
+    border-color: #2e7d32;
+}
+
+.calendar-day.has-weekly-iftar {
+    background-color: #e3f2fd;
+    border-color: #1976d2;
+}
+
+.calendar-day.has-single-iftar {
+    background-color: #fff3e0;
+    border-color: #f57c00;
+}
+
+.calendar-day.today {
+    border-width: 2px;
+    border-color: var(--primary-color);
+    font-weight: bold;
+}
+
+/* Iftar category styling */
 .iftar-category {
     margin-bottom: 3rem;
 }
@@ -79,66 +152,6 @@
 .iftar-card.single {
     background: #fff3e0;
     border-left: 5px solid #f57c00;
-}
-
-.iftar-date {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-}
-
-.iftar-mosque {
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-}
-
-.iftar-details {
-    color: var(--text-secondary);
-    margin-bottom: 0.5rem;
-}
-
-.badge-family {
-    background: #e8f5e9;
-    color: #2e7d32;
-    padding: 0.25rem 0.75rem;
-    border-radius: 1rem;
-    font-size: 0.875rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-.iftar-actions {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    display: flex;
-    gap: 0.5rem;
-}
-
-.edit-iftar, .delete-iftar {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    transition: color 0.2s ease;
-}
-
-.edit-iftar {
-    color: #0d6efd;
-}
-
-.edit-iftar:hover {
-    color: #0a58ca;
-}
-
-.delete-iftar {
-    color: #dc3545;
-}
-
-.delete-iftar:hover {
-    color: #b02a37;
 }
 
 /* Legend styling */
@@ -205,6 +218,65 @@
                 <div class="legend-color single"></div>
                 {{ _('Eenmalig') }}
             </div>
+        </div>
+    </div>
+
+    <!-- Calendar View -->
+    <div class="calendar-section">
+        <div class="calendar-navigation">
+            <a href="{{ url_for('main.iftar_map', date=prev_month, filter='family' if family_only else 'all') }}" 
+               class="btn btn-outline-primary">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+            <div class="calendar-title">{{ current_date.strftime('%B %Y') }}</div>
+            <a href="{{ url_for('main.iftar_map', date=next_month, filter='family' if family_only else 'all') }}" 
+               class="btn btn-outline-primary">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </div>
+
+        <div class="calendar-grid">
+            <!-- Calendar header -->
+            <div class="calendar-header">{{ _('Ma') }}</div>
+            <div class="calendar-header">{{ _('Di') }}</div>
+            <div class="calendar-header">{{ _('Wo') }}</div>
+            <div class="calendar-header">{{ _('Do') }}</div>
+            <div class="calendar-header">{{ _('Vr') }}</div>
+            <div class="calendar-header">{{ _('Za') }}</div>
+            <div class="calendar-header">{{ _('Zo') }}</div>
+
+            <!-- Empty days before start of month -->
+            {% for _ in range((current_date.replace(day=1).weekday() + 7) % 7) %}
+                <div class="calendar-day"></div>
+            {% endfor %}
+
+            <!-- Days of the month -->
+            {% for day in range(1, (current_date.replace(day=28) + timedelta(days=4)).day + 1) %}
+                {% set current_day = current_date.replace(day=day) %}
+                {% set has_daily = false %}
+                {% set has_weekly = false %}
+                {% set has_single = false %}
+
+                {% for iftar in iftar_events %}
+                    {% if iftar.date == current_day %}
+                        {% if iftar.is_recurring and iftar.recurrence_type == 'daily' %}
+                            {% set has_daily = true %}
+                        {% elif iftar.is_recurring and iftar.recurrence_type == 'weekly' %}
+                            {% set has_weekly = true %}
+                        {% else %}
+                            {% set has_single = true %}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+                <div class="calendar-day 
+                    {% if has_daily %}has-daily-iftar{% endif %}
+                    {% if has_weekly %}has-weekly-iftar{% endif %}
+                    {% if has_single %}has-single-iftar{% endif %}
+                    {% if current_day == today %}today{% endif %}">
+                    {{ day }}
+                </div>
+            {% endfor %}
         </div>
     </div>
 
