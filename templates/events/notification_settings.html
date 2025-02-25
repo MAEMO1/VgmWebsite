@@ -61,6 +61,23 @@
     margin-bottom: 1.5rem;
 }
 
+.form-select {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background-color: white;
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    transition: var(--transition);
+}
+
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0, 90, 135, 0.1);
+}
+
 .form-check {
     margin-bottom: 1rem;
     padding: 1.5rem;
@@ -74,25 +91,12 @@
 }
 
 .form-check-input {
-    width: 1.25rem;
-    height: 1.25rem;
-    margin-top: 0.25rem;
-    margin-left: -2rem;
-    border: 2px solid var(--border-color);
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.form-check-input:checked {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
+    margin-right: 1rem;
 }
 
 .form-check-label {
-    font-size: 1rem;
-    color: var(--text-primary);
-    cursor: pointer;
     font-weight: 500;
+    color: var(--text-primary);
 }
 
 .form-text {
@@ -103,48 +107,42 @@
 
 .mosque-selection {
     margin-top: 1rem;
-    padding: 1rem;
-    background: white;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border-color);
+    display: none;
 }
 
-.mosque-selection.disabled {
-    opacity: 0.6;
-    pointer-events: none;
+.mosque-selection.active {
+    display: block;
 }
 
 .mosque-list {
-    max-height: 200px;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    max-height: 300px;
     overflow-y: auto;
-    padding: 0.5rem;
 }
 
 .mosque-item {
-    padding: 0.5rem;
-    margin-bottom: 0.5rem;
-    border-radius: var(--radius-sm);
-    transition: var(--transition);
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
 }
 
-.mosque-item:hover {
-    background: var(--background-light);
+.mosque-item:last-child {
+    border-bottom: none;
 }
 
-.btn {
-    padding: 0.875rem 1.75rem;
+.btn-primary {
+    background: var(--primary-color);
+    border: none;
+    padding: 1rem 2rem;
     font-weight: 500;
     border-radius: var(--radius-sm);
     transition: var(--transition);
 }
 
-.btn-primary {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-}
-
 .btn-primary:hover {
-    opacity: 0.9;
+    background: #004a70;
     transform: translateY(-1px);
 }
 
@@ -176,53 +174,34 @@
                 <div class="notification-section">
                     <h3 class="section-title">{{ _('Moskee Notificaties') }}</h3>
 
-                    <div class="form-check">
-                        <input type="radio" class="form-check-input" id="notify_all" 
-                               name="mosque_notification_type" value="all" 
-                               {% if current_user.notify_all_mosques %}checked{% endif %}
-                               onchange="toggleMosqueSelection('all')">
-                        <label class="form-check-label" for="notify_all">
-                            {{ _('Ontvang alle notificaties (VGM en alle moskeeën)') }}
-                        </label>
-                        <div class="form-text">{{ _('Word op de hoogte gehouden van alle evenementen en updates') }}</div>
-                    </div>
-
-                    <div class="form-check">
-                        <input type="radio" class="form-check-input" id="notify_vgm_only" 
-                               name="mosque_notification_type" value="vgm_only"
-                               {% if current_user.notify_vgm_only %}checked{% endif %}
-                               onchange="toggleMosqueSelection('vgm')">
-                        <label class="form-check-label" for="notify_vgm_only">
+                    <select class="form-select" name="mosque_notification_type" id="mosque_notification_type" onchange="handleNotificationTypeChange()">
+                        <option value="all" {% if current_user.notify_all_mosques %}selected{% endif %}>
+                            {{ _('Alle notificaties (VGM en alle moskeeën)') }}
+                        </option>
+                        <option value="vgm_only" {% if current_user.notify_vgm_only %}selected{% endif %}>
                             {{ _('Alleen VGM notificaties') }}
-                        </label>
-                        <div class="form-text">{{ _('Ontvang alleen notificaties van VGM evenementen') }}</div>
-                    </div>
+                        </option>
+                        <option value="specific" {% if not current_user.notify_all_mosques and not current_user.notify_vgm_only %}selected{% endif %}>
+                            {{ _('Specifieke moskeeën selecteren') }}
+                        </option>
+                    </select>
 
-                    <div class="form-check">
-                        <input type="radio" class="form-check-input" id="notify_specific" 
-                               name="mosque_notification_type" value="specific"
-                               {% if not current_user.notify_all_mosques and not current_user.notify_vgm_only %}checked{% endif %}
-                               onchange="toggleMosqueSelection('specific')">
-                        <label class="form-check-label" for="notify_specific">
-                            {{ _('Selecteer specifieke moskeeën') }}
-                        </label>
-                        <div class="form-text">{{ _('Kies zelf van welke moskeeën je notificaties wilt ontvangen') }}</div>
-
-                        <div id="mosque-selection" class="mosque-selection {% if current_user.notify_all_mosques or current_user.notify_vgm_only %}disabled{% endif %}">
-                            <div class="mosque-list">
-                                {% for mosque in mosques %}
-                                <div class="mosque-item">
+                    <div id="mosque-selection" class="mosque-selection {% if not current_user.notify_all_mosques and not current_user.notify_vgm_only %}active{% endif %}">
+                        <div class="mosque-list">
+                            {% for mosque in mosques %}
+                            <div class="mosque-item">
+                                <div class="form-check">
                                     <input type="checkbox" class="form-check-input" 
                                            id="mosque_{{ mosque.id }}" 
                                            name="selected_mosques" 
                                            value="{{ mosque.id }}"
                                            {% if mosque.id in user_mosque_preferences %}checked{% endif %}>
                                     <label class="form-check-label" for="mosque_{{ mosque.id }}">
-                                        {{ mosque.username.replace('_', ' ').title() }}
+                                        {{ mosque.mosque_name or mosque.username.replace('_', ' ').title() }}
                                     </label>
                                 </div>
-                                {% endfor %}
                             </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
@@ -282,19 +261,20 @@
 </div>
 
 <script>
-function toggleMosqueSelection(type) {
+function handleNotificationTypeChange() {
+    const type = document.getElementById('mosque_notification_type').value;
     const mosqueSelection = document.getElementById('mosque-selection');
+
     if (type === 'specific') {
-        mosqueSelection.classList.remove('disabled');
+        mosqueSelection.classList.add('active');
     } else {
-        mosqueSelection.classList.add('disabled');
+        mosqueSelection.classList.remove('active');
     }
 }
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    const selectedType = document.querySelector('input[name="mosque_notification_type"]:checked').value;
-    toggleMosqueSelection(selectedType);
+    handleNotificationTypeChange();
 });
 </script>
 {% endblock %}
