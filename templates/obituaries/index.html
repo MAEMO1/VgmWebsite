@@ -4,6 +4,19 @@
 
 {% block styles %}
 <style>
+:root {
+    --primary-color: #005A87;
+    --secondary-color: #41B7AC;
+    --accent-color: #FF4154;
+    --background-light: #F8F9FA;
+    --text-primary: #2C3E50;
+    --text-secondary: #6C757D;
+    --border-color: #E9ECEF;
+    --primary-gradient: linear-gradient(135deg, var(--primary-color) 0%, #004a70 100%);
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital@0;1&display=swap');
+
 .hero-section {
     background: var(--primary-gradient);
     color: white;
@@ -55,6 +68,15 @@
     margin: 2rem auto;
     padding: 1rem;
 }
+
+.section-header {
+    color: var(--primary-color);
+    margin: 2rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary-color);
+    font-size: 1.75rem;
+}
+
 .obituary-card {
     background: white;
     border-radius: 12px;
