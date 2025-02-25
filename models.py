@@ -17,6 +17,12 @@ class User(UserMixin, db.Model):
     is_admin = db.Column(db.Boolean, default=False)
     user_type = db.Column(db.String(20), nullable=False)  # 'visitor' or 'mosque'
 
+    # Add mosque_preferences relationship
+    mosque_preferences = db.relationship('MosqueNotificationPreference',
+                                      foreign_keys='MosqueNotificationPreference.user_id',
+                                      backref='user',
+                                      lazy='dynamic')
+
     # Notification preferences for mosques
     notify_all_mosques = db.Column(db.Boolean, default=False)
     notify_vgm_only = db.Column(db.Boolean, default=False)
