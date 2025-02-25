@@ -45,16 +45,9 @@ class User(UserMixin, db.Model):
     mosque_preferences = db.relationship(
         'MosqueNotificationPreference',
         foreign_keys='MosqueNotificationPreference.user_id',
-        backref='following_user',
-        lazy='dynamic'
-    )
-
-    # Mosques being followed (as mosque being followed by users)
-    followed_by = db.relationship(
-        'MosqueNotificationPreference',
-        foreign_keys='MosqueNotificationPreference.mosque_id',
-        backref='followed_mosque',
-        lazy='dynamic'
+        backref=db.backref('user', lazy='joined'),
+        lazy='dynamic',
+        cascade='all, delete-orphan'
     )
 
     def get_full_address(self):
@@ -301,3 +294,6 @@ class MosqueNotificationPreference(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Define the mosque relationship separately
+    mosque = db.relationship('User', foreign_keys=[mosque_id], backref=db.backref('followers', lazy='dynamic'))
