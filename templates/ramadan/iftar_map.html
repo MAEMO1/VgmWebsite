@@ -325,6 +325,11 @@
                                     <div class="iftar-details">
                                         <div>{{ iftar.mosque.mosque_street }} {{ iftar.mosque.mosque_number }}</div>
                                         <div>{{ iftar.mosque.mosque_postal }} {{ iftar.mosque.mosque_city }}</div>
+                                        {% if iftar.women_entrance %}
+                                            <div class="text-muted">
+                                                <i class="fas fa-door-open"></i> {{ _('Ingang vrouwen:') }} {{ iftar.women_entrance }}
+                                            </div>
+                                        {% endif %}
                                     </div>
                                     {% if iftar.is_family_friendly %}
                                         <span class="badge-family">
@@ -373,13 +378,13 @@
                 </div>
                 <div class="iftar-list">
                     {% if iftar_events %}
-                        {% set current_date = None %}
-                        {% for iftar in iftar_events|sort(attribute='date') %}
-                            {% if current_date != iftar.date %}
-                                {% if current_date is not none %}
+                        {% set current_day = None %}
+                        {% for iftar in iftar_events|sort(attribute='date')|sort(attribute='start_time') %}
+                            {% if iftar.date != current_day %}
+                                {% if current_day is not none %}
                                     </div>
                                 {% endif %}
-                                {% set current_date = iftar.date %}
+                                {% set current_day = iftar.date %}
                                 <h4 class="mb-3">{{ iftar.date.strftime('%A %d %B') }}</h4>
                                 <div class="daily-iftars">
                             {% endif %}
@@ -407,7 +412,7 @@
                                 {% endif %}
                             </div>
                         {% endfor %}
-                        {% if current_date is not none %}
+                        {% if current_day is not none %}
                             </div>
                         {% endif %}
                     {% else %}
