@@ -418,8 +418,6 @@ def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-from werkzeug.utils import secure_filename
-
 def initialize_mosques():
     """Initialize the mosques in the database with their coordinates"""
     mosques_data = [
@@ -781,7 +779,7 @@ def about():
         current_date = date.today()
         latest_term = BoardMember.query.filter(
             BoardMember.term_end >= current_date
-        ).order_by(BoardMember.term_start.desc()).first()
+                ).order_by(BoardMember.term_start.desc()).first()
 
         if latest_term:
             term_start = latest_term.term_start
@@ -1350,6 +1348,7 @@ def iftar_map():
     # Get query parameters
     date_str = request.args.get('date')
     family_only = request.args.get('filter') == 'family'
+    view = request.args.get('view', 'day')  # Default to day view
 
     # Parse date or use today
     try:
@@ -1357,19 +1356,36 @@ def iftar_map():
     except ValueError:
         current_date = date.today()
 
-    # Calculate previous and next dates
-    prev_date = (current_date - timedelta(days=1)).strftime('%Y-%m-%d')
-    next_date = (current_date + timedelta(days=1)).strftime('%Y-%m-%d')
+    # Calculate date ranges based on view
+    if view == 'month':
+        start_date = current_date.replace(day=1)
+        if start_date.month == 12:
+            end_date = start_date.replace(year=start_date.year + 1, month=1, day=1) - timedelta(days=1)
+        else:
+            end_date = start_date.replace(month=start_date.month + 1, day=1) - timedelta(days=1)
+        prev_date = (start_date - timedelta(days=1)).replace(day=1).strftime('%Y-%m-%d')
+        next_date = (end_date + timedelta(days=1)).strftime('%Y-%m-%d')
+    elif view == 'week':
+        start_date = current_date - timedelta(days=current_date.weekday())
+        end_date = start_date + timedelta(days=6)
+        prev_date = (start_date - timedelta(days=7)).strftime('%Y-%m-%d')
+        next_date = (start_date + timedelta(days=7)).strftime('%Y-%m-%d')
+    else:  # day view
+        start_date = current_date
+        end_date = current_date
+        prev_date = (current_date - timedelta(days=1)).strftime('%Y-%m-%d')
+        next_date = (current_date + timedelta(days=1)).strftime('%Y-%m-%d')
 
     # Build query for iftar events
     query = IfterEvent.query.filter(
-        IfterEvent.date == current_date
+        IfterEvent.date >= start_date,
+        IfterEvent.date <= end_date
     )
 
     if family_only:
         query = query.filter(IfterEvent.is_family_friendly == True)
 
-    iftar_events = query.order_by(IfterEvent.start_time).all()
+    iftar_events = query.order_by(IfterEvent.date, IfterEvent.start_time).all()
 
     # Calculate map center (average of all mosque coordinates)
     if iftar_events:
@@ -1388,6 +1404,7 @@ def iftar_map():
                          prev_date=prev_date,
                          next_date=next_date,
                          family_only=family_only,
+                         view=view,
                          center_lat=center_lat,
                          center_lng=center_lng,
                          google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'))
