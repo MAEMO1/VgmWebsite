@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('Overlijdensbericht Toevoegen') }} - VGM{% endblock %}
+{% block title %}{{ _('Begrafenisgebed (Janazah) Toevoegen') }} - VGM{% endblock %}
 
 {% block styles %}
 <style>
@@ -69,7 +69,7 @@
 {% block content %}
 <div class="container">
     <div class="obituary-form">
-        <h1 class="mb-4">{{ _('Overlijdensbericht Toevoegen') }}</h1>
+        <h1 class="mb-4">{{ _('Begrafenisgebed (Janazah) Toevoegen') }}</h1>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -84,6 +84,38 @@
 
         <form method="POST">
             {{ form.csrf_token }}
+
+            <!-- Indiener Informatie -->
+            <div class="form-section">
+                <h2 class="section-title">{{ _('Uw Contactgegevens') }}</h2>
+                <div class="mb-4">
+                    {{ form.submitter_name.label(class="form-label required-field") }}
+                    {{ form.submitter_name(class="form-control" + (" is-invalid" if form.submitter_name.errors else "")) }}
+                    {% if form.submitter_name.errors %}
+                        {% for error in form.submitter_name.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="mb-4">
+                    {{ form.submitter_phone.label(class="form-label required-field") }}
+                    {{ form.submitter_phone(class="form-control" + (" is-invalid" if form.submitter_phone.errors else "")) }}
+                    {% if form.submitter_phone.errors %}
+                        {% for error in form.submitter_phone.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="mb-4">
+                    {{ form.family_contact.label(class="form-label required-field") }}
+                    {{ form.family_contact(class="form-control" + (" is-invalid" if form.family_contact.errors else "")) }}
+                    {% if form.family_contact.errors %}
+                        {% for error in form.family_contact.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
 
             <!-- Persoonlijke Informatie -->
             <div class="form-section">
@@ -145,9 +177,9 @@
                 </div>
             </div>
 
-            <!-- Dodengebed -->
+            <!-- Begrafenisgebed (Janazah) -->
             <div class="form-section">
-                <h2 class="section-title">{{ _('Dodengebed') }}</h2>
+                <h2 class="section-title">{{ _('Begrafenisgebed (Janazah)') }}</h2>
 
                 <div class="mb-4">
                     {{ form.death_prayer_location.label(class="form-label required-field") }}
@@ -181,7 +213,7 @@
 
                 <div id="specific_time_container">
                     {{ form.prayer_time.label(class="form-label required-field") }}
-                    {{ form.prayer_time(class="form-control" + (" is-invalid" if form.prayer_time.errors else ""), type="datetime-local") }}
+                    {{ form.prayer_time(class="form-control" + (" is-invalid" if form.prayer_time.errors else ""), type="datetime-local", step="60") }}
                     {% if form.prayer_time.errors %}
                         {% for error in form.prayer_time.errors %}
                             <div class="error-message">{{ error }}</div>
@@ -227,17 +259,6 @@
                 <h2 class="section-title">{{ _('Extra Informatie') }}</h2>
 
                 <div class="mb-4">
-                    {{ form.family_contact.label(class="form-label") }}
-                    {{ form.family_contact(class="form-control" + (" is-invalid" if form.family_contact.errors else "")) }}
-                    {% if form.family_contact.errors %}
-                        {% for error in form.family_contact.errors %}
-                            <div class="error-message">{{ error }}</div>
-                        {% endfor %}
-                    {% endif %}
-                    <div class="help-text">{{ _('Naam en telefoonnummer voor condoleances') }}</div>
-                </div>
-
-                <div class="mb-4">
                     {{ form.additional_notes.label(class="form-label") }}
                     {{ form.additional_notes(class="form-control" + (" is-invalid" if form.additional_notes.errors else ""), rows=3) }}
                     {% if form.additional_notes.errors %}
@@ -250,7 +271,7 @@
 
             <div class="d-grid gap-2">
                 <button type="submit" class="btn btn-primary btn-lg">
-                    {{ _('Overlijdensbericht Toevoegen') }}
+                    {{ _('Begrafenisgebed (Janazah) Toevoegen') }}
                 </button>
                 <a href="{{ url_for('obituaries.index') }}" class="btn btn-outline-secondary btn-lg">
                     {{ _('Annuleren') }}
