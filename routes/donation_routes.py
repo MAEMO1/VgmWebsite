@@ -137,3 +137,12 @@ def toggle_campaign(id):
     flash(f'Campagne succesvol {status}!', 'success')
 
     return redirect(url_for('donations.list_campaigns'))
+
+@donations.route('/api/campaigns/<int:id>/status')
+def get_campaign_status(id):
+    campaign = FundraisingCampaign.query.get_or_404(id)
+    return {
+        'current_amount': float(campaign.current_amount),
+        'goal_amount': float(campaign.goal_amount),
+        'progress': campaign.calculate_progress()
+    }
