@@ -24,6 +24,21 @@
                 </div>
                 <div class="card-body">
                     <form method="POST" enctype="multipart/form-data">
+                        <!-- Mission & Vision -->
+                        <div class="mb-4">
+                            <h4>{{ _('Mission & Vision') }}</h4>
+                            <div class="mb-3">
+                                <label for="mission_statement" class="form-label">{{ _('Mission Statement') }}</label>
+                                <textarea class="form-control" id="mission_statement" name="mission_statement" rows="4">{{ mosque.mission_statement or '' }}</textarea>
+                                <small class="text-muted">{{ _('Your mosque\'s core mission and purpose') }}</small>
+                            </div>
+                            <div class="mb-3">
+                                <label for="vision_statement" class="form-label">{{ _('Vision Statement') }}</label>
+                                <textarea class="form-control" id="vision_statement" name="vision_statement" rows="4">{{ mosque.vision_statement or '' }}</textarea>
+                                <small class="text-muted">{{ _('Your long-term vision for the future') }}</small>
+                            </div>
+                        </div>
+
                         <!-- Contact Information -->
                         <div class="mb-4">
                             <h4>{{ _('Contact Information') }}</h4>
@@ -132,16 +147,207 @@
                         <!-- Basic Information -->
                         <div class="mb-4">
                             <h4>{{ _('Basic Information') }}</h4>
-                            <div class="mb-3">
-                                <label for="history" class="form-label">{{ _('History') }}</label>
-                                <textarea class="form-control" id="history" name="history" rows="5">{{ mosque.history or '' }}</textarea>
-                                <small class="text-muted">{{ _('Share the history and background of your mosque') }}</small>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="foundation_year" class="form-label">{{ _('Year of Establishment') }}</label>
+                                        <input type="number" class="form-control" id="foundation_year" name="foundation_year" 
+                                               value="{{ mosque.foundation_year or '' }}" min="1000" max="{{ current_year }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="capacity" class="form-label">{{ _('Prayer Hall Capacity') }}</label>
+                                        <input type="number" class="form-control" id="capacity" name="capacity" 
+                                               value="{{ mosque.capacity or '' }}" min="1">
+                                        <small class="text-muted">{{ _('Maximum number of worshippers') }}</small>
+                                    </div>
+                                </div>
                             </div>
                             <div class="mb-3">
-                                <label for="establishment_year" class="form-label">{{ _('Year of Establishment') }}</label>
-                                <input type="number" class="form-control" id="establishment_year" name="establishment_year" 
-                                       value="{{ mosque.establishment_year or '' }}" min="1000" max="{{ current_year }}">
+                                <label for="activities" class="form-label">{{ _('Activities') }}</label>
+                                <textarea class="form-control" id="activities" name="activities" rows="4">{{ mosque.activities or '' }}</textarea>
+                                <small class="text-muted">{{ _('Regular activities and programs offered') }}</small>
                             </div>
+                            <div class="mb-3">
+                                <label for="facilities" class="form-label">{{ _('Facilities') }}</label>
+                                <textarea class="form-control" id="facilities" name="facilities" rows="4">{{ mosque.facilities or '' }}</textarea>
+                                <small class="text-muted">{{ _('Available facilities and amenities') }}</small>
+                            </div>
+                            <div class="mb-3">
+                                <label for="languages" class="form-label">{{ _('Languages') }}</label>
+                                <input type="text" class="form-control" id="languages" name="languages" 
+                                       value="{{ mosque.languages or '' }}">
+                                <small class="text-muted">{{ _('Languages used in services and khutbah') }}</small>
+                            </div>
+                        </div>
+
+                        <!-- Accessibility & Transportation -->
+                        <div class="mb-4">
+                            <h4>{{ _('Accessibility & Transportation') }}</h4>
+                            <div class="mb-3">
+                                <label for="accessibility_features" class="form-label">{{ _('Accessibility Features') }}</label>
+                                <textarea class="form-control" id="accessibility_features" name="accessibility_features" rows="4">{{ mosque.accessibility_features or '' }}</textarea>
+                                <small class="text-muted">{{ _('Describe available accessibility accommodations') }}</small>
+                            </div>
+                            <div class="mb-3">
+                                <label for="parking_info" class="form-label">{{ _('Parking Information') }}</label>
+                                <textarea class="form-control" id="parking_info" name="parking_info" rows="3">{{ mosque.parking_info or '' }}</textarea>
+                                <small class="text-muted">{{ _('Parking availability and instructions') }}</small>
+                            </div>
+                            <div class="mb-3">
+                                <label for="public_transport" class="form-label">{{ _('Public Transportation') }}</label>
+                                <textarea class="form-control" id="public_transport" name="public_transport" rows="3">{{ mosque.public_transport or '' }}</textarea>
+                                <small class="text-muted">{{ _('Nearby public transport options and directions') }}</small>
+                            </div>
+                        </div>
+
+                        <!-- Board Members -->
+                        <div class="mb-4">
+                            <h4>{{ _('Board Members') }}</h4>
+                            <div id="board-members-container">
+                                {% for member in mosque.board_members %}
+                                <div class="board-member-item mb-3 p-3 border rounded">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-2">
+                                                <label class="form-label">{{ _('Name') }}</label>
+                                                <input type="text" class="form-control" name="board_member_names[]" 
+                                                       value="{{ member.name }}" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-2">
+                                                <label class="form-label">{{ _('Role') }}</label>
+                                                <input type="text" class="form-control" name="board_member_roles[]" 
+                                                       value="{{ member.role }}" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-2">
+                                                <label class="form-label">{{ _('Email') }}</label>
+                                                <input type="email" class="form-control" name="board_member_emails[]" 
+                                                       value="{{ member.contact_email }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-2">
+                                                <label class="form-label">{{ _('Phone') }}</label>
+                                                <input type="tel" class="form-control" name="board_member_phones[]" 
+                                                       value="{{ member.contact_phone }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label">{{ _('Bio') }}</label>
+                                        <textarea class="form-control" name="board_member_bios[]" rows="2">{{ member.bio or '' }}</textarea>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label">{{ _('Photo') }}</label>
+                                        <input type="file" class="form-control" name="board_member_photos[]" accept="image/*">
+                                        {% if member.photo_url %}
+                                        <div class="mt-2">
+                                            <img src="{{ member.photo_url }}" alt="{{ member.name }}" class="img-thumbnail" style="height: 100px;">
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <button type="button" class="btn btn-outline-danger btn-sm mt-2" onclick="removeBoardMember(this)">
+                                        <i class="fas fa-trash"></i> {{ _('Remove') }}
+                                    </button>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="addBoardMember()">
+                                <i class="fas fa-plus"></i> {{ _('Add Board Member') }}
+                            </button>
+                        </div>
+
+                        <!-- History Entries -->
+                        <div class="mb-4">
+                            <h4>{{ _('History') }}</h4>
+                            <div id="history-entries-container">
+                                {% for entry in mosque.history_entries %}
+                                <div class="history-entry-item mb-3 p-3 border rounded">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-2">
+                                                <label class="form-label">{{ _('Year') }}</label>
+                                                <input type="number" class="form-control" name="history_years[]" 
+                                                       value="{{ entry.year }}" required min="1000" max="{{ current_year }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="mb-2">
+                                                <label class="form-label">{{ _('Title') }}</label>
+                                                <input type="text" class="form-control" name="history_titles[]" 
+                                                       value="{{ entry.title }}" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label">{{ _('Description') }}</label>
+                                        <textarea class="form-control" name="history_descriptions[]" rows="3" required>{{ entry.description }}</textarea>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label">{{ _('Photo') }}</label>
+                                        <input type="file" class="form-control" name="history_photos[]" accept="image/*">
+                                        {% if entry.photo_url %}
+                                        <div class="mt-2">
+                                            <img src="{{ entry.photo_url }}" alt="{{ entry.title }}" class="img-thumbnail" style="height: 100px;">
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <button type="button" class="btn btn-outline-danger btn-sm mt-2" onclick="removeHistoryEntry(this)">
+                                        <i class="fas fa-trash"></i> {{ _('Remove') }}
+                                    </button>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="addHistoryEntry()">
+                                <i class="fas fa-plus"></i> {{ _('Add Historical Event') }}
+                            </button>
+                        </div>
+
+                        <!-- Photo Gallery -->
+                        <div class="mb-4">
+                            <h4>{{ _('Photo Gallery') }}</h4>
+                            <div class="mb-3">
+                                <label for="new_photos" class="form-label">{{ _('Add New Photos') }}</label>
+                                <input type="file" class="form-control" id="new_photos" name="new_photos[]" multiple accept="image/*">
+                                <small class="text-muted">{{ _('You can select multiple images') }}</small>
+                            </div>
+
+                            {% if mosque.photos.count() > 0 %}
+                            <div class="row g-2 existing-photos">
+                                {% for photo in mosque.photos %}
+                                <div class="col-md-4 col-6">
+                                    <div class="photo-item p-2 border rounded">
+                                        <img src="{{ photo.url }}" alt="{{ photo.title }}" class="img-fluid rounded">
+                                        <div class="mt-2">
+                                            <input type="text" class="form-control form-control-sm mb-1" 
+                                                   name="photo_titles[]" value="{{ photo.title or '' }}" 
+                                                   placeholder="{{ _('Title') }}">
+                                            <textarea class="form-control form-control-sm mb-1" 
+                                                    name="photo_descriptions[]" 
+                                                    placeholder="{{ _('Description') }}">{{ photo.description or '' }}</textarea>
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input" 
+                                                       name="photo_featured[]" value="{{ photo.id }}"
+                                                       {% if photo.is_featured %}checked{% endif %}>
+                                                <label class="form-check-label small">{{ _('Featured Photo') }}</label>
+                                            </div>
+                                            <button type="button" class="btn btn-outline-danger btn-sm mt-1" 
+                                                    onclick="removePhoto(this, {{ photo.id }})">
+                                                <i class="fas fa-trash"></i> {{ _('Remove') }}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
                         </div>
 
                         <!-- Prayer Times -->
@@ -249,5 +455,115 @@ function addVideoField() {
     `;
     container.appendChild(newField);
 }
+
+function addBoardMember() {
+    const container = document.getElementById('board-members-container');
+    const template = `
+        <div class="board-member-item mb-3 p-3 border rounded">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-2">
+                        <label class="form-label">{{ _('Name') }}</label>
+                        <input type="text" class="form-control" name="board_member_names[]" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-2">
+                        <label class="form-label">{{ _('Role') }}</label>
+                        <input type="text" class="form-control" name="board_member_roles[]" required>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-2">
+                        <label class="form-label">{{ _('Email') }}</label>
+                        <input type="email" class="form-control" name="board_member_emails[]">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-2">
+                        <label class="form-label">{{ _('Phone') }}</label>
+                        <input type="tel" class="form-control" name="board_member_phones[]">
+                    </div>
+                </div>
+            </div>
+            <div class="mb-2">
+                <label class="form-label">{{ _('Bio') }}</label>
+                <textarea class="form-control" name="board_member_bios[]" rows="2"></textarea>
+            </div>
+            <div class="mb-2">
+                <label class="form-label">{{ _('Photo') }}</label>
+                <input type="file" class="form-control" name="board_member_photos[]" accept="image/*">
+            </div>
+            <button type="button" class="btn btn-outline-danger btn-sm mt-2" onclick="removeBoardMember(this)">
+                <i class="fas fa-trash"></i> {{ _('Remove') }}
+            </button>
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', template);
+}
+
+function removeBoardMember(button) {
+    button.closest('.board-member-item').remove();
+}
+
+function addHistoryEntry() {
+    const container = document.getElementById('history-entries-container');
+    const template = `
+        <div class="history-entry-item mb-3 p-3 border rounded">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-2">
+                        <label class="form-label">{{ _('Year') }}</label>
+                        <input type="number" class="form-control" name="history_years[]" 
+                               required min="1000" max="{{ current_year }}">
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="mb-2">
+                        <label class="form-label">{{ _('Title') }}</label>
+                        <input type="text" class="form-control" name="history_titles[]" required>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-2">
+                <label class="form-label">{{ _('Description') }}</label>
+                <textarea class="form-control" name="history_descriptions[]" rows="3" required></textarea>
+            </div>
+            <div class="mb-2">
+                <label class="form-label">{{ _('Photo') }}</label>
+                <input type="file" class="form-control" name="history_photos[]" accept="image/*">
+            </div>
+            <button type="button" class="btn btn-outline-danger btn-sm mt-2" onclick="removeHistoryEntry(this)">
+                <i class="fas fa-trash"></i> {{ _('Remove') }}
+            </button>
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', template);
+}
+
+function removeHistoryEntry(button) {
+    button.closest('.history-entry-item').remove();
+}
+
+function removePhoto(button, photoId) {
+    if (confirm('{{ _('Are you sure you want to remove this photo?') }}')) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'remove_photos[]';
+        input.value = photoId;
+        button.closest('form').appendChild(input);
+        button.closest('.col-md-4').remove();
+    }
+}
+
+// Initialize tooltips
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
 </script>
 {% endblock %}

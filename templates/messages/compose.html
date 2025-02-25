@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Compose Message') }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">{{ _('Compose New Message') }}</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="recipient_id" class="form-label">{{ _('To') }}</label>
+                            <select class="form-select" id="recipient_id" name="recipient_id" required>
+                                <option value="">{{ _('Select recipient...') }}</option>
+                                {% for recipient in recipients %}
+                                <option value="{{ recipient.id }}">
+                                    {% if recipient.is_admin %}
+                                    {{ _('VGM Admin:') }} {{ recipient.username }}
+                                    {% else %}
+                                    {{ recipient.mosque_name or recipient.username }}
+                                    {% endif %}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">{{ _('Subject') }}</label>
+                            <input type="text" class="form-control" id="subject" name="subject" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="body" class="form-label">{{ _('Message') }}</label>
+                            <textarea class="form-control" id="body" name="body" rows="8" required></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('messages.inbox') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> {{ _('Back to Inbox') }}
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> {{ _('Send Message') }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.form-select, .form-control {
+    border-color: var(--border-color);
+}
+
+.form-select:focus, .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0, 90, 135, 0.1);
+}
+</style>
+{% endblock %}

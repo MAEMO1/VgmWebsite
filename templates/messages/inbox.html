@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Messages') }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <a href="{{ url_for('messages.compose') }}" class="btn btn-primary w-100 mb-3">
+                        <i class="fas fa-pen"></i> {{ _('Compose Message') }}
+                    </a>
+                    <div class="list-group">
+                        <a href="#inbox" class="list-group-item list-group-item-action active" data-bs-toggle="list">
+                            {{ _('Inbox') }}
+                            {% if unread_count > 0 %}
+                            <span class="badge bg-primary float-end">{{ unread_count }}</span>
+                            {% endif %}
+                        </a>
+                        <a href="#sent" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                            {{ _('Sent Messages') }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message List -->
+        <div class="col-md-9">
+            <div class="tab-content">
+                <!-- Inbox -->
+                <div class="tab-pane fade show active" id="inbox">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">{{ _('Inbox') }}</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if received_messages %}
+                            <div class="list-group">
+                                {% for message in received_messages %}
+                                <a href="{{ url_for('messages.view_message', message_id=message.id) }}" 
+                                   class="list-group-item list-group-item-action {% if not message.is_read %}unread{% endif %}">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">{{ message.subject }}</h6>
+                                        <small>{{ message.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                    </div>
+                                    <p class="mb-1">{{ _('From:') }} {{ message.sender.username }}</p>
+                                    <small class="text-muted">{{ message.body[:100] }}{% if message.body|length > 100 %}...{% endif %}</small>
+                                </a>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <p class="text-muted text-center py-4">{{ _('No messages in your inbox') }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sent Messages -->
+                <div class="tab-pane fade" id="sent">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">{{ _('Sent Messages') }}</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if sent_messages %}
+                            <div class="list-group">
+                                {% for message in sent_messages %}
+                                <a href="{{ url_for('messages.view_message', message_id=message.id) }}" 
+                                   class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">{{ message.subject }}</h6>
+                                        <small>{{ message.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                    </div>
+                                    <p class="mb-1">{{ _('To:') }} {{ message.recipient.username }}</p>
+                                    <small class="text-muted">{{ message.body[:100] }}{% if message.body|length > 100 %}...{% endif %}</small>
+                                </a>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <p class="text-muted text-center py-4">{{ _('No sent messages') }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.unread {
+    background-color: var(--background-light);
+    font-weight: 500;
+}
+
+.unread:hover {
+    background-color: #e9ecef;
+}
+
+.list-group-item {
+    border-left: 3px solid transparent;
+}
+
+.list-group-item.unread {
+    border-left-color: var(--primary-color);
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+</style>
+{% endblock %}

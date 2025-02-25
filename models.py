@@ -47,6 +47,27 @@ class User(UserMixin, db.Model):
                                       backref='user',
                                       lazy='dynamic')
 
+    # Add new relationships
+    board_members = db.relationship('MosqueBoardMember', backref='mosque', lazy='dynamic')
+    history_entries = db.relationship('MosqueHistory', backref='mosque', lazy='dynamic')
+    photos = db.relationship('MosquePhoto', backref='mosque', lazy='dynamic')
+    content_changes = db.relationship('ContentChangeLog', 
+                                    foreign_keys='ContentChangeLog.mosque_id',
+                                    backref='mosque', 
+                                    lazy='dynamic')
+
+    # New fields for mosque profiles
+    foundation_year = db.Column(db.Integer)
+    mission_statement = db.Column(db.Text)
+    vision_statement = db.Column(db.Text)
+    activities = db.Column(db.Text)  # List of regular activities
+    facilities = db.Column(db.Text)  # Available facilities
+    languages = db.Column(db.String(200))  # Languages of services/khutbah
+    capacity = db.Column(db.Integer)  # Prayer hall capacity
+    accessibility_features = db.Column(db.Text)  # Accessibility information
+    parking_info = db.Column(db.Text)  # Parking information
+    public_transport = db.Column(db.Text)  # Public transport directions
+
     def get_full_address(self):
         if self.user_type == 'mosque':
             return f"{self.mosque_street} {self.mosque_number}, {self.mosque_postal} {self.mosque_city}"
@@ -185,7 +206,57 @@ class BoardMember(db.Model):
     def __repr__(self):
         return f'<BoardMember {self.name} ({self.role})>'
 
-# Add new models for categories and tags
+class MosqueBoardMember(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    role = db.Column(db.String(50), nullable=False)
+    contact_email = db.Column(db.String(120))
+    contact_phone = db.Column(db.String(20))
+    bio = db.Column(db.Text)
+    photo_url = db.Column(db.String(500))
+    start_date = db.Column(db.Date)
+    end_date = db.Column(db.Date)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class MosqueHistory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    year = db.Column(db.Integer, nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    photo_url = db.Column(db.String(500))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class MosquePhoto(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    title = db.Column(db.String(200))
+    description = db.Column(db.Text)
+    category = db.Column(db.String(50))  # e.g., 'events', 'building', 'community'
+    url = db.Column(db.String(500), nullable=False)
+    is_featured = db.Column(db.Boolean, default=False)
+    taken_at = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class ContentChangeLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    changed_by_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    content_type = db.Column(db.String(50), nullable=False)  # 'profile', 'history', 'board_member', etc.
+    content_id = db.Column(db.Integer)  # ID of the changed content
+    change_type = db.Column(db.String(20), nullable=False)  # 'create', 'update', 'delete'
+    old_value = db.Column(db.JSON)
+    new_value = db.Column(db.JSON)
+    is_approved = db.Column(db.Boolean, default=False)
+    approved_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    approved_at = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
 class BlogCategory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -197,13 +268,11 @@ class BlogCategory(db.Model):
         backref=db.backref('parent', remote_side=[id]),
         cascade="all, delete-orphan")
 
-# Association table for many-to-many relationship between posts and categories
 post_categories = db.Table('post_categories',
     db.Column('post_id', db.Integer, db.ForeignKey('blog_post.id'), primary_key=True),
     db.Column('category_id', db.Integer, db.ForeignKey('blog_category.id'), primary_key=True)
 )
 
-# Update BlogPost model to include categories relationship
 class BlogPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
@@ -235,7 +304,6 @@ class BlogPost(db.Model):
         minutes = round(word_count / words_per_minute)
         return max(1, minutes)  # Minimum 1 minute reading time
 
-# Update the Donation model to support multiple payment methods
 class Donation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.Float, nullable=False)
@@ -276,7 +344,6 @@ class Donation(db.Model):
         random_part = ''.join(random.choices('0123456789', k=4))
         return f'VGM-{date_part}-{random_part}'
 
-# New model for payment provider configurations
 class PaymentConfig(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     provider = db.Column(db.String(50), unique=True, nullable=False)  # 'stripe', 'paypal', etc.
@@ -284,3 +351,20 @@ class PaymentConfig(db.Model):
     config = db.Column(db.JSON)  # Store provider-specific configuration
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    subject = db.Column(db.String(200), nullable=False)
+    body = db.Column(db.Text, nullable=False)
+    is_read = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    sender = db.relationship('User', foreign_keys=[sender_id], backref='sent_messages')
+    recipient = db.relationship('User', foreign_keys=[recipient_id], backref='received_messages')
+
+    def __repr__(self):
+        return f'<Message {self.subject}>'

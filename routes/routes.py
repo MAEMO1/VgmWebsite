@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from app import db
-from models import User, BoardMember, Event, PrayerTime, BlogPost, MosqueImage, MosqueVideo, Donation, MosqueNotificationPreference # Added MosqueNotificationPreference model
+from models import User, BoardMember, Event, PrayerTime, BlogPost, MosqueImage, MosqueVideo, Donation, MosqueNotificationPreference, MosqueBoardMember, MosqueHistory, MosquePhoto, ContentChangeLog # Added new models
 from datetime import datetime, date
 import os
 
@@ -216,16 +216,38 @@ def edit_mosque(mosque_id):
 
     # Check if user has permission to edit
     if not (current_user.is_admin or current_user.id == mosque.id):
-        flash('Je hebt geen toestemming om deze moskee te bewerken.', 'error')
+        flash(_('Je hebt geen toestemming om deze moskee te bewerken.'), 'error')
         return redirect(url_for('main.mosque_detail', mosque_id=mosque_id))
 
     if request.method == 'POST':
         try:
-            # Update basic information
-            mosque.history = request.form.get('history')
-            mosque.establishment_year = int(request.form.get('establishment_year')) if request.form.get('establishment_year') else None
+            # Store old values for change logging
+            old_values = {
+                'mission_statement': mosque.mission_statement,
+                'vision_statement': mosque.vision_statement,
+                'activities': mosque.activities,
+                'facilities': mosque.facilities,
+                'languages': mosque.languages,
+                'capacity': mosque.capacity,
+                'foundation_year': mosque.foundation_year,
+                'accessibility_features': mosque.accessibility_features,
+                'parking_info': mosque.parking_info,
+                'public_transport': mosque.public_transport
+            }
 
-            # Update contact information
+            # Update basic profile information
+            mosque.mission_statement = request.form.get('mission_statement')
+            mosque.vision_statement = request.form.get('vision_statement')
+            mosque.activities = request.form.get('activities')
+            mosque.facilities = request.form.get('facilities')
+            mosque.languages = request.form.get('languages')
+            mosque.capacity = int(request.form.get('capacity')) if request.form.get('capacity') else None
+            mosque.foundation_year = int(request.form.get('foundation_year')) if request.form.get('foundation_year') else None
+            mosque.accessibility_features = request.form.get('accessibility_features')
+            mosque.parking_info = request.form.get('parking_info')
+            mosque.public_transport = request.form.get('public_transport')
+
+            # Contact information
             mosque.mosque_email = request.form.get('mosque_email')
             mosque.mosque_website = request.form.get('mosque_website')
             mosque.mosque_phone = request.form.get('mosque_phone')
@@ -233,55 +255,147 @@ def edit_mosque(mosque_id):
             mosque.emergency_contact = request.form.get('emergency_contact')
             mosque.emergency_phone = request.form.get('emergency_phone')
 
-            # Update social media links
+            # Social media links
             mosque.facebook_url = request.form.get('facebook_url')
             mosque.twitter_url = request.form.get('twitter_url')
             mosque.instagram_url = request.form.get('instagram_url')
             mosque.youtube_url = request.form.get('youtube_url')
             mosque.whatsapp_number = request.form.get('whatsapp_number')
 
-            # Parse and set Friday prayer time
-            friday_time = request.form.get('friday_prayer_time')
-            if friday_time:
-                mosque.friday_prayer_time = datetime.strptime(friday_time, '%H:%M').time()
+            # Log changes to profile information
+            new_values = {
+                'mission_statement': mosque.mission_statement,
+                'vision_statement': mosque.vision_statement,
+                'activities': mosque.activities,
+                'facilities': mosque.facilities,
+                'languages': mosque.languages,
+                'capacity': mosque.capacity,
+                'foundation_year': mosque.foundation_year,
+                'accessibility_features': mosque.accessibility_features,
+                'parking_info': mosque.parking_info,
+                'public_transport': mosque.public_transport
+            }
 
-            # Handle image uploads
-            if 'images' in request.files:
-                for image in request.files.getlist('images'):
-                    if image and allowed_file(image.filename):
-                        filename = secure_filename(image.filename)
-                        image_path = os.path.join('static', 'uploads', filename)
-                        image.save(image_path)
+            # Create change log for profile updates
+            if any(old_values[k] != new_values[k] for k in old_values.keys()):
+                change_log = ContentChangeLog(
+                    mosque_id=mosque.id,
+                    changed_by_id=current_user.id,
+                    content_type='profile',
+                    change_type='update',
+                    old_value=old_values,
+                    new_value=new_values
+                )
+                db.session.add(change_log)
 
-                        mosque_image = MosqueImage(
-                            mosque_id=mosque.id,
-                            url=url_for('static', filename=f'uploads/{filename}'),
-                            description=request.form.get('image_description')
-                        )
-                        db.session.add(mosque_image)
+            # Handle board members
+            names = request.form.getlist('board_member_names[]')
+            roles = request.form.getlist('board_member_roles[]')
+            emails = request.form.getlist('board_member_emails[]')
+            phones = request.form.getlist('board_member_phones[]')
+            bios = request.form.getlist('board_member_bios[]')
+            photos = request.files.getlist('board_member_photos[]')
 
-            # Handle video URLs
-            video_urls = request.form.getlist('video_urls[]')
-            video_titles = request.form.getlist('video_titles[]')
-            for url, title in zip(video_urls, video_titles):
-                if url and title:
-                    mosque_video = MosqueVideo(
+            # Remove existing board members
+            MosqueBoardMember.query.filter_by(mosque_id=mosque.id).delete()
+
+            # Add new board members
+            for i, (name, role) in enumerate(zip(names, roles)):
+                if name and role:  # Only add if name and role are provided
+                    photo = photos[i] if i < len(photos) and photos[i].filename else None
+                    photo_url = None
+                    if photo and allowed_file(photo.filename):
+                        filename = secure_filename(f"board_{mosque.id}_{i}_{photo.filename}")
+                        photo_path = os.path.join('static', 'uploads', 'board', filename)
+                        os.makedirs(os.path.dirname(photo_path), exist_ok=True)
+                        photo.save(photo_path)
+                        photo_url = url_for('static', filename=f'uploads/board/{filename}')
+
+                    board_member = MosqueBoardMember(
                         mosque_id=mosque.id,
-                        url=url,
-                        title=title
+                        name=name,
+                        role=role,
+                        contact_email=emails[i] if i < len(emails) else None,
+                        contact_phone=phones[i] if i < len(phones) else None,
+                        bio=bios[i] if i < len(bios) else None,
+                        photo_url=photo_url
                     )
-                    db.session.add(mosque_video)
+                    db.session.add(board_member)
+
+            # Handle history entries
+            years = request.form.getlist('history_years[]')
+            titles = request.form.getlist('history_titles[]')
+            descriptions = request.form.getlist('history_descriptions[]')
+            history_photos = request.files.getlist('history_photos[]')
+
+            # Remove existing history entries
+            MosqueHistory.query.filter_by(mosque_id=mosque.id).delete()
+
+            # Add new history entries
+            for i, (year, title, description) in enumerate(zip(years, titles, descriptions)):
+                if year and title and description:
+                    photo = history_photos[i] if i < len(history_photos) and history_photos[i].filename else None
+                    photo_url = None
+                    if photo and allowed_file(photo.filename):
+                        filename = secure_filename(f"history_{mosque.id}_{i}_{photo.filename}")
+                        photo_path = os.path.join('static', 'uploads', 'history', filename)
+                        os.makedirs(os.path.dirname(photo_path), exist_ok=True)
+                        photo.save(photo_path)
+                        photo_url = url_for('static', filename=f'uploads/history/{filename}')
+
+                    history_entry = MosqueHistory(
+                        mosque_id=mosque.id,
+                        year=int(year),
+                        title=title,
+                        description=description,
+                        photo_url=photo_url
+                    )
+                    db.session.add(history_entry)
+
+            # Handle photo gallery
+            if 'new_photos[]' in request.files:
+                for photo in request.files.getlist('new_photos[]'):
+                    if photo and allowed_file(photo.filename):
+                        filename = secure_filename(photo.filename)
+                        photo_path = os.path.join('static', 'uploads', 'gallery', filename)
+                        os.makedirs(os.path.dirname(photo_path), exist_ok=True)
+                        photo.save(photo_path)
+                        photo_url = url_for('static', filename=f'uploads/gallery/{filename}')
+
+                        mosque_photo = MosquePhoto(
+                            mosque_id=mosque.id,
+                            url=photo_url
+                        )
+                        db.session.add(mosque_photo)
+
+            # Handle photo removals
+            remove_photos = request.form.getlist('remove_photos[]')
+            if remove_photos:
+                MosquePhoto.query.filter(MosquePhoto.id.in_(remove_photos)).delete(synchronize_session=False)
+
+            # Update photo details
+            photo_titles = request.form.getlist('photo_titles[]')
+            photo_descriptions = request.form.getlist('photo_descriptions[]')
+            photo_featured = request.form.getlist('photo_featured[]')
+
+            for photo in mosque.photos:
+                idx = mosque.photos.index(photo)
+                if idx < len(photo_titles):
+                    photo.title = photo_titles[idx]
+                if idx < len(photo_descriptions):
+                    photo.description = photo_descriptions[idx]
+                photo.is_featured = str(photo.id) in photo_featured
 
             db.session.commit()
-            flash('Moskee informatie succesvol bijgewerkt.', 'success')
+            flash(_('Moskee informatie succesvol bijgewerkt.'), 'success')
             return redirect(url_for('main.mosque_detail', mosque_id=mosque_id))
 
         except Exception as e:
             db.session.rollback()
-            flash('Er is een fout opgetreden bij het bijwerken van de moskee informatie.', 'error')
+            flash(_('Er is een fout opgetreden bij het bijwerken van de moskee informatie.'), 'error')
             print(f"Error updating mosque: {e}")
 
-    return render_template('edit_mosque.html', mosque=mosque)
+    return render_template('edit_mosque.html', mosque=mosque, current_year=datetime.now().year)
 
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
