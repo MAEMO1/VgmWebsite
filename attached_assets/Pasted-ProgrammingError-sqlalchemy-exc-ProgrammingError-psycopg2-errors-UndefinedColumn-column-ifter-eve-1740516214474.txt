@@ -1,0 +1,92 @@
+ProgrammingError
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column ifter_event.women_entrance does not exist
+LINE 1: ...me, ifter_event.location AS ifter_event_location, ifter_even...
+                                                             ^
+
+[SQL: SELECT DISTINCT ifter_event.id AS ifter_event_id, ifter_event.mosque_id AS ifter_event_mosque_id, ifter_event.date AS ifter_event_date, ifter_event.start_time AS ifter_event_start_time, ifter_event.end_time AS ifter_event_end_time, ifter_event.location AS ifter_event_location, ifter_event.women_entrance AS ifter_event_women_entrance, ifter_event.capacity AS ifter_event_capacity, ifter_event.is_family_friendly AS ifter_event_is_family_friendly, ifter_event.registration_required AS ifter_event_registration_required, ifter_event.registration_deadline AS ifter_event_registration_deadline, ifter_event.dietary_options AS ifter_event_dietary_options, ifter_event.notes AS ifter_event_notes, ifter_event.is_recurring AS ifter_event_is_recurring, ifter_event.recurrence_type AS ifter_event_recurrence_type, ifter_event.recurrence_end_date AS ifter_event_recurrence_end_date, ifter_event.created_at AS ifter_event_created_at, ifter_event.updated_at AS ifter_event_updated_at 
+FROM ifter_event 
+WHERE ifter_event.date >= %(date_1)s AND ifter_event.date <= %(date_2)s ORDER BY ifter_event.date, ifter_event.start_time]
+[parameters: {'date_1': datetime.date(2025, 2, 25), 'date_2': datetime.date(2025, 2, 25)}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+
+Traceback (most recent call last)
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+self.dialect.do_execute(
+^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+cursor.execute(statement, parameters)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The above exception was the direct cause of the following exception:
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1536, in __call__
+return self.wsgi_app(environ, start_response)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1514, in wsgi_app
+response = self.handle_exception(e)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 1511, in wsgi_app
+response = self.full_dispatch_request()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 919, in full_dispatch_request
+rv = self.handle_user_exception(e)
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+rv = self.dispatch_request()
+     ^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/routes/routes.py", line 1396, in iftar_map
+iftar_events = query.distinct().all()
+               ^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2699, in all
+return self._iter().all()  # type: ignore
+       ^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2853, in _iter
+result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                              
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2365, in execute
+return self._execute_internal(
+       
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2251, in _execute_internal
+result: Result[Any] = compile_state_cls.orm_execute_statement(
+                      
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/orm/context.py", line 305, in orm_execute_statement
+result = conn.execute(
+         
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+return meth(
+       
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 516, in _execute_on_connection
+return connection._execute_clauseelement(
+       
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1638, in _execute_clauseelement
+ret = self._execute_context(
+      
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1843, in _execute_context
+return self._exec_single_context(
+       
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1983, in _exec_single_context
+self._handle_dbapi_exception(
+^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2352, in _handle_dbapi_exception
+raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+self.dialect.do_execute(
+^
+File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 942, in do_execute
+cursor.execute(statement, parameters)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column ifter_event.women_entrance does not exist
+LINE 1: ...me, ifter_event.location AS ifter_event_location, ifter_even...
+^
+
+[SQL: SELECT DISTINCT ifter_event.id AS ifter_event_id, ifter_event.mosque_id AS ifter_event_mosque_id, ifter_event.date AS ifter_event_date, ifter_event.start_time AS ifter_event_start_time, ifter_event.end_time AS ifter_event_end_time, ifter_event.location AS ifter_event_location, ifter_event.women_entrance AS ifter_event_women_entrance, ifter_event.capacity AS ifter_event_capacity, ifter_event.is_family_friendly AS ifter_event_is_family_friendly, ifter_event.registration_required AS ifter_event_registration_required, ifter_event.registration_deadline AS ifter_event_registration_deadline, ifter_event.dietary_options AS ifter_event_dietary_options, ifter_event.notes AS ifter_event_notes, ifter_event.is_recurring AS ifter_event_is_recurring, ifter_event.recurrence_type AS ifter_event_recurrence_type, ifter_event.recurrence_end_date AS ifter_event_recurrence_end_date, ifter_event.created_at AS ifter_event_created_at, ifter_event.updated_at AS ifter_event_updated_at
+FROM ifter_event
+WHERE ifter_event.date >= %(date_1)s AND ifter_event.date <= %(date_2)s ORDER BY ifter_event.date, ifter_event.start_time]
+[parameters: {'date_1': datetime.date(2025, 2, 25), 'date_2': datetime.date(2025, 2, 25)}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+The debugger caught an exception in your WSGI application. You can now look at the traceback which led to the error.
+To switch between the interactive traceback and the plaintext one, you can click on the "Traceback" headline. From the text traceback you can also create a paste of it.
+
+Brought to you by DON'T PANIC, your friendly Werkzeug powered traceback interpreter.
