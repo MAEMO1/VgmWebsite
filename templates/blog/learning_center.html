@@ -118,6 +118,33 @@
     line-height: 1.6;
 }
 
+.content-section {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-md);
+}
+
+.content-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+}
+
+.content-meta {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.content-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-primary);
+}
+
 @media (max-width: 768px) {
     .learning-container {
         flex-direction: column;
@@ -130,6 +157,29 @@
         border-right: none;
         border-bottom: 1px solid var(--border-color);
     }
+}
+
+.admin-controls {
+    margin-bottom: 2rem;
+}
+
+.btn-add-content {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--transition);
+}
+
+.btn-add-content:hover {
+    opacity: 0.9;
+    color: white;
+    text-decoration: none;
 }
 </style>
 {% endblock %}
@@ -146,7 +196,8 @@
             </div>
             <div class="subtopics" id="{{ topic_key }}-subtopics">
                 {% for subtopic in topic.subtopics %}
-                <a href="#{{ topic_key }}/{{ subtopic|lower }}" class="subtopic-link">
+                <a href="{{ url_for('blog.learning_center', topic=topic_key, subtopic=subtopic|lower) }}" 
+                   class="subtopic-link {% if selected_topic == topic_key and selected_subtopic == subtopic|lower %}active{% endif %}">
                     {{ subtopic }}
                 </a>
                 {% endfor %}
@@ -156,16 +207,43 @@
     </aside>
 
     <main class="main-content">
+        {% if current_user.is_authenticated and current_user.is_admin %}
+        <div class="admin-controls">
+            <a href="{{ url_for('blog.add_learning_content') }}" class="btn-add-content">
+                <i class="fas fa-plus"></i>
+                {{ _('Nieuwe Content Toevoegen') }}
+            </a>
+        </div>
+        {% endif %}
+
+        {% if not selected_topic %}
         <section class="welcome-section">
             <h1 class="welcome-title">{{ _('Welkom bij het VGM Leercentrum') }}</h1>
             <p class="welcome-text">
                 {{ _('Ontdek een schat aan islamitische kennis en wijsheid. Kies een onderwerp uit het menu om te beginnen met leren.') }}
             </p>
         </section>
+        {% endif %}
 
-        <div id="content-area">
-            <!-- Dynamic content will be loaded here -->
+        {% if content %}
+        {% for item in content %}
+        <article class="content-section">
+            <h2 class="content-title">{{ item.title }}</h2>
+            <div class="content-meta">
+                <span><i class="fas fa-user me-1"></i>{{ item.author.username }}</span>
+                <span class="mx-2">•</span>
+                <span><i class="far fa-calendar me-1"></i>{{ item.created_at.strftime('%d-%m-%Y') }}</span>
+            </div>
+            <div class="content-text">
+                {{ item.content|safe }}
+            </div>
+        </article>
+        {% endfor %}
+        {% elif selected_topic %}
+        <div class="content-section">
+            <p class="text-center text-muted">{{ _('Nog geen content beschikbaar voor dit onderwerp.') }}</p>
         </div>
+        {% endif %}
     </main>
 </div>
 {% endblock %}
@@ -175,16 +253,16 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Handle topic expansion
     const topicHeaders = document.querySelectorAll('.topic-header');
-    
+
     topicHeaders.forEach(header => {
         header.addEventListener('click', function() {
             const topicKey = this.dataset.topic;
             const subtopics = document.getElementById(`${topicKey}-subtopics`);
-            
+
             // Toggle active class
             this.classList.toggle('active');
             subtopics.classList.toggle('active');
-            
+
             // Close other topics
             topicHeaders.forEach(otherHeader => {
                 if (otherHeader !== header) {
@@ -197,25 +275,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Handle subtopic navigation
-    const subtopicLinks = document.querySelectorAll('.subtopic-link');
-    subtopicLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Remove active class from all links
-            subtopicLinks.forEach(l => l.classList.remove('active'));
-            
-            // Add active class to clicked link
-            this.classList.add('active');
-            
-            // Here you would typically load the content for the selected topic
-            // For now, we'll just update the content area with a placeholder
-            const contentArea = document.getElementById('content-area');
-            const topic = this.textContent.trim();
-            contentArea.innerHTML = `<h2>${topic}</h2><p>Content for ${topic} will be loaded here.</p>`;
-        });
-    });
+    // Activate current topic if selected
+    const selectedTopic = '{{ selected_topic }}';
+    if (selectedTopic) {
+        const currentHeader = document.querySelector(`[data-topic="${selectedTopic}"]`);
+        const currentSubtopics = document.getElementById(`${selectedTopic}-subtopics`);
+        if (currentHeader && currentSubtopics) {
+            currentHeader.classList.add('active');
+            currentSubtopics.classList.add('active');
+        }
+    }
 });
 </script>
 {% endblock %}

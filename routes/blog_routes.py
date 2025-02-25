@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_required, current_user
 from app import db
-from models import BlogPost, BlogCategory
-from forms import VideoForm # Added import for VideoForm
+from models import BlogPost, BlogCategory, LearningContent # Added LearningContent import
+from forms import VideoForm, LearningContentForm # Added import for LearningContentForm
 from datetime import datetime
 
 blog = Blueprint('blog', __name__)
@@ -98,7 +98,7 @@ def index():
                          posts=posts, 
                          categories=categories)
 
-@blog.route('/leercentrum')
+@blog.route('/leercentrum', methods=['GET'])
 def learning_center():
     topics = {
         'plichtenleer': {
@@ -118,7 +118,23 @@ def learning_center():
             'subtopics': ['Profeet Mohammed ﷺ', 'Sahaba', 'Islamitische Beschaving', 'Islamitische geschiedenis in België']
         }
     }
-    return render_template('blog/learning_center.html', topics=topics)
+
+    # Get content for the selected topic/subtopic from URL parameters
+    selected_topic = request.args.get('topic')
+    selected_subtopic = request.args.get('subtopic')
+
+    content = None
+    if selected_topic and selected_subtopic:
+        content = LearningContent.query.filter_by(
+            topic=selected_topic,
+            subtopic=selected_subtopic
+        ).order_by(LearningContent.order).all()
+
+    return render_template('blog/learning_center.html', 
+                         topics=topics,
+                         content=content,
+                         selected_topic=selected_topic,
+                         selected_subtopic=selected_subtopic)
 
 @blog.route('/<slug>')
 def view(slug):
@@ -240,3 +256,32 @@ def create():
     return render_template('blog/create.html', 
                          is_video=is_video,
                          categories=categories)
+
+@blog.route('/leercentrum/toevoegen', methods=['GET', 'POST'])
+@login_required
+def add_learning_content():
+    if not current_user.is_admin:
+        flash('Alleen administrators kunnen content toevoegen.', 'error')
+        return redirect(url_for('blog.learning_center'))
+
+    form = LearningContentForm()
+
+    if form.validate_on_submit():
+        content = LearningContent(
+            title=form.title.data,
+            content=form.content.data,
+            topic=form.topic.data,
+            subtopic=form.subtopic.data,
+            order=form.order.data or 0,  # Default to 0 if no order specified
+            author_id=current_user.id
+        )
+
+        db.session.add(content)
+        db.session.commit()
+
+        flash('Content succesvol toegevoegd!', 'success')
+        return redirect(url_for('blog.learning_center', 
+                              topic=form.topic.data,
+                              subtopic=form.subtopic.data))
+
+    return render_template('blog/learning_content_form.html', form=form)

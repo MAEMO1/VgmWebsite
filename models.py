@@ -379,3 +379,20 @@ class Message(db.Model):
 
     def __repr__(self):
         return f'<Message {self.subject}>'
+
+class LearningContent(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    topic = db.Column(db.String(50), nullable=False)  # plichtenleer, geloofsleer, etc.
+    subtopic = db.Column(db.String(100), nullable=False)  # Shahada, Gebed, etc.
+    order = db.Column(db.Integer)  # For ordering content within a subtopic
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationship with the author
+    author = db.relationship('User', backref=db.backref('learning_content', lazy='dynamic'))
+
+    def __repr__(self):
+        return f'<LearningContent {self.title}>'

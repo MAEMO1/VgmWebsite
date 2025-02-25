@@ -18,6 +18,37 @@ class VideoForm(FlaskForm):
         Length(max=2000, message='Beschrijving mag maximaal 2000 karakters zijn')
     ])
 
+class LearningContentForm(FlaskForm):
+    title = StringField('Titel', validators=[
+        DataRequired(message='Vul een titel in'),
+        Length(min=2, max=200, message='Titel moet tussen 2 en 200 karakters zijn')
+    ])
+    content = TextAreaField('Inhoud', validators=[
+        DataRequired(message='Vul de inhoud in'),
+        Length(min=10, message='De inhoud moet minimaal 10 karakters bevatten')
+    ])
+    topic = SelectField('Onderwerp', validators=[DataRequired(message='Selecteer een onderwerp')], choices=[
+        ('plichtenleer', 'Plichtenleer'),
+        ('geloofsleer', 'Geloofsleer'),
+        ('karaktervorming', 'Karaktervorming'),
+        ('geschiedenis', 'Islamitische Geschiedenis')
+    ])
+    subtopic = SelectField('Subonderwerp', validators=[DataRequired(message='Selecteer een subonderwerp')])
+    order = IntegerField('Volgorde', validators=[Optional()])
+
+    def __init__(self, *args, **kwargs):
+        super(LearningContentForm, self).__init__(*args, **kwargs)
+        # Dynamic subtopic choices based on main topic
+        self.topic_subtopics = {
+            'plichtenleer': ['Shahada', 'Gebed', 'Zakat', 'Vasten', 'Hadj'],
+            'geloofsleer': ['Allah', 'Engelen', 'Koran', 'Profeten', 'De Laatste Dag', 'Het Lot'],
+            'karaktervorming': ['Ethiek', 'Manieren', 'Omgang'],
+            'geschiedenis': ['Profeet Mohammed ﷺ', 'Sahaba', 'Islamitische Beschaving', 'Islamitische geschiedenis in België']
+        }
+        # Set initial subtopic choices
+        if self.topic.data in self.topic_subtopics:
+            self.subtopic.choices = [(st, st) for st in self.topic_subtopics[self.topic.data]]
+
 class ObituaryForm(FlaskForm):
     # Indiener (submitter) information - required fields
     submitter_name = StringField('Uw Naam *', validators=[
