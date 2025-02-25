@@ -1,44 +1,168 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('Register - Mosque Management') }}{% endblock %}
+{% block title %}{{ _('Registreren - VGM') }}{% endblock %}
+
+{% block styles %}
+<style>
+.register-container {
+    max-width: 480px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.register-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.register-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.register-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.register-options {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.register-option {
+    background: white;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.register-option:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.register-option i {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,90,135,0.1);
+    border-radius: 8px;
+}
+
+.register-option-content {
+    flex: 1;
+}
+
+.register-option-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+}
+
+.register-option-description {
+    color: var(--text-secondary);
+    font-size: 0.925rem;
+    line-height: 1.5;
+}
+
+.login-link {
+    text-align: center;
+    margin-top: 2rem;
+    color: var(--text-secondary);
+}
+
+.login-link a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 576px) {
+    .register-container {
+        padding: 1.5rem;
+    }
+
+    .register-title {
+        font-size: 1.75rem;
+    }
+
+    .register-option {
+        padding: 1.25rem;
+    }
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h2>{{ _('Register') }}</h2>
-            </div>
-            <div class="card-body">
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="alert alert-{{ category }}">{{ _(message) }}</div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-
-                <div class="mb-4">
-                    <h4>{{ _('Choose Registration Type:') }}</h4>
-                    <div class="d-flex justify-content-center gap-3">
-                        <a href="{{ url_for('main.register_visitor') }}" class="btn btn-primary">{{ _('Register as Visitor') }}</a>
-                        <a href="{{ url_for('main.register_mosque') }}" class="btn btn-secondary">{{ _('Register as Mosque') }}</a>
-                        {% if 'admin_registration_code' in request.args %}
-                        <a href="{{ url_for('main.register_admin', code=request.args.get('admin_registration_code')) }}" class="btn btn-danger">
-                            {{ _('Register as Admin') }}
-                        </a>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div class="mt-4">
-                    <p class="text-center">
-                        {{ _('Already have an account?') }}
-                        <a href="{{ url_for('main.login') }}">{{ _('Login here') }}</a>
-                    </p>
-                </div>
-            </div>
-        </div>
+<div class="register-container">
+    <div class="register-header">
+        <h1 class="register-title">{{ _('Word lid van VGM') }}</h1>
+        <p class="register-subtitle">
+            {{ _('Kies hieronder hoe u zich wilt registreren bij de Vereniging van Gentse Moskeeën') }}
+        </p>
     </div>
+
+    <div class="register-options">
+        <a href="{{ url_for('main.register_mosque') }}" class="register-option">
+            <i class="fas fa-mosque"></i>
+            <div class="register-option-content">
+                <h2 class="register-option-title">{{ _('Registreer als Moskee') }}</h2>
+                <p class="register-option-description">
+                    {{ _('Voor moskeeën die lid willen worden van VGM en hun aanwezigheid willen beheren') }}
+                </p>
+            </div>
+            <i class="fas fa-chevron-right"></i>
+        </a>
+
+        <a href="{{ url_for('main.register_visitor') }}" class="register-option">
+            <i class="fas fa-user"></i>
+            <div class="register-option-content">
+                <h2 class="register-option-title">{{ _('Registreer als Bezoeker') }}</h2>
+                <p class="register-option-description">
+                    {{ _('Voor gemeenschapsleden die op de hoogte willen blijven van nieuws en evenementen') }}
+                </p>
+            </div>
+            <i class="fas fa-chevron-right"></i>
+        </a>
+
+        {% if 'admin_registration_code' in request.args %}
+        <a href="{{ url_for('main.register_admin', code=request.args.get('admin_registration_code')) }}" 
+           class="register-option">
+            <i class="fas fa-shield-alt"></i>
+            <div class="register-option-content">
+                <h2 class="register-option-title">{{ _('Registreer als Beheerder') }}</h2>
+                <p class="register-option-description">
+                    {{ _('Voor VGM beheerders met speciale toegangsrechten') }}
+                </p>
+            </div>
+            <i class="fas fa-chevron-right"></i>
+        </a>
+        {% endif %}
+    </div>
+
+    <p class="login-link">
+        {{ _('Al een account?') }}
+        <a href="{{ url_for('main.login') }}">{{ _('Log hier in') }}</a>
+    </p>
 </div>
 {% endblock %}
