@@ -4,6 +4,26 @@
 
 {% block styles %}
 <style>
+.hero-section {
+    background: linear-gradient(rgba(0, 90, 135, 0.9), rgba(0, 90, 135, 0.8));
+    color: white;
+    padding: 4rem 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.hero-verse {
+    font-size: 1.75rem;
+    font-weight: 300;
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+.hero-reference {
+    font-size: 1.25rem;
+    opacity: 0.9;
+}
+
 .obituaries-container {
     max-width: 1200px;
     margin: 2rem auto;
@@ -139,6 +159,14 @@
 {% endblock %}
 
 {% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container">
+        <h1 class="hero-verse">{{ _('Wij behoren tot Allah en tot Hem keren wij terug') }}</h1>
+        <div class="hero-reference">{{ _('Koran 2:156') }}</div>
+    </div>
+</div>
+
 <div class="obituaries-container">
     <h1>{{ _('Overlijdensberichten') }}</h1>
 
