@@ -2,9 +2,54 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_required, current_user
 from app import db
 from models import BlogPost, BlogCategory
+from forms import VideoForm # Added import for VideoForm
 from datetime import datetime
 
 blog = Blueprint('blog', __name__)
+
+@blog.route('/gemeenschap', methods=['GET', 'POST'])
+def community():
+    form = VideoForm()
+
+    if request.method == 'POST' and form.validate_on_submit():
+        if not current_user.is_authenticated or not current_user.is_admin:
+            flash('Alleen administrators kunnen videos toevoegen.', 'error')
+            return redirect(url_for('blog.community'))
+
+        # Create the blog post with video
+        post = BlogPost(
+            title=form.title.data,
+            content=form.description.data,
+            video_url=form.video_url.data,
+            video_platform='youtube' if 'youtube' in form.video_url.data or 'youtu.be' in form.video_url.data else 'vimeo',
+            has_video=True,
+            author_id=current_user.id,
+            published=True,
+            slug=form.title.data.lower().replace(' ', '-')
+        )
+
+        # Add to community category
+        community_category = BlogCategory.query.filter_by(name='Gemeenschap').first()
+        if not community_category:
+            community_category = BlogCategory(name='Gemeenschap')
+            db.session.add(community_category)
+        post.categories.append(community_category)
+
+        db.session.add(post)
+        db.session.commit()
+
+        flash('Video succesvol toegevoegd!', 'success')
+        return redirect(url_for('blog.community'))
+
+    # Get video posts for the community section
+    video_posts = BlogPost.query.join(BlogPost.categories)\
+        .filter(
+            BlogPost.published == True,
+            BlogPost.has_video == True,
+            BlogCategory.name == 'Gemeenschap'
+        ).order_by(BlogPost.created_at.desc()).all()
+
+    return render_template('blog/community.html', posts=video_posts, form=form)
 
 @blog.route('/')
 def index():
@@ -52,17 +97,6 @@ def index():
     return render_template('blog/index.html', 
                          posts=posts, 
                          categories=categories)
-
-@blog.route('/gemeenschap')
-def community():
-    # Get video posts for the community section
-    video_posts = BlogPost.query.join(BlogPost.categories)\
-        .filter(
-            BlogPost.published == True,
-            BlogPost.has_video == True,
-            BlogCategory.name == 'Gemeenschap'
-        ).order_by(BlogPost.created_at.desc()).all()
-    return render_template('blog/community.html', posts=video_posts)
 
 @blog.route('/leercentrum')
 def learning_center():

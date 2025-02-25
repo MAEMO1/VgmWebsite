@@ -1,6 +1,22 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, TextAreaField, DateField, DateTimeLocalField, SelectField
-from wtforms.validators import DataRequired, Optional, Length, Email, ValidationError, Regexp
+from wtforms import StringField, IntegerField, TextAreaField, DateField, DateTimeLocalField, SelectField, URLField
+from wtforms.validators import DataRequired, Optional, Length, Email, ValidationError, Regexp, URL
+
+class VideoForm(FlaskForm):
+    title = StringField('Titel', validators=[
+        DataRequired(message='Vul een titel in'),
+        Length(min=2, max=200, message='Titel moet tussen 2 en 200 karakters zijn')
+    ])
+    video_url = URLField('Video URL', validators=[
+        DataRequired(message='Vul een video URL in'),
+        URL(message='Voer een geldige URL in'),
+        Regexp(r'^https?://(www\.)?(youtube\.com|youtu\.be|vimeo\.com)/.+', 
+               message='Alleen YouTube en Vimeo URLs zijn toegestaan')
+    ])
+    description = TextAreaField('Beschrijving', validators=[
+        Optional(),
+        Length(max=2000, message='Beschrijving mag maximaal 2000 karakters zijn')
+    ])
 
 class ObituaryForm(FlaskForm):
     # Indiener (submitter) information - required fields
