@@ -1353,70 +1353,25 @@ def add_program():
 @routes.route('/ramadan/iftar-map')
 def iftar_map():
     # Get query parameters
-    date_str = request.args.get('date')
     family_only = request.args.get('filter') == 'family'
-    view = request.args.get('view', 'day')  # Default to day view
-
-    # Parse date or use today
-    try:
-        current_date = datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else date.today()
-    except ValueError:
-        current_date = date.today()
-
-    # Calculate date ranges based on view
-    if view == 'month':
-        start_date = current_date.replace(day=1)
-        if start_date.month == 12:
-            end_date = start_date.replace(year=start_date.year + 1, month=1, day=1) - timedelta(days=1)
-        else:
-            end_date = start_date.replace(month=start_date.month + 1, day=1) - timedelta(days=1)
-        prev_date = (start_date - timedelta(days=1)).replace(day=1).strftime('%Y-%m-%d')
-        next_date = (end_date + timedelta(days=1)).strftime('%Y-%m-%d')
-    elif view == 'week':
-        start_date = current_date - timedelta(days=current_date.weekday())
-        end_date = start_date + timedelta(days=6)
-        prev_date = (start_date - timedelta(days=7)).strftime('%Y-%m-%d')
-        next_date = (start_date + timedelta(days=7)).strftime('%Y-%m-%d')
-    else:  # day view
-        start_date = current_date
-        end_date = current_date
-        prev_date = (current_date - timedelta(days=1)).strftime('%Y-%m-%d')
-        next_date = (current_date + timedelta(days=1)).strftime('%Y-%m-%d')
 
     # Build query for iftar events
-    query = IfterEvent.query.filter(
-        IfterEvent.date >= start_date,
-        IfterEvent.date <= end_date
-    ).order_by(IfterEvent.date, IfterEvent.start_time)
+    query = IfterEvent.query
 
     if family_only:
         query = query.filter(IfterEvent.is_family_friendly == True)
 
-    # Get unique events (no duplicates)
-    iftar_events = query.distinct().all()
-
-    # Calculate map center (average of all mosque coordinates)
-    if iftar_events:
-        mosque_lats = [event.mosque.latitude for event in iftar_events]
-        mosque_lngs = [event.mosque.longitude for event in iftar_events]
-        center_lat = sum(mosque_lats) / len(mosque_lats)
-        center_lng = sum(mosque_lngs) / len(mosque_lngs)
-    else:
-        # Default to Gent center coordinates
-        center_lat = 51.0543
-        center_lng = 3.7174
+    # Get all events sorted by date and time
+    iftar_events = query.order_by(
+        IfterEvent.is_recurring.desc(),  # Recurring events first
+        IfterEvent.recurrence_type,      # Daily before weekly
+        IfterEvent.date,                 # Then by date
+        IfterEvent.start_time           # Finally by time
+    ).all()
 
     return render_template('ramadan/iftar_map.html',
                          iftar_events=iftar_events,
-                         current_date=current_date,
-                         prev_date=prev_date,
-                         next_date=next_date,
-                         family_only=family_only,
-                         view=view,
-                         center_lat=center_lat,
-                         center_lng=center_lng,
-                         timedelta=timedelta,
-                         google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'))
+                         family_only=family_only)
 
 @routes.route('/ramadan/iftar/<int:iftar_id>/delete', methods=['POST'])
 @login_required

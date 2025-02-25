@@ -1,0 +1,46 @@
+<div class="iftar-card">
+    {% if current_user.is_authenticated and (current_user.is_admin or current_user.id == iftar.mosque_id) %}
+    <div class="iftar-actions">
+        <a href="{{ url_for('main.edit_iftar', iftar_id=iftar.id) }}" 
+           class="edit-iftar" 
+           title="{{ _('Bewerk iftar') }}">
+            <i class="fas fa-edit"></i>
+        </a>
+        <form action="{{ url_for('main.delete_iftar', iftar_id=iftar.id) }}" method="POST" 
+              onsubmit="return confirm('{{ _('Weet je zeker dat je dit iftar evenement wilt verwijderen?') }}');" 
+              class="d-inline">
+            <button type="submit" class="delete-iftar" title="{{ _('Verwijder iftar') }}">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </form>
+    </div>
+    {% endif %}
+    
+    <div class="iftar-date">
+        {% if not iftar.is_recurring %}
+            {{ iftar.date.strftime('%d %B') }} -
+        {% endif %}
+        {{ iftar.start_time.strftime('%H:%M') }}
+        {% if iftar.end_time %}
+            - {{ iftar.end_time.strftime('%H:%M') }}
+        {% endif %}
+    </div>
+    
+    <div class="iftar-mosque">{{ iftar.mosque.mosque_name }}</div>
+    
+    <div class="iftar-details">
+        <div>{{ iftar.mosque.mosque_street }} {{ iftar.mosque.mosque_number }}</div>
+        <div>{{ iftar.mosque.mosque_postal }} {{ iftar.mosque.mosque_city }}</div>
+        {% if iftar.women_entrance %}
+            <div class="text-muted">
+                <i class="fas fa-door-open"></i> {{ _('Ingang vrouwen:') }} {{ iftar.women_entrance }}
+            </div>
+        {% endif %}
+    </div>
+    
+    {% if iftar.is_family_friendly %}
+        <span class="badge-family">
+            <i class="fas fa-users"></i> {{ _('Gezinsvriendelijk') }}
+        </span>
+    {% endif %}
+</div>
