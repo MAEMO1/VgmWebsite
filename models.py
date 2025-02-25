@@ -3,6 +3,12 @@ import random
 from app import db
 from flask_login import UserMixin
 
+class MosqueNotificationPreference(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
@@ -11,47 +17,34 @@ class User(UserMixin, db.Model):
     is_admin = db.Column(db.Boolean, default=False)
     user_type = db.Column(db.String(20), nullable=False)  # 'visitor' or 'mosque'
 
-    # Event notification settings
+    # Basic notification settings
     notify_new_events = db.Column(db.Boolean, default=False)
     notify_event_changes = db.Column(db.Boolean, default=False)
     notify_event_reminders = db.Column(db.Boolean, default=False)
-
-    # Obituary notification settings
     notify_obituaries = db.Column(db.Boolean, default=False)
     notify_funeral_updates = db.Column(db.Boolean, default=False)
 
     # Mosque-specific fields
     mosque_name = db.Column(db.String(200))
-    mosque_street = db.Column(db.String(100))  # Street name
-    mosque_number = db.Column(db.String(10))   # House number
-    mosque_postal = db.Column(db.String(10))   # Postal code
-    mosque_city = db.Column(db.String(100))    # City
+    mosque_street = db.Column(db.String(100))
+    mosque_number = db.Column(db.String(10))
+    mosque_postal = db.Column(db.String(10))
+    mosque_city = db.Column(db.String(100))
     mosque_phone = db.Column(db.String(20))
-    mosque_image = db.Column(db.String(500))   # URL to mosque image
-    latitude = db.Column(db.Float)             # Geographical coordinates
-    longitude = db.Column(db.Float)            # Geographical coordinates
+    mosque_image = db.Column(db.String(500))
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
     is_verified = db.Column(db.Boolean, default=False)
-    verification_status = db.Column(db.String(20), default='pending')  # 'pending', 'approved', 'rejected'
-    verification_note = db.Column(db.Text)  # Admin feedback for verification
+    verification_status = db.Column(db.String(20), default='pending')
+    verification_note = db.Column(db.Text)
 
-    # Relationships
-    images = db.relationship('MosqueImage', backref='mosque', lazy='dynamic')
-    videos = db.relationship('MosqueVideo', backref='mosque', lazy='dynamic')
-    prayer_times = db.relationship('PrayerTime', backref='mosque', lazy='dynamic')
-    events = db.relationship('Event', backref='mosque', lazy='dynamic')
-    authored_posts = db.relationship('BlogPost', backref='author', lazy='dynamic')
-
-    # Mosque notification preferences (as user following mosques)
-    mosque_preferences = db.relationship(
-        'MosqueNotificationPreference',
-        foreign_keys='MosqueNotificationPreference.user_id',
-        backref=db.backref('user', lazy='joined'),
-        lazy='dynamic',
-        cascade='all, delete-orphan'
-    )
+    # Simple notification preferences relationship
+    mosque_preferences = db.relationship('MosqueNotificationPreference',
+                                      foreign_keys='MosqueNotificationPreference.user_id',
+                                      backref='user',
+                                      lazy='dynamic')
 
     def get_full_address(self):
-        """Return the full formatted address for the mosque"""
         if self.user_type == 'mosque':
             return f"{self.mosque_street} {self.mosque_number}, {self.mosque_postal} {self.mosque_city}"
         return None
@@ -288,12 +281,3 @@ class PaymentConfig(db.Model):
     config = db.Column(db.JSON)  # Store provider-specific configuration
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
-class MosqueNotificationPreference(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    # Define the mosque relationship separately
-    mosque = db.relationship('User', foreign_keys=[mosque_id], backref=db.backref('followers', lazy='dynamic'))
