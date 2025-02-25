@@ -92,10 +92,20 @@
     color: var(--primary-color);
     cursor: pointer;
     transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.view-option:hover {
+    text-decoration: none;
+    color: var(--primary-color);
 }
 
 .view-option.active {
     background: var(--primary-color);
+    color: white;
+}
+
+.view-option.active:hover {
     color: white;
 }
 
@@ -218,15 +228,18 @@
     <div class="filter-section">
         <div class="filter-controls">
             <div class="view-options">
-                <button class="view-option {% if view == 'day' %}active{% endif %}" data-view="day">
+                <a href="{{ url_for('main.iftar_map', date=current_date.strftime('%Y-%m-%d'), view='day', filter='family' if family_only else 'all') }}" 
+                   class="view-option {% if view == 'day' %}active{% endif %}">
                     <i class="fas fa-calendar-day"></i> {{ _('Dag') }}
-                </button>
-                <button class="view-option {% if view == 'week' %}active{% endif %}" data-view="week">
+                </a>
+                <a href="{{ url_for('main.iftar_map', date=current_date.strftime('%Y-%m-%d'), view='week', filter='family' if family_only else 'all') }}"
+                   class="view-option {% if view == 'week' %}active{% endif %}">
                     <i class="fas fa-calendar-week"></i> {{ _('Week') }}
-                </button>
-                <button class="view-option {% if view == 'month' %}active{% endif %}" data-view="month">
+                </a>
+                <a href="{{ url_for('main.iftar_map', date=current_date.strftime('%Y-%m-%d'), view='month', filter='family' if family_only else 'all') }}"
+                   class="view-option {% if view == 'month' %}active{% endif %}">
                     <i class="fas fa-calendar-alt"></i> {{ _('Maand') }}
-                </button>
+                </a>
             </div>
 
             <div class="date-navigation">
