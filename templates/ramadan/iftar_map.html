@@ -218,6 +218,10 @@
     border-color: var(--primary-color);
     font-weight: bold;
 }
+.daily-iftars{
+    margin-bottom: 2rem;
+}
+
 </style>
 {% endblock %}
 
@@ -369,10 +373,19 @@
                 </div>
                 <div class="iftar-list">
                     {% if iftar_events %}
-                        {% for iftar in iftar_events %}
+                        {% set current_date = None %}
+                        {% for iftar in iftar_events|sort(attribute='date') %}
+                            {% if current_date != iftar.date %}
+                                {% if current_date is not none %}
+                                    </div>
+                                {% endif %}
+                                {% set current_date = iftar.date %}
+                                <h4 class="mb-3">{{ iftar.date.strftime('%A %d %B') }}</h4>
+                                <div class="daily-iftars">
+                            {% endif %}
                             <div class="iftar-card" data-mosque-id="{{ iftar.mosque_id }}">
                                 <div class="iftar-date">
-                                    {{ iftar.date.strftime('%d %B') }} {{ iftar.start_time.strftime('%H:%M') }}
+                                    {{ iftar.start_time.strftime('%H:%M') }}
                                     {% if iftar.end_time %}
                                         - {{ iftar.end_time.strftime('%H:%M') }}
                                     {% endif %}
@@ -389,6 +402,9 @@
                                 {% endif %}
                             </div>
                         {% endfor %}
+                        {% if current_date is not none %}
+                            </div>
+                        {% endif %}
                     {% else %}
                         <p class="text-center text-muted">{{ _('Er zijn geen iftar evenementen gevonden voor deze maand.') }}</p>
                     {% endif %}
