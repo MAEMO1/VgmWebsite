@@ -782,6 +782,7 @@ def about():
         current_date = date.today()
         latest_term = BoardMember.query.filter(
                         BoardMember.term_end >= current_date        ).orderby(BoardMember.term_start.desc()).first()
+        
 
         if latest_term:
             term_start= latest_term.term_start
@@ -1183,8 +1184,13 @@ def ramadan():
 @routes.route('/ramadan/iftar/add', methods=['GET', 'POST'])
 @login_required
 def add_iftar():
+    if not current_user.user_type == 'mosque':
+        flash('Alleen moskeeën kunnen iftar evenementen toevoegen.', 'error')
+        return redirect(url_for('main.ramadan'))
+
     if request.method == 'POST':
         try:
+            # Create the iftar event with the form data
             iftar = IfterEvent(
                 mosque_id=current_user.id,
                 date=datetime.strptime(request.form['date'], '%Y-%m-%d').date(),
@@ -1203,7 +1209,7 @@ def add_iftar():
             db.session.rollback()
             flash('Er is een fout opgetreden bij het toevoegen van het iftar evenement.', 'error')
             print(f"Error adding iftar event: {e}")
-            return redirect(url_for('main.ramadan'))
+            return redirect(url_for('main.add_iftar'))
 
     return render_template('ramadan/add_iftar.html')
 
