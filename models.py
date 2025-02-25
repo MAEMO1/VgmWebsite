@@ -348,6 +348,7 @@ class Donation(db.Model):
     # Timestamps for payment tracking
     payment_initiated_at = db.Column(db.DateTime)
     payment_completed_at = db.Column(db.DateTime)
+    campaign_id = db.Column(db.Integer, db.ForeignKey('fundraising_campaign.id'))
 
     def __init__(self, **kwargs):
         super(Donation, self).__init__(**kwargs)
@@ -407,3 +408,25 @@ class LearningContent(db.Model):
 
     def __repr__(self):
         return f'<LearningContent {self.title}>'
+
+class FundraisingCampaign(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    goal_amount = db.Column(db.Float, nullable=False)
+    current_amount = db.Column(db.Float, default=0.0)
+    start_date = db.Column(db.DateTime, default=datetime.utcnow)
+    end_date = db.Column(db.DateTime)
+    is_active = db.Column(db.Boolean, default=True)
+    image_url = db.Column(db.String(500))  # Optional campaign image
+
+    donations = db.relationship('Donation', backref='campaign', lazy='dynamic')
+
+    def calculate_progress(self):
+        """Calculate percentage of goal reached"""
+        if self.goal_amount == 0:
+            return 0
+        return min(100, (self.current_amount / self.goal_amount) * 100)
+
+    def __repr__(self):
+        return f'<FundraisingCampaign {self.title}>'
