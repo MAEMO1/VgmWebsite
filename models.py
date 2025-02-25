@@ -154,14 +154,13 @@ class Obituary(db.Model):
     prayer_after = db.Column(db.String(20))  # stores which prayer: fajr, dhuhr, asr, etc.
     death_prayer_location = db.Column(db.String(200))  # Place of death prayer
     burial_location = db.Column(db.String(200))
-    family_contact = db.Column(db.String(200))
     additional_notes = db.Column(db.Text)
     mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Link to mosque user for verification
     submitter_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Link to user who submitted
 
-    # New required fields for submitter information
-    submitter_name = db.Column(db.String(100), nullable=False)
-    submitter_phone = db.Column(db.String(20), nullable=False)
+    # New required fields for submitter information - temporarily nullable
+    submitter_name = db.Column(db.String(100), nullable=True)
+    submitter_phone = db.Column(db.String(20), nullable=True)
 
     is_approved = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

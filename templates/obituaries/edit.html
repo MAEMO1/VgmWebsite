@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('Overlijdensbericht Bewerken') }} - VGM{% endblock %}
+{% block title %}{{ _('Begrafenisgebed (Janazah) Bewerken') }} - VGM{% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="obituary-form">
-        <h1 class="mb-4">{{ _('Overlijdensbericht Bewerken') }}</h1>
+        <h1 class="mb-4">{{ _('Begrafenisgebed (Janazah) Bewerken') }}</h1>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -184,17 +184,6 @@
             <!-- Extra Informatie -->
             <div class="form-section">
                 <h2 class="section-title">{{ _('Extra Informatie') }}</h2>
-
-                <div class="mb-4">
-                    {{ form.family_contact.label(class="form-label") }}
-                    {{ form.family_contact(class="form-control" + (" is-invalid" if form.family_contact.errors else "")) }}
-                    {% if form.family_contact.errors %}
-                        {% for error in form.family_contact.errors %}
-                            <div class="error-message">{{ error }}</div>
-                        {% endfor %}
-                    {% endif %}
-                    <div class="help-text">{{ _('Naam en telefoonnummer voor condoleances') }}</div>
-                </div>
 
                 <div class="mb-4">
                     {{ form.additional_notes.label(class="form-label") }}

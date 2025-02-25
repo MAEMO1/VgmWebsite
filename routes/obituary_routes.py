@@ -224,11 +224,9 @@ def edit_obituary(obituary_id):
             obituary.prayer_date = form.prayer_date.data if form.time_type.data == 'after_prayer' else None
             obituary.prayer_after = form.after_prayer.data if form.time_type.data == 'after_prayer' else None
             obituary.burial_location = form.burial_location.data
-            obituary.family_contact = form.family_contact.data
             obituary.additional_notes = form.additional_notes.data
             obituary.submitter_name = form.submitter_name.data
             obituary.submitter_phone = form.submitter_phone.data
-
 
             db.session.commit()
             flash('Overlijdensbericht is succesvol bijgewerkt.', 'success')
