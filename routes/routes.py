@@ -772,7 +772,7 @@ def about():
     term_start_str = request.args.get('term')
     if term_start_str:
         term_start = datetime.strptime(term_start_str, '%Y-%m-%d').date()
-        # Get the corresponding term_end for this term_start
+        #        # Get the corresponding term_end for this term_start
         term = next((t for t in terms if t[0] == term_start), None)
         term_end = term[1] if term else None
     else:
@@ -1118,3 +1118,22 @@ def profile():
     # Get all verified mosques for the dropdown
     mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
     return render_template('profile.html', mosques=mosques)
+
+@routes.route('/test_canva')
+@login_required
+def test_canva():
+    try:
+        # Get brand resources
+        brand_resources = canva_client.get_brand_resources()
+
+        # Get recent designs
+        designs = canva_client.get_designs(limit=5)
+
+        return render_template(
+            'admin/canva_test.html',
+            brand_resources=brand_resources,
+            designs=designs
+        )
+    except Exception as e:
+        flash(f'Error accessing Canva API: {str(e)}', 'error')
+        return redirect(url_for('main.index'))

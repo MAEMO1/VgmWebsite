@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Canva Integration Test') }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">{{ _('Canva Integration Test') }}</h1>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="h5 mb-0">{{ _('Brand Resources') }}</h2>
+        </div>
+        <div class="card-body">
+            {% if brand_resources %}
+                <div class="row">
+                {% for resource in brand_resources %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            {% if resource.get('preview_url') %}
+                            <img src="{{ resource.preview_url }}" class="card-img-top" alt="{{ resource.name }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ resource.name }}</h5>
+                                <p class="card-text text-muted">{{ resource.type }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">{{ _('No brand resources found.') }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2 class="h5 mb-0">{{ _('Recent Designs') }}</h2>
+        </div>
+        <div class="card-body">
+            {% if designs %}
+                <div class="row">
+                {% for design in designs %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            {% if design.get('preview_url') %}
+                            <img src="{{ design.preview_url }}" class="card-img-top" alt="{{ design.name }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ design.name }}</h5>
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        {{ _('Created') }}: {{ design.created_at|datetime }}
+                                    </small>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">{{ _('No designs found.') }}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
