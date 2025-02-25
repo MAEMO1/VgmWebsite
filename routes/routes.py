@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from app import db
-from models import User, BoardMember, Event, PrayerTime, BlogPost, MosqueImage, MosqueVideo, Donation, MosqueNotificationPreference, MosqueBoardMember, MosqueHistory, MosquePhoto, ContentChangeLog, EventMosqueCollaboration # Added new models and EventMosqueCollaboration
+from models import User, BoardMember, Event, PrayerTime, BlogPost, MosqueImage, MosqueVideo, Donation, MosqueNotificationPreference, MosqueBoardMember, MosqueHistory, MosquePhoto, ContentChangeLog, EventMosqueCollaboration, FundraisingCampaign
 from datetime import datetime, date
 import os
 
@@ -150,16 +150,23 @@ def index():
         today = datetime.today().date()
         prayer_times = PrayerTime.query.filter_by(date=today).all()
 
+        # Get active campaigns
+        active_campaigns = FundraisingCampaign.query.filter_by(
+            is_active=True
+        ).order_by(FundraisingCampaign.start_date.desc()).all()
+
         return render_template('index.html', 
                             next_event=next_event,
                             latest_posts=latest_posts,
-                            prayer_times=prayer_times)
+                            prayer_times=prayer_times,
+                            campaigns=active_campaigns)
     except Exception as e:
         print(f"Error loading index page: {e}")
         return render_template('index.html', 
                             next_event=None,
                             latest_posts=[],
-                            prayer_times=[])
+                            prayer_times=[],
+                            campaigns=[])
 
 @routes.route('/mosques')
 def mosques():
@@ -772,7 +779,7 @@ def about():
         # Default to current or most recent term
         current_date = date.today()
         latest_term = BoardMember.query.filter(
-            BoardMember.term_end >= current_date
+                        BoardMember.term_end >= current_date
         ).order_by(BoardMember.term_start.desc()).first()
 
         if latest_term:

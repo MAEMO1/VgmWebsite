@@ -60,7 +60,7 @@ def create_app():
         from routes.blog_routes import blog
         from routes.translation_routes import translation_bp
         from routes.message_routes import messages
-        from routes.donation_routes import donations  # Add import for donations blueprint
+        from routes.donation_routes import donations
 
         # Register blueprints
         app.register_blueprint(main_routes)
@@ -69,7 +69,7 @@ def create_app():
         app.register_blueprint(blog, url_prefix='/blog')
         app.register_blueprint(translation_bp)
         app.register_blueprint(messages, url_prefix='/messages')
-        app.register_blueprint(donations, url_prefix='/donate')  # Register donations blueprint
+        app.register_blueprint(donations)  # Remove prefix to fix route conflicts
 
         # Import models to ensure they're registered with SQLAlchemy
         from models import User, Event, EventRegistration, EventNotification, PrayerTime, Obituary, ObituaryNotification, BlogPost, Message, FundraisingCampaign
