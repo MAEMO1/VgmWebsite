@@ -87,11 +87,11 @@
                                 <div class="progress-stats">
                                     <div class="progress-stat">
                                         <span class="stat-label">{{ _('Opgehaald') }}</span>
-                                        <span class="stat-value progress-amount">€{{ "%.2f"|format(campaign.current_amount) }}</span>
+                                        <span class="stat-value progress-amount">€{{ format_currency(campaign.current_amount) }}</span>
                                     </div>
                                     <div class="progress-stat text-end">
                                         <span class="stat-label">{{ _('Doel') }}</span>
-                                        <span class="stat-value">€{{ "%.2f"|format(campaign.goal_amount) }}</span>
+                                        <span class="stat-value">€{{ format_currency(campaign.goal_amount) }}</span>
                                     </div>
                                 </div>
                                 <div class="progress">
@@ -428,9 +428,9 @@
 }
 
 .project-item {
-    padding: 2rem;
+    padding: 1.5rem;
     background: white;
-    border-radius: 1rem;
+    border-radius: 0.75rem;
     border: 1px solid var(--border-color);
     transition: all 0.3s ease;
 }
@@ -442,14 +442,14 @@
 
 .project-header {
     display: flex;
-    gap: 2rem;
-    margin-bottom: 1.5rem;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .project-image {
-    width: 200px;
-    height: 150px;
-    border-radius: 0.75rem;
+    width: 180px;
+    height: 135px;
+    border-radius: 0.5rem;
     overflow: hidden;
     flex-shrink: 0;
 }
@@ -466,20 +466,20 @@
 
 .project-badge {
     display: inline-block;
-    padding: 0.5rem 1rem;
+    padding: 0.35rem 0.75rem;
     background: rgba(0, 90, 135, 0.1);
     color: var(--primary-color);
     border-radius: 2rem;
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     font-weight: 500;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
 }
 
 .project-title {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
     line-height: 1.3;
 }
 
@@ -487,13 +487,14 @@
     color: var(--text-secondary);
     line-height: 1.6;
     margin-bottom: 0;
+    font-size: 0.95rem;
 }
 
 .project-progress {
-    padding: 1.5rem;
+    padding: 1.25rem;
     background: var(--background-light);
     border-radius: 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
 }
 
 .progress-stats {
@@ -514,16 +515,16 @@
 }
 
 .stat-value {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 600;
 }
 
 .progress {
-    height: 10px;
+    height: 8px;
     background-color: rgba(0, 0, 0, 0.05);
     border-radius: 1rem;
     overflow: hidden;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
 }
 
 .progress-bar {
@@ -534,7 +535,7 @@
 
 .progress-percentage {
     text-align: center;
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
     font-weight: 500;
 }
@@ -543,10 +544,11 @@
     background: var(--primary-color);
     color: white;
     font-weight: 600;
-    padding: 1rem;
+    padding: 0.75rem;
     border-radius: 0.75rem;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: none;
+    font-size: 0.95rem;
 }
 
 .btn-support:hover {
@@ -562,7 +564,7 @@
 
     .project-image {
         width: 100%;
-        height: 200px;
+        height: 180px;
     }
 
     .project-item {
@@ -570,10 +572,9 @@
     }
 
     .project-progress {
-        padding: 1.25rem;
+        padding: 1rem;
     }
 }
-
 
 .section-title {
     font-size: 2.5rem;
@@ -793,6 +794,74 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
+/* Project item refinements */
+.project-item {
+    padding: 1.5rem;  /* Reduced padding */
+    background: white;
+    border-radius: 0.75rem;  /* Slightly reduced border radius */
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.project-header {
+    gap: 1.5rem;  /* Reduced gap */
+    margin-bottom: 1rem;  /* Reduced margin */
+}
+
+.project-image {
+    width: 180px;  /* Slightly smaller image */
+    height: 135px;
+    border-radius: 0.5rem;
+}
+
+.project-badge {
+    padding: 0.35rem 0.75rem;  /* Smaller badge */
+    font-size: 0.8rem;
+    margin-bottom: 0.75rem;
+}
+
+.project-title {
+    font-size: 1.25rem;  /* Smaller title */
+    margin-bottom: 0.75rem;
+}
+
+.project-description {
+    font-size: 0.95rem;  /* Slightly smaller text */
+    margin-bottom: 1.5rem;
+}
+
+.project-progress {
+    padding: 1.25rem;  /* Reduced padding */
+    margin-bottom: 1.25rem;
+}
+
+.stat-value {
+    font-size: 1.1rem;  /* Smaller stats */
+}
+
+.progress {
+    height: 8px;  /* Thinner progress bar */
+    margin-bottom: 0.5rem;
+}
+
+.progress-percentage {
+    font-size: 0.8rem;
+}
+
+.btn-support {
+    padding: 0.75rem;  /* Smaller button */
+    font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+    .project-image {
+        height: 180px;
+    }
+
+    .project-progress {
+        padding: 1rem;
+    }
+}
 </style>
 {% endblock %}
 

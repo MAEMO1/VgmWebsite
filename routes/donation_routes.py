@@ -7,6 +7,10 @@ from datetime import datetime
 
 donations = Blueprint('donations', __name__)
 
+def format_currency(amount):
+    """Format currency with thousands separator and 2 decimal places"""
+    return "{:,.2f}".format(amount).replace(",", "@").replace(".", ",").replace("@", ".")
+
 @donations.route('/donate')
 def donate_vgm():
     # Get active campaigns
@@ -14,7 +18,7 @@ def donate_vgm():
         is_active=True
     ).order_by(FundraisingCampaign.start_date.desc()).all()
 
-    return render_template('donate_vgm.html', campaigns=active_campaigns)
+    return render_template('donate_vgm.html', campaigns=active_campaigns, format_currency=format_currency)
 
 @donations.route('/donate', methods=['POST'])
 def process_donation():
@@ -142,7 +146,7 @@ def toggle_campaign(id):
 def get_campaign_status(id):
     campaign = FundraisingCampaign.query.get_or_404(id)
     return {
-        'current_amount': float(campaign.current_amount),
-        'goal_amount': float(campaign.goal_amount),
+        'current_amount': format_currency(campaign.current_amount),
+        'goal_amount': format_currency(campaign.goal_amount),
         'progress': campaign.calculate_progress()
     }
