@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Ramadan 1445/2024 - VGM') }}{% endblock %}
+
+{% block styles %}
+<style>
+.ramadan-hero {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 4rem 0;
+    overflow: hidden;
+    color: white;
+}
+
+.ramadan-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.1;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.ramadan-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+}
+
+.ramadan-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+}
+
+.ramadan-subtitle {
+    font-size: 1.5rem;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+    font-weight: 300;
+}
+
+.times-widget {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-top: -4rem;
+    position: relative;
+    z-index: 3;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.time-block {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--background-light);
+    border-radius: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.time-label {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.time-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.ramadan-section {
+    padding: 4rem 0;
+}
+
+.section-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 3rem;
+    color: var(--text-primary);
+}
+
+.activity-card {
+    background: white;
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    border: 1px solid var(--border-color);
+    height: 100%;
+}
+
+.activity-card:hover {
+    transform: translateY(-5px);
+}
+
+.activity-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.activity-content {
+    padding: 1.5rem;
+}
+
+.activity-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.activity-description {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.resource-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.resource-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    transition: transform 0.3s ease;
+}
+
+.resource-card:hover {
+    transform: translateY(-5px);
+}
+
+.resource-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 1.5rem;
+    color: var(--primary-color);
+}
+
+.resource-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.resource-description {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .ramadan-title {
+        font-size: 2.5rem;
+    }
+    
+    .ramadan-subtitle {
+        font-size: 1.25rem;
+    }
+    
+    .times-widget {
+        margin-top: -2rem;
+        padding: 1.5rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="ramadan-hero">
+    <div class="ramadan-pattern"></div>
+    <div class="container">
+        <div class="ramadan-content">
+            <h1 class="ramadan-title">{{ _('Ramadan Mubarak') }}</h1>
+            <p class="ramadan-subtitle">{{ _('Moge deze heilige maand gevuld zijn met zegeningen') }}</p>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+    <div class="times-widget">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="time-block">
+                    <div class="time-label">{{ _('Suhoor') }}</div>
+                    {% for prayer in prayer_times %}
+                        {% if prayer.prayer_name == 'Fajr' %}
+                            <div class="time-value">{{ prayer.time.strftime('%H:%M') }}</div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="time-block">
+                    <div class="time-label">{{ _('Iftar') }}</div>
+                    {% for prayer in prayer_times %}
+                        {% if prayer.prayer_name == 'Maghrib' %}
+                            <div class="time-value">{{ prayer.time.strftime('%H:%M') }}</div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="ramadan-section">
+    <div class="container">
+        <h2 class="section-title">{{ _('Ramadan Activiteiten') }}</h2>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for event in events %}
+            <div class="col">
+                <div class="activity-card">
+                    {% if event.image_url %}
+                    <img src="{{ event.image_url }}" alt="{{ event.title }}" class="activity-image">
+                    {% endif %}
+                    <div class="activity-content">
+                        <h3 class="activity-title">{{ event.title }}</h3>
+                        <p class="activity-description">{{ event.description }}</p>
+                        <a href="{{ url_for('events.event_detail', event_id=event.id) }}" class="btn btn-primary">
+                            {{ _('Meer Info') }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="ramadan-section bg-light">
+    <div class="container">
+        <h2 class="section-title">{{ _('Ramadan Bronnen') }}</h2>
+        <div class="resource-grid">
+            <div class="resource-card">
+                <div class="resource-icon">
+                    <i class="fas fa-book-open fa-3x"></i>
+                </div>
+                <h3 class="resource-title">{{ _('Koran & Dua') }}</h3>
+                <p class="resource-description">{{ _('Dagelijkse Koran-recitaties en duʿāʾ voor tijdens de Ramadan') }}</p>
+                <a href="#" class="btn btn-outline-primary">{{ _('Bekijk Meer') }}</a>
+            </div>
+            
+            <div class="resource-card">
+                <div class="resource-icon">
+                    <i class="fas fa-video fa-3x"></i>
+                </div>
+                <h3 class="resource-title">{{ _('Video\'s & Lezingen') }}</h3>
+                <p class="resource-description">{{ _('Inspirerende video\'s en lezingen over de Ramadan') }}</p>
+                <a href="#" class="btn btn-outline-primary">{{ _('Bekijk Video\'s') }}</a>
+            </div>
+            
+            <div class="resource-card">
+                <div class="resource-icon">
+                    <i class="fas fa-calendar-alt fa-3x"></i>
+                </div>
+                <h3 class="resource-title">{{ _('Programma') }}</h3>
+                <p class="resource-description">{{ _('Volledige programma van alle Ramadan-activiteiten') }}</p>
+                <a href="#" class="btn btn-outline-primary">{{ _('Bekijk Planning') }}</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add any Ramadan-specific JavaScript here
+});
+</script>
+{% endblock %}

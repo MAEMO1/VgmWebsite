@@ -783,7 +783,7 @@ def about():
         ).order_by(BoardMember.term_start.desc()).first()
 
         if latest_term:
-            term_start = latest_term.term_start
+            term_start= latest_term.term_start
             term_end = latest_term.term_end
         else:
             term_start = date(current_date.year, 1, 1, 1)
@@ -1136,4 +1136,31 @@ def test_canva():
         )
     except Exception as e:
         flash(f'Error accessing Canva API: {str(e)}', 'error')
+        return redirect(url_for('main.index'))
+
+@routes.route('/ramadan')
+def ramadan():
+    try:
+        # Get Ramadan-specific designs from Canva
+        ramadan_designs = canva_client.get_designs(limit=3)
+
+        # Get today's prayer times for iftar/suhoor
+        today = datetime.today().date()
+        prayer_times = PrayerTime.query.filter_by(date=today).all()
+
+        # Get upcoming Ramadan events
+        ramadan_events = Event.query.filter(
+            Event.date >= datetime.utcnow(),
+            Event.category == 'ramadan'
+        ).order_by(Event.date).limit(5).all()
+
+        return render_template(
+            'ramadan/index.html',
+            designs=ramadan_designs,
+            prayer_times=prayer_times,
+            events=ramadan_events
+        )
+    except Exception as e:
+        print(f"Error loading Ramadan page: {e}")
+        flash('Er is een fout opgetreden bij het laden van de Ramadan-pagina.', 'error')
         return redirect(url_for('main.index'))
