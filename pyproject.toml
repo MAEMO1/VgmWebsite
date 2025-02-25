@@ -21,4 +21,8 @@ dependencies = [
     "langdetect>=1.0.9",
     "twilio>=9.4.6",
     "wtforms>=3.2.1",
+    "stripe>=11.6.0",
+    "paypalrestsdk>=1.13.3",
+    "python-dotenv>=1.0.1",
+    "flask-mail>=0.10.0",
 ]

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .thank-you {
+            font-size: 24px;
+            color: #005A87;
+            margin-bottom: 20px;
+        }
+        .bank-details {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .important {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            font-size: 14px;
+            color: #6c757d;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="{{ url_for('static', filename='images/LogoVGM.jpg', _external=True) }}" alt="VGM Logo" width="150">
+        </div>
+        
+        <div class="thank-you">
+            Bedankt voor uw donatie!
+        </div>
+        
+        <p>Beste {% if donation.is_anonymous %}donor{% else %}{{ donation.donor_name }}{% endif %},</p>
+        
+        <p>Hartelijk bedankt voor uw voornemen om VGM te steunen. Hieronder vindt u de betalingsgegevens voor uw bankoverschrijving:</p>
+        
+        <div class="bank-details">
+            <h3>Betalingsgegevens:</h3>
+            <p>Bedrag: €{{ "%.2f"|format(donation.amount) }}</p>
+            <p>IBAN: {{ iban }}</p>
+            <p>BIC: {{ bic }}</p>
+            <p>Begunstigde: VGM vzw</p>
+            <p class="important">Betalingskenmerk: {{ donation.payment_reference }}</p>
+            {% if donation.is_monthly %}
+            <p>Type: Maandelijkse donatie</p>
+            {% endif %}
+        </div>
+        
+        <p><strong>Belangrijk:</strong> Vermeld altijd het betalingskenmerk bij uw overschrijving zodat we uw donatie correct kunnen verwerken.</p>
+        
+        <p>Zodra we uw betaling hebben ontvangen, sturen we u een bevestiging.</p>
+        
+        <p>Moge Allah (swt) u rijkelijk belonen voor uw vrijgevigheid.</p>
+        
+        <div class="footer">
+            <p>VGM - Verenigde Gentse Moskeeën</p>
+            <p>Bij vragen kunt u contact met ons opnemen via info@vgm.be</p>
+        </div>
+    </div>
+</body>
+</html>

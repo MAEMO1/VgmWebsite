@@ -1,4 +1,5 @@
 from datetime import datetime, date
+import random
 from app import db
 from flask_login import UserMixin
 
@@ -250,6 +251,7 @@ class BlogPost(db.Model):
         minutes = round(word_count / words_per_minute)
         return max(1, minutes)  # Minimum 1 minute reading time
 
+# Update the Donation model to support multiple payment methods
 class Donation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.Float, nullable=False)
@@ -258,10 +260,43 @@ class Donation(db.Model):
     message = db.Column(db.Text)  # Optional message from donor
     date = db.Column(db.DateTime, default=datetime.utcnow)
     is_anonymous = db.Column(db.Boolean, default=False)
+    is_monthly = db.Column(db.Boolean, default=False)  # For recurring donations
+
+    # Payment specific fields
+    payment_method = db.Column(db.String(50), nullable=False)  # 'bank_transfer', 'paypal', 'apple_pay', 'bancontact', 'ideal'
+    payment_status = db.Column(db.String(20), default='pending')  # 'pending', 'completed', 'failed', 'refunded'
+    transaction_id = db.Column(db.String(100))  # Payment provider transaction ID
+    payment_reference = db.Column(db.String(50))  # For bank transfers
 
     # For mosque-specific donations
     mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     # If mosque_id is NULL, it's a VGM donation
 
-    status = db.Column(db.String(20), default='pending')  # 'pending', 'completed', 'failed'
-    transaction_id = db.Column(db.String(100))  # Payment provider transaction ID
+    # Payment provider specific IDs
+    stripe_payment_intent_id = db.Column(db.String(100))  # For Stripe payments (Apple Pay, Bancontact, iDEAL)
+    paypal_payment_id = db.Column(db.String(100))  # For PayPal payments
+
+    # Timestamps for payment tracking
+    payment_initiated_at = db.Column(db.DateTime)
+    payment_completed_at = db.Column(db.DateTime)
+
+    def __init__(self, **kwargs):
+        super(Donation, self).__init__(**kwargs)
+        if self.payment_method == 'bank_transfer':
+            self.payment_reference = self.generate_payment_reference()
+
+    def generate_payment_reference(self):
+        """Generate a unique payment reference for bank transfers"""
+        # Format: VGM-YYYYMMDD-XXXX where X is random
+        date_part = datetime.utcnow().strftime('%Y%m%d')
+        random_part = ''.join(random.choices('0123456789', k=4))
+        return f'VGM-{date_part}-{random_part}'
+
+# New model for payment provider configurations
+class PaymentConfig(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    provider = db.Column(db.String(50), unique=True, nullable=False)  # 'stripe', 'paypal', etc.
+    is_active = db.Column(db.Boolean, default=True)
+    config = db.Column(db.JSON)  # Store provider-specific configuration
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
