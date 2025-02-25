@@ -44,7 +44,7 @@
 .calendar-section {
     background: white;
     border-radius: 1rem;
-    padding: 1.5rem;
+    padding: 2rem;
     margin-bottom: 2rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
@@ -53,120 +53,107 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .calendar-title {
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: 600;
-}
-
-.calendar-nav-buttons {
-    display: flex;
-    gap: 0.5rem;
+    color: var(--primary-color);
 }
 
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+    gap: 1rem;
+    margin-bottom: 2rem;
 }
 
 .calendar-header {
     text-align: center;
     font-weight: 600;
-    padding: 0.5rem;
+    padding: 1rem;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
 }
 
 .calendar-day {
     aspect-ratio: 1;
-    padding: 0.5rem;
+    padding: 1rem;
     border: 1px solid #eee;
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
 }
 
-.calendar-day.has-iftar {
+.calendar-day:not(:empty) {
     cursor: pointer;
 }
 
-.calendar-day.has-daily-iftar {
-    background-color: #e8f5e9;
-    border-color: #2e7d32;
+.calendar-day:hover:not(:empty) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.calendar-day.has-weekly-iftar {
-    background-color: #e3f2fd;
-    border-color: #1976d2;
+.day-number {
+    font-size: 1.25rem;
+    font-weight: 500;
 }
 
-.calendar-day.has-single-iftar {
-    background-color: #fff3e0;
-    border-color: #f57c00;
+.day-events {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.event-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin: 0 2px;
+}
+
+.event-dot.daily {
+    background-color: #2e7d32;
+}
+
+.event-dot.weekly {
+    background-color: #1976d2;
+}
+
+.event-dot.single {
+    background-color: #f57c00;
 }
 
 .calendar-day.today {
-    border-width: 2px;
-    border-color: var(--primary-color);
+    border: 2px solid var(--primary-color);
     font-weight: bold;
-}
-
-/* Iftar category styling */
-.iftar-category {
-    margin-bottom: 3rem;
-}
-
-.category-title {
-    font-size: 1.5rem;
-    color: var(--primary-color);
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--primary-color);
-}
-
-.iftar-card {
-    border-radius: 1rem;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    position: relative;
-    transition: transform 0.2s ease;
-}
-
-.iftar-card:hover {
-    transform: translateY(-2px);
-}
-
-/* Kleurcodering voor verschillende types iftars */
-.iftar-card.daily {
-    background: #e8f5e9;
-    border-left: 5px solid #2e7d32;
-}
-
-.iftar-card.weekly {
-    background: #e3f2fd;
-    border-left: 5px solid #1976d2;
-}
-
-.iftar-card.single {
-    background: #fff3e0;
-    border-left: 5px solid #f57c00;
 }
 
 /* Legend styling */
 .iftar-legend {
     display: flex;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
     flex-wrap: wrap;
+    justify-content: center;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 0.75rem;
 }
 
 .legend-item {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
+    gap: 0.75rem;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .legend-color {
@@ -185,6 +172,106 @@
 
 .legend-color.single {
     background: #f57c00;
+}
+
+/* Day details modal */
+.day-details {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.day-details.active {
+    display: flex;
+}
+
+.day-details-content {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    max-width: 600px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.close-details {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+.close-details:hover {
+    color: var(--text-primary);
+}
+
+.iftar-card {
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+.iftar-card.daily {
+    background: #e8f5e9;
+    border-left: 5px solid #2e7d32;
+}
+
+.iftar-card.weekly {
+    background: #e3f2fd;
+    border-left: 5px solid #1976d2;
+}
+
+.iftar-card.single {
+    background: #fff3e0;
+    border-left: 5px solid #f57c00;
+}
+
+.iftar-actions {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.edit-iftar, .delete-iftar {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.edit-iftar {
+    color: #0d6efd;
+}
+
+.edit-iftar:hover {
+    color: #0a58ca;
+}
+
+.delete-iftar {
+    color: #dc3545;
+}
+
+.delete-iftar:hover {
+    color: #b02a37;
 }
 </style>
 {% endblock %}
@@ -253,103 +340,109 @@
             <!-- Days of the month -->
             {% for day in range(1, (current_date.replace(day=28) + timedelta(days=4)).day + 1) %}
                 {% set current_day = current_date.replace(day=day) %}
-                {% set has_daily = false %}
-                {% set has_weekly = false %}
-                {% set has_single = false %}
+                {% set day_iftars = {'daily': [], 'weekly': [], 'single': []} %}
 
                 {% for iftar in iftar_events %}
                     {% if iftar.date == current_day %}
                         {% if iftar.is_recurring and iftar.recurrence_type == 'daily' %}
-                            {% set has_daily = true %}
+                            {% do day_iftars.daily.append(iftar) %}
                         {% elif iftar.is_recurring and iftar.recurrence_type == 'weekly' %}
-                            {% set has_weekly = true %}
+                            {% do day_iftars.weekly.append(iftar) %}
                         {% else %}
-                            {% set has_single = true %}
+                            {% do day_iftars.single.append(iftar) %}
                         {% endif %}
                     {% endif %}
                 {% endfor %}
 
-                <div class="calendar-day 
-                    {% if has_daily %}has-daily-iftar{% endif %}
-                    {% if has_weekly %}has-weekly-iftar{% endif %}
-                    {% if has_single %}has-single-iftar{% endif %}
-                    {% if current_day == today %}today{% endif %}">
-                    {{ day }}
+                <div class="calendar-day {% if current_day == today %}today{% endif %}"
+                     onclick="showDayDetails('{{ current_day.strftime('%Y-%m-%d') }}')">
+                    <div class="day-number">{{ day }}</div>
+                    {% if day_iftars.daily or day_iftars.weekly or day_iftars.single %}
+                        <div class="day-events">
+                            {% if day_iftars.daily %}
+                                <span class="event-dot daily" title="{{ _('Dagelijkse iftars') }}"></span>
+                            {% endif %}
+                            {% if day_iftars.weekly %}
+                                <span class="event-dot weekly" title="{{ _('Wekelijkse iftars') }}"></span>
+                            {% endif %}
+                            {% if day_iftars.single %}
+                                <span class="event-dot single" title="{{ _('Eenmalige iftars') }}"></span>
+                            {% endif %}
+                        </div>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>
     </div>
-
-    <!-- Dagelijkse Iftars -->
-    <div class="iftar-category">
-        <h2 class="category-title">
-            <i class="fas fa-calendar-day"></i> {{ _('Dagelijkse Iftars') }}
-        </h2>
-        <div class="iftar-list">
-            {% set has_daily = false %}
-            {% for iftar in iftar_events %}
-                {% if iftar.is_recurring and iftar.recurrence_type == 'daily' %}
-                    {% set has_daily = true %}
-                    <div class="iftar-card daily">
-                        {% include 'ramadan/includes/iftar_card.html' %}
-                    </div>
-                {% endif %}
-            {% endfor %}
-            {% if not has_daily %}
-                <p class="text-muted">{{ _('Geen dagelijkse iftars gevonden.') }}</p>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- Wekelijkse Iftars -->
-    <div class="iftar-category">
-        <h2 class="category-title">
-            <i class="fas fa-calendar-week"></i> {{ _('Wekelijkse Iftars') }}
-        </h2>
-        <div class="iftar-list">
-            {% set has_weekly = false %}
-            {% for iftar in iftar_events %}
-                {% if iftar.is_recurring and iftar.recurrence_type == 'weekly' %}
-                    {% set has_weekly = true %}
-                    <div class="iftar-card weekly">
-                        {% include 'ramadan/includes/iftar_card.html' %}
-                    </div>
-                {% endif %}
-            {% endfor %}
-            {% if not has_weekly %}
-                <p class="text-muted">{{ _('Geen wekelijkse iftars gevonden.') }}</p>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- Eenmalige Iftars -->
-    <div class="iftar-category">
-        <h2 class="category-title">
-            <i class="fas fa-calendar"></i> {{ _('Eenmalige Iftars') }}
-        </h2>
-        <div class="iftar-list">
-            {% set has_single = false %}
-            {% for iftar in iftar_events %}
-                {% if not iftar.is_recurring %}
-                    {% set has_single = true %}
-                    <div class="iftar-card single">
-                        {% include 'ramadan/includes/iftar_card.html' %}
-                    </div>
-                {% endif %}
-            {% endfor %}
-            {% if not has_single %}
-                <p class="text-muted">{{ _('Geen eenmalige iftars gevonden.') }}</p>
-            {% endif %}
-        </div>
-    </div>
 </div>
 
-{% if current_user.is_authenticated and (current_user.user_type == 'mosque' or current_user.is_admin) %}
-<a href="{{ url_for('main.add_iftar') }}" class="add-iftar-btn" title="{{ _('Iftar Toevoegen') }}">
-    <i class="fas fa-plus"></i>
-</a>
-{% endif %}
+<!-- Day Details Modal -->
+<div class="day-details" id="dayDetailsModal">
+    <div class="day-details-content">
+        <button class="close-details" onclick="hideDayDetails()">×</button>
+        <h3 class="mb-4" id="dayDetailsTitle"></h3>
+        <div id="dayDetailsContent"></div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
+<script>
+function showDayDetails(date) {
+    const modal = document.getElementById('dayDetailsModal');
+    const title = document.getElementById('dayDetailsTitle');
+    const content = document.getElementById('dayDetailsContent');
+
+    // Format date for display
+    const dateObj = new Date(date);
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    title.textContent = dateObj.toLocaleDateString('nl-NL', options);
+
+    // Get iftars for this date
+    let dayIftars = [];
+    {% for iftar in iftar_events %}
+        if ('{{ iftar.date }}' === date) {
+            dayIftars.push({
+                type: '{{ "daily" if iftar.is_recurring and iftar.recurrence_type == "daily" else "weekly" if iftar.is_recurring and iftar.recurrence_type == "weekly" else "single" }}',
+                mosque: '{{ iftar.mosque.mosque_name }}',
+                startTime: '{{ iftar.start_time.strftime("%H:%M") }}',
+                endTime: '{{ iftar.end_time.strftime("%H:%M") if iftar.end_time else "" }}',
+                location: '{{ iftar.mosque.mosque_street }} {{ iftar.mosque.mosque_number }}, {{ iftar.mosque.mosque_postal }} {{ iftar.mosque.mosque_city }}',
+                isFamilyFriendly: {{ 'true' if iftar.is_family_friendly else 'false' }},
+                id: '{{ iftar.id }}'
+            });
+        }
+    {% endfor %}
+
+    // Generate content
+    if (dayIftars.length === 0) {
+        content.innerHTML = '<p class="text-muted">{{ _("Geen iftars gevonden voor deze dag.") }}</p>';
+    } else {
+        content.innerHTML = dayIftars.map(iftar => `
+            <div class="iftar-card ${iftar.type}">
+                <div class="iftar-time">
+                    ${iftar.startTime}${iftar.endTime ? ` - ${iftar.endTime}` : ''}
+                </div>
+                <div class="iftar-mosque">${iftar.mosque}</div>
+                <div class="iftar-location">${iftar.location}</div>
+                ${iftar.isFamilyFriendly ? '<span class="badge-family"><i class="fas fa-users"></i> {{ _("Gezinsvriendelijk") }}</span>' : ''}
+            </div>
+        `).join('');
+    }
+
+    modal.classList.add('active');
+}
+
+function hideDayDetails() {
+    const modal = document.getElementById('dayDetailsModal');
+    modal.classList.remove('active');
+}
+
+// Close modal when clicking outside
+document.getElementById('dayDetailsModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        hideDayDetails();
+    }
+});
+</script>
 {% endblock %}

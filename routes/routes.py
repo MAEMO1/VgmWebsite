@@ -1373,18 +1373,28 @@ def iftar_map():
     else:
         next_month = f"{current_date.year}-{current_date.month+1:02d}-01"
 
+    # Calculate start and end date for the current month view
+    start_date = current_date.replace(day=1)
+    if start_date.month == 12:
+        end_date = start_date.replace(year=start_date.year + 1, month=1, day=1) - timedelta(days=1)
+    else:
+        end_date = start_date.replace(month=start_date.month + 1, day=1) - timedelta(days=1)
+
     # Build query for iftar events
-    query = IfterEvent.query
+    query = IfterEvent.query.filter(
+        IfterEvent.date >= start_date,
+        IfterEvent.date <= end_date
+    )
 
     if family_only:
         query = query.filter(IfterEvent.is_family_friendly == True)
 
     # Get all events sorted by date and time
     iftar_events = query.order_by(
-        IfterEvent.is_recurring.desc(),  # Recurring events first
-        IfterEvent.recurrence_type,      # Daily before weekly
-        IfterEvent.date,                 # Then by date
-        IfterEvent.start_time           # Finally by time
+        IfterEvent.date,
+        IfterEvent.start_time,
+        IfterEvent.is_recurring.desc(),
+        IfterEvent.recurrence_type
     ).all()
 
     return render_template('ramadan/iftar_map.html',
