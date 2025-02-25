@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Programma Toevoegen - Ramadan 1445/2024') }}{% endblock %}
+
+{% block styles %}
+<style>
+.form-section {
+    padding: 2rem;
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin: 2rem auto;
+    max-width: 800px;
+}
+
+.form-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-floating > label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-section">
+        <h1 class="form-title">{{ _('Programma Toevoegen') }}</h1>
+
+        <form method="POST" class="needs-validation" novalidate>
+            <div class="form-group">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="title" name="title" required>
+                    <label for="title">{{ _('Titel') }}</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-floating">
+                    <textarea class="form-control" id="description" name="description" style="height: 150px" required></textarea>
+                    <label for="description">{{ _('Beschrijving') }}</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-floating">
+                    <input type="datetime-local" class="form-control" id="start_date" name="start_date" required>
+                    <label for="start_date">{{ _('Start Datum & Tijd') }}</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-floating">
+                    <input type="datetime-local" class="form-control" id="end_date" name="end_date">
+                    <label for="end_date">{{ _('Eind Datum & Tijd (Optioneel)') }}</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="location" name="location" required>
+                    <label for="location">{{ _('Locatie') }}</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-floating">
+                    <input type="url" class="form-control" id="image_url" name="image_url">
+                    <label for="image_url">{{ _('Afbeelding URL (Optioneel)') }}</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-floating">
+                    <select class="form-select" id="category" name="category" required>
+                        <option value="">{{ _('Kies een categorie') }}</option>
+                        <option value="lecture">{{ _('Lezing') }}</option>
+                        <option value="workshop">{{ _('Workshop') }}</option>
+                        <option value="gathering">{{ _('Bijeenkomst') }}</option>
+                        <option value="iftar">{{ _('Iftar') }}</option>
+                        <option value="other">{{ _('Anders') }}</option>
+                    </select>
+                    <label for="category">{{ _('Categorie') }}</label>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary btn-lg">{{ _('Toevoegen') }}</button>
+                <a href="{{ url_for('main.ramadan_schedule') }}" class="btn btn-outline-secondary">{{ _('Annuleren') }}</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

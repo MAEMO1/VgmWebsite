@@ -70,17 +70,50 @@
     margin-bottom: 1rem;
 }
 
+.category-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    margin-right: 0.5rem;
+    background: var(--background-light);
+    color: var(--text-primary);
+}
+
+.add-program-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+.add-program-btn:hover {
+    transform: scale(1.1);
+    color: white;
+    text-decoration: none;
+}
+
 @media (max-width: 768px) {
     .timeline::before {
         left: 0;
     }
-    
+
     .timeline-item {
         width: 100%;
         padding-left: 2rem;
         padding-right: 0;
     }
-    
+
     .timeline-item:nth-child(even) {
         padding-left: 2rem;
     }
@@ -93,46 +126,47 @@
     <section class="schedule-section">
         <h1 class="section-title">{{ _('Ramadan Programma') }}</h1>
 
-        <div class="schedule-filter">
-            <!-- Add filter options here -->
-        </div>
-
         <div class="timeline">
-            {% for event in events %}
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <div class="timeline-date">{{ event.date.strftime('%d-%m-%Y') }}</div>
-                    <h3 class="timeline-title">{{ event.title }}</h3>
-                    <p class="timeline-description">{{ event.description }}</p>
-                    <a href="{{ url_for('events.event_detail', event_id=event.id) }}" class="btn btn-primary">
-                        {{ _('Meer Info') }}
-                    </a>
-                </div>
-            </div>
-            {% endfor %}
+            {% if programs %}
+                {% for program in programs %}
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">
+                            {{ program.start_date.strftime('%d-%m-%Y %H:%M') }}
+                            {% if program.end_date %}
+                                - {{ program.end_date.strftime('%H:%M') }}
+                            {% endif %}
+                        </div>
+                        <h3 class="timeline-title">{{ program.title }}</h3>
+                        <p class="timeline-description">{{ program.description }}</p>
 
-            {% for iftar in iftar_events %}
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <div class="timeline-date">
-                        {{ iftar.date.strftime('%d-%m-%Y') }} - {{ iftar.start_time.strftime('%H:%M') }}
+                        <div class="mb-3">
+                            <span class="category-badge">{{ program.category|title }}</span>
+                            {% if program.location %}
+                                <span class="category-badge">{{ program.location }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="text-muted">
+                            <small>{{ _('Georganiseerd door') }} {{ program.organizer.username }}</small>
+                        </div>
+
+                        {% if program.image_url %}
+                            <img src="{{ program.image_url }}" alt="{{ program.title }}" class="img-fluid mt-3 rounded">
+                        {% endif %}
                     </div>
-                    <h3 class="timeline-title">{{ _('Iftar bij ') }}{{ iftar.mosque.mosque_name }}</h3>
-                    {% if iftar.notes %}
-                        <p class="timeline-description">{{ iftar.notes }}</p>
-                    {% endif %}
-                    {% if iftar.is_family_friendly %}
-                        <span class="badge badge-family">{{ _('Gezinsvriendelijk') }}</span>
-                    {% endif %}
-                    {% if iftar.registration_required and current_user.is_authenticated %}
-                        <form action="{{ url_for('main.register_iftar', iftar_id=iftar.id) }}" method="POST">
-                            <button type="submit" class="btn btn-primary">{{ _('Registreer') }}</button>
-                        </form>
-                    {% endif %}
                 </div>
-            </div>
-            {% endfor %}
+                {% endfor %}
+            {% else %}
+                <p class="text-center text-muted">{{ _('Er zijn nog geen programma\'s toegevoegd.') }}</p>
+            {% endif %}
         </div>
     </section>
 </div>
+
+{% if current_user.is_authenticated %}
+<a href="{{ url_for('main.add_program') }}" class="add-program-btn" title="{{ _('Programma Toevoegen') }}">
+    <i class="fas fa-plus"></i>
+</a>
+{% endif %}
 {% endblock %}

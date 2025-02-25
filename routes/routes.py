@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from app import db
-from models import User, BoardMember, Event, PrayerTime, BlogPost, MosqueImage, MosqueVideo, Donation, MosqueNotificationPreference, MosqueBoardMember, MosqueHistory, MosquePhoto, ContentChangeLog, EventMosqueCollaboration, FundraisingCampaign, IfterEvent, IfterRegistration # Added IfterEvent and IfterRegistration
+from models import User, BoardMember, Event, PrayerTime, BlogPost, MosqueImage, MosqueVideo, Donation, MosqueNotificationPreference, MosqueBoardMember, MosqueHistory, MosquePhoto, ContentChangeLog, EventMosqueCollaboration, FundraisingCampaign, IfterEvent, IfterRegistration, RamadanQuranResource, RamadanVideo, RamadanProgram # Added Ramadan models
 from datetime import datetime, date
 import os
 from utils.canva_client import canva_client # Added import statement
@@ -781,8 +781,7 @@ def about():
         # Default to current or mostrecent term
         current_date = date.today()
         latest_term = BoardMember.query.filter(
-                        BoardMember.term_end >= current_date
-        ).orderby(BoardMember.term_start.desc()).first()
+                        BoardMember.term_end >= current_date        ).orderby(BoardMember.term_start.desc()).first()
 
         if latest_term:
             term_start= latest_term.term_start
@@ -1235,27 +1234,90 @@ def register_iftar(iftar_id):
 
 @routes.route('/ramadan/quran-resources')
 def quran_resources():
-    return render_template('ramadan/quran_resources.html')
+    resources = RamadanQuranResource.query.order_by(RamadanQuranResource.created_at.desc()).all()
+    return render_template('ramadan/quran_resources.html', resources=resources)
+
+@routes.route('/ramadan/quran-resources/add', methods=['GET', 'POST'])
+@login_required
+def add_quran_resource():
+    if request.method == 'POST':
+        try:
+            resource = RamadanQuranResource(
+                title=request.form['title'],
+                arabic_text=request.form['arabic_text'],
+                translation=request.form['translation'],
+                explanation=request.form['explanation'],
+                category=request.form['category'],
+                author_id=current_user.id
+            )
+            db.session.add(resource)
+            db.session.commit()
+            flash('Quran bron succesvol toegevoegd.', 'success')
+            return redirect(url_for('main.quran_resources'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Er is een fout opgetreden bij het toevoegen van de Quran bron.', 'error')
+            print(f"Error adding Quran resource: {e}")
+
+    return render_template('ramadan/add_quran_resource.html')
 
 @routes.route('/ramadan/videos')
 def ramadan_videos():
-    return render_template('ramadan/videos.html')
+    videos = RamadanVideo.query.order_by(RamadanVideo.created_at.desc()).all()
+    return render_template('ramadan/videos.html', videos=videos)
+
+@routes.route('/ramadan/videos/add', methods=['GET', 'POST'])
+@login_required
+def add_video():
+    if request.method == 'POST':
+        try:
+            video = RamadanVideo(
+                title=request.form['title'],
+                description=request.form['description'],
+                video_url=request.form['video_url'],
+                thumbnail_url=request.form['thumbnail_url'],
+                duration=request.form['duration'],
+                speaker=request.form['speaker'],
+                author_id=current_user.id
+            )
+            db.session.add(video)
+            db.session.commit()
+            flash('Video succesvol toegevoegd.', 'success')
+            return redirect(url_for('main.ramadan_videos'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Er is een fout opgetreden bij het toevoegen van de video.', 'error')
+            print(f"Error adding video: {e}")
+
+    return render_template('ramadan/add_video.html')
 
 @routes.route('/ramadan/schedule')
 def ramadan_schedule():
-    # Get all Ramadan events and iftars
-    today = datetime.today().date()
-    ramadan_events = Event.query.filter(
-        Event.date >= today,
-        Event.title.ilike('%ramadan%')
-    ).order_by(Event.date).all()
+    programs = RamadanProgram.query.order_by(RamadanProgram.start_date).all()
+    return render_template('ramadan/schedule.html', programs=programs)
 
-    iftar_events = IfterEvent.query.filter(
-        IfterEvent.date >= today
-    ).order_by(IfterEvent.date, IfterEvent.start_time).all()
+@routes.route('/ramadan/schedule/add', methods=['GET', 'POST'])
+@login_required
+def add_program():
+    if request.method == 'POST':
+        try:
+            program = RamadanProgram(
+                title=request.form['title'],
+                description=request.form['description'],
+                start_date=datetime.strptime(request.form['start_date'], '%Y-%m-%dT%H:%M'),
+                end_date=datetime.strptime(request.form['end_date'], '%Y-%m-%dT%H:%M') if request.form.get('end_date') else None,
+                location=request.form['location'],
+                organizer_id=current_user.id,
+                image_url=request.form['image_url'] if request.form.get('image_url') else None,
+                category=request.form['category']
+            )
+            db.session.add(program)
+            db.session.commit()
+            flash('Programma succesvol toegevoegd.', 'success')
+            return redirect(url_for('main.ramadan_schedule'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Er is een fout opgetreden bij het toevoegen van het programma.', 'error')
+            print(f"Error adding program: {e}")
 
-    return render_template(
-        'ramadan/schedule.html',
-        events=ramadan_events,
-        iftar_events=iftar_events
-    )
+    return render_template('ramadan/add_program.html')

@@ -458,3 +458,49 @@ class IfterRegistration(db.Model):
     dietary_requirements = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     status = db.Column(db.String(20), default='registered')  # registered, cancelled, attended
+
+
+class RamadanQuranResource(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    arabic_text = db.Column(db.Text)
+    translation = db.Column(db.Text)
+    explanation = db.Column(db.Text)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    category = db.Column(db.String(50))  # e.g., 'quran', 'dua', 'dhikr'
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationship with author
+    author = db.relationship('User', backref=db.backref('quran_resources', lazy='dynamic'))
+
+class RamadanVideo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    video_url = db.Column(db.String(500))  # URL to video (YouTube, Vimeo)
+    thumbnail_url = db.Column(db.String(500))
+    duration = db.Column(db.String(20))  # Duration in format "HH:MM:SS"
+    speaker = db.Column(db.String(100))
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationship with author
+    author = db.relationship('User', backref=db.backref('ramadan_videos', lazy='dynamic'))
+
+class RamadanProgram(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    start_date = db.Column(db.DateTime, nullable=False)
+    end_date = db.Column(db.DateTime)
+    location = db.Column(db.String(200))
+    organizer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    image_url = db.Column(db.String(500))
+    category = db.Column(db.String(50))  # e.g., 'lecture', 'workshop', 'gathering'
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationship with organizer
+    organizer = db.relationship('User', backref=db.backref('ramadan_programs', lazy='dynamic'))

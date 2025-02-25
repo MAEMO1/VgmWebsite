@@ -36,28 +36,58 @@
     border-radius: 0.5rem;
 }
 
-.dua-item {
-    margin-bottom: 1.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.dua-arabic {
+.resource-arabic {
     font-size: 1.5rem;
     margin-bottom: 1rem;
     text-align: right;
     direction: rtl;
 }
 
-.dua-translation {
+.resource-translation {
     color: var(--text-secondary);
     margin-bottom: 0.5rem;
 }
 
-.dua-reference {
+.resource-explanation {
     font-size: 0.875rem;
     color: var(--text-primary);
     font-style: italic;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.add-resource-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+.add-resource-btn:hover {
+    transform: scale(1.1);
+    color: white;
+    text-decoration: none;
+}
+
+.category-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    background: var(--background-light);
+    color: var(--text-primary);
 }
 </style>
 {% endblock %}
@@ -66,39 +96,35 @@
 <div class="container">
     <section class="resource-section">
         <h1 class="section-title">{{ _('Koran & Dua voor Ramadan') }}</h1>
-        
-        <!-- Daily Quran Reading -->
-        <div class="resource-card">
-            <h2 class="resource-title">{{ _('Dagelijkse Koran Lezing') }}</h2>
-            <p class="resource-description">
-                {{ _('Aanbevolen verzen voor dagelijkse recitatie tijdens de Ramadan.') }}
-            </p>
-            <div class="resource-content">
-                <!-- Add your Quran content here -->
-            </div>
-        </div>
 
-        <!-- Dua Collection -->
-        <div class="resource-card">
-            <h2 class="resource-title">{{ _('Duʿāʾ Verzameling') }}</h2>
-            <p class="resource-description">
-                {{ _('Een verzameling van duʿāʾ voor tijdens de Ramadan.') }}
-            </p>
-            <div class="resource-content">
-                <div class="dua-item">
-                    <div class="dua-arabic">
-                        اللَّهُمَّ إِنِّي أَسْأَلُكَ رِضَاكَ وَالْجَنَّةَ وَأَعُوذُ بِكَ مِنْ سَخَطِكَ وَالنَّارِ
+        {% if resources %}
+            {% for resource in resources %}
+                <div class="resource-card">
+                    <span class="category-badge">{{ resource.category|title }}</span>
+                    <h2 class="resource-title">{{ resource.title }}</h2>
+
+                    <div class="resource-content">
+                        <div class="resource-arabic">{{ resource.arabic_text }}</div>
+                        <div class="resource-translation">{{ resource.translation }}</div>
+                        {% if resource.explanation %}
+                            <div class="resource-explanation">{{ resource.explanation }}</div>
+                        {% endif %}
                     </div>
-                    <div class="dua-translation">
-                        {{ _('O Allah, ik vraag U om Uw tevredenheid en het Paradijs, en ik zoek toevlucht bij U tegen Uw ongenoegen en het Vuur.') }}
-                    </div>
-                    <div class="dua-reference">
-                        {{ _('Overgeleverd door Ibn Majah') }}
+
+                    <div class="mt-3 text-muted">
+                        <small>{{ _('Toegevoegd door') }} {{ resource.author.username }} - {{ resource.created_at.strftime('%d-%m-%Y') }}</small>
                     </div>
                 </div>
-                <!-- Add more dua items as needed -->
-            </div>
-        </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-center text-muted">{{ _('Er zijn nog geen bronnen toegevoegd.') }}</p>
+        {% endif %}
     </section>
 </div>
+
+{% if current_user.is_authenticated %}
+<a href="{{ url_for('main.add_quran_resource') }}" class="add-resource-btn" title="{{ _('Bron Toevoegen') }}">
+    <i class="fas fa-plus"></i>
+</a>
+{% endif %}
 {% endblock %}
