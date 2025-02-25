@@ -3,29 +3,32 @@ from wtforms import StringField, IntegerField, TextAreaField, DateField, DateTim
 from wtforms.validators import DataRequired, Optional, Length, Email, ValidationError, Regexp
 
 class ObituaryForm(FlaskForm):
-    # Indiener (submitter) information
-    submitter_name = StringField('Uw Naam', validators=[DataRequired(), Length(min=2, max=100)])
-    submitter_phone = StringField('Uw GSM Nummer', validators=[
-        DataRequired(),
+    # Indiener (submitter) information - required fields
+    submitter_name = StringField('Uw Naam *', validators=[
+        DataRequired(message='Vul uw naam in'),
+        Length(min=2, max=100, message='Naam moet tussen 2 en 100 karakters zijn')
+    ])
+    submitter_phone = StringField('Uw GSM Nummer *', validators=[
+        DataRequired(message='Vul uw GSM nummer in'),
         Regexp(r'^\+?[0-9\s-]{8,}$', message='Voer een geldig telefoonnummer in')
     ])
-    family_contact = StringField('Contactpersoon Familie', validators=[
-        DataRequired(), 
-        Length(min=2, max=100)
+    family_contact = StringField('Contactpersoon Familie *', validators=[
+        DataRequired(message='Vul de naam van de contactpersoon in'), 
+        Length(min=2, max=100, message='Naam moet tussen 2 en 100 karakters zijn')
     ])
 
     # Deceased person information
-    name = StringField('Naam', validators=[DataRequired(), Length(min=2, max=100)])
+    name = StringField('Naam van de Overledene *', validators=[DataRequired(), Length(min=2, max=100)])
     age = IntegerField('Leeftijd', validators=[Optional()])
     birth_place = StringField('Geboorteplaats', validators=[Optional(), Length(max=100)])
-    death_place = StringField('Plaats van Overlijden', validators=[DataRequired(), Length(max=100)])
-    date_of_death = DateField('Datum van Overlijden', validators=[DataRequired()])
+    death_place = StringField('Plaats van Overlijden *', validators=[DataRequired(), Length(max=100)])
+    date_of_death = DateField('Datum van Overlijden *', validators=[DataRequired()])
 
     # Prayer details
-    death_prayer_location = SelectField('Locatie', validators=[DataRequired()])
+    death_prayer_location = SelectField('Locatie Begrafenisgebed (Janazah) *', validators=[DataRequired()])
     other_location_address = StringField('Adres', validators=[Length(max=200)])
 
-    time_type = SelectField('Type Tijdsaanduiding',
+    time_type = SelectField('Type Tijdsaanduiding *',
         choices=[
             ('specific', 'Specifiek Tijdstip'),
             ('after_prayer', 'Na een Gebed')
