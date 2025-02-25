@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Video\'s & Lezingen - Ramadan 1445/2024') }}{% endblock %}
+
+{% block styles %}
+<style>
+.video-section {
+    padding: 4rem 0;
+}
+
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.video-card {
+    background: white;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.video-card:hover {
+    transform: translateY(-5px);
+}
+
+.video-thumbnail {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.video-content {
+    padding: 1.5rem;
+}
+
+.video-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.video-description {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.video-meta {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <section class="video-section">
+        <h1 class="section-title">{{ _('Video\'s & Lezingen voor Ramadan') }}</h1>
+        
+        <div class="video-grid">
+            <!-- Example video card -->
+            <div class="video-card">
+                <img src="{{ url_for('static', filename='images/video-thumbnail.jpg') }}" alt="Video thumbnail" class="video-thumbnail">
+                <div class="video-content">
+                    <h3 class="video-title">{{ _('De Betekenis van Ramadan') }}</h3>
+                    <p class="video-description">
+                        {{ _('Een diepgaande uitleg over de spirituele betekenis van de Ramadan.') }}
+                    </p>
+                    <div class="video-meta">
+                        <span>30:15</span> • <span>Imam Ahmed</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Add more video cards as needed -->
+        </div>
+    </section>
+</div>
+{% endblock %}

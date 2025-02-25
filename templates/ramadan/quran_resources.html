@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Koran & Dua - Ramadan 1445/2024') }}{% endblock %}
+
+{% block styles %}
+<style>
+.resource-section {
+    padding: 4rem 0;
+}
+
+.resource-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.resource-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.resource-description {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.resource-content {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: var(--background-light);
+    border-radius: 0.5rem;
+}
+
+.dua-item {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dua-arabic {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    text-align: right;
+    direction: rtl;
+}
+
+.dua-translation {
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.dua-reference {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    font-style: italic;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <section class="resource-section">
+        <h1 class="section-title">{{ _('Koran & Dua voor Ramadan') }}</h1>
+        
+        <!-- Daily Quran Reading -->
+        <div class="resource-card">
+            <h2 class="resource-title">{{ _('Dagelijkse Koran Lezing') }}</h2>
+            <p class="resource-description">
+                {{ _('Aanbevolen verzen voor dagelijkse recitatie tijdens de Ramadan.') }}
+            </p>
+            <div class="resource-content">
+                <!-- Add your Quran content here -->
+            </div>
+        </div>
+
+        <!-- Dua Collection -->
+        <div class="resource-card">
+            <h2 class="resource-title">{{ _('Duʿāʾ Verzameling') }}</h2>
+            <p class="resource-description">
+                {{ _('Een verzameling van duʿāʾ voor tijdens de Ramadan.') }}
+            </p>
+            <div class="resource-content">
+                <div class="dua-item">
+                    <div class="dua-arabic">
+                        اللَّهُمَّ إِنِّي أَسْأَلُكَ رِضَاكَ وَالْجَنَّةَ وَأَعُوذُ بِكَ مِنْ سَخَطِكَ وَالنَّارِ
+                    </div>
+                    <div class="dua-translation">
+                        {{ _('O Allah, ik vraag U om Uw tevredenheid en het Paradijs, en ik zoek toevlucht bij U tegen Uw ongenoegen en het Vuur.') }}
+                    </div>
+                    <div class="dua-reference">
+                        {{ _('Overgeleverd door Ibn Majah') }}
+                    </div>
+                </div>
+                <!-- Add more dua items as needed -->
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

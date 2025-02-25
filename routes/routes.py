@@ -1232,3 +1232,30 @@ def register_iftar(iftar_id):
         print(f"Error registering for iftar: {e}")
 
     return redirect(url_for('main.ramadan'))
+
+@routes.route('/ramadan/quran-resources')
+def quran_resources():
+    return render_template('ramadan/quran_resources.html')
+
+@routes.route('/ramadan/videos')
+def ramadan_videos():
+    return render_template('ramadan/videos.html')
+
+@routes.route('/ramadan/schedule')
+def ramadan_schedule():
+    # Get all Ramadan events and iftars
+    today = datetime.today().date()
+    ramadan_events = Event.query.filter(
+        Event.date >= today,
+        Event.title.ilike('%ramadan%')
+    ).order_by(Event.date).all()
+
+    iftar_events = IfterEvent.query.filter(
+        IfterEvent.date >= today
+    ).order_by(IfterEvent.date, IfterEvent.start_time).all()
+
+    return render_template(
+        'ramadan/schedule.html',
+        events=ramadan_events,
+        iftar_events=iftar_events
+    )
