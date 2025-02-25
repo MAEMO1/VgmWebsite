@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from app import db
-from models import User, BoardMember, Event, PrayerTime, BlogPost, MosqueImage, MosqueVideo, Donation, MosqueNotificationPreference, MosqueBoardMember, MosqueHistory, MosquePhoto, ContentChangeLog # Added new models
+from models import User, BoardMember, Event, PrayerTime, BlogPost, MosqueImage, MosqueVideo, Donation, MosqueNotificationPreference, MosqueBoardMember, MosqueHistory, MosquePhoto, ContentChangeLog, EventMosqueCollaboration # Added new models and EventMosqueCollaboration
 from datetime import datetime, date
 import os
 
@@ -196,13 +196,18 @@ def contact():
 def mosque_detail(mosque_id):
     mosque = User.query.filter_by(id=mosque_id, user_type='mosque', is_verified=True).first_or_404()
 
-    # Get today's prayer times, handle empty result
+    # Get today's prayer times
     today = datetime.today().date()
     prayer_times = PrayerTime.query.filter_by(mosque_id=mosque_id, date=today).all()
 
-    # Get upcoming events
+    # Get upcoming events that are either organized by or collaborated with the mosque
     events = Event.query.filter(
-        Event.mosque_id == mosque_id,
+        db.or_(
+            Event.mosque_id == mosque_id,
+            Event.id.in_(
+                db.session.query(EventMosqueCollaboration.event_id).filter_by(mosque_id=mosque_id)
+            )
+        ),
         Event.date >= datetime.utcnow()
     ).order_by(Event.date).limit(5).all()
 
@@ -1011,7 +1016,6 @@ def donate_vgm():
         return redirect(url_for('main.index'))
 
     return render_template('donate_vgm.html')
-
 
 @routes.route('/mosque/<int:mosque_id>/donate', methods=['GET', 'POST'])
 def donate_mosque(mosque_id):

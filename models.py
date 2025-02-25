@@ -41,12 +41,6 @@ class User(UserMixin, db.Model):
     verification_status = db.Column(db.String(20), default='pending')
     verification_note = db.Column(db.Text)
 
-    # Simple notification preferences relationship
-    mosque_preferences = db.relationship('MosqueNotificationPreference',
-                                      foreign_keys='MosqueNotificationPreference.user_id',
-                                      backref='user',
-                                      lazy='dynamic')
-
     # Add new relationships
     board_members = db.relationship('MosqueBoardMember', backref='mosque', lazy='dynamic')
     history_entries = db.relationship('MosqueHistory', backref='mosque', lazy='dynamic')
@@ -55,6 +49,17 @@ class User(UserMixin, db.Model):
                                     foreign_keys='ContentChangeLog.mosque_id',
                                     backref='mosque', 
                                     lazy='dynamic')
+
+    # Events relationships - One to Many
+    events = db.relationship('Event', 
+                           foreign_keys='Event.mosque_id',
+                           backref='mosque',
+                           lazy='dynamic')
+
+    # Prayer times relationship - One to Many
+    prayer_times = db.relationship('PrayerTime',
+                                 backref='mosque',
+                                 lazy='dynamic')
 
     # New fields for mosque profiles
     foundation_year = db.Column(db.Integer)
@@ -108,6 +113,10 @@ class Event(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    # Event organization fields
+    mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Direct mosque relationship
+    organizer_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # For admin organizers
+
     # New field for event flyer
     flyer_url = db.Column(db.String(500))  # URL to event flyer image
 
@@ -117,15 +126,14 @@ class Event(db.Model):
     featured_image = db.Column(db.String(500))  # URL to event image
     featured_until = db.Column(db.DateTime)  # How long to feature the event
 
-    # Relationships
-    organizer_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Primary organizer (mosque or VGM)
+    # Many to Many relationship for collaborating mosques
     collaborating_mosques = db.relationship('User',
                                           secondary='event_mosque_collaboration',
                                           backref=db.backref('collaborated_events', lazy='dynamic'))
 
+    # One to Many relationships
     registrations = db.relationship('EventRegistration', backref='event', lazy='dynamic')
     notifications = db.relationship('EventNotification', backref='event', lazy='dynamic')
-
 
 class EventRegistration(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -148,10 +156,7 @@ class PrayerTime(db.Model):
     prayer_name = db.Column(db.String(20), nullable=False)
     time = db.Column(db.Time, nullable=False)
     date = db.Column(db.Date, nullable=False)
-    mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Link to mosque user
-
-    # Add backref to User model
-    mosque = db.relationship('User', backref=db.backref('prayer_times', lazy='dynamic'))
+    mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
         return f'<PrayerTime {self.prayer_name} at {self.time}>'
