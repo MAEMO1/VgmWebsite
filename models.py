@@ -431,3 +431,30 @@ class FundraisingCampaign(db.Model):
 
     def __repr__(self):
         return f'<FundraisingCampaign {self.title}>'
+
+# Add new IfterEvent model after the Event model
+class IfterEvent(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    start_time = db.Column(db.Time, nullable=False)
+    end_time = db.Column(db.Time)
+    capacity = db.Column(db.Integer)
+    is_family_friendly = db.Column(db.Boolean, default=True)
+    registration_required = db.Column(db.Boolean, default=False)
+    notes = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    mosque = db.relationship('User', backref='ifter_events')
+    registrations = db.relationship('IfterRegistration', backref='ifter_event', lazy='dynamic')
+
+class IfterRegistration(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    ifter_event_id = db.Column(db.Integer, db.ForeignKey('ifter_event.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    number_of_people = db.Column(db.Integer, default=1)
+    dietary_requirements = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    status = db.Column(db.String(20), default='registered')  # registered, cancelled, attended

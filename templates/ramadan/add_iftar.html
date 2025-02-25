@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Voeg Iftar Toe - Ramadan 1445/2024') }}{% endblock %}
+
+{% block styles %}
+<style>
+.add-iftar-form {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    margin: 2rem auto;
+    max-width: 800px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--text-primary);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.form-text {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="add-iftar-form">
+        <h2 class="form-title">{{ _('Voeg Iftar Evenement Toe') }}</h2>
+        <form method="POST" action="{{ url_for('main.add_iftar') }}">
+            <div class="form-group">
+                <label for="date" class="form-label">{{ _('Datum') }}</label>
+                <input type="date" class="form-control" id="date" name="date" required>
+            </div>
+
+            <div class="form-group">
+                <label for="start_time" class="form-label">{{ _('Starttijd') }}</label>
+                <input type="time" class="form-control" id="start_time" name="start_time" required>
+            </div>
+
+            <div class="form-group">
+                <label for="end_time" class="form-label">{{ _('Eindtijd') }}</label>
+                <input type="time" class="form-control" id="end_time" name="end_time">
+                <small class="form-text">{{ _('Optioneel') }}</small>
+            </div>
+
+            <div class="form-group">
+                <label for="capacity" class="form-label">{{ _('Capaciteit') }}</label>
+                <input type="number" class="form-control" id="capacity" name="capacity" min="1">
+                <small class="form-text">{{ _('Laat leeg voor onbeperkte capaciteit') }}</small>
+            </div>
+
+            <div class="form-group">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="is_family_friendly" name="is_family_friendly" checked>
+                    <label class="form-check-label" for="is_family_friendly">{{ _('Gezinsvriendelijk') }}</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="registration_required" name="registration_required">
+                    <label class="form-check-label" for="registration_required">{{ _('Registratie Vereist') }}</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="notes" class="form-label">{{ _('Opmerkingen') }}</label>
+                <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                <small class="form-text">{{ _('Bijv. specifieke dieetwensen, parkeerinformatie, etc.') }}</small>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary btn-lg">{{ _('Voeg Iftar Toe') }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

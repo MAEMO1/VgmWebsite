@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from app import db
-from models import User, BoardMember, Event, PrayerTime, BlogPost, MosqueImage, MosqueVideo, Donation, MosqueNotificationPreference, MosqueBoardMember, MosqueHistory, MosquePhoto, ContentChangeLog, EventMosqueCollaboration, FundraisingCampaign
+from models import User, BoardMember, Event, PrayerTime, BlogPost, MosqueImage, MosqueVideo, Donation, MosqueNotificationPreference, MosqueBoardMember, MosqueHistory, MosquePhoto, ContentChangeLog, EventMosqueCollaboration, FundraisingCampaign, IfterEvent, IfterRegistration # Added IfterEvent and IfterRegistration
 from datetime import datetime, date
 import os
 from utils.canva_client import canva_client # Added import statement
@@ -1157,21 +1157,78 @@ def ramadan():
             )
         ).order_by(Event.date).limit(5).all()
 
+        # Get all upcoming Iftar events
+        iftar_events = IfterEvent.query.filter(
+            IfterEvent.date >= today
+        ).order_by(IfterEvent.date, IfterEvent.start_time).all()
+
         # Try to get Canva designs if available
         designs = []
         try:
             designs = canva_client.get_designs(limit=3)
         except Exception as canva_error:
             print(f"Note: Canva designs could not be loaded: {canva_error}")
-            # Continue without designs
 
         return render_template(
             'ramadan/index.html',
             designs=designs,
             prayer_times=prayer_times,
-            events=ramadan_events
+            events=ramadan_events,
+            iftar_events=iftar_events
         )
     except Exception as e:
         print(f"Error loading Ramadan page: {e}")
         flash('Er is een fout opgetreden bij het laden van de Ramadan-pagina.', 'error')
         return redirect(url_for('main.index'))
+
+@routes.route('/ramadan/iftar/add', methods=['GET', 'POST'])
+@login_required
+def add_iftar():
+    if request.method == 'POST':
+        try:
+            iftar = IfterEvent(
+                mosque_id=current_user.id,
+                date=datetime.strptime(request.form['date'], '%Y-%m-%d').date(),
+                start_time=datetime.strptime(request.form['start_time'], '%H:%M').time(),
+                end_time=datetime.strptime(request.form['end_time'], '%H:%M').time() if request.form.get('end_time') else None,
+                capacity=int(request.form['capacity']) if request.form.get('capacity') else None,
+                is_family_friendly=bool(request.form.get('is_family_friendly')),
+                registration_required=bool(request.form.get('registration_required')),
+                notes=request.form.get('notes')
+            )
+            db.session.add(iftar)
+            db.session.commit()
+            flash('Iftar evenement succesvol toegevoegd.', 'success')
+            return redirect(url_for('main.ramadan'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Er is een fout opgetreden bij het toevoegen van het iftar evenement.', 'error')
+            print(f"Error adding iftar event: {e}")
+            return redirect(url_for('main.ramadan'))
+
+    return render_template('ramadan/add_iftar.html')
+
+@routes.route('/ramadan/iftar/<int:iftar_id>/register', methods=['POST'])
+@login_required
+def register_iftar(iftar_id):
+    try:
+        iftar = IfterEvent.query.get_or_404(iftar_id)
+        if iftar.capacity and iftar.registrations.count() >= iftar.capacity:
+            flash('Dit iftar evenement is helaas vol.', 'error')
+            return redirect(url_for('main.ramadan'))
+
+        registration = IfterRegistration(
+            ifter_event_id=iftar_id,
+            user_id=current_user.id,
+            number_of_people=int(request.form.get('number_of_people', 1)),
+            dietary_requirements=request.form.get('dietary_requirements')
+        )
+        db.session.add(registration)
+        db.session.commit()
+        flash('Je bent succesvol geregistreerd voor dit iftar evenement.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Er is een fout opgetreden bij het registreren.', 'error')
+        print(f"Error registering for iftar: {e}")
+
+    return redirect(url_for('main.ramadan'))
