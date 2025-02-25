@@ -12,7 +12,7 @@
                 {% if current_user.is_admin %}
                 <div class="form-group">
                     <label for="mosque_id" class="form-label">{{ _('Moskee') }}</label>
-                    <select class="form-control" id="mosque_id" name="mosque_id" required disabled>
+                    <select class="form-control" id="mosque_id" name="mosque_id" required>
                         {% for mosque in mosques %}
                             <option value="{{ mosque.id }}" {% if mosque.id == iftar.mosque_id %}selected{% endif %}>
                                 {{ mosque.mosque_name }}
@@ -44,7 +44,7 @@
 
                 <div class="form-group">
                     <label for="location" class="form-label">{{ _('Locatie') }}</label>
-                    <input type="text" class="form-control" id="location" name="location" value="{{ iftar.location }}">
+                    <input type="text" class="form-control" id="location" name="location" value="{{ iftar.mosque.mosque_street }} {{ iftar.mosque.mosque_number }}">
                     <small class="form-text">{{ _('Specifieke locatie binnen de moskee (bijv. Hoofdzaal, Gemeenschapsruimte)') }}</small>
                 </div>
 

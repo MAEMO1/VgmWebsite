@@ -53,7 +53,6 @@
 }
 
 .iftar-card {
-    background: white;
     border-radius: 1rem;
     padding: 1.5rem;
     margin-bottom: 1rem;
@@ -66,11 +65,26 @@
     transform: translateY(-2px);
 }
 
+/* Kleurcodering voor verschillende types iftars */
+.iftar-card.daily {
+    background: #e8f5e9;
+    border-left: 5px solid #2e7d32;
+}
+
+.iftar-card.weekly {
+    background: #e3f2fd;
+    border-left: 5px solid #1976d2;
+}
+
+.iftar-card.single {
+    background: #fff3e0;
+    border-left: 5px solid #f57c00;
+}
+
 .iftar-date {
     font-size: 1.25rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
-    color: var(--primary-color);
 }
 
 .iftar-mosque {
@@ -103,12 +117,16 @@
     gap: 0.5rem;
 }
 
-.edit-iftar {
-    color: #0d6efd;
+.edit-iftar, .delete-iftar {
     background: none;
     border: none;
     padding: 0;
     cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.edit-iftar {
+    color: #0d6efd;
 }
 
 .edit-iftar:hover {
@@ -117,14 +135,43 @@
 
 .delete-iftar {
     color: #dc3545;
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
 }
 
 .delete-iftar:hover {
     color: #b02a37;
+}
+
+/* Legend styling */
+.iftar-legend {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.legend-color {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.25rem;
+}
+
+.legend-color.daily {
+    background: #2e7d32;
+}
+
+.legend-color.weekly {
+    background: #1976d2;
+}
+
+.legend-color.single {
+    background: #f57c00;
 }
 </style>
 {% endblock %}
@@ -144,6 +191,21 @@
                 <i class="fas fa-users"></i> {{ _('Gezinsvriendelijk') }}
             </a>
         </div>
+
+        <div class="iftar-legend">
+            <div class="legend-item">
+                <div class="legend-color daily"></div>
+                {{ _('Dagelijks') }}
+            </div>
+            <div class="legend-item">
+                <div class="legend-color weekly"></div>
+                {{ _('Wekelijks') }}
+            </div>
+            <div class="legend-item">
+                <div class="legend-color single"></div>
+                {{ _('Eenmalig') }}
+            </div>
+        </div>
     </div>
 
     <!-- Dagelijkse Iftars -->
@@ -156,7 +218,9 @@
             {% for iftar in iftar_events %}
                 {% if iftar.is_recurring and iftar.recurrence_type == 'daily' %}
                     {% set has_daily = true %}
-                    {% include 'ramadan/includes/iftar_card.html' %}
+                    <div class="iftar-card daily">
+                        {% include 'ramadan/includes/iftar_card.html' %}
+                    </div>
                 {% endif %}
             {% endfor %}
             {% if not has_daily %}
@@ -175,7 +239,9 @@
             {% for iftar in iftar_events %}
                 {% if iftar.is_recurring and iftar.recurrence_type == 'weekly' %}
                     {% set has_weekly = true %}
-                    {% include 'ramadan/includes/iftar_card.html' %}
+                    <div class="iftar-card weekly">
+                        {% include 'ramadan/includes/iftar_card.html' %}
+                    </div>
                 {% endif %}
             {% endfor %}
             {% if not has_weekly %}
@@ -194,7 +260,9 @@
             {% for iftar in iftar_events %}
                 {% if not iftar.is_recurring %}
                     {% set has_single = true %}
-                    {% include 'ramadan/includes/iftar_card.html' %}
+                    <div class="iftar-card single">
+                        {% include 'ramadan/includes/iftar_card.html' %}
+                    </div>
                 {% endif %}
             {% endfor %}
             {% if not has_single %}
