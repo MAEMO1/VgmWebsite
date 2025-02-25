@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, TextAreaField, DateField, DateTimeLocalField, SelectField, URLField
-from wtforms.validators import DataRequired, Optional, Length, Email, ValidationError, Regexp, URL
+from wtforms.validators import DataRequired, Optional, Length, Email, ValidationError, Regexp, URL, NumberRange
 
 class VideoForm(FlaskForm):
     title = StringField('Titel', validators=[
@@ -116,3 +116,21 @@ class ObituaryForm(FlaskForm):
     def validate_after_prayer(self, field):
         if self.time_type.data == 'after_prayer' and not field.data:
             raise ValidationError('Selecteer een gebed wanneer "Na een Gebed" is geselecteerd')
+
+class FundraisingCampaignForm(FlaskForm):
+    title = StringField('Titel', validators=[
+        DataRequired(message='Vul een titel in'),
+        Length(min=2, max=200, message='Titel moet tussen 2 en 200 karakters zijn')
+    ])
+    description = TextAreaField('Beschrijving', validators=[
+        DataRequired(message='Vul een beschrijving in')
+    ])
+    goal_amount = IntegerField('Doelbedrag (€)', validators=[
+        DataRequired(message='Vul een doelbedrag in'),
+        NumberRange(min=1, message='Het doelbedrag moet minimaal €1 zijn')
+    ])
+    end_date = DateField('Einddatum', validators=[Optional()])
+    image_url = URLField('Afbeelding URL', validators=[
+        Optional(),
+        URL(message='Voer een geldige URL in')
+    ])

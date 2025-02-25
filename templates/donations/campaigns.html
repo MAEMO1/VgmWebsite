@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Campagne Beheer') }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ _('Campagne Beheer') }}</h1>
+        <a href="{{ url_for('donations.add_campaign') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>{{ _('Nieuwe Campagne') }}
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>{{ _('Titel') }}</th>
+                    <th>{{ _('Doel') }}</th>
+                    <th>{{ _('Ontvangen') }}</th>
+                    <th>{{ _('Voortgang') }}</th>
+                    <th>{{ _('Status') }}</th>
+                    <th>{{ _('Acties') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for campaign in campaigns %}
+                <tr>
+                    <td>{{ campaign.title }}</td>
+                    <td>€{{ "%.2f"|format(campaign.goal_amount) }}</td>
+                    <td>€{{ "%.2f"|format(campaign.current_amount) }}</td>
+                    <td>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar" role="progressbar" 
+                                 style="width: {{ campaign.calculate_progress() }}%"
+                                 aria-valuenow="{{ campaign.calculate_progress() }}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                                {{ "%.1f"|format(campaign.calculate_progress()) }}%
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge {% if campaign.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                            {{ _('Actief') if campaign.is_active else _('Inactief') }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <a href="{{ url_for('donations.edit_campaign', id=campaign.id) }}" 
+                               class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="{{ url_for('donations.toggle_campaign', id=campaign.id) }}" 
+                                  method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-{{ 'danger' if campaign.is_active else 'success' }}">
+                                    <i class="fas fa-{{ 'pause' if campaign.is_active else 'play' }}"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center">{{ _('Geen campagnes gevonden.') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.progress {
+    background-color: #e9ecef;
+    border-radius: 0.25rem;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    font-size: 0.875rem;
+    line-height: 20px;
+}
+
+.btn-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-group .btn {
+    border-radius: 0.25rem !important;
+}
+</style>
+{% endblock %}
