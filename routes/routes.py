@@ -1397,12 +1397,19 @@ def iftar_map():
         IfterEvent.recurrence_type
     ).all()
 
+    # Get Canva design resources
+    try:
+        brand_resources = canva_client.get_brand_resources()
+        designs = canva_client.get_designs(limit=5)  # Get latest 5 designs
+    except Exception as e:
+        print(f"Error fetching Canva resources: {e}")
+        brand_resources = []
+        designs = []
+
     # Pre-process events by day and type
     calendar_events = {}
-    current_month_days = (end_date - start_date).days + 1
-
-    for day in range(current_month_days):
-        current_day = start_date + timedelta(days=day)
+    for day in range(1, (current_date.replace(day=28) + timedelta(days=4)).day + 1):
+        current_day = current_date.replace(day=day)
         calendar_events[current_day] = {
             'daily': [],
             'weekly': [],
@@ -1426,7 +1433,9 @@ def iftar_map():
                          prev_month=prev_month,
                          next_month=next_month,
                          today=date.today(),
-                         timedelta=timedelta)
+                         timedelta=timedelta,
+                         brand_resources=brand_resources,
+                         designs=designs)
 
 @routes.route('/ramadan/iftar/<int:iftar_id>/delete', methods=['POST'])
 @login_required

@@ -3,285 +3,135 @@
 {% block title %}{{ _('VGM Iftarkaart - Ramadan 1445/2024') }}{% endblock %}
 
 {% block content %}
-<style>
-/* Base container */
-.calendar-wrapper {
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 20px;
-}
-
-/* Controls section */
-.calendar-controls {
-    margin-bottom: 20px;
-}
-
-.filter-button {
-    display: inline-block;
-    padding: 8px 16px;
-    border: 2px solid var(--primary-color);
-    border-radius: 20px;
-    color: var(--primary-color);
-    text-decoration: none;
-    margin: 0 5px;
-    transition: all 0.2s;
-}
-
-.filter-button:hover,
-.filter-button.active {
-    background-color: var(--primary-color);
-    color: white;
-}
-
-/* Month navigation */
-.month-nav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    margin: 20px 0;
-}
-
-.month-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--primary-color);
-    min-width: 200px;
-    text-align: center;
-}
-
-/* Legend */
-.calendar-legend {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-bottom: 20px;
-    padding: 10px;
-    background: #f8f9fa;
-    border-radius: 8px;
-}
-
-.legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.legend-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-}
-
-.daily { background: #2e7d32; }
-.weekly { background: #1976d2; }
-.single { background: #f57c00; }
-
-/* Calendar table */
-.calendar-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 4px;
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.calendar-table th {
-    padding: 10px;
-    font-weight: 600;
-    color: #666;
-    text-align: center;
-}
-
-.calendar-table td {
-    padding: 0;
-    border: 1px solid #eee;
-    border-radius: 4px;
-    vertical-align: top;
-}
-
-.calendar-day {
-    min-height: 100px;
-    padding: 8px;
-    position: relative;
-    cursor: pointer;
-}
-
-.calendar-day:hover {
-    background: #f8f9fa;
-}
-
-.calendar-day.today {
-    border: 2px solid var(--primary-color);
-}
-
-.day-number {
-    font-size: 14px;
-    margin-bottom: 4px;
-}
-
-.day-dots {
-    display: flex;
-    gap: 3px;
-    justify-content: center;
-}
-
-.day-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-}
-
-/* Modal */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: 1000;
-    padding: 20px;
-}
-
-.modal.active {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-content {
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
-    max-width: 500px;
-    width: 100%;
-    max-height: 80vh;
-    overflow-y: auto;
-    position: relative;
-}
-
-.close-modal {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    color: #666;
-}
-</style>
-
-<div class="calendar-wrapper">
+<div class="container py-4">
     <!-- Header -->
-    <div class="calendar-controls">
-        <h1 class="h3 mb-4">{{ _('VGM Iftarkaart') }}</h1>
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h3">{{ _('VGM Iftarkaart') }}</h1>
+        </div>
+    </div>
 
-        <div class="text-center">
+    <!-- Filters -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
             <a href="{{ url_for('main.iftar_map', filter='all') }}" 
-               class="filter-button {% if not family_only %}active{% endif %}">
+               class="btn btn-outline-primary me-2 {% if not family_only %}active{% endif %}">
                 {{ _('Alle Iftars') }}
             </a>
             <a href="{{ url_for('main.iftar_map', filter='family') }}"
-               class="filter-button {% if family_only %}active{% endif %}">
+               class="btn btn-outline-primary {% if family_only %}active{% endif %}">
                 <i class="fas fa-users"></i> {{ _('Gezinsvriendelijk') }}
             </a>
         </div>
     </div>
 
     <!-- Legend -->
-    <div class="calendar-legend">
-        <div class="legend-item">
-            <span class="legend-dot daily"></span>
-            <span>{{ _('Dagelijkse Iftars') }}</span>
-        </div>
-        <div class="legend-item">
-            <span class="legend-dot weekly"></span>
-            <span>{{ _('Wekelijkse Iftars') }}</span>
-        </div>
-        <div class="legend-item">
-            <span class="legend-dot single"></span>
-            <span>{{ _('Eenmalige Iftars') }}</span>
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="bg-light p-3 rounded">
+                <div class="d-flex justify-content-center gap-4">
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-success rounded-circle me-2">&nbsp;</span>
+                        <span>{{ _('Dagelijks') }}</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-primary rounded-circle me-2">&nbsp;</span>
+                        <span>{{ _('Wekelijks') }}</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-warning rounded-circle me-2">&nbsp;</span>
+                        <span>{{ _('Eenmalig') }}</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Month Navigation -->
-    <div class="month-nav">
-        <a href="{{ url_for('main.iftar_map', date=prev_month, filter='family' if family_only else 'all') }}" 
-           class="btn btn-sm btn-outline-primary">
-            <i class="fas fa-chevron-left"></i>
-        </a>
-        <span class="month-title">{{ current_date.strftime('%B %Y') }}</span>
-        <a href="{{ url_for('main.iftar_map', date=next_month, filter='family' if family_only else 'all') }}" 
-           class="btn btn-sm btn-outline-primary">
-            <i class="fas fa-chevron-right"></i>
-        </a>
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-center align-items-center">
+            <a href="{{ url_for('main.iftar_map', date=prev_month, filter='family' if family_only else 'all') }}" 
+               class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+            <h2 class="h4 mx-4 mb-0">{{ current_date.strftime('%B %Y') }}</h2>
+            <a href="{{ url_for('main.iftar_map', date=next_month, filter='family' if family_only else 'all') }}" 
+               class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </div>
     </div>
 
     <!-- Calendar -->
-    <table class="calendar-table">
-        <thead>
-            <tr>
-                <th>{{ _('Ma') }}</th>
-                <th>{{ _('Di') }}</th>
-                <th>{{ _('Wo') }}</th>
-                <th>{{ _('Do') }}</th>
-                <th>{{ _('Vr') }}</th>
-                <th>{{ _('Za') }}</th>
-                <th>{{ _('Zo') }}</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% set day_counter = 0 %}
-            {% set first_day = (current_date.replace(day=1).weekday() + 7) % 7 %}
+    <div class="row">
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="text-center">{{ _('Ma') }}</th>
+                            <th class="text-center">{{ _('Di') }}</th>
+                            <th class="text-center">{{ _('Wo') }}</th>
+                            <th class="text-center">{{ _('Do') }}</th>
+                            <th class="text-center">{{ _('Vr') }}</th>
+                            <th class="text-center">{{ _('Za') }}</th>
+                            <th class="text-center">{{ _('Zo') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set ns = namespace(day_counter=0) %}
+                        {% for week in range(6) %}
+                            <tr style="height: 100px;">
+                                {% for weekday in range(7) %}
+                                    {% set day_number = ns.day_counter - ((current_date.replace(day=1).weekday() + 7) % 7) + 1 %}
+                                    <td class="position-relative p-2" style="width: 14.28%">
+                                        {% if day_number > 0 and day_number <= (current_date.replace(day=28) + timedelta(days=4)).day %}
+                                            {% set current_day = current_date.replace(day=day_number) %}
+                                            {% set day_events = calendar_events[current_day] %}
 
-            {% for week in range(6) %}
-                <tr>
-                    {% for weekday in range(7) %}
-                        {% set day_number = day_counter - first_day + 1 %}
-                        {% if day_counter >= first_day and day_number <= (current_date.replace(day=28) + timedelta(days=4)).day %}
-                            {% set current_day = current_date.replace(day=day_number) %}
-                            {% set day_events = calendar_events[current_day] %}
-                            <td>
-                                <div class="calendar-day {% if current_day == today %}today{% endif %}"
-                                     onclick="showDayDetails('{{ current_day.strftime("%Y-%m-%d") }}')">
-                                    <div class="day-number">{{ day_number }}</div>
-                                    {% if day_events %}
-                                        <div class="day-dots">
-                                            {% if day_events.daily %}
-                                                <span class="day-dot daily" title="{{ _('Dagelijkse iftars') }}"></span>
-                                            {% endif %}
-                                            {% if day_events.weekly %}
-                                                <span class="day-dot weekly" title="{{ _('Wekelijkse iftars') }}"></span>
-                                            {% endif %}
-                                            {% if day_events.single %}
-                                                <span class="day-dot single" title="{{ _('Eenmalige iftars') }}"></span>
-                                            {% endif %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </td>
-                        {% else %}
-                            <td></td>
-                        {% endif %}
-                        {% set day_counter = day_counter + 1 %}
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                                            <div class="h-100 {% if current_day == today %}border border-primary rounded{% endif %}"
+                                                 onclick="showDayDetails('{{ current_day.strftime("%Y-%m-%d") }}')"
+                                                 style="cursor: pointer;">
+                                                <div class="d-flex flex-column h-100">
+                                                    <div class="text-end mb-2">{{ day_number }}</div>
+                                                    {% if day_events %}
+                                                        <div class="d-flex justify-content-center gap-1 mt-auto">
+                                                            {% if day_events.daily %}
+                                                                <span class="badge bg-success rounded-circle" style="width: 8px; height: 8px;"></span>
+                                                            {% endif %}
+                                                            {% if day_events.weekly %}
+                                                                <span class="badge bg-primary rounded-circle" style="width: 8px; height: 8px;"></span>
+                                                            {% endif %}
+                                                            {% if day_events.single %}
+                                                                <span class="badge bg-warning rounded-circle" style="width: 8px; height: 8px;"></span>
+                                                            {% endif %}
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                    {% set ns.day_counter = ns.day_counter + 1 %}
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Modal -->
-<div class="modal" id="dayDetailsModal">
-    <div class="modal-content">
-        <button class="close-modal" onclick="hideDayDetails()">×</button>
-        <h3 class="mb-3" id="dayDetailsTitle"></h3>
-        <div id="dayDetailsContent"></div>
+<div class="modal fade" id="dayDetailsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="dayDetailsTitle"></h5>
+                <button type="button" class="btn-close" onclick="hideDayDetails()"></button>
+            </div>
+            <div class="modal-body" id="dayDetailsContent"></div>
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -304,8 +154,10 @@ function showDayDetails(date) {
                 html += '<h5 class="mb-2">{{ _("Dagelijkse Iftars") }}</h5>';
                 {% for iftar in events.daily %}
                     html += `
-                        <div class="iftar-card daily">
-                            {% include 'ramadan/includes/iftar_card.html' %}
+                        <div class="card mb-2 border-success">
+                            <div class="card-body">
+                                {% include 'ramadan/includes/iftar_card.html' %}
+                            </div>
                         </div>
                     `;
                 {% endfor %}
@@ -315,8 +167,10 @@ function showDayDetails(date) {
                 html += '<h5 class="mb-2">{{ _("Wekelijkse Iftars") }}</h5>';
                 {% for iftar in events.weekly %}
                     html += `
-                        <div class="iftar-card weekly">
-                            {% include 'ramadan/includes/iftar_card.html' %}
+                        <div class="card mb-2 border-primary">
+                            <div class="card-body">
+                                {% include 'ramadan/includes/iftar_card.html' %}
+                            </div>
                         </div>
                     `;
                 {% endfor %}
@@ -326,8 +180,10 @@ function showDayDetails(date) {
                 html += '<h5 class="mb-2">{{ _("Eenmalige Iftars") }}</h5>';
                 {% for iftar in events.single %}
                     html += `
-                        <div class="iftar-card single">
-                            {% include 'ramadan/includes/iftar_card.html' %}
+                        <div class="card mb-2 border-warning">
+                            <div class="card-body">
+                                {% include 'ramadan/includes/iftar_card.html' %}
+                            </div>
                         </div>
                     `;
                 {% endfor %}
@@ -336,18 +192,11 @@ function showDayDetails(date) {
     {% endfor %}
 
     content.innerHTML = html || '<p class="text-muted">{{ _("Geen iftars gevonden voor deze dag.") }}</p>';
-    modal.classList.add('active');
+    $(modal).modal('show');
 }
 
 function hideDayDetails() {
-    document.getElementById('dayDetailsModal').classList.remove('active');
+    $('#dayDetailsModal').modal('hide');
 }
-
-// Close modal when clicking outside
-document.getElementById('dayDetailsModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        hideDayDetails();
-    }
-});
 </script>
 {% endblock %}
