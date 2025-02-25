@@ -21,7 +21,7 @@
             </h1>
             <div class="quote-container">
                 <blockquote class="hadith-quote">
-                    <p class="lead-quote">Steun de gemeenschap vandaag, zie haar morgen bloeien</p>
+                    <p class="lead-quote">{{ _('Samen bouwen aan een sterkere gemeenschap') }}</p>
                     <p class="quote-text">De gelijkenis van degenen die op de Weg van Allah uitgeven is als de gelijkenis van een graankorrel, (die) zeven aren voortbrengt, in iedere aar honderd korrels, en Allah vermenigvuldigt voor wie Hij wil. En Allah is Alomvattend, Alwetend.</p>
                     <footer class="quote-source">Koran 2:261</footer>
                 </blockquote>
@@ -30,22 +30,30 @@
     </div>
 </div>
 
-<div class="donation-type-section">
+<div class="donation-choice-section">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <div class="donation-type-selector">
-                    <h2 class="text-center mb-4">{{ _('Kies uw donatie type') }}</h2>
-                    <div class="donation-type-grid">
-                        <button class="donation-type-option active" data-type="general">
-                            <i class="fas fa-mosque"></i>
-                            <h3>{{ _('Algemene Donatie') }}</h3>
-                            <p>{{ _('Steun VGM in het algemeen voor diverse activiteiten en projecten') }}</p>
+                <div class="donation-choice-container">
+                    <h2 class="text-center mb-4">{{ _('Hoe wilt u bijdragen?') }}</h2>
+                    <div class="choice-grid">
+                        <button class="choice-option active" data-type="general">
+                            <div class="choice-icon">
+                                <i class="fas fa-mosque"></i>
+                            </div>
+                            <div class="choice-content">
+                                <h3>{{ _('Steun VGM') }}</h3>
+                                <p>{{ _('Steun de diverse activiteiten en projecten van de VGM') }}</p>
+                            </div>
                         </button>
-                        <button class="donation-type-option" data-type="project">
-                            <i class="fas fa-hands-helping"></i>
-                            <h3>{{ _('Specifiek Project') }}</h3>
-                            <p>{{ _('Kies een specifiek project om te steunen') }}</p>
+                        <button class="choice-option" data-type="project">
+                            <div class="choice-icon">
+                                <i class="fas fa-hands-helping"></i>
+                            </div>
+                            <div class="choice-content">
+                                <h3>{{ _('Specifiek Project') }}</h3>
+                                <p>{{ _('Kies een specifiek project om te steunen') }}</p>
+                            </div>
                         </button>
                     </div>
                 </div>
@@ -56,10 +64,13 @@
 
 <div id="projectSection" class="campaigns-section" style="display: none;">
     <div class="container">
-        <h2 class="section-title text-center mb-5">{{ _('Actuele Projecten') }}</h2>
+        <h2 class="section-title text-center">
+            {{ _('Onze Actuele Projecten') }}
+            <div class="section-subtitle">{{ _('Kies een project om te steunen') }}</div>
+        </h2>
         <div class="campaigns-grid">
             {% for campaign in campaigns %}
-            <div class="campaign-card">
+            <div class="campaign-card" data-campaign-id="{{campaign.id}}">
                 {% if campaign.image_url %}
                 <div class="campaign-image">
                     <img src="{{ campaign.image_url }}" alt="{{ campaign.title }}">
@@ -83,7 +94,7 @@
                         </div>
                         <div class="progress-percentage">{{ "%.1f"|format(campaign.calculate_progress()) }}% bereikt</div>
                     </div>
-                    <button class="btn btn-outline-primary btn-support w-100 mt-3" 
+                    <button class="btn btn-primary btn-support w-100 mt-3" 
                             data-campaign-id="{{ campaign.id }}"
                             onclick="selectCampaign({{ campaign.id }}, '{{ campaign.title }}')">
                         {{ _('Steun dit Project') }}
@@ -221,7 +232,7 @@
 
 {% block styles %}
 <style>
-::root {
+:root {
     --primary-color: #005A87;
     --secondary-color: #41B7AC;
     --accent-color: #FF4154;
@@ -280,7 +291,7 @@
 }
 
 .lead-quote {
-    font-size: 1.5rem; 
+    font-size: 1.5rem;
     font-weight: 300;
     line-height: 1.8;
     margin-bottom: 1rem;
@@ -302,12 +313,201 @@
     font-style: italic;
 }
 
-/* Donation Section */
-.donation-section {
-    padding: 6rem 0;
-    background-color: var(--background-light);
-    margin-top: -4rem;
+/* Donation Choice Section */
+.donation-choice-section {
+    padding: 4rem 0;
+    background-color: white;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 2rem;
 }
+
+.donation-choice-container {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.choice-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.choice-option {
+    background: white;
+    border: 2px solid var(--border-color);
+    border-radius: 1rem;
+    padding: 2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    text-align: left;
+}
+
+.choice-icon {
+    font-size: 2rem;
+    color: var(--primary-color);
+    flex-shrink: 0;
+}
+
+.choice-content h3 {
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.choice-content p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.choice-option:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.choice-option.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.choice-option.active .choice-icon,
+.choice-option.active h3,
+.choice-option.active p {
+    color: white;
+}
+
+/* Campaigns Section */
+.campaigns-section {
+    padding: 4rem 0;
+    background-color: var(--background-light);
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.section-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.campaigns-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+}
+
+.campaign-card {
+    background: white;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.campaign-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.campaign-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.campaign-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.campaign-content {
+    padding: 2rem;
+}
+
+.campaign-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.campaign-description {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.progress-container {
+    margin-bottom: 1rem;
+}
+
+.progress-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.progress-amount {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.progress-goal {
+    color: var(--text-secondary);
+}
+
+.progress {
+    height: 8px;
+    background-color: var(--background-light);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    transition: width 1s ease-in-out;
+}
+
+.progress-percentage {
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.btn-support {
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-support:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
 
 /* Amount Grid */
 .amount-grid {
@@ -446,6 +646,13 @@
     .payment-option label i {
         margin-bottom: 0;
     }
+    .choice-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .choice-option {
+        padding: 1.5rem;
+    }
 }
 
 .bloom-icon {
@@ -491,200 +698,34 @@
     }
 }
 
-/* Campaign Section Styles */
-.campaigns-section {
+/* Donation Section */
+.donation-section {
     padding: 6rem 0;
-    background-color: var(--background-light);
-}
-
-.section-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: 3rem;
-}
-
-.campaigns-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    margin-bottom: 4rem;
-}
-
-.campaign-card {
-    background: white;
-    border-radius: 1rem;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-}
-
-.campaign-card:hover {
-    transform: translateY(-5px);
-}
-
-.campaign-image {
-    width: 100%;
-    height: 200px;
-    overflow: hidden;
-}
-
-.campaign-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.campaign-content {
-    padding: 2rem;
-}
-
-.campaign-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 1rem;
-}
-
-.campaign-description {
-    color: var(--text-secondary);
-    margin-bottom: 1.5rem;
-    line-height: 1.6;
-}
-
-.progress-container {
-    margin-bottom: 1rem;
-}
-
-.progress-stats {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
-}
-
-.progress-amount {
-    font-weight: 600;
-    color: var(--primary-color);
-}
-
-.progress-goal {
-    color: var(--text-secondary);
-}
-
-.progress {
-    height: 8px;
-    background-color: var(--background-light);
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 0.5rem;
-}
-
-.progress-bar {
-    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-    transition: width 1s ease-in-out;
-}
-
-.progress-percentage {
-    text-align: center;
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-}
-
-.btn-support {
-    border: 2px solid var(--primary-color);
-    color: var(--primary-color);
-    font-weight: 500;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    transition: all 0.3s ease;
-}
-
-.btn-support:hover {
-    background: var(--primary-color);
-    color: white;
-}
-
-
-/* New styles for donation type selector */
-.donation-type-section {
-    padding: 4rem 0;
     background-color: var(--background-light);
     margin-top: -4rem;
 }
 
-.donation-type-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
-    margin-top: 2rem;
-}
-
-.donation-type-option {
+.donation-card{
     background: white;
-    border: 2px solid var(--border-color);
     border-radius: 1rem;
     padding: 2rem;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-.donation-type-option i {
-    font-size: 2.5rem;
-    color: var(--primary-color);
-    margin-bottom: 1rem;
-}
 
-.donation-type-option h3 {
-    font-size: 1.25rem;
-    color: var(--text-primary);
-    margin-bottom: 0.5rem;
-}
-
-.donation-type-option p {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    margin: 0;
-}
-
-.donation-type-option:hover {
-    transform: translateY(-2px);
-    border-color: var(--primary-color);
-}
-
-.donation-type-option.active {
-    background: var(--primary-color);
-    border-color: var(--primary-color);
-    color: white;
-}
-
-.donation-type-option.active i,
-.donation-type-option.active h3,
-.donation-type-option.active p {
-    color: white;
-}
-
-@media (max-width: 768px) {
-    .donation-type-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-}
 </style>
 {% endblock %}
 
 {% block scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const donationTypes = document.querySelectorAll('.donation-type-option');
+    const choiceOptions = document.querySelectorAll('.choice-option');
     const projectSection = document.getElementById('projectSection');
     const donationFormTitle = document.getElementById('donationFormTitle');
 
-    donationTypes.forEach(option => {
+    choiceOptions.forEach(option => {
         option.addEventListener('click', function() {
-            // Remove active class from all options
-            donationTypes.forEach(opt => opt.classList.remove('active'));
-            // Add active class to clicked option
+            choiceOptions.forEach(opt => opt.classList.remove('active'));
             this.classList.add('active');
 
             const type = this.dataset.type;
@@ -694,7 +735,6 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 projectSection.style.display = 'none';
                 donationFormTitle.textContent = 'Kies een donatiebedrag';
-                // Reset any selected campaign
                 document.querySelector('form').dataset.campaignId = '';
             }
         });
@@ -707,11 +747,7 @@ document.addEventListener('DOMContentLoaded', function() {
     amountOptions.forEach(option => {
         option.addEventListener('click', function() {
             const amount = this.dataset.amount;
-
-            // Remove active class from all options
             amountOptions.forEach(opt => opt.classList.remove('active'));
-
-            // Add active class to clicked option
             this.classList.add('active');
 
             if (amount === 'custom') {
@@ -729,18 +765,12 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function selectCampaign(campaignId, campaignTitle) {
-    // Store selected campaign
     document.querySelector('form').dataset.campaignId = campaignId;
-
-    // Update form title/description to reflect selected campaign
     const formTitle = document.querySelector('#donationFormTitle');
     formTitle.textContent = `Steun: ${campaignTitle}`;
-
-    // Scroll to donation form
     document.querySelector('.donation-section').scrollIntoView({ behavior: 'smooth' });
 }
 
-// Update existing form submission to include campaign_id
 document.querySelector('form').addEventListener('submit', function(e) {
     const campaignId = this.dataset.campaignId;
     if (campaignId) {
@@ -752,25 +782,20 @@ document.querySelector('form').addEventListener('submit', function(e) {
     }
 });
 
-// Real-time progress update function
 function updateCampaignProgress(campaignId) {
     fetch(`/api/campaigns/${campaignId}/status`)
         .then(response => response.json())
         .then(data => {
-            const card = document.querySelector(`[data-campaign-id="${campaignId}"]`).closest('.campaign-card');
+            const card = document.querySelector(`[data-campaign-id="${campaignId}"]`);
             const progressBar = card.querySelector('.progress-bar');
             const progressText = card.querySelector('.progress-percentage');
             const amountText = card.querySelector('.progress-amount');
 
-            // Update progress bar
             progressBar.style.width = `${data.progress}%`;
             progressBar.setAttribute('aria-valuenow', data.progress);
-
-            // Update text
             progressText.textContent = `${data.progress.toFixed(1)}% bereikt`;
             amountText.textContent = `€${data.current_amount.toFixed(2)}`;
 
-            // Add animation class
             progressBar.classList.add('progress-updated');
             setTimeout(() => progressBar.classList.remove('progress-updated'), 1000);
         });
@@ -778,13 +803,12 @@ function updateCampaignProgress(campaignId) {
 
 // Update all campaign progress bars every 30 seconds
 document.querySelectorAll('.campaign-card').forEach(card => {
-    const campaignId = card.querySelector('.btn-support').dataset.campaignId;
+    const campaignId = card.dataset.campaignId;
     setInterval(() => updateCampaignProgress(campaignId), 30000);
 });
 </script>
 
 <style>
-/* Add animation for progress updates */
 @keyframes progressPulse {
     0% { opacity: 0.7; }
     50% { opacity: 1; }
