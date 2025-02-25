@@ -12,10 +12,6 @@ class ObituaryForm(FlaskForm):
         DataRequired(message='Vul uw GSM nummer in'),
         Regexp(r'^\+?[0-9\s-]{8,}$', message='Voer een geldig telefoonnummer in')
     ])
-    family_contact = StringField('Contactpersoon Familie *', validators=[
-        DataRequired(message='Vul de naam van de contactpersoon in'), 
-        Length(min=2, max=100, message='Naam moet tussen 2 en 100 karakters zijn')
-    ])
 
     # Deceased person information
     name = StringField('Naam van de Overledene *', validators=[DataRequired(), Length(min=2, max=100)])
