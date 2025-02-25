@@ -359,6 +359,11 @@
                             <li><a class="dropdown-item" href="{{ url_for('events.notification_settings') }}">
                                 <i class="fas fa-bell me-2"></i>{{ _('Notificaties') }}
                             </a></li>
+                            {% if current_user.is_admin %}
+                            <li><a class="dropdown-item" href="{{ url_for('donations.list_campaigns') }}">
+                                <i class="fas fa-hand-holding-heart me-2"></i>{{ _('Campagnes Beheren') }}
+                            </a></li>
+                            {% endif %}
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{{ url_for('main.logout') }}">
                                 <i class="fas fa-sign-out-alt me-2"></i>{{ _('Uitloggen') }}
