@@ -128,14 +128,15 @@ class Event(db.Model):
 
     # New fields for event categorization
     event_type = db.Column(db.String(20), nullable=False, default='individual')  # 'vgm', 'collaboration', 'individual'
+    category = db.Column(db.String(50))  # 'ramadan', 'lecture', 'workshop', etc.
     is_featured = db.Column(db.Boolean, default=False)  # For highlighting important events
     featured_image = db.Column(db.String(500))  # URL to event image
     featured_until = db.Column(db.DateTime)  # How long to feature the event
 
     # Many to Many relationship for collaborating mosques
     collaborating_mosques = db.relationship('User',
-                                          secondary='event_mosque_collaboration',
-                                          backref=db.backref('collaborated_events', lazy='dynamic'))
+                                       secondary='event_mosque_collaboration',
+                                       backref=db.backref('collaborated_events', lazy='dynamic'))
 
     # One to Many relationships
     registrations = db.relationship('EventRegistration', backref='event', lazy='dynamic')

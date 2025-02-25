@@ -6,6 +6,8 @@ from app import db
 from models import User, BoardMember, Event, PrayerTime, BlogPost, MosqueImage, MosqueVideo, Donation, MosqueNotificationPreference, MosqueBoardMember, MosqueHistory, MosquePhoto, ContentChangeLog, EventMosqueCollaboration, FundraisingCampaign
 from datetime import datetime, date
 import os
+from utils.canva_client import canva_client # Added import statement
+
 
 routes = Blueprint('main', __name__)
 
@@ -772,21 +774,21 @@ def about():
     term_start_str = request.args.get('term')
     if term_start_str:
         term_start = datetime.strptime(term_start_str, '%Y-%m-%d').date()
-        #        # Get the corresponding term_end for this term_start
+        # Get the corresponding term_end for this term_start
         term = next((t for t in terms if t[0] == term_start), None)
         term_end = term[1] if term else None
     else:
-        # Default to current or most recent term
+        # Default to current or mostrecent term
         current_date = date.today()
         latest_term = BoardMember.query.filter(
                         BoardMember.term_end >= current_date
-        ).order_by(BoardMember.term_start.desc()).first()
+        ).orderby(BoardMember.term_start.desc()).first()
 
         if latest_term:
             term_start= latest_term.term_start
             term_end = latest_term.term_end
         else:
-            term_start = date(current_date.year, 1, 1, 1)
+            term_start = date(current_date.year, 1, 1)
             term_end = date(current_date.year, 12, 31)
 
     # Get board members for the selected term
@@ -1141,22 +1143,30 @@ def test_canva():
 @routes.route('/ramadan')
 def ramadan():
     try:
-        # Get Ramadan-specific designs from Canva
-        ramadan_designs = canva_client.get_designs(limit=3)
-
         # Get today's prayer times for iftar/suhoor
         today = datetime.today().date()
         prayer_times = PrayerTime.query.filter_by(date=today).all()
 
-        # Get upcoming Ramadan events
+        # Get upcoming Ramadan events - fallback to empty list if none exist
+        from sqlalchemy import or_
         ramadan_events = Event.query.filter(
             Event.date >= datetime.utcnow(),
-            Event.category == 'ramadan'
+            or_(
+                Event.category == 'ramadan',
+                Event.title.ilike('%ramadan%')
+            )
         ).order_by(Event.date).limit(5).all()
+
+        # Try to get Canva designs if available
+        designs = []
+        try:
+            designs = canva_client.get_designs(limit=3)
+        except Exception as canva_error:
+            print(f"Note: Canva designs could not be loaded: {canva_error}")
 
         return render_template(
             'ramadan/index.html',
-            designs=ramadan_designs,
+            designs=designs,
             prayer_times=prayer_times,
             events=ramadan_events
         )
