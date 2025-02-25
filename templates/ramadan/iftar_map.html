@@ -240,6 +240,20 @@
     position: absolute;
     top: 1rem;
     right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.edit-iftar {
+    color: #0d6efd;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.edit-iftar:hover {
+    color: #0a58ca;
 }
 </style>
 {% endblock %}
@@ -301,6 +315,11 @@
                                 <div class="iftar-card" data-mosque-id="{{ iftar.mosque_id }}">
                                     {% if current_user.is_authenticated and (current_user.is_admin or current_user.id == iftar.mosque_id) %}
                                     <div class="iftar-actions">
+                                        <a href="{{ url_for('main.edit_iftar', iftar_id=iftar.id) }}" 
+                                           class="edit-iftar" 
+                                           title="{{ _('Bewerk iftar') }}">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
                                         <form action="{{ url_for('main.delete_iftar', iftar_id=iftar.id) }}" method="POST" 
                                               onsubmit="return confirm('{{ _('Weet je zeker dat je dit iftar evenement wilt verwijderen?') }}');" 
                                               class="d-inline">
@@ -347,6 +366,11 @@
                                 <div class="iftar-card" data-mosque-id="{{ iftar.mosque_id }}">
                                     {% if current_user.is_authenticated and (current_user.is_admin or current_user.id == iftar.mosque_id) %}
                                     <div class="iftar-actions">
+                                        <a href="{{ url_for('main.edit_iftar', iftar_id=iftar.id) }}" 
+                                           class="edit-iftar" 
+                                           title="{{ _('Bewerk iftar') }}">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
                                         <form action="{{ url_for('main.delete_iftar', iftar_id=iftar.id) }}" method="POST" 
                                               onsubmit="return confirm('{{ _('Weet je zeker dat je dit iftar evenement wilt verwijderen?') }}');" 
                                               class="d-inline">
@@ -432,6 +456,11 @@
                             <div class="iftar-card" data-mosque-id="{{ iftar.mosque_id }}">
                                 {% if current_user.is_authenticated and (current_user.is_admin or current_user.id == iftar.mosque_id) %}
                                     <div class="iftar-actions">
+                                        <a href="{{ url_for('main.edit_iftar', iftar_id=iftar.id) }}" 
+                                           class="edit-iftar" 
+                                           title="{{ _('Bewerk iftar') }}">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
                                         <form action="{{ url_for('main.delete_iftar', iftar_id=iftar.id) }}" method="POST" 
                                               onsubmit="return confirm('{{ _('Weet je zeker dat je dit iftar evenement wilt verwijderen?') }}');" 
                                               class="d-inline">

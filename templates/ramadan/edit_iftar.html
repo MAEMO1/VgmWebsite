@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Iftar Evenement Bewerken') }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">{{ _('Iftar Evenement Bewerken') }}</h1>
+
+    <div class="card">
+        <div class="card-body">
+            <form method="POST">
+                {% if current_user.is_admin %}
+                <div class="form-group">
+                    <label for="mosque_id" class="form-label">{{ _('Moskee') }}</label>
+                    <select class="form-control" id="mosque_id" name="mosque_id" required disabled>
+                        {% for mosque in mosques %}
+                            <option value="{{ mosque.id }}" {% if mosque.id == iftar.mosque_id %}selected{% endif %}>
+                                {{ mosque.mosque_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label for="date" class="form-label">{{ _('Datum') }}</label>
+                    <input type="date" class="form-control" id="date" name="date" value="{{ iftar.date }}" required>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="start_time" class="form-label">{{ _('Starttijd') }}</label>
+                            <input type="time" class="form-control" id="start_time" name="start_time" value="{{ iftar.start_time.strftime('%H:%M') }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="end_time" class="form-label">{{ _('Eindtijd') }}</label>
+                            <input type="time" class="form-control" id="end_time" name="end_time" value="{{ iftar.end_time.strftime('%H:%M') if iftar.end_time }}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="location" class="form-label">{{ _('Locatie') }}</label>
+                    <input type="text" class="form-control" id="location" name="location" value="{{ iftar.location }}">
+                    <small class="form-text">{{ _('Specifieke locatie binnen de moskee (bijv. Hoofdzaal, Gemeenschapsruimte)') }}</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="women_entrance" class="form-label">{{ _('Ingang vrouwen') }}</label>
+                    <input type="text" class="form-control" id="women_entrance" name="women_entrance" value="{{ iftar.women_entrance }}">
+                    <small class="form-text">{{ _('Optioneel: specifieke ingang voor vrouwen als deze verschilt van de hoofdingang') }}</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="capacity" class="form-label">{{ _('Capaciteit') }}</label>
+                    <input type="number" class="form-control" id="capacity" name="capacity" value="{{ iftar.capacity }}">
+                </div>
+
+                <div class="form-check mb-3">
+                    <input type="checkbox" class="form-check-input" id="is_family_friendly" name="is_family_friendly" {% if iftar.is_family_friendly %}checked{% endif %}>
+                    <label class="form-check-label" for="is_family_friendly">{{ _('Gezinsvriendelijk') }}</label>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input type="checkbox" class="form-check-input" id="registration_required" name="registration_required" {% if iftar.registration_required %}checked{% endif %}>
+                    <label class="form-check-label" for="registration_required">{{ _('Registratie vereist') }}</label>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input type="checkbox" class="form-check-input" id="dietary_options" name="dietary_options" {% if iftar.dietary_options %}checked{% endif %}>
+                    <label class="form-check-label" for="dietary_options">{{ _('Dieetopties beschikbaar') }}</label>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes" class="form-label">{{ _('Opmerkingen') }}</label>
+                    <textarea class="form-control" id="notes" name="notes" rows="3">{{ iftar.notes }}</textarea>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">{{ _('Opslaan') }}</button>
+                    <a href="{{ url_for('main.iftar_map') }}" class="btn btn-secondary">{{ _('Annuleren') }}</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

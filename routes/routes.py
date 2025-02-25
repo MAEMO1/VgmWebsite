@@ -1438,3 +1438,40 @@ def delete_iftar(iftar_id):
         print(f"Error deleting iftar event: {e}")
 
     return redirect(url_for('main.iftar_map'))
+
+@routes.route('/ramadan/iftar/<int:iftar_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_iftar(iftar_id):
+    iftar = IfterEvent.query.get_or_404(iftar_id)
+
+    # Check if user has permission to edit (admin or mosque owner)
+    if not (current_user.is_admin or current_user.id == iftar.mosque_id):
+        flash(_('Je hebt geen toestemming om dit iftar evenement te bewerken.'), 'error')
+        return redirect(url_for('main.iftar_map'))
+
+    if request.method == 'POST':
+        try:
+            # Update iftar event details
+            iftar.date = datetime.strptime(request.form['date'], '%Y-%m-%d').date()
+            iftar.start_time = datetime.strptime(request.form['start_time'], '%H:%M').time()
+            iftar.end_time = datetime.strptime(request.form['end_time'], '%H:%M').time() if request.form.get('end_time') else None
+            iftar.location = request.form.get('location')
+            iftar.women_entrance = request.form.get('women_entrance')
+            iftar.capacity = int(request.form['capacity']) if request.form.get('capacity') else None
+            iftar.is_family_friendly = bool(request.form.get('is_family_friendly'))
+            iftar.registration_required = bool(request.form.get('registration_required'))
+            iftar.dietary_options = bool(request.form.get('dietary_options'))
+            iftar.notes = request.form.get('notes')
+
+            db.session.commit()
+            flash(_('Iftar evenement succesvol bijgewerkt.'), 'success')
+            return redirect(url_for('main.iftar_map'))
+
+        except Exception as e:
+            db.session.rollback()
+            flash(_('Er is een fout opgetreden bij het bijwerken van het iftar evenement.'), 'error')
+            print(f"Error updating iftar event: {e}")
+
+    # GET request - show edit form
+    mosques = User.query.filter_by(user_type='mosque', is_verified=True).all() if current_user.is_admin else None
+    return render_template('ramadan/edit_iftar.html', iftar=iftar, mosques=mosques)
