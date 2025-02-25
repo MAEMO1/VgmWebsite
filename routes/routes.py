@@ -1157,18 +1157,26 @@ def ramadan():
 @routes.route('/ramadan/iftar/add', methods=['GET', 'POST'])
 @login_required
 def add_iftar():
-    if not current_user.user_type == 'mosque':
-        flash('Alleen moskeeën kunnen iftar evenementen toevoegen.', 'error')
+    if not (current_user.is_admin or current_user.user_type == 'mosque'):
+        flash('Alleen moskeeën en beheerders kunnen iftar evenementen toevoegen.', 'error')
         return redirect(url_for('main.ramadan'))
+
+    # Get list of mosques for admin selection
+    mosques = None
+    if current_user.is_admin:
+        mosques = User.query.filter_by(user_type='mosque', is_verified=True).order_by(User.mosque_name).all()
 
     if request.method == 'POST':
         try:
             start_date = datetime.strptime(request.form['date'], '%Y-%m-%d').date()
             is_recurring = 'is_recurring' in request.form
 
+            # Determine mosque_id based on user type
+            mosque_id = current_user.id if current_user.user_type == 'mosque' else request.form.get('mosque_id')
+
             # Base iftar event data
             iftar_data = {
-                'mosque_id': current_user.id,
+                'mosque_id': mosque_id,
                 'start_time': datetime.strptime(request.form['start_time'], '%H:%M').time(),
                 'end_time': datetime.strptime(request.form['end_time'], '%H:%M').time() if request.form.get('end_time') else None,
                 'location': request.form['location'],
@@ -1219,7 +1227,7 @@ def add_iftar():
             print(f"Error adding iftar event: {e}")
             return redirect(url_for('main.add_iftar'))
 
-    return render_template('ramadan/add_iftar.html')
+    return render_template('ramadan/add_iftar.html', mosques=mosques)
 
 @routes.route('/ramadan/iftar/<int:iftar_id>/register', methods=['POST'])
 @login_required
