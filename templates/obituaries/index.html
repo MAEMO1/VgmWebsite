@@ -12,7 +12,7 @@
     --text-primary: #2C3E50;
     --text-secondary: #6C757D;
     --border-color: #E9ECEF;
-    --primary-gradient: linear-gradient(135deg, var(--primary-color) 0%, #004a70 100%);
+    --primary-gradient: linear-gradient(135deg, #005A87 0%, #003654 100%);
     --card-shadow: 0 2px 4px rgba(0,0,0,0.1);
     --hover-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
@@ -22,11 +22,12 @@
 .hero-section {
     background: var(--primary-gradient);
     color: white;
-    padding: 4rem 0;
+    padding: 5rem 0;
     text-align: center;
     position: relative;
     overflow: hidden;
-    margin-bottom: 3rem;
+    margin-bottom: 4rem;
+    box-shadow: inset 0 -10px 20px rgba(0,0,0,0.1);
 }
 
 .hero-section::before {
@@ -37,7 +38,13 @@
     right: 0;
     bottom: 0;
     background: url('/static/images/pattern.svg') repeat;
-    opacity: 0.1;
+    opacity: 0.05;
+    animation: fadeInPattern 1.5s ease-out;
+}
+
+@keyframes fadeInPattern {
+    from { opacity: 0; }
+    to { opacity: 0.05; }
 }
 
 .hero-container {
@@ -45,57 +52,102 @@
     z-index: 1;
     max-width: 800px;
     margin: 0 auto;
+    padding: 0 2rem;
 }
 
 .hero-title {
-    font-size: 3rem;
-    font-weight: 600;
-    margin-bottom: 2rem;
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 2.5rem;
     color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    animation: slideDown 0.8s ease-out;
 }
 
 .quran-verse {
     font-family: 'Amiri', serif;
-    font-size: 2rem;
-    margin: 2rem 0;
+    font-size: 2.25rem;
+    margin: 2.5rem 0;
     font-style: italic;
     color: rgba(255, 255, 255, 0.95);
     line-height: 1.6;
+    animation: fadeIn 1s ease-out 0.3s both;
 }
 
 .verse-reference {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     color: rgba(255, 255, 255, 0.9);
     font-weight: 500;
+    animation: fadeIn 1s ease-out 0.6s both;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .obituaries-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 1rem;
+    padding: 0 2rem;
 }
 
 .section-header {
     color: var(--primary-color);
-    margin: 3rem 0 2rem;
+    margin: 4rem 0 2.5rem;
     padding-bottom: 1rem;
     border-bottom: 2px solid var(--primary-color);
-    font-size: 2rem;
-    font-weight: 600;
+    font-size: 2.25rem;
+    font-weight: 700;
+    position: relative;
+}
+
+.section-header::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100px;
+    height: 2px;
+    background: var(--secondary-color);
 }
 
 .obituary-card {
     background: white;
-    border-radius: 16px;
+    border-radius: 20px;
     box-shadow: var(--card-shadow);
-    margin-bottom: 2rem;
-    padding: 2rem;
+    margin-bottom: 2.5rem;
+    padding: 2.5rem;
     transition: all 0.3s ease;
     border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.obituary-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--primary-gradient);
+    opacity: 0.8;
 }
 
 .obituary-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     box-shadow: var(--hover-shadow);
 }
 
@@ -103,7 +155,7 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
     padding-bottom: 1.5rem;
     border-bottom: 1px solid var(--border-color);
 }
@@ -111,47 +163,61 @@
 .obituary-title {
     color: var(--primary-color);
     margin: 0;
-    font-size: 1.5rem;
-    font-weight: 600;
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.3;
 }
 
 .date-badge {
-    background: var(--primary-color);
+    background: var(--primary-gradient);
     color: white;
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1.25rem;
     border-radius: 100px;
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 500;
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .date-badge i {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
 }
 
 .prayer-info {
     background: var(--background-light);
-    padding: 1.5rem;
-    border-radius: 12px;
+    padding: 2rem;
+    border-radius: 15px;
     margin: 1.5rem 0;
-    border-left: 4px solid var(--primary-color);
+    border-left: 4px solid var(--secondary-color);
+    position: relative;
+}
+
+.prayer-info::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -4px;
+    width: 4px;
+    height: 50px;
+    background: var(--primary-color);
 }
 
 .detail-label {
     color: var(--primary-color);
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     margin-bottom: 0.5rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.75px;
 }
 
 .detail-value {
     color: var(--text-primary);
-    font-size: 1.1rem;
-    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
 }
 
 .detail-value:last-child {
@@ -159,105 +225,75 @@
 }
 
 .actions {
-    margin-top: 1.5rem;
+    margin-top: 2rem;
     padding-top: 1.5rem;
     border-top: 1px solid var(--border-color);
     display: flex;
     gap: 1rem;
 }
 
+.actions .btn {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.actions .btn:hover {
+    transform: translateY(-2px);
+}
+
 .add-btn {
     position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    background: var(--primary-color);
+    bottom: 2.5rem;
+    right: 2.5rem;
+    background: var(--primary-gradient);
     color: white;
-    width: 60px;
-    height: 60px;
+    width: 65px;
+    height: 65px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     transition: all 0.3s ease;
     z-index: 1000;
+    font-size: 1.25rem;
 }
 
 .add-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-    background: #004a70;
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
     color: white;
 }
 
-.faq-section {
-    margin: 4rem 0;
-    background: var(--background-light);
-    padding: 3rem;
-    border-radius: 20px;
-    box-shadow: var(--card-shadow);
-}
-
-.faq-section .section-title {
-    color: var(--primary-color);
-    font-size: 2rem;
-    margin-bottom: 2rem;
+.empty-state {
     text-align: center;
-}
-
-.faq-item {
-    margin-bottom: 2rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.faq-item:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
-}
-
-.faq-question {
-    font-weight: 600;
-    color: var(--primary-color);
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
-}
-
-.faq-answer {
+    padding: 4rem 2rem;
     color: var(--text-secondary);
-    line-height: 1.6;
-    font-size: 1.1rem;
 }
 
-.pagination {
-    margin: 3rem 0;
-}
-
-.page-link {
-    color: var(--primary-color);
-    border-color: var(--primary-color);
-    padding: 0.75rem 1.25rem;
-    font-weight: 500;
-}
-
-.page-item.active .page-link {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
+.empty-state p {
+    font-size: 1.2rem;
+    margin: 0;
 }
 
 @media (max-width: 768px) {
+    .hero-section {
+        padding: 4rem 0;
+    }
+
     .hero-title {
         font-size: 2.5rem;
     }
 
     .quran-verse {
-        font-size: 1.5rem;
+        font-size: 1.75rem;
     }
 
     .obituary-header {
         flex-direction: column;
-        gap: 1rem;
+        gap: 1.5rem;
     }
 
     .date-badge {
@@ -266,6 +302,14 @@
 
     .actions {
         flex-wrap: wrap;
+    }
+
+    .obituaries-container {
+        padding: 0 1rem;
+    }
+
+    .obituary-card {
+        padding: 1.5rem;
     }
 }
 </style>
@@ -367,7 +411,9 @@
         {% endif %}
     </div>
     {% else %}
-    <p class="text-center h5 text-muted my-5">{{ _('Geen aankomende begrafenisgebeden.') }}</p>
+    <div class="empty-state">
+        <p>{{ _('Geen aankomende begrafenisgebeden.') }}</p>
+    </div>
     {% endfor %}
 
     <!-- Eerdere Begrafenisgebeden -->
@@ -447,7 +493,9 @@
         {% endif %}
     </div>
     {% else %}
-    <p class="text-center h5 text-muted my-5">{{ _('Geen eerdere begrafenisgebeden gevonden.') }}</p>
+    <div class="empty-state">
+        <p>{{ _('Geen eerdere begrafenisgebeden gevonden.') }}</p>
+    </div>
     {% endfor %}
 
     {% if total_pages > 1 %}
@@ -461,31 +509,6 @@
         </ul>
     </nav>
     {% endif %}
-
-    <!-- Veelgestelde vragen -->
-    <div class="faq-section">
-        <h2 class="section-title">{{ _('Veelgestelde vragen') }}</h2>
-
-        <div class="faq-item">
-            <div class="faq-question">{{ _('Hoe kan ik een overlijdensbericht toevoegen?') }}</div>
-            <div class="faq-answer">{{ _('U kunt een overlijdensbericht toevoegen door op de + knop rechtsonder te klikken. Als u een moskee selecteert voor het begrafenisgebed (Janazah), moet deze het bericht eerst verifiëren voordat het wordt gepubliceerd.') }}</div>
-        </div>
-
-        <div class="faq-item">
-            <div class="faq-question">{{ _('Wie kan een overlijdensbericht bewerken?') }}</div>
-            <div class="faq-answer">{{ _('Een overlijdensbericht kan bewerkt worden door de persoon die het heeft toegevoegd, de geselecteerde moskee en de beheerders van de website.') }}</div>
-        </div>
-
-        <div class="faq-item">
-            <div class="faq-question">{{ _('Wanneer is verificatie nodig?') }}</div>
-            <div class="faq-answer">{{ _('Verificatie is alleen nodig wanneer u een specifieke moskee selecteert voor het begrafenisgebed (Janazah). Als u "Andere locatie" kiest, wordt het bericht direct gepubliceerd.') }}</div>
-        </div>
-
-        <div class="faq-item">
-            <div class="faq-question">{{ _('Hoe lang blijft een overlijdensbericht zichtbaar?') }}</div>
-            <div class="faq-answer">{{ _('Overlijdensberichten blijven zichtbaar in het archief. Aankomende begrafenisgebeden (Janazah) worden prominent weergegeven op de pagina.') }}</div>
-        </div>
-    </div>
 
     <a href="{{ url_for('obituaries.create') }}" class="add-btn" title="{{ _('Overlijdensbericht Toevoegen') }}">
         <i class="fas fa-plus"></i>
