@@ -5,36 +5,29 @@
 {% block content %}
 <style>
 .calendar-container {
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem 0;
+    padding: 1rem;
 }
 
 .calendar-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 1.5rem;
-}
-
-.month-navigation {
-    display: flex;
-    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
     gap: 1rem;
 }
 
-.month-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--primary-color);
-    min-width: 200px;
-    text-align: center;
+.filter-buttons {
+    display: flex;
+    gap: 0.5rem;
 }
 
 .filter-button {
     padding: 0.5rem 1rem;
-    border-radius: 1.5rem;
     border: 2px solid var(--primary-color);
+    border-radius: 1.5rem;
     background: white;
     color: var(--primary-color);
     cursor: pointer;
@@ -49,12 +42,22 @@
     color: white;
 }
 
-.calendar-legend {
+.month-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin: 0 1rem;
+}
+
+.legend {
     display: flex;
     gap: 1rem;
-    margin-bottom: 1.5rem;
     justify-content: center;
     flex-wrap: wrap;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background: #f8f9fa;
+    border-radius: 0.5rem;
 }
 
 .legend-item {
@@ -62,55 +65,67 @@
     align-items: center;
     gap: 0.5rem;
     font-size: 0.85rem;
-    padding: 0.4rem 0.8rem;
-    background: #f8f9fa;
-    border-radius: 0.5rem;
 }
 
-.legend-color {
+.legend-dot {
     width: 0.75rem;
     height: 0.75rem;
-    border-radius: 0.25rem;
+    border-radius: 50%;
 }
 
-.legend-color.daily { background: #2e7d32; }
-.legend-color.weekly { background: #1976d2; }
-.legend-color.single { background: #f57c00; }
+.daily { background: #2e7d32; }
+.weekly { background: #1976d2; }
+.single { background: #f57c00; }
+
+.calendar {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
 .calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 0.5rem;
-    background: white;
-    padding: 1.5rem;
-    border-radius: 0.75rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    display: table;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 4px;
 }
 
-.weekday-header {
+.calendar-row {
+    display: table-row;
+}
+
+.calendar-header-cell,
+.calendar-day {
+    display: table-cell;
+    width: 14.28%;
+    padding: 8px;
     text-align: center;
+    vertical-align: middle;
+}
+
+.calendar-header-cell {
     font-weight: 600;
-    padding: 0.5rem;
-    font-size: 0.9rem;
     color: var(--text-secondary);
+    font-size: 0.9rem;
+    padding-bottom: 1rem;
 }
 
 .calendar-day {
-    aspect-ratio: 1;
-    padding: 0.5rem;
+    min-height: 80px;
     border: 1px solid #eee;
-    border-radius: 0.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    transition: all 0.2s ease;
+    border-radius: 0.25rem;
+    position: relative;
     cursor: pointer;
-    background: white;
+    transition: all 0.2s ease;
+    vertical-align: top;
+    padding: 8px;
 }
 
 .calendar-day:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    background: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .calendar-day.today {
@@ -118,28 +133,26 @@
 }
 
 .day-number {
-    font-size: 1rem;
-    font-weight: 500;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
 }
 
-.day-indicators {
+.day-dots {
     display: flex;
-    gap: 0.15rem;
+    gap: 2px;
     flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 4px;
 }
 
-.iftar-indicator {
-    width: 6px;
-    height: 6px;
+.day-dot {
+    width: 4px;
+    height: 4px;
     border-radius: 50%;
 }
 
-.iftar-indicator.daily { background: #2e7d32; }
-.iftar-indicator.weekly { background: #1976d2; }
-.iftar-indicator.single { background: #f57c00; }
-
-/* Modal styling */
-.day-details-modal {
+/* Modal styles */
+.modal {
     display: none;
     position: fixed;
     top: 0;
@@ -148,18 +161,18 @@
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
     z-index: 1000;
-    align-items: center;
-    justify-content: center;
     padding: 1rem;
 }
 
-.day-details-modal.active {
+.modal.active {
     display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .modal-content {
     background: white;
-    border-radius: 0.75rem;
+    border-radius: 0.5rem;
     padding: 1.5rem;
     max-width: 500px;
     width: 100%;
@@ -170,30 +183,19 @@
 
 .close-modal {
     position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
+    top: 0.5rem;
+    right: 0.5rem;
     background: none;
     border: none;
     font-size: 1.25rem;
     cursor: pointer;
     color: var(--text-secondary);
-    padding: 0.25rem;
-}
-
-.close-modal:hover {
-    color: var(--text-primary);
-}
-
-.iftar-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
 }
 
 .iftar-card {
     padding: 1rem;
-    border-radius: 0.5rem;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
+    border-radius: 0.25rem;
 }
 
 .iftar-card.daily {
@@ -212,11 +214,10 @@
 }
 </style>
 
-<div class="container calendar-container">
+<div class="calendar-container">
     <div class="calendar-header">
         <h1 class="h3">{{ _('VGM Iftarkaart') }}</h1>
-
-        <div class="filter-controls">
+        <div class="filter-buttons">
             <a href="{{ url_for('main.iftar_map', filter='all') }}" 
                class="filter-button {% if not family_only %}active{% endif %}">
                 {{ _('Alle Iftars') }}
@@ -228,76 +229,98 @@
         </div>
     </div>
 
-    <div class="calendar-legend">
+    <div class="legend">
         <div class="legend-item">
-            <div class="legend-color daily"></div>
+            <span class="legend-dot daily"></span>
             {{ _('Dagelijkse Iftars') }}
         </div>
         <div class="legend-item">
-            <div class="legend-color weekly"></div>
+            <span class="legend-dot weekly"></span>
             {{ _('Wekelijkse Iftars') }}
         </div>
         <div class="legend-item">
-            <div class="legend-color single"></div>
+            <span class="legend-dot single"></span>
             {{ _('Eenmalige Iftars') }}
         </div>
     </div>
 
-    <div class="month-navigation">
+    <div class="d-flex align-items-center justify-content-center gap-3 mb-3">
         <a href="{{ url_for('main.iftar_map', date=prev_month, filter='family' if family_only else 'all') }}" 
            class="btn btn-sm btn-outline-primary">
             <i class="fas fa-chevron-left"></i>
         </a>
-        <div class="month-title">{{ current_date.strftime('%B %Y') }}</div>
+        <span class="month-title">{{ current_date.strftime('%B %Y') }}</span>
         <a href="{{ url_for('main.iftar_map', date=next_month, filter='family' if family_only else 'all') }}" 
            class="btn btn-sm btn-outline-primary">
             <i class="fas fa-chevron-right"></i>
         </a>
     </div>
 
-    <div class="calendar-grid">
-        <!-- Weekday headers -->
-        <div class="weekday-header">{{ _('Ma') }}</div>
-        <div class="weekday-header">{{ _('Di') }}</div>
-        <div class="weekday-header">{{ _('Wo') }}</div>
-        <div class="weekday-header">{{ _('Do') }}</div>
-        <div class="weekday-header">{{ _('Vr') }}</div>
-        <div class="weekday-header">{{ _('Za') }}</div>
-        <div class="weekday-header">{{ _('Zo') }}</div>
-
-        <!-- Empty cells for days before start of month -->
-        {% for _ in range((current_date.replace(day=1).weekday() + 7) % 7) %}
-            <div class="calendar-day empty"></div>
-        {% endfor %}
-
-        <!-- Calendar days -->
-        {% for day in range(1, (current_date.replace(day=28) + timedelta(days=4)).day + 1) %}
-            {% set current_day = current_date.replace(day=day) %}
-            {% set day_events = calendar_events[current_day] %}
-
-            <div class="calendar-day {% if current_day == today %}today{% endif %}"
-                 onclick="showDayDetails('{{ current_day.strftime('%Y-%m-%d') }}')">
-                <div class="day-number">{{ day }}</div>
-                {% if day_events %}
-                    <div class="day-indicators">
-                        {% if day_events.daily %}
-                            <span class="iftar-indicator daily" title="{{ _('Dagelijkse iftars') }}"></span>
-                        {% endif %}
-                        {% if day_events.weekly %}
-                            <span class="iftar-indicator weekly" title="{{ _('Wekelijkse iftars') }}"></span>
-                        {% endif %}
-                        {% if day_events.single %}
-                            <span class="iftar-indicator single" title="{{ _('Eenmalige iftars') }}"></span>
-                        {% endif %}
-                    </div>
-                {% endif %}
+    <div class="calendar">
+        <div class="calendar-grid">
+            <div class="calendar-row">
+                <div class="calendar-header-cell">{{ _('Ma') }}</div>
+                <div class="calendar-header-cell">{{ _('Di') }}</div>
+                <div class="calendar-header-cell">{{ _('Wo') }}</div>
+                <div class="calendar-header-cell">{{ _('Do') }}</div>
+                <div class="calendar-header-cell">{{ _('Vr') }}</div>
+                <div class="calendar-header-cell">{{ _('Za') }}</div>
+                <div class="calendar-header-cell">{{ _('Zo') }}</div>
             </div>
-        {% endfor %}
+
+            {% set row_started = false %}
+            {% set day_count = 0 %}
+
+            {% for _ in range((current_date.replace(day=1).weekday() + 7) % 7) %}
+                {% if not row_started %}
+                    <div class="calendar-row">
+                    {% set row_started = true %}
+                {% endif %}
+                <div class="calendar-day empty"></div>
+                {% set day_count = day_count + 1 %}
+            {% endfor %}
+
+            {% for day in range(1, (current_date.replace(day=28) + timedelta(days=4)).day + 1) %}
+                {% if day_count % 7 == 0 %}
+                    {% if row_started %}
+                        </div>
+                    {% endif %}
+                    <div class="calendar-row">
+                    {% set row_started = true %}
+                {% endif %}
+
+                {% set current_day = current_date.replace(day=day) %}
+                {% set day_events = calendar_events[current_day] %}
+
+                <div class="calendar-day {% if current_day == today %}today{% endif %}"
+                     onclick="showDayDetails('{{ current_day.strftime("%Y-%m-%d") }}')">
+                    <div class="day-number">{{ day }}</div>
+                    {% if day_events %}
+                        <div class="day-dots">
+                            {% if day_events.daily %}
+                                <span class="day-dot daily" title="{{ _('Dagelijkse iftars') }}"></span>
+                            {% endif %}
+                            {% if day_events.weekly %}
+                                <span class="day-dot weekly" title="{{ _('Wekelijkse iftars') }}"></span>
+                            {% endif %}
+                            {% if day_events.single %}
+                                <span class="day-dot single" title="{{ _('Eenmalige iftars') }}"></span>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                {% set day_count = day_count + 1 %}
+            {% endfor %}
+
+            {% if row_started %}
+                </div>
+            {% endif %}
+        </div>
     </div>
 </div>
 
-<!-- Day Details Modal -->
-<div class="day-details-modal" id="dayDetailsModal">
+<div class="modal" id="dayDetailsModal">
     <div class="modal-content">
         <button class="close-modal" onclick="hideDayDetails()">×</button>
         <h3 class="mb-3" id="dayDetailsTitle"></h3>
