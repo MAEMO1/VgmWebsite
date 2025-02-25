@@ -1147,13 +1147,13 @@ def ramadan():
         today = datetime.today().date()
         prayer_times = PrayerTime.query.filter_by(date=today).all()
 
-        # Get upcoming Ramadan events - fallback to empty list if none exist
+        # Get upcoming Ramadan events - using title matching as fallback
         from sqlalchemy import or_
         ramadan_events = Event.query.filter(
             Event.date >= datetime.utcnow(),
             or_(
-                Event.category == 'ramadan',
-                Event.title.ilike('%ramadan%')
+                Event.title.ilike('%ramadan%'),
+                Event.description.ilike('%ramadan%')
             )
         ).order_by(Event.date).limit(5).all()
 
@@ -1163,6 +1163,7 @@ def ramadan():
             designs = canva_client.get_designs(limit=3)
         except Exception as canva_error:
             print(f"Note: Canva designs could not be loaded: {canva_error}")
+            # Continue without designs
 
         return render_template(
             'ramadan/index.html',
