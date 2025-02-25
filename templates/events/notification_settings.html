@@ -4,7 +4,7 @@
 
 {% block styles %}
 <style>
-:root {
+::root {
     --primary-color: #005A87;
     --secondary-color: #41B7AC;
     --accent-color: #FF4154;
@@ -170,16 +170,17 @@
             {% endwith %}
 
             <form method="POST" action="{{ url_for('events.update_notification_settings') }}">
-                <!-- Moskee Notificaties -->
+                <!-- Notificatie Voorkeuren -->
                 <div class="notification-section">
-                    <h3 class="section-title">{{ _('Moskee Notificaties') }}</h3>
+                    <h3 class="section-title">{{ _('Berichtgeving voorkeuren') }}</h3>
+                    <div class="form-text mb-3">{{ _('Kies van welke organisaties u berichten wilt ontvangen') }}</div>
 
                     <select class="form-select" name="mosque_notification_type" id="mosque_notification_type" onchange="handleNotificationTypeChange()">
-                        <option value="all" {% if current_user.notify_all_mosques %}selected{% endif %}>
-                            {{ _('Alle notificaties (VGM en alle moskeeën)') }}
+                        <option value="all" selected>
+                            {{ _('Alle berichten (VGM en alle moskeeën)') }}
                         </option>
                         <option value="vgm_only" {% if current_user.notify_vgm_only %}selected{% endif %}>
-                            {{ _('Alleen VGM notificaties') }}
+                            {{ _('Alleen VGM berichten') }}
                         </option>
                         <option value="specific" {% if not current_user.notify_all_mosques and not current_user.notify_vgm_only %}selected{% endif %}>
                             {{ _('Specifieke moskeeën selecteren') }}
