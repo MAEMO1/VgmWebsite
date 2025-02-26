@@ -95,7 +95,7 @@
                            class="btn btn-sm btn-outline-secondary">
                             <i class="fas fa-chevron-left"></i>
                         </a>
-                        <h2 class="h4 mb-0">{{ current_date.strftime('%B %Y') }}</h2>
+                        <h2 class="h4 mb-0">{{ current_date.strftime('%B %Y')|replace('March', 'Maart')|replace('April', 'April')|replace('May', 'Mei')|replace('June', 'Juni')|replace('July', 'Juli')|replace('August', 'Augustus')|replace('September', 'September')|replace('October', 'Oktober')|replace('November', 'November')|replace('December', 'December') }}</h2>
                         <a href="{{ url_for('ramadan.iftar_map', date=next_month, type=iftar_type, mosque_id=selected_mosque, filter='family' if family_only else 'all') }}" 
                            class="btn btn-sm btn-outline-secondary">
                             <i class="fas fa-chevron-right"></i>

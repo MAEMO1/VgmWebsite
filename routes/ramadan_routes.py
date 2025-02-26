@@ -261,6 +261,10 @@ def add_iftar():
 
     if request.method == 'POST':
         try:
+            # Debug log: Print form data
+            print("\nProcessing Iftar Add Request:")
+            print(f"Form data: {request.form}")
+
             # Handle image upload
             image = request.files.get('iftar_image')
             image_url = None
@@ -275,12 +279,20 @@ def add_iftar():
             mosque_id = request.form.get('mosque_id') if current_user.is_admin else current_user.id
             mosque = User.query.get(mosque_id)
 
+            print(f"Creating iftar for mosque: {mosque.mosque_name} (ID: {mosque_id})")
+
             # Create new iftar event
+            date_str = request.form.get('date')
+            start_time_str = request.form.get('start_time')
+            end_time_str = request.form.get('end_time')
+
+            print(f"Date: {date_str}, Start time: {start_time_str}, End time: {end_time_str}")
+
             iftar = IfterEvent(
                 mosque_id=mosque_id,
-                date=datetime.strptime(request.form.get('date'), '%Y-%m-%d').date(),
-                start_time=datetime.strptime(request.form.get('start_time'), '%H:%M').time(),
-                end_time=datetime.strptime(request.form.get('end_time'), '%H:%M').time() if request.form.get('end_time') else None,
+                date=datetime.strptime(date_str, '%Y-%m-%d').date(),
+                start_time=datetime.strptime(start_time_str, '%H:%M').time(),
+                end_time=datetime.strptime(end_time_str, '%H:%M').time() if end_time_str else None,
                 location=request.form.get('location') or mosque.get_full_address(),
                 capacity=int(request.form.get('capacity')) if request.form.get('capacity') else None,
                 is_family_friendly=bool(request.form.get('is_family_friendly')),
@@ -298,12 +310,16 @@ def add_iftar():
             db.session.add(iftar)
             db.session.commit()
 
+            print(f"Successfully created iftar with ID: {iftar.id}")
             flash(_('Iftar evenement succesvol toegevoegd.'), 'success')
             return redirect(url_for('ramadan.iftar_map'))
 
         except Exception as e:
             db.session.rollback()
             print(f"Error adding iftar: {e}")
+            print(f"Exception details: {str(e.__class__.__name__)}")
+            import traceback
+            print(f"Traceback: {traceback.format_exc()}")
             flash(_('Er is een fout opgetreden bij het toevoegen van het iftar evenement.'), 'error')
 
     return render_template('ramadan/add_iftar.html', 
