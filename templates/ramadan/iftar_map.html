@@ -29,7 +29,105 @@
 </div>
 {% endif %}
 
-{% block title %}{{ _('VGM Iftarkaart - Ramadan 1446/2025') }}{% endblock %}
+{% block styles %}
+<style>
+/* Modal Styles */
+.modal-iftar {
+    max-width: 800px;
+}
+
+.modal-iftar .modal-body {
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.iftar-card {
+    border: none;
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease;
+}
+
+.iftar-card:hover {
+    transform: translateY(-2px);
+}
+
+.iftar-mosque {
+    color: var(--primary);
+    font-size: 1.25rem;
+}
+
+.iftar-date {
+    color: var(--gray-700);
+    font-size: 1rem;
+}
+
+.iftar-details {
+    margin: 1rem 0;
+}
+
+.location-details {
+    font-size: 1rem;
+    color: var(--gray-800);
+}
+
+.women-entrance {
+    font-size: 0.9rem;
+    color: var(--gray-600);
+}
+
+.iftar-meta {
+    font-size: 0.9rem;
+    color: var(--gray-700);
+}
+
+.iftar-features {
+    margin-top: 1rem;
+}
+
+.iftar-notes {
+    font-size: 0.9rem;
+    color: var(--gray-600);
+    font-style: italic;
+}
+
+.iftar-image img {
+    max-height: 200px;
+    width: 100%;
+    object-fit: cover;
+}
+
+/* Calendar Styles */
+.calendar-cell {
+    height: 120px;
+    position: relative;
+}
+
+.day-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.event-indicators {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    margin-top: auto;
+    padding-bottom: 4px;
+}
+
+.event-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="container-fluid py-4">
@@ -147,21 +245,14 @@
                             </thead>
                             <tbody>
                                 {% for week in calendar %}
-                                <tr style="height: 120px;">
+                                <tr class="calendar-row">
                                     {% for day in week %}
-                                    <td class="position-relative p-2" style="width: 14.28%">
+                                    <td class="calendar-cell p-2" style="width: 14.28%">
                                         {% if day != 0 %}
                                             {% set current_day = current_date.replace(day=day) %}
                                             {% set day_events = calendar_events.get(current_day, {'daily': [], 'weekly': [], 'single': []}) %}
 
-                                            <!-- Debug display -->
-                                            {% if current_user.is_admin %}
-                                            <div class="d-none">
-                                                Day: {{ day }}, Events: {{ day_events }}
-                                            </div>
-                                            {% endif %}
-
-                                            <div class="h-100 d-flex flex-column justify-content-between border {% if current_day == today %}border-primary{% else %}border-light{% endif %} rounded p-2"
+                                            <div class="day-content border {% if current_day == today %}border-primary{% else %}border-light{% endif %} rounded p-2"
                                                  onclick="showDayDetails('{{ current_day.strftime("%Y-%m-%d") }}')"
                                                  style="cursor: pointer;">
 
@@ -170,20 +261,17 @@
 
                                                 <!-- Event indicators -->
                                                 {% if day_events.daily|length > 0 or day_events.weekly|length > 0 or day_events.single|length > 0 %}
-                                                    <div class="d-flex justify-content-center gap-1 mb-1">
+                                                    <div class="event-indicators">
                                                         {% if day_events.daily|length > 0 %}
-                                                            <div class="bg-success rounded-circle" 
-                                                                 style="width: 8px; height: 8px;" 
+                                                            <div class="event-indicator bg-success"
                                                                  title="{{ _('Dagelijkse iftars') }} ({{ day_events.daily|length }})"></div>
                                                         {% endif %}
                                                         {% if day_events.weekly|length > 0 %}
-                                                            <div class="bg-primary rounded-circle"
-                                                                 style="width: 8px; height: 8px;"
+                                                            <div class="event-indicator bg-primary"
                                                                  title="{{ _('Wekelijkse iftars') }} ({{ day_events.weekly|length }})"></div>
                                                         {% endif %}
                                                         {% if day_events.single|length > 0 %}
-                                                            <div class="bg-warning rounded-circle"
-                                                                 style="width: 8px; height: 8px;"
+                                                            <div class="event-indicator bg-warning"
                                                                  title="{{ _('Eenmalige iftars') }} ({{ day_events.single|length }})"></div>
                                                         {% endif %}
                                                     </div>
@@ -203,9 +291,9 @@
     </div>
 </div>
 
-<!-- Modal -->
+<!-- Enhanced Modal -->
 <div class="modal fade" id="dayDetailsModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-iftar">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="dayDetailsTitle"></h5>
@@ -233,10 +321,10 @@ function showDayDetails(date) {
     {% for current_day, events in calendar_events.items() %}
         if ('{{ current_day.strftime("%Y-%m-%d") }}' === date) {
             {% if events.daily %}
-                html += '<h5 class="mb-2">{{ _("Dagelijkse Iftars") }}</h5>';
+                html += '<h5 class="mb-3">{{ _("Dagelijkse Iftars") }}</h5>';
                 {% for iftar in events.daily %}
                     html += `
-                        <div class="card mb-2 border-success">
+                        <div class="card mb-3 border-success">
                             <div class="card-body">
                                 {% include 'ramadan/includes/iftar_card.html' %}
                             </div>
@@ -246,10 +334,10 @@ function showDayDetails(date) {
             {% endif %}
 
             {% if events.weekly %}
-                html += '<h5 class="mb-2">{{ _("Wekelijkse Iftars") }}</h5>';
+                html += '<h5 class="mb-3">{{ _("Wekelijkse Iftars") }}</h5>';
                 {% for iftar in events.weekly %}
                     html += `
-                        <div class="card mb-2 border-primary">
+                        <div class="card mb-3 border-primary">
                             <div class="card-body">
                                 {% include 'ramadan/includes/iftar_card.html' %}
                             </div>
@@ -259,10 +347,10 @@ function showDayDetails(date) {
             {% endif %}
 
             {% if events.single %}
-                html += '<h5 class="mb-2">{{ _("Eenmalige Iftars") }}</h5>';
+                html += '<h5 class="mb-3">{{ _("Eenmalige Iftars") }}</h5>';
                 {% for iftar in events.single %}
                     html += `
-                        <div class="card mb-2 border-warning">
+                        <div class="card mb-3 border-warning">
                             <div class="card-body">
                                 {% include 'ramadan/includes/iftar_card.html' %}
                             </div>

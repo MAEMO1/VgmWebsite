@@ -16,54 +16,93 @@
     </div>
     {% endif %}
 
-    <div class="iftar-date">
+    <!-- Header with Mosque Name and Type Indicator -->
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <h4 class="iftar-mosque mb-0">{{ iftar.mosque.mosque_name }}</h4>
+        <div>
+            {% if iftar.is_recurring and iftar.recurrence_type == 'daily' %}
+                <span class="badge bg-success">{{ _('Dagelijks') }}</span>
+            {% elif iftar.is_recurring and iftar.recurrence_type == 'weekly' %}
+                <span class="badge bg-primary">{{ _('Wekelijks') }}</span>
+            {% else %}
+                <span class="badge bg-warning">{{ _('Eenmalig') }}</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Date and Time Information -->
+    <div class="iftar-date mb-3">
+        <i class="fas fa-calendar-alt me-2"></i>
         {% if not iftar.is_recurring %}
-            {{ iftar.date.strftime('%d %B') }} -
+            {{ iftar.date.strftime('%d %B %Y') }}
         {% endif %}
+        <i class="fas fa-clock ms-3 me-2"></i>
         {{ iftar.start_time.strftime('%H:%M') }}
         {% if iftar.end_time %}
             - {{ iftar.end_time.strftime('%H:%M') }}
         {% endif %}
     </div>
 
-    <div class="iftar-mosque">{{ iftar.mosque.mosque_name }}</div>
-
-    <div class="iftar-details">
-        <div>{{ iftar.location }}</div>
+    <!-- Location Information -->
+    <div class="iftar-details mb-3">
+        <div class="location-details">
+            <i class="fas fa-map-marker-alt me-2"></i>
+            {{ iftar.location }}
+        </div>
         {% if iftar.women_entrance %}
-            <div class="text-muted">
-                <i class="fas fa-door-open"></i> {{ _('Ingang vrouwen:') }} {{ iftar.women_entrance }}
+            <div class="women-entrance mt-2">
+                <i class="fas fa-door-open me-2"></i>
+                {{ _('Ingang vrouwen:') }} {{ iftar.women_entrance }}
             </div>
         {% endif %}
+    </div>
+
+    <!-- Capacity and Registration -->
+    <div class="iftar-meta mb-3">
         {% if iftar.capacity %}
-            <div class="text-muted">
-                <i class="fas fa-users"></i> {{ _('Capaciteit:') }} {{ iftar.capacity }}
+            <div class="capacity-info">
+                <i class="fas fa-users me-2"></i>
+                {{ _('Capaciteit:') }} {{ iftar.capacity }} {{ _('personen') }}
             </div>
         {% endif %}
         {% if iftar.registration_required %}
-            <div class="text-info">
-                <i class="fas fa-clipboard-list"></i> {{ _('Registratie vereist') }}
+            <div class="registration-info mt-2">
+                <i class="fas fa-clipboard-list me-2"></i>
+                <strong>{{ _('Registratie vereist') }}</strong>
                 {% if iftar.registration_deadline %}
-                    {{ _('voor') }} {{ iftar.registration_deadline.strftime('%d-%m-%Y %H:%M') }}
+                    <div class="deadline-info ms-4">
+                        {{ _('Deadline:') }} {{ iftar.registration_deadline.strftime('%d-%m-%Y %H:%M') }}
+                    </div>
                 {% endif %}
             </div>
             {% if iftar.dietary_options %}
-                <div class="text-muted">
-                    <i class="fas fa-utensils"></i> {{ _('Dieetwensen mogelijk') }}
+                <div class="dietary-info mt-2">
+                    <i class="fas fa-utensils me-2"></i>
+                    {{ _('Dieetwensen mogelijk') }}
                 </div>
             {% endif %}
         {% endif %}
     </div>
 
-    {% if iftar.is_family_friendly %}
-        <span class="badge bg-success">
-            <i class="fas fa-users"></i> {{ _('Gezinsvriendelijk') }}
-        </span>
-    {% endif %}
+    <!-- Additional Features -->
+    <div class="iftar-features">
+        {% if iftar.is_family_friendly %}
+            <span class="badge bg-success me-2">
+                <i class="fas fa-users"></i> {{ _('Gezinsvriendelijk') }}
+            </span>
+        {% endif %}
+    </div>
 
     {% if iftar.notes %}
-        <div class="iftar-notes mt-2">
-            <small class="text-muted">{{ iftar.notes }}</small>
+        <div class="iftar-notes mt-3">
+            <i class="fas fa-info-circle me-2"></i>
+            <small>{{ iftar.notes }}</small>
+        </div>
+    {% endif %}
+
+    {% if iftar.image_url %}
+        <div class="iftar-image mt-3">
+            <img src="{{ iftar.image_url }}" alt="{{ iftar.mosque.mosque_name }}" class="img-fluid rounded">
         </div>
     {% endif %}
 </div>
