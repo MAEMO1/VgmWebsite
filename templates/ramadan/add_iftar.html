@@ -9,7 +9,7 @@
             <h2 class="card-title mb-0">{{ _('Voeg Iftar Evenement Toe') }}</h2>
         </div>
         <div class="card-body">
-            <form method="POST" enctype="multipart/form-data" action="{{ url_for('main.add_iftar') }}">
+            <form method="POST" enctype="multipart/form-data" action="{{ url_for('ramadan.add_iftar') }}">
                 {% if current_user.is_admin %}
                 <div class="mb-3">
                     <label for="mosque_id" class="form-label">{{ _('Selecteer Moskee') }}</label>
@@ -116,7 +116,7 @@
                 </div>
 
                 <div class="text-end">
-                    <a href="{{ url_for('main.iftar_map') }}" class="btn btn-secondary">{{ _('Annuleren') }}</a>
+                    <a href="{{ url_for('ramadan.iftar_map') }}" class="btn btn-secondary">{{ _('Annuleren') }}</a>
                     <button type="submit" class="btn btn-primary">{{ _('Iftar Toevoegen') }}</button>
                 </div>
             </form>
