@@ -10,17 +10,12 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1 class="h3">{{ _('VGM Iftarkaart') }}</h1>
 
-                <!-- Filters -->
-                <div class="btn-group">
-                    <a href="{{ url_for('main.iftar_map', filter='all') }}" 
-                       class="btn btn-outline-primary {% if not family_only %}active{% endif %}">
-                        {{ _('Alle Iftars') }}
-                    </a>
-                    <a href="{{ url_for('main.iftar_map', filter='family') }}"
-                       class="btn btn-outline-primary {% if family_only %}active{% endif %}">
-                        <i class="fas fa-users"></i> {{ _('Gezinsvriendelijk') }}
-                    </a>
-                </div>
+                <!-- Add Iftar Button -->
+                {% if current_user.is_authenticated and (current_user.is_admin or current_user.user_type == 'mosque') %}
+                <a href="{{ url_for('main.add_iftar') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> {{ _('Voeg Iftar Toe') }}
+                </a>
+                {% endif %}
             </div>
 
             <!-- Legend -->

@@ -65,6 +65,7 @@ def create_app():
         from routes.translation_routes import translation_bp
         from routes.message_routes import messages
         from routes.donation_routes import donations
+        from routes.ramadan_routes import ramadan
 
         # Register blueprints
         app.register_blueprint(main_routes)
@@ -74,6 +75,7 @@ def create_app():
         app.register_blueprint(translation_bp)
         app.register_blueprint(messages, url_prefix='/messages')
         app.register_blueprint(donations)
+        app.register_blueprint(ramadan, url_prefix='/ramadan')
 
         try:
             # Import models and create tables

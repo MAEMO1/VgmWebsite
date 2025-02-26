@@ -2,264 +2,149 @@
 
 {% block title %}{{ _('Voeg Iftar Toe - Ramadan 1445/2024') }}{% endblock %}
 
-{% block styles %}
-<style>
-.add-iftar-form {
-    background: white;
-    border-radius: 1rem;
-    padding: 2rem;
-    margin: 2rem auto;
-    max-width: 800px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.form-title {
-    font-size: 2rem;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 2rem;
-    color: var(--text-primary);
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-label {
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: var(--text-primary);
-}
-
-.form-text {
-    color: var(--text-secondary);
-    font-size: 0.875rem;
-    margin-top: 0.25rem;
-}
-
-.registration-details {
-    display: none;
-}
-
-#registration_required:checked ~ .registration-details {
-    display: block;
-}
-
-.recurrence-details {
-    display: none;
-    padding: 1rem;
-    margin-top: 1rem;
-    background: var(--background-light);
-    border-radius: 0.5rem;
-}
-
-#is_recurring:checked ~ .recurrence-details {
-    display: block;
-}
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="container">
-    <div class="add-iftar-form">
-        <h2 class="form-title">{{ _('Voeg Iftar Evenement Toe') }}</h2>
-        <form method="POST" action="{{ url_for('main.add_iftar') }}">
-            {% if current_user.is_admin %}
-            <div class="form-group">
-                <label for="mosque_id" class="form-label">{{ _('Selecteer Moskee') }}</label>
-                <select class="form-control" id="mosque_id" name="mosque_id" required>
-                    <option value="">{{ _('Kies een moskee...') }}</option>
-                    {% for mosque in mosques %}
-                        <option value="{{ mosque.id }}" 
-                                data-street="{{ mosque.mosque_street }}"
-                                data-number="{{ mosque.mosque_number }}"
-                                data-postal="{{ mosque.mosque_postal }}"
-                                data-city="{{ mosque.mosque_city }}">
-                            {{ mosque.mosque_name }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-            {% endif %}
+<div class="container py-4">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title mb-0">{{ _('Voeg Iftar Evenement Toe') }}</h2>
+        </div>
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data" action="{{ url_for('main.add_iftar') }}">
+                {% if current_user.is_admin %}
+                <div class="mb-3">
+                    <label for="mosque_id" class="form-label">{{ _('Selecteer Moskee') }}</label>
+                    <select class="form-control" id="mosque_id" name="mosque_id" required>
+                        <option value="">{{ _('Kies een moskee...') }}</option>
+                        {% for mosque in mosques %}
+                            <option value="{{ mosque.id }}">{{ mosque.mosque_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
 
-            <div class="form-group">
-                <label for="date" class="form-label">{{ _('Startdatum') }}</label>
-                <input type="date" class="form-control" id="date" name="date" required>
-            </div>
+                <div class="mb-3">
+                    <label for="date" class="form-label">{{ _('Datum') }}</label>
+                    <input type="date" class="form-control" id="date" name="date" required>
+                </div>
 
-            <div class="form-group">
-                <label for="start_time" class="form-label">{{ _('Starttijd') }}</label>
-                <input type="time" class="form-control" id="start_time" name="start_time" required>
-                <small class="form-text">{{ _('Voer de tijd in voor het breken van het vasten') }}</small>
-            </div>
-
-            <div class="form-group">
-                <label for="end_time" class="form-label">{{ _('Eindtijd') }}</label>
-                <input type="time" class="form-control" id="end_time" name="end_time">
-                <small class="form-text">{{ _('Optioneel') }}</small>
-            </div>
-
-            <div class="form-group">
-                <label for="location" class="form-label">{{ _('Locatie') }}</label>
-                <input type="text" class="form-control" id="location" name="location">
-                <small class="form-text">{{ _('Specifieke locatie binnen de moskee (bijv. Hoofdzaal, Gemeenschapsruimte)') }}</small>
-            </div>
-
-            <div class="form-group">
-                <label for="women_entrance" class="form-label">{{ _('Ingang vrouwen') }}</label>
-                <input type="text" class="form-control" id="women_entrance" name="women_entrance">
-                <small class="form-text">{{ _('Optioneel: specifieke ingang voor vrouwen als deze verschilt van de hoofdingang') }}</small>
-            </div>
-
-            <div class="form-group">
-                <label for="address" class="form-label">{{ _('Adres') }}</label>
                 <div class="row">
-                    <div class="col-md-8">
-                        <input type="text" class="form-control" id="street" name="street" readonly>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="start_time" class="form-label">{{ _('Starttijd') }}</label>
+                            <input type="time" class="form-control" id="start_time" name="start_time" required>
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" id="number" name="number" readonly>
-                    </div>
-                </div>
-                <div class="row mt-2">
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" id="postal" name="postal" readonly>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="text" class="form-control" id="city" name="city" readonly>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="end_time" class="form-label">{{ _('Eindtijd') }} <small class="text-muted">({{ _('Optioneel') }})</small></label>
+                            <input type="time" class="form-control" id="end_time" name="end_time">
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label for="capacity" class="form-label">{{ _('Capaciteit') }}</label>
-                <input type="number" class="form-control" id="capacity" name="capacity" min="1">
-                <small class="form-text">{{ _('Laat leeg voor onbeperkte capaciteit') }}</small>
-            </div>
+                <div class="mb-3">
+                    <label for="location" class="form-label">{{ _('Locatie in de moskee') }}</label>
+                    <input type="text" class="form-control" id="location" name="location">
+                    <small class="form-text">{{ _('Bijvoorbeeld: Hoofdzaal, Gemeenschapsruimte') }}</small>
+                </div>
 
-            <div class="form-group">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="is_family_friendly" name="is_family_friendly" checked>
+                <div class="mb-3">
+                    <label for="iftar_image" class="form-label">{{ _('Afbeelding') }}</label>
+                    <input type="file" class="form-control" id="iftar_image" name="iftar_image" accept="image/png,image/jpeg">
+                    <small class="form-text">{{ _('Upload een afbeelding voor dit iftar evenement (PNG, JPG)') }}</small>
+                </div>
+
+                <div class="mb-3">
+                    <label for="capacity" class="form-label">{{ _('Capaciteit') }}</label>
+                    <input type="number" class="form-control" id="capacity" name="capacity" min="1">
+                    <small class="form-text">{{ _('Laat leeg voor onbeperkte capaciteit') }}</small>
+                </div>
+
+                <div class="mb-3">
+                    <label for="women_entrance" class="form-label">{{ _('Aparte ingang voor vrouwen') }}</label>
+                    <input type="text" class="form-control" id="women_entrance" name="women_entrance">
+                </div>
+
+                <div class="form-check mb-3">
+                    <input type="checkbox" class="form-check-input" id="is_family_friendly" name="is_family_friendly">
                     <label class="form-check-label" for="is_family_friendly">{{ _('Gezinsvriendelijk') }}</label>
                 </div>
-                <small class="form-text">{{ _('Vink aan als het evenement geschikt is voor gezinnen met kinderen') }}</small>
-            </div>
 
-            <div class="form-group">
-                <div class="form-check">
+                <div class="form-check mb-3">
                     <input type="checkbox" class="form-check-input" id="is_recurring" name="is_recurring">
-                    <label class="form-check-label" for="is_recurring">{{ _('Terugkerend Evenement') }}</label>
+                    <label class="form-check-label" for="is_recurring">{{ _('Terugkerend evenement') }}</label>
                 </div>
-                <small class="form-text">{{ _('Vink aan als dit een terugkerend iftar evenement is') }}</small>
 
-                <div class="recurrence-details">
-                    <div class="form-group">
-                        <label for="recurrence_type" class="form-label">{{ _('Herhaling') }}</label>
-                        <select class="form-control" id="recurrence_type" name="recurrence_type">
-                            <option value="daily">{{ _('Dagelijks') }}</option>
-                            <option value="weekly">{{ _('Wekelijks') }}</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="recurrence_end_date" class="form-label">{{ _('Einddatum Herhaling') }}</label>
-                        <input type="date" class="form-control" id="recurrence_end_date" name="recurrence_end_date">
-                        <small class="form-text">{{ _('Laatste datum waarop het iftar evenement plaatsvindt') }}</small>
+                <div id="recurring-options" class="card mb-3" style="display: none;">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="recurrence_type" class="form-label">{{ _('Herhaling') }}</label>
+                            <select class="form-control" id="recurrence_type" name="recurrence_type">
+                                <option value="daily">{{ _('Dagelijks') }}</option>
+                                <option value="weekly">{{ _('Wekelijks') }}</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="recurrence_end_date" class="form-label">{{ _('Einddatum herhaling') }}</label>
+                            <input type="date" class="form-control" id="recurrence_end_date" name="recurrence_end_date">
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <div class="form-check">
+                <div class="form-check mb-3">
                     <input type="checkbox" class="form-check-input" id="registration_required" name="registration_required">
-                    <label class="form-check-label" for="registration_required">{{ _('Registratie Vereist') }}</label>
-                </div>
-            </div>
-
-            <div class="registration-details">
-                <div class="form-group">
-                    <label for="registration_deadline" class="form-label">{{ _('Registratie Deadline') }}</label>
-                    <input type="datetime-local" class="form-control" id="registration_deadline" name="registration_deadline">
+                    <label class="form-check-label" for="registration_required">{{ _('Registratie vereist') }}</label>
                 </div>
 
-                <div class="form-group">
-                    <label for="dietary_options" class="form-label">{{ _('Dieetwensen Mogelijk') }}</label>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="dietary_options" name="dietary_options">
-                        <label class="form-check-label" for="dietary_options">{{ _('Ja, we kunnen rekening houden met dieetwensen') }}</label>
+                <div id="registration-options" class="card mb-3" style="display: none;">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="registration_deadline" class="form-label">{{ _('Deadline voor registratie') }}</label>
+                            <input type="datetime-local" class="form-control" id="registration_deadline" name="registration_deadline">
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="dietary_options" name="dietary_options">
+                            <label class="form-check-label" for="dietary_options">{{ _('Dieetwensen mogelijk') }}</label>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label for="notes" class="form-label">{{ _('Opmerkingen') }}</label>
-                <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
-                <small class="form-text">{{ _('Extra informatie over het iftar evenement, parkeren, toegankelijkheid, etc.') }}</small>
-            </div>
+                <div class="mb-3">
+                    <label for="notes" class="form-label">{{ _('Opmerkingen') }}</label>
+                    <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                    <small class="form-text">{{ _('Extra informatie over het evenement') }}</small>
+                </div>
 
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary btn-lg">{{ _('Voeg Iftar Toe') }}</button>
-                <a href="{{ url_for('main.ramadan') }}" class="btn btn-outline-secondary btn-lg ms-2">{{ _('Annuleren') }}</a>
-            </div>
-        </form>
+                <div class="text-end">
+                    <a href="{{ url_for('main.iftar_map') }}" class="btn btn-secondary">{{ _('Annuleren') }}</a>
+                    <button type="submit" class="btn btn-primary">{{ _('Iftar Toevoegen') }}</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
 {% block scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const registration_required = document.getElementById('registration_required');
-    const registrationDetails = document.querySelector('.registration-details');
-    const is_recurring = document.getElementById('is_recurring');
-    const recurrenceDetails = document.querySelector('.recurrence-details');
-    const mosque_id = document.getElementById('mosque_id');
+    const isRecurring = document.getElementById('is_recurring');
+    const recurringOptions = document.getElementById('recurring-options');
+    const registrationRequired = document.getElementById('registration_required');
+    const registrationOptions = document.getElementById('registration-options');
 
-    // Function to fill address fields
-    function fillAddressFields(street, number, postal, city) {
-        document.getElementById('street').value = street;
-        document.getElementById('number').value = number;
-        document.getElementById('postal').value = postal;
-        document.getElementById('city').value = city;
-    }
-
-    // If user is a mosque, fill in the address immediately
-    {% if not current_user.is_admin %}
-        fillAddressFields(
-            '{{ current_user.mosque_street }}',
-            '{{ current_user.mosque_number }}',
-            '{{ current_user.mosque_postal }}',
-            '{{ current_user.mosque_city }}'
-        );
-    {% endif %}
-
-    // For admin users, update address when mosque is selected
-    if (mosque_id) {
-        mosque_id.addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            if (selectedOption.value) {
-                fillAddressFields(
-                    selectedOption.dataset.street,
-                    selectedOption.dataset.number,
-                    selectedOption.dataset.postal,
-                    selectedOption.dataset.city
-                );
-            } else {
-                fillAddressFields('', '', '', '');
-            }
-        });
-    }
-
-    registration_required.addEventListener('change', function() {
-        registrationDetails.style.display = this.checked ? 'block' : 'none';
+    isRecurring.addEventListener('change', function() {
+        recurringOptions.style.display = this.checked ? 'block' : 'none';
+        if (this.checked) {
+            document.getElementById('recurrence_end_date').required = true;
+            document.getElementById('recurrence_type').required = true;
+        }
     });
 
-    is_recurring.addEventListener('change', function() {
-        recurrenceDetails.style.display = this.checked ? 'block' : 'none';
-
-        // Make recurrence end date required if recurring is checked
-        const recurrenceEndDate = document.getElementById('recurrence_end_date');
-        recurrenceEndDate.required = this.checked;
-        const recurrenceType = document.getElementById('recurrence_type');
-        recurrenceType.required = this.checked;
+    registrationRequired.addEventListener('change', function() {
+        registrationOptions.style.display = this.checked ? 'block' : 'none';
+        if (this.checked) {
+            document.getElementById('registration_deadline').required = true;
+        }
     });
 });
 </script>
