@@ -1,5 +1,23 @@
 {% extends "base.html" %}
 
+<!-- Debug info -->
+{% if current_user.is_admin %}
+<div class="d-none">
+    <pre>
+    Calendar Events Debug:
+    {% for date, events in calendar_events.items() %}
+        {{ date }}:
+        Daily Events: {{ events.daily|length }}
+        Weekly Events: {{ events.weekly|length }}
+        Single Events: {{ events.single|length }}
+        {% if events.single %}
+        Single Event IDs: {{ events.single|map(attribute='id')|list }}
+        {% endif %}
+    {% endfor %}
+    </pre>
+</div>
+{% endif %}
+
 {% block title %}{{ _('VGM Iftarkaart - Ramadan 1445/2024') }}{% endblock %}
 
 {% block content %}
@@ -152,7 +170,7 @@
                             </tr>
                             {% endfor %}
                         </tbody>
-                    </table>
+                        </table>
                     </div>
                 </div>
             </div>
