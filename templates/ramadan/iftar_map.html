@@ -161,26 +161,29 @@
                                             </div>
                                             {% endif %}
 
-                                            <div class="h-100 d-flex flex-column border {% if current_day == today %}border-primary{% else %}border-light{% endif %} rounded p-2"
+                                            <div class="h-100 d-flex flex-column justify-content-between border {% if current_day == today %}border-primary{% else %}border-light{% endif %} rounded p-2"
                                                  onclick="showDayDetails('{{ current_day.strftime("%Y-%m-%d") }}')"
                                                  style="cursor: pointer;">
 
                                                 <!-- Day number -->
-                                                <div class="text-end mb-2">{{ day }}</div>
+                                                <div class="text-end">{{ day }}</div>
 
                                                 <!-- Event indicators -->
                                                 {% if day_events.daily|length > 0 or day_events.weekly|length > 0 or day_events.single|length > 0 %}
-                                                    <div class="d-flex justify-content-center gap-1 mt-auto">
+                                                    <div class="d-flex justify-content-center gap-1 mb-1">
                                                         {% if day_events.daily|length > 0 %}
-                                                            <div class="badge bg-success" style="width: 10px; height: 10px; border-radius: 50%;" 
+                                                            <div class="bg-success rounded-circle" 
+                                                                 style="width: 8px; height: 8px;" 
                                                                  title="{{ _('Dagelijkse iftars') }} ({{ day_events.daily|length }})"></div>
                                                         {% endif %}
                                                         {% if day_events.weekly|length > 0 %}
-                                                            <div class="badge bg-primary" style="width: 10px; height: 10px; border-radius: 50%;"
+                                                            <div class="bg-primary rounded-circle"
+                                                                 style="width: 8px; height: 8px;"
                                                                  title="{{ _('Wekelijkse iftars') }} ({{ day_events.weekly|length }})"></div>
                                                         {% endif %}
                                                         {% if day_events.single|length > 0 %}
-                                                            <div class="badge bg-warning" style="width: 10px; height: 10px; border-radius: 50%;"
+                                                            <div class="bg-warning rounded-circle"
+                                                                 style="width: 8px; height: 8px;"
                                                                  title="{{ _('Eenmalige iftars') }} ({{ day_events.single|length }})"></div>
                                                         {% endif %}
                                                     </div>

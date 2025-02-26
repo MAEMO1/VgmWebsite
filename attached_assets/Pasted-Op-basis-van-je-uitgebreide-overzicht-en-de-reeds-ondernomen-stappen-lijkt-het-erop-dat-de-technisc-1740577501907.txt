@@ -1,0 +1,58 @@
+Op basis van je uitgebreide overzicht en de reeds ondernomen stappen, lijkt het erop dat de technische verwerking (database-opslag, data in de `calendar_events` dictionary, modal-functionaliteit) in orde is. Het probleem zit vooral in de visuele weergave van de indicatoren (de gekleurde dots) in de kalender. Hier zijn enkele mogelijke oorzaken en concrete aanbevelingen:
+
+---
+
+### Mogelijke Oorzaken
+
+1. **CSS- of Styling Conflicten**  
+   - **Verkeerde of Ontbrekende CSS:** Het kan zijn dat de indicatoren (badges/dots) wel in de HTML aanwezig zijn, maar door CSS-regels (zoals `display: none`, `opacity: 0` of een onjuiste kleur- of positioneringsinstelling) niet zichtbaar zijn.  
+   - **Z-index en Positionering:** Soms liggen elementen achter elkaar of buiten de zichtbare viewport. Controleer of de dots niet verborgen worden door een z-index-probleem of onjuiste positionering in de layout van de tabelcellen.
+
+2. **Template Logica voor Weergave**  
+   - **Conditie Evaluatie:** De template controleert de lengte van de arrays (`daily`, `weekly`, `single`) om te bepalen of de indicator getoond moet worden. Als deze voorwaardelijke checks niet kloppen (bijvoorbeeld doordat de categorisering in de backend niet overeenkomt met wat de template verwacht), dan wordt de dot niet getoond.  
+   - **Datum- of Categorisatie Mismatch:** Hoewel je al hebt gecontroleerd dat de keys consistent zijn, kan het zijn dat de categorisering (bijvoorbeeld dat een iftar onterecht in een andere categorie valt) de conditie beïnvloedt.
+
+3. **HTML-structuur in de Kalender**  
+   - **Plaatsing van de Indicatoren:** Als de indicatoren in de verkeerde HTML-context worden geplaatst (bijvoorbeeld buiten de juiste `<td>`-elementen), kan de browser ze wel renderen maar niet tonen zoals bedoeld.
+
+---
+
+### Aanbevelingen en Debug Stappen
+
+1. **Inspecteer de Gerenderde HTML**  
+   - Gebruik de browser’s Developer Tools om te verifiëren dat de indicator-elementen (badges of dots) daadwerkelijk in de DOM aanwezig zijn.  
+   - Controleer in het Elements-paneel of de dots de juiste HTML-structuur hebben en in de juiste `<td>`-cellen staan.
+
+2. **Controleer en Pas de CSS aan**  
+   - **Verberg/Toon Test:** Voeg tijdelijk een expliciete achtergrondkleur of border toe aan de dot-elementen om te zien of ze dan zichtbaar worden.  
+   - **Regels doorlopen:** Ga na of er geen CSS-regels zijn die per ongeluk de dots verbergen (zoals `display: none` of `visibility: hidden`).  
+   - **Positionering en Z-index:** Controleer of er positioneringsproblemen zijn. Misschien staan de dots er wel, maar liggen ze achter andere elementen.
+
+3. **Herzie de Template Condities**  
+   - **Debug de Voorwaarden:** Voeg tijdelijk debug-uitvoer toe in de template, bijvoorbeeld:  
+     ```jinja2
+     {% set events = calendar_events.get(current_date.replace(day=day), {'daily': [], 'weekly': [], 'single': []}) %}
+     <p>Debug: {{ events }}</p>
+     ```
+     Zo kun je controleren of de arrays daadwerkelijk de verwachte elementen bevatten op een dag waarop je een iftar verwacht.  
+   - **Controleer Categorisering:** Zorg ervoor dat een iftar-event daadwerkelijk in de `single` (of de verwachte) array terechtkomt en dat de voorwaarde in de template (bv. `if events.single|length > 0`) juist evalueert.
+
+4. **UI en Layout Validatie**  
+   - **Responsieve Test:** Bekijk de kalender in verschillende browsers of schermgroottes. Soms kunnen responsive CSS-regels de weergave beïnvloeden.  
+   - **Bootstrap Classes:** Controleer of de gebruikte Bootstrap classes niet conflicteren met je eigen CSS voor de indicatoren.
+
+5. **Gebruik van Fallback Mechanismen**  
+   - Als de lookup in de dictionary via `.get()` geen indicator toont omdat de key niet gevonden wordt, overweeg dan een tijdelijke hardcoding of extra logging in de template om te zien of de juiste key wordt gebruikt.  
+   - Controleer of de key die je in de template genereert (`current_date.replace(day=day)`) exact overeenkomt met de keys in de `calendar_events`-dictionary.
+
+---
+
+### Conclusie
+
+De technische verwerking van events lijkt correct, wat erop wijst dat de kern van het probleem ligt in de visuele presentatie. Door systematisch de volgende stappen te volgen:
+- **Inspecteer de gerenderde HTML** om te zien of de indicatoren wel in de DOM aanwezig zijn,
+- **Controleer de CSS** om te bepalen of styling ze verbergt,
+- **Herzie de template-logica** voor de condities die de indicatoren activeren, en
+- **Verifieer de consistente generatie van de datum-keys**,
+
+kun je de oorzaak van de niet-zichtbare indicatoren achterhalen en verhelpen. Dit zorgt er uiteindelijk voor dat gebruikers in één oogopslag kunnen zien welke dagen events bevatten, zonder dat ze daarvoor eerst op een dag hoeven te klikken.
