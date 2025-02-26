@@ -29,18 +29,41 @@
     <div class="iftar-mosque">{{ iftar.mosque.mosque_name }}</div>
 
     <div class="iftar-details">
-        <div>{{ iftar.mosque.mosque_street }} {{ iftar.mosque.mosque_number }}</div>
-        <div>{{ iftar.mosque.mosque_postal }} {{ iftar.mosque.mosque_city }}</div>
+        <div>{{ iftar.location }}</div>
         {% if iftar.women_entrance %}
             <div class="text-muted">
                 <i class="fas fa-door-open"></i> {{ _('Ingang vrouwen:') }} {{ iftar.women_entrance }}
             </div>
         {% endif %}
+        {% if iftar.capacity %}
+            <div class="text-muted">
+                <i class="fas fa-users"></i> {{ _('Capaciteit:') }} {{ iftar.capacity }}
+            </div>
+        {% endif %}
+        {% if iftar.registration_required %}
+            <div class="text-info">
+                <i class="fas fa-clipboard-list"></i> {{ _('Registratie vereist') }}
+                {% if iftar.registration_deadline %}
+                    {{ _('voor') }} {{ iftar.registration_deadline.strftime('%d-%m-%Y %H:%M') }}
+                {% endif %}
+            </div>
+            {% if iftar.dietary_options %}
+                <div class="text-muted">
+                    <i class="fas fa-utensils"></i> {{ _('Dieetwensen mogelijk') }}
+                </div>
+            {% endif %}
+        {% endif %}
     </div>
 
     {% if iftar.is_family_friendly %}
-        <span class="badge-family">
+        <span class="badge bg-success">
             <i class="fas fa-users"></i> {{ _('Gezinsvriendelijk') }}
         </span>
+    {% endif %}
+
+    {% if iftar.notes %}
+        <div class="iftar-notes mt-2">
+            <small class="text-muted">{{ iftar.notes }}</small>
+        </div>
     {% endif %}
 </div>

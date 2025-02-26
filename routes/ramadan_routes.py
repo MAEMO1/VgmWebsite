@@ -194,12 +194,24 @@ def iftar_map():
 
     # Populate events
     for event in events:
-        if event.date in calendar_events:
-            if event.is_recurring and event.recurrence_type == 'daily':
-                calendar_events[event.date]['daily'].append(event)
-            elif event.is_recurring and event.recurrence_type == 'weekly':
-                calendar_events[event.date]['weekly'].append(event)
-            else:
+        if event.is_recurring:
+            # Calculate all dates this event occurs on within the month
+            event_date = event.date
+            while event_date <= (event.recurrence_end_date or last_day) and event_date <= last_day:
+                if event_date >= first_day:
+                    if event.recurrence_type == 'daily':
+                        calendar_events[event_date]['daily'].append(event)
+                    elif event.recurrence_type == 'weekly':
+                        calendar_events[event_date]['weekly'].append(event)
+
+                # Move to next occurrence
+                if event.recurrence_type == 'daily':
+                    event_date += timedelta(days=1)
+                elif event.recurrence_type == 'weekly':
+                    event_date += timedelta(days=7)
+        else:
+            # Single event
+            if first_day <= event.date <= last_day:
                 calendar_events[event.date]['single'].append(event)
 
     print(f"Generated calendar for {current_date.strftime('%B %Y')}")
