@@ -120,8 +120,10 @@ def add_program():
 
 @ramadan.route('/iftar-map')
 def iftar_map():
-    # Get filter parameter
+    # Get filter parameters
     family_only = request.args.get('filter') == 'family'
+    iftar_type = request.args.get('type', 'all')  # 'daily', 'weekly', 'single', 'all'
+    selected_mosque = request.args.get('mosque_id', type=int)
 
     # Get date parameter or use current date
     try:
@@ -154,14 +156,28 @@ def iftar_map():
     else:
         next_month = current_date.replace(month=current_date.month + 1, day=1)
 
-    # Get all events for this month
+    # Build the base query
     query = IfterEvent.query.filter(
         IfterEvent.date >= first_day,
         IfterEvent.date <= last_day
     )
 
+    # Apply filters
     if family_only:
         query = query.filter(IfterEvent.is_family_friendly == True)
+
+    if selected_mosque:
+        query = query.filter(IfterEvent.mosque_id == selected_mosque)
+
+    if iftar_type != 'all':
+        if iftar_type == 'daily':
+            query = query.filter(IfterEvent.is_recurring == True, 
+                               IfterEvent.recurrence_type == 'daily')
+        elif iftar_type == 'weekly':
+            query = query.filter(IfterEvent.is_recurring == True, 
+                               IfterEvent.recurrence_type == 'weekly')
+        elif iftar_type == 'single':
+            query = query.filter(IfterEvent.is_recurring == False)
 
     events = query.all()
 
@@ -189,14 +205,17 @@ def iftar_map():
     print(f"Generated calendar for {current_date.strftime('%B %Y')}")
     print(f"First day: {first_day}, Last day: {last_day}")
     print(f"Number of days in calendar: {len(calendar_events)}")
+    print(f"Number of events found: {len(events)}")
 
-    # Get all mosques for admin selection
-    mosques = User.query.filter_by(user_type='mosque', is_verified=True).all() if current_user.is_authenticated and current_user.is_admin else None
+    # Get all mosques for filtering
+    mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
 
     return render_template('ramadan/iftar_map.html',
                          calendar=cal,
                          calendar_events=calendar_events,
                          family_only=family_only,
+                         iftar_type=iftar_type,
+                         selected_mosque=selected_mosque,
                          current_date=current_date,
                          prev_month=prev_month.strftime('%Y-%m-%d'),
                          next_month=next_month.strftime('%Y-%m-%d'),
