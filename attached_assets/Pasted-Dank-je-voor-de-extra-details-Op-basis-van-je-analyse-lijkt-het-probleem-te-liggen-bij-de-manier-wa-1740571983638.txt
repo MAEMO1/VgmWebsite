@@ -1,0 +1,118 @@
+Dank je voor de extra details. Op basis van je analyse lijkt het probleem te liggen bij de manier waarop de datum-keys worden gegenereerd en opgehaald in de `calendar_events` dictionary. 
+
+Ik zal onderzoeken welke mogelijke oorzaken en oplossingen er zijn, met focus op:
+- **Datetime Key Mismatch:** Controleren of de datetime objecten in de dictionary en de template exact overeenkomen (bijv. verschillen in tijdzone, formatting, of typeverschillen tussen string en datetime-objecten).
+- **Dictionary Structuur en Opvraging:** Hoe worden de events in de backend aan `calendar_events` toegevoegd en hoe wordt de lookup in de template uitgevoerd?
+- **Jinja2 Handling van Dictionaries:** Zijn er restricties in Jinja2 die ervoor zorgen dat `.get()` niet correct functioneert?
+- **Debugging Technieken:** Hoe kun je bevestigen dat de juiste datum-key wordt gebruikt in de template en of `calendar_events` correct wordt benaderd?
+
+Ik zal concrete aanbevelingen geven om de juiste debugging stappen te nemen en de code aan te passen zodat de iftar-events correct verschijnen in de kalender.
+
+# Problemen met het tonen van iftar-events in de Flask/Jinja2-kalender oplossen
+
+### 1. **Datetime Key Mismatch (Datum-sleutel komt niet overeen)**  
+Een veelvoorkomende oorzaak is dat de sleutel in de `calendar_events`-dictionary niet exact overeenkomt met de waarde waarmee in de template gezocht wordt. Mogelijke mismatch-oorzaken zijn:  
+
+- **Typeverschil (string vs. datetime)**: Als de dictionary bijvoorbeeld een **`datetime`- of `date`-object** als sleutel gebruikt, maar de template zoekt met een **string** (of omgekeerd), vindt Jinja de sleutel niet. Een sleutel `'2025-04-14'` (string) komt niet overeen met `datetime.date(2025, 4, 14)` (date-object) – verschillende typen zijn in Python nooit gelijk als dictionary-key. Zorg dus dat beide kanten **dezelfde datatypen en format** gebruiken voor datumsleutels. Indien je strings gebruikt, hanteer dan consequent een formaat (bijv. ISO `YYYY-MM-DD`). Gebruik je `date`-objecten, zorg dan dat de template ook `date`-objecten gebruikt en niet eerst converteert naar string.  
+
+- **Datum vs. datum-tijd**: Controleer of je de tijd weglaat of niet. Bijvoorbeeld, een iftar-event kan opgeslagen zijn onder sleutel `datetime.datetime(2025, 4, 14, 19, 00)` (inclusief tijd). Als de template echter zoekt op basis van de **dag** (14 april 2025 zonder tijd), dan zal dit niet matchen. Een `datetime.datetime` en een `datetime.date` van dezelfde dag zijn niet gelijk. Zorg ervoor dat events gegroepeerd worden op datum: bijvoorbeeld door in de backend de datum-tijd te **converteren naar een datum** (bijv. met `event_datetime.date()`) als sleutel ([datetime — Basic date and time types — Python 3.13.2 documentation](https://docs.python.org/3/library/datetime.html#:~:text=datetime)). Dit geeft een `date`-object (2025-04-14) zonder tijd, zodat de vergelijking per dag consistent is.
+
+- **Tijdzoneverschillen**: Als de event-datetime een timezone bevat (aware datetime) en je vergelijkt die met een naive datetime of date (zonder timezone), dan ontstaan mismatches. Twee datetime-objecten zijn alleen gelijk (en hebben dezelfde hash) als ze exact dezelfde tijdspunt voorstellen, inclusief tijdzone ([datetime and time equality and hashing problematic #116035 - GitHub](https://github.com/python/cpython/issues/116035#:~:text=GitHub%20github,CPython%20versions)). Bijvoorbeeld, `2025-04-14 19:00 UTC` is niet gelijk aan `2025-04-14 19:00 CET` tenzij geconverteerd. Bovendien kan een verkeerde timezone ervoor zorgen dat een event onder een andere datum valt (bv. een iftar rond middernacht UTC kan lokaal al de volgende dag zijn). **Oplossing**: Converteer datetimes naar de gewenste lokale tijdzone voordat je de datum als sleutel neemt, of gebruik uitsluitend naive datetimes consistent. Daarna weer de `.date()` methode gebruiken om de kalenderdag te verkrijgen.  
+
+Kortom, de sleutel in `calendar_events` moet **exact hetzelfde** zijn als de waarde waarmee je in de template opzoekt. Controleer of je nergens onbedoeld een string van de datum maakt of een tijdzone-/tijdcomponent toevoegt die voor discrepantie zorgt.
+
+### 2. **Backend-structuur vs. template lookup**  
+Onderzoek hoe de `calendar_events`-dictionary wordt opgebouwd in de backend en hoe de template die benadert, om inconsistente structuren te vinden:
+
+- **Opbouw van de dictionary in de backend**: Meestal wordt zo’n dictionary opgebouwd door over events te itereren en ze per dag te groeperen. Bijvoorbeeld:  
+  ```python
+  calendar_events = {}
+  for event in events:
+      date_key = event.datetime.date()   # datum van de event-datetime
+      calendar_events.setdefault(date_key, []).append(event)
+  ```  
+  Controleer hier **wat `date_key` precies is**. Is het een `datetime.date` object? Of al een string met een format? Gebruik bij voorkeur één consistent datatype. In het voorbeeld hierboven is `date_key` een `date`-object (dag-nauwkeurigheid). Als je elders keys als string toevoegt, of misschien de volledige datetime (incl. tijd), ontstaat een mix die in de template lastig te behandelen is.
+
+- **Lookup in de Jinja2-template**: Bekijk hoe de template de kalender opbouwt. Vaak loopt men per dag door de maand heen, bv.:  
+  ```jinja
+  {% for day in days_in_month %}
+      {% set events = calendar_events.get(day, []) %}
+      ... render de dag ...
+  {% endfor %}
+  ```  
+  Hier moet het type van `day` aansluiten bij de keys in `calendar_events`. Als `days_in_month` een lijst van `date`-objecten is, moeten de keys ook `date`-objecten zijn. Als je echter `day` eerder naar string formatteert (bv. `day_str = day.strftime("%Y-%m-%d")`) om weer te geven, gebruik diezelfde `day_str` dan ook voor de lookup **als** je dictionary keys strings zijn. Inconsistentie tussen backend en template – bijvoorbeeld keys als `date` opslaan maar in de template met strings zoeken – verklaart dat events niet gevonden worden. Pas desnoods de backend aan om keys als string op te slaan **of** wijzig de template om met echte date-objects te zoeken, afhankelijk van wat logischer is voor je toepassing.
+
+- **Vergelijk de structuur**: Loop mentaal of met logging door een concrete datum. Stel dat een iftar-event op 14 april 2025 niet zichtbaar is. Check in de backend of `calendar_events` zoiets bevat als key `2025-04-14` (string) of `datetime.date(2025,4,14)`. Vergelijk dat met wat de template doet voor 14 april. Alleen wanneer die exact overeenkomen, zul je in de template iets terugkrijgen. Zo niet, dan moet je de structuur gelijk trekken (zelfde type/format).  
+
+Door de backend- en template-aanpak naast elkaar te leggen, kun je pinpointen waar de mismatch zit. Vaak is het oplossing om **in de backend de keys te normaliseren** (bijv. allebei naar `date`-object of allebei naar dezelfde stringvorm) zodat de template ze één-op-één kan gebruiken.
+
+### 3. **Jinja2 handling van dictionaries (.get gebruik)**  
+De manier waarop Jinja2 dictionary-waarden ophaalt kan ook het debuggen bemoeilijken als het niet goed wordt gebruikt:
+
+- **Gebruik van `.get()`**: In Jinja2 kun je Python’s `dict.get()` methode direct toepassen ([python - Using .get() in Jinja2? - Stack Overflow](https://stackoverflow.com/questions/55086199/using-get-in-jinja2#:~:text=Thankfully%2C%20Jinja2%20is%20python%20in,get%20directly)). Dit werkt hetzelfde als in Python: je geeft een sleutel en optioneel een default terugvalwaarde. Bijvoorbeeld `calendar_events.get(day, [])` geeft de lijst events voor `day` of een lege lijst als er geen entry is. Dit is handig om fouten te voorkomen, maar het **maskeert ook errors**: als de key niet gevonden wordt (door een mismatch), krijg je gewoon `None` of de default terug, zonder waarschuwing. Daardoor “faalt” de lookup geruisloos – de iftar-event blijft onzichtbaar, maar er wordt geen error gegooid die je alert maakt op het probleem.  
+
+- **Mogelijk probleem door `.get`**: Stel dat je `.get(day)` gebruikt zonder default. Als de key ontbreekt retourneert het `None`. Indien je vervolgens probeert te itereren of een attribuut te benaderen op die `None`, kan dat tot fouten leiden. Gebruik daarom altijd een default, bijvoorbeeld `.get(day, [])`, zodat je ten minste een lege lijst krijgt waarmee veilig te itereren is. Echter, zoals gezegd, met een default merk je het niet direct als de key verkeerd is – de template ziet gewoon een lege lijst en toont niets. Het gebruik van `.get` an sich is dus niet verkeerd, maar **je moet zeker zijn dat de key klopt**, anders loop je events mis zonder het te merken.
+
+- **Jinja2 dictionary syntax**: Alternatief kun je in de template ook `calendar_events[day]` gebruiken. Dit gooit een uitzondering (en mogelijk een template-render error) als de sleutel ontbreekt. In debug-fase kan dat nuttig zijn om mismatches op te sporen, omdat het meteen duidelijk maakt dat de key niet bestaat. Maar in productie is dat ongewenst (het zou de pagina breken voor dagen zonder events). Daarom is `.get` met default of een `{% if day in calendar_events %}` check gebruikelijk.  
+
+- **.get en attributenamen**: Let op dat Jinja2, net als Python, onderscheid maakt tussen dictionary keys en object-attributen. `calendar_events.get(some_date)` zoekt **exact die key**. Er is geen magie die bijvoorbeeld een string `'2025-04-14'` automatisch converteert naar een date-object key. Ook als een dictionary keys heeft die eruitzien als methoden (zoals `.get` zelf soms verwarrend kan zijn), wordt bij juiste aanroep gewoon de dictionary doorzocht ([pillar.get('top:sub') won't work · Issue #7645 · saltstack/salt - GitHub](https://github.com/saltstack/salt/issues/7645#:~:text=pillar,extra%20logic%20for%20%3A%20delimiters)). Kortom, het gebruik van `.get` is waarschijnlijk niet de oorzaak van het probleem, **maar hoe `.get` wordt gevoed** (met een verkeerde sleutel) wel. Gebruik `.get` correct: geef het de exact juiste sleutel én een passende default. 
+
+### 4. **Debugging technieken**  
+Om te verifiëren dat de juiste datum-key wordt gebruikt en dat `calendar_events` correct wordt benaderd, kun je een paar strategieën toepassen:
+
+- **Logging van keys en types**: Voeg tijdelijk wat debug-prints of logging toe in de Flask-route waar `calendar_events` wordt opgebouwd. Bijvoorbeeld:  
+  ```python
+  app.logger.debug(f"Keys in calendar_events: {list(calendar_events.keys())}")
+  for key in calendar_events.keys():
+      app.logger.debug(f"Key: {key} (type={type(key)})")
+  ```  
+  Zo zie je in de console welke sleutelwaarden erin zitten (en van welk type ze zijn). Als je daar bijv. `"2025-04-14"` (string) ziet staan, weet je dat je template ook met exact die string moet zoeken. Zie je `datetime.date(2025, 4, 14)`, dan moet de template datzelfde object of type krijgen. Dit soort logging bevestigt of de opgeslagen events staan onder de datum die jij denkt.  
+
+- **Template inspectie**: Je kunt in de template tijdelijk debug-informatie tonen (alleen doen in een dev-omgeving!). Bijvoorbeeld:  
+  ```jinja
+  <p>Debug: huidige dag {{ day }} (type: {{ day.__class__.__name__ }})</p>
+  <p>Events via get: {{ calendar_events.get(day, 'GEEN') }}</p>
+  ```  
+  Dit toont voor elke dag welke waarde `day` is (controleer of het bijvoorbeeld `'2025-04-14'` of `2025-04-14` zonder quotes – dat laatste duidt op een date-object, omdat `str(date)` in ISO-formaat verschijnt ([datetime — Basic date and time types — Python 3.13.2 documentation](https://docs.python.org/3/library/datetime.html#:~:text=date))). Ook zie je wat `calendar_events.get(day)` oplevert. Als je weet dat er op een bepaalde datum een iftar zou moeten zijn, maar de output is `'GEEN'` (of een lege lijst), dan kun je concluderen dat de key niet gevonden wordt. **Let op**: `{{ day.__class__.__name__ }}` geeft de class-naam van het object (bv. "date" of "str"). Dit kan handig zijn om te bevestigen of je met een string of date-object te maken hebt. Verwijder zulke debuguitvoer weer in productie, uiteraard.
+
+- **Controleren van specifieke keys**: In de Flask-code kun je een assert of check inbouwen voor een datum waarvan je zeker weet dat er een iftar-event is. Bijvoorbeeld als je weet dat 14 april 2025 een iftar heeft, doe:  
+  ```python
+  assert some_iftar_date in calendar_events, "Iftar datum niet als key in calendar_events!"
+  ```  
+  of log `calendar_events.get(some_iftar_date)`. Als dit faalt, weet je dat het probleem bij de keys zit. Eventueel kun je ook direct na het vullen van `calendar_events` een vergelijking maken tussen een key en wat je denkt dat de template gaat gebruiken: bv. `print(calendar_events.get(datetime.date(2025,4,14)))` en `print(calendar_events.get('2025-04-14'))` om te zien welke van de twee een resultaat oplevert.
+
+- **Gebruik een debugger of tests**: Maak gebruik van een interactieve debugger (zoals `pdb` of een IDE) om de staat van `calendar_events` te inspecteren tijdens runtime. Je kunt ook een kleine unit test schrijven die de view functie aanroept en controleert of in de gegenereerde context de iftar-event aanwezig is op de juiste datum. Dit dwingt je ook om het format expliciet te maken (de test moet dan bv. `assert calendar_events.get(date(2025,4,14)) is not None`).  
+
+- **Timezone check**: Als je vermoedt dat tijdzones een rol spelen, print dan ook de datetime van het event en de date die je daarvan afleidt. Bijvoorbeeld:  
+  ```python
+  for event in events:
+      print(event.datetime, event.datetime.tzinfo, "-> date:", event.datetime.date())
+  ```  
+  Zo zie je of een event misschien door een offset op een andere dag terechtkomt. Als een iftar gepland was op de avond van de 14e maar de datetime (bijv. UTC) valt op de 13e laat op de avond in UTC, dan zou `.date()` de 13e geven. In dat geval moet je de conversie naar lokale tijdzone doen vóór `.date()`.  
+
+Door zulke technieken krijg je inzicht in waar het misgaat. Je zult waarschijnlijk ontdekken dat de key die je in de template gebruikt niet 100% overeenkomt met wat in `calendar_events` zit, waarna je de code kunt verbeteren.
+
+### **Aanbevelingen voor debugging en code-aanpassingen**  
+Om de iftar-events correct in de kalender te laten verschijnen, volgen hier concrete aanbevelingen:
+
+- **Zorg voor consistente datum-keys**: Gebruik eenduidig **één type en format** voor datumkeys in `calendar_events`. De eenvoudigste aanpak is om `datetime.date` objecten te gebruiken voor elke event-datum (dus de tijd negeren) en in de template ook met `date`-objecten te werken. Alternatief kun je consistente datumstrings gebruiken (bijv. altijd `"YYYY-MM-DD"` formaat), zolang de template exact diezelfde string vormt voor de lookup. Kies één aanpak en pas zowel backend als template daarop aan.
+
+- **Verwijder tijdcomponent voor dag-weergave**: Mocht je nu de volledige `datetime` (met tijd) als key opslaan, wijzig dit zodat je alleen de datum gebruikt. In Python kun je van een datetime `d` de datum krijgen met `d.date()` ([datetime — Basic date and time types — Python 3.13.2 documentation](https://docs.python.org/3/library/datetime.html#:~:text=datetime)). Gebruik dat als sleutel in plaats van de datetime zelf. Hierdoor worden alle events van die dag onder dezelfde sleutel gegroepeerd en matcht een dag in de kalender precies één key. 
+
+- **Hanteer tijdzones expliciet**: Als je applicatie met tijdzones werkt, converteer event-tijden naar de lokale tijdzone **voordat** je de datum extraheert. Bijvoorbeeld: `local_dt = event_dt.astimezone(local_zone); date_key = local_dt.date()`. Zo voorkom je off-by-one-day fouten door UTC/locale verschillen. Werk binnen de hele pipeline (van data-opslag tot weergeven) bij voorkeur consistent met ofwel naive datetimes die al in lokale tijd zijn, of aware datetimes die je tijdig omzet. 
+
+- **Gebruik `.get()` met mate tijdens debuggen**: In de eindcode is `dict.get(key, [])` prima om missing keys af te vangen. Maar tijdens het debuggen kan het handig zijn tijdelijk directe indexering of een check te doen. Bijvoorbeeld:  
+  ```jinja
+  {% if day in calendar_events %}
+      {% set events = calendar_events[day] %}
+  {% else %}
+      {{ raise('Missing key') }}
+  {% endif %}
+  ```  
+  (Dit laatste is pseudocode; Jinja heeft geen directe `raise`, maar je kunt een fout provoceren of een opvallende boodschap tonen.) Het idee is dat je meteen merkt als `day` niet in `calendar_events` zit. Uiteindelijk kun je teruggaan naar `.get(day, [])` als het probleem is opgelost, om lege dagen netjes op te vangen.
+
+- **Controleer visueel**: Nadat je aanpassingen hebt gedaan, test de kalender uitvoerig. Voeg een test-event toe op een bekende datum en kijk of het verschijnt. Print desnoods de hele `calendar_events` dictionary naar de pagina in een pre-tag om te zien of de inhoud klopt. Dit hoeft niet mooi te zijn – puur om te valideren dat de structuur klopt. Zodra bevestigd is dat keys en lookups matchen, verwijder je deze debuguitvoer weer.
+
+- **Documenteer de gekozen aanpak**: Leg in code comments of docs vast of jullie nu datumobjecten of strings gebruiken als keys, en in welk formaat. Zo voorkom je verwarring in de toekomst en houden alle teamleden zich eraan.
+
+Door deze stappen te volgen, kun je de mismatch opsporen en verhelpen. Samengevat komt het neer op **uniformiteit** in hoe datums worden opgeslagen en opgevraagd, en zorgvuldig inspecteren wat er werkelijk in `calendar_events` gebeurt. Met consistente keys en een beetje debugging zou je de iftar-events correct in de kalender moeten zien verschijnen.
