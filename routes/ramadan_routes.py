@@ -201,6 +201,9 @@ def iftar_map():
     print(f"- Family only: {family_only}")
     print(f"- Selected mosque: {selected_mosque}")
     print(f"- Iftar type: {iftar_type}")
+    print("\nCalendar Dictionary Keys:")
+    for key in calendar_events.keys():
+        print(f"Key type: {type(key)}, Value: {key}")
     print("\nEvent details:")
 
     # Populate events
@@ -235,6 +238,7 @@ def iftar_map():
 
     print("\nCalendar events summary:")
     for day, events in calendar_events.items():
+        print(f"Key type: {type(day)}, Value: {day}")
         if any(events.values()):
             print(f"{day}: Daily={len(events['daily'])}, Weekly={len(events['weekly'])}, Single={len(events['single'])}")
 
@@ -344,6 +348,7 @@ def add_iftar():
                          mosques=mosques,
                          mosques_data=mosques_data,  # Pass serialized data
                          current_mosque=current_mosque)
+
 
 
 @ramadan.route('/iftar/<int:iftar_id>/edit', methods=['GET', 'POST'])
