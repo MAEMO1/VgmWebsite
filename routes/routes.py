@@ -1,3 +1,4 @@
+import calendar
 from flask import Blueprint, render_template, redirect, url_for, request, flash, session
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -775,8 +776,7 @@ def about():
         # Get the corresponding term_end for this term_start
         term = next((t for t in terms if t[0] == term_start), None)
         term_end = term[1] if term else None
-    else:  # Default to current or most recent term
-        current_date = date.today()
+    else:  # Default to current or most recent term        current_date = date.today()
         latest_term = BoardMember.query.filter(
             BoardMember.term_end >= current_date
         ).order_by(BoardMember.term_start.desc()).first()
@@ -1352,82 +1352,84 @@ def add_program():
 
 @routes.route('/ramadan/iftar-map')
 def iftar_map():
-        # Get filter parameter
-        family_only = request.args.get('filter') == 'family'
+    # Get filter parameter
+    family_only = request.args.get('filter') == 'family'
 
-        # Get date parameter or use current date
-        try:
-            date_str = request.args.get('date')
-            if date_str:
-                current_date = datetime.strptime(date_str, '%Y-%m-%d').date()
-            else:
-                current_date = date.today()
-        except ValueError:
+    # Get date parameter or use current date
+    try:
+        date_str = request.args.get('date')
+        if date_str:
+            current_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        else:
             current_date = date.today()
+    except ValueError:
+        current_date = date.today()
 
-        # Calculate start and end of month
-        first_day = current_date.replace(day=1)
-        if current_date.month == 12:
-            last_day = current_date.replace(year=current_date.year + 1, month=1, day=1) - timedelta(days=1)
-        else:
-            last_day = current_date.replace(month=current_date.month + 1, day=1) - timedelta(days=1)
+    # Get the calendar for current month
+    cal = calendar.monthcalendar(current_date.year, current_date.month)
 
-        # Calculate previous and next month
-        if current_date.month == 1:
-            prev_month = current_date.replace(year=current_date.year - 1, month=12, day=1)
-        else:
-            prev_month = current_date.replace(month=current_date.month - 1, day=1)
+    # Calculate first and last day of month
+    first_day = current_date.replace(day=1)
+    if current_date.month == 12:
+        last_day = current_date.replace(year=current_date.year + 1, month=1, day=1) - timedelta(days=1)
+    else:
+        last_day = current_date.replace(month=current_date.month + 1, day=1) - timedelta(days=1)
 
-        if current_date.month == 12:
-            next_month = current_date.replace(year=current_date.year + 1, month=1, day=1)
-        else:
-            next_month = current_date.replace(month=current_date.month + 1, day=1)
+    # Navigation dates
+    if current_date.month == 1:
+        prev_month = current_date.replace(year=current_date.year - 1, month=12, day=1)
+    else:
+        prev_month = current_date.replace(month=current_date.month - 1, day=1)
 
-        # Query base
-        query = IfterEvent.query
+    if current_date.month == 12:
+        next_month = current_date.replace(year=current_date.year + 1, month=1, day=1)
+    else:
+        next_month = current_date.replace(month=current_date.month + 1, day=1)
 
-        # Apply family filter if needed
-        if family_only:
-            query = query.filter(IfterEvent.is_family_friendly == True)
+    # Get all events for this month
+    query = IfterEvent.query.filter(
+        IfterEvent.date >= first_day,
+        IfterEvent.date <= last_day
+    )
 
-        # Get all events
-        iftar_events = query.all()
+    if family_only:
+        query = query.filter(IfterEvent.is_family_friendly == True)
 
-        # Initialize calendar events dictionary
-        calendar_events = {}
-        current_day = first_day
-        while current_day <= last_day:
-            calendar_events[current_day] = {
-                'daily': [],
-                'weekly': [],
-                'single': []
-            }
-            current_day += timedelta(days=1)
+    events = query.all()
 
-        # Populate events
-        for event in iftar_events:
-            event_date = event.date
-            if event_date in calendar_events:
-                if event.is_recurring and event.recurrence_type == 'daily':
-                    calendar_events[event_date]['daily'].append(event)
-                elif event.is_recurring and event.recurrence_type == 'weekly':
-                    calendar_events[event_date]['weekly'].append(event)
-                else:
-                    calendar_events[event_date]['single'].append(event)
+    # Create calendar events dictionary
+    calendar_events = {}
+    current_day = first_day
+    while current_day <= last_day:
+        calendar_events[current_day] = {
+            'daily': [],
+            'weekly': [],
+            'single': []
+        }
+        current_day += timedelta(days=1)
 
-        # Debug logging
-        print(f"Generated calendar for {current_date.strftime('%B %Y')}")
-        print(f"First day: {first_day}, Last day: {last_day}")
-        print(f"Number of days in calendar: {len(calendar_events)}")
+    # Populate events
+    for event in events:
+        if event.date in calendar_events:
+            if event.is_recurring and event.recurrence_type == 'daily':
+                calendar_events[event.date]['daily'].append(event)
+            elif event.is_recurring and event.recurrence_type == 'weekly':
+                calendar_events[event.date]['weekly'].append(event)
+            else:
+                calendar_events[event.date]['single'].append(event)
 
-        return render_template('ramadan/iftar_map.html',
-                             calendar_events=calendar_events,
-                             family_only=family_only,
-                             current_date=current_date,
-                             prev_month=prev_month,
-                             next_month=next_month,
-                             today=date.today(),
-                             timedelta=timedelta)
+    print(f"Generated calendar for {current_date.strftime('%B %Y')}")
+    print(f"First day: {first_day}, Last day: {last_day}")
+    print(f"Number of days in calendar: {len(calendar_events)}")
+
+    return render_template('ramadan/iftar_map.html',
+                         calendar=cal,
+                         calendar_events=calendar_events,
+                         family_only=family_only,
+                         current_date=current_date,
+                         prev_month=prev_month.strftime('%Y-%m-%d'),
+                         next_month=next_month.strftime('%Y-%m-%d'),
+                         today=date.today())
 
 @routes.route('/ramadan/iftar/<int:iftar_id>/delete', methods=['POST'])
 @login_required

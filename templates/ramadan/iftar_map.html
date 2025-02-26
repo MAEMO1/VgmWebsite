@@ -3,72 +3,64 @@
 {% block title %}{{ _('VGM Iftarkaart - Ramadan 1445/2024') }}{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <!-- Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <h1 class="h3">{{ _('VGM Iftarkaart') }}</h1>
-        </div>
-    </div>
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3">{{ _('VGM Iftarkaart') }}</h1>
 
-    <!-- Filters -->
-    <div class="row mb-4">
-        <div class="col-12 text-center">
-            <a href="{{ url_for('main.iftar_map', filter='all') }}" 
-               class="btn btn-outline-primary me-2 {% if not family_only %}active{% endif %}">
-                {{ _('Alle Iftars') }}
-            </a>
-            <a href="{{ url_for('main.iftar_map', filter='family') }}"
-               class="btn btn-outline-primary {% if family_only %}active{% endif %}">
-                <i class="fas fa-users"></i> {{ _('Gezinsvriendelijk') }}
-            </a>
-        </div>
-    </div>
+                <!-- Filters -->
+                <div class="btn-group">
+                    <a href="{{ url_for('main.iftar_map', filter='all') }}" 
+                       class="btn btn-outline-primary {% if not family_only %}active{% endif %}">
+                        {{ _('Alle Iftars') }}
+                    </a>
+                    <a href="{{ url_for('main.iftar_map', filter='family') }}"
+                       class="btn btn-outline-primary {% if family_only %}active{% endif %}">
+                        <i class="fas fa-users"></i> {{ _('Gezinsvriendelijk') }}
+                    </a>
+                </div>
+            </div>
 
-    <!-- Legend -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="bg-light p-3 rounded">
-                <div class="d-flex justify-content-center gap-4">
-                    <div class="d-flex align-items-center">
-                        <span class="badge bg-success rounded-circle me-2">&nbsp;</span>
-                        <span>{{ _('Dagelijks') }}</span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <span class="badge bg-primary rounded-circle me-2">&nbsp;</span>
-                        <span>{{ _('Wekelijks') }}</span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <span class="badge bg-warning rounded-circle me-2">&nbsp;</span>
-                        <span>{{ _('Eenmalig') }}</span>
+            <!-- Legend -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-center gap-4 flex-wrap">
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-success rounded-circle me-2">&nbsp;</span>
+                            {{ _('Dagelijkse Iftars') }}
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-primary rounded-circle me-2">&nbsp;</span>
+                            {{ _('Wekelijkse Iftars') }}
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-warning rounded-circle me-2">&nbsp;</span>
+                            {{ _('Eenmalige Iftars') }}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Month Navigation -->
-    <div class="row mb-4">
-        <div class="col-12 d-flex justify-content-center align-items-center">
-            <a href="{{ url_for('main.iftar_map', date=prev_month, filter='family' if family_only else 'all') }}" 
-               class="btn btn-sm btn-outline-secondary">
-                <i class="fas fa-chevron-left"></i>
-            </a>
-            <h2 class="h4 mx-4 mb-0">{{ current_date.strftime('%B %Y') }}</h2>
-            <a href="{{ url_for('main.iftar_map', date=next_month, filter='family' if family_only else 'all') }}" 
-               class="btn btn-sm btn-outline-secondary">
-                <i class="fas fa-chevron-right"></i>
-            </a>
-        </div>
-    </div>
-
-    <!-- Calendar -->
-    <div class="row">
-        <div class="col-12">
+            <!-- Calendar Card -->
             <div class="card">
-                <div class="card-body">
+                <div class="card-header bg-white py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{{ url_for('main.iftar_map', date=prev_month, filter='family' if family_only else 'all') }}" 
+                           class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                        <h2 class="h4 mb-0">{{ current_date.strftime('%B %Y') }}</h2>
+                        <a href="{{ url_for('main.iftar_map', date=next_month, filter='family' if family_only else 'all') }}" 
+                           class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-3">
                     <div class="table-responsive">
-                        <table class="table table-bordered">
+                        <table class="table table-bordered mb-0">
                             <thead>
                                 <tr>
                                     <th class="text-center">{{ _('Ma') }}</th>
@@ -81,44 +73,39 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% set first_day_weekday = current_date.replace(day=1).weekday() %}
-                                {% set last_day = (current_date.replace(day=28) + timedelta(days=4)).replace(day=1) - timedelta(days=1) %}
-                                {% set total_days = last_day.day %}
-                                {% set day_counter = 0 %}
+                                {% for week in calendar %}
+                                <tr style="height: 120px;">
+                                    {% for day in week %}
+                                    <td class="position-relative p-2" style="width: 14.28%">
+                                        {% if day != 0 %}
+                                            {% set current_day = current_date.replace(day=day) %}
+                                            {% set day_events = calendar_events[current_day] %}
 
-                                {% for week in range((first_day_weekday + total_days + 6) // 7) %}
-                                    <tr style="height: 100px;">
-                                        {% for weekday in range(7) %}
-                                            <td class="position-relative p-2" style="width: 14.28%">
-                                                {% if (day_counter >= first_day_weekday and day_counter - first_day_weekday < total_days) %}
-                                                    {% set current_day = current_date.replace(day=day_counter - first_day_weekday + 1) %}
-                                                    {% set day_events = calendar_events[current_day] %}
-
-                                                    <div class="h-100 {% if current_day == today %}border border-primary rounded{% endif %}"
-                                                         onclick="showDayDetails('{{ current_day.strftime("%Y-%m-%d") }}')"
-                                                         style="cursor: pointer;">
-                                                        <div class="d-flex flex-column h-100">
-                                                            <div class="text-end mb-2">{{ current_day.day }}</div>
-                                                            {% if day_events %}
-                                                                <div class="d-flex justify-content-center gap-1 mt-auto">
-                                                                    {% if day_events.daily %}
-                                                                        <span class="badge bg-success rounded-circle" style="width: 8px; height: 8px;" title="{{ _('Dagelijkse iftars') }}"></span>
-                                                                    {% endif %}
-                                                                    {% if day_events.weekly %}
-                                                                        <span class="badge bg-primary rounded-circle" style="width: 8px; height: 8px;" title="{{ _('Wekelijkse iftars') }}"></span>
-                                                                    {% endif %}
-                                                                    {% if day_events.single %}
-                                                                        <span class="badge bg-warning rounded-circle" style="width: 8px; height: 8px;" title="{{ _('Eenmalige iftars') }}"></span>
-                                                                    {% endif %}
-                                                                </div>
-                                                            {% endif %}
-                                                        </div>
+                                            <div class="h-100 d-flex flex-column border {% if current_day == today %}border-primary{% else %}border-light{% endif %} rounded p-2"
+                                                 onclick="showDayDetails('{{ current_day.strftime("%Y-%m-%d") }}')"
+                                                 style="cursor: pointer;">
+                                                <div class="text-end mb-2">{{ day }}</div>
+                                                {% if day_events %}
+                                                    <div class="d-flex justify-content-center gap-1 mt-auto">
+                                                        {% if day_events.daily %}
+                                                            <span class="badge bg-success rounded-circle" style="width: 8px; height: 8px;" 
+                                                                  title="{{ _('Dagelijkse iftars') }}"></span>
+                                                        {% endif %}
+                                                        {% if day_events.weekly %}
+                                                            <span class="badge bg-primary rounded-circle" style="width: 8px; height: 8px;"
+                                                                  title="{{ _('Wekelijkse iftars') }}"></span>
+                                                        {% endif %}
+                                                        {% if day_events.single %}
+                                                            <span class="badge bg-warning rounded-circle" style="width: 8px; height: 8px;"
+                                                                  title="{{ _('Eenmalige iftars') }}"></span>
+                                                        {% endif %}
                                                     </div>
                                                 {% endif %}
-                                            </td>
-                                            {% set day_counter = day_counter + 1 %}
-                                        {% endfor %}
-                                    </tr>
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
