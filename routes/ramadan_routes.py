@@ -288,6 +288,13 @@ def add_iftar():
 
             print(f"Date: {date_str}, Start time: {start_time_str}, End time: {end_time_str}")
 
+            # Handle recurrence settings
+            is_recurring = bool(request.form.get('is_recurring'))
+            recurrence_type = request.form.get('recurrence_type') if is_recurring else None
+            recurrence_end_date = datetime.strptime(request.form.get('recurrence_end_date'), '%Y-%m-%d').date() if request.form.get('recurrence_end_date') else None
+
+            print(f"Recurrence settings - Is recurring: {is_recurring}, Type: {recurrence_type}, End date: {recurrence_end_date}")
+
             iftar = IfterEvent(
                 mosque_id=mosque_id,
                 date=datetime.strptime(date_str, '%Y-%m-%d').date(),
@@ -296,9 +303,9 @@ def add_iftar():
                 location=request.form.get('location') or mosque.get_full_address(),
                 capacity=int(request.form.get('capacity')) if request.form.get('capacity') else None,
                 is_family_friendly=bool(request.form.get('is_family_friendly')),
-                is_recurring=bool(request.form.get('is_recurring')),
-                recurrence_type=request.form.get('recurrence_type') if request.form.get('is_recurring') else None,
-                recurrence_end_date=datetime.strptime(request.form.get('recurrence_end_date'), '%Y-%m-%d').date() if request.form.get('recurrence_end_date') else None,
+                is_recurring=is_recurring,
+                recurrence_type=recurrence_type,
+                recurrence_end_date=recurrence_end_date,
                 registration_required=bool(request.form.get('registration_required')),
                 registration_deadline=datetime.strptime(request.form.get('registration_deadline'), '%Y-%m-%dT%H:%M') if request.form.get('registration_deadline') else None,
                 dietary_options=bool(request.form.get('dietary_options')),
