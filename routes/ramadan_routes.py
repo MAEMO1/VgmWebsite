@@ -192,17 +192,29 @@ def iftar_map():
         }
         current_day += timedelta(days=1)
 
+    # Debug prints
+    print(f"\nProcessing events for {current_date.strftime('%B %Y')}")
+    print(f"Date range: {first_day} to {last_day}")
+    print(f"Found {len(events)} events")
+
     # Populate events
     for event in events:
+        print(f"\nProcessing event: {event.id}")
+        print(f"Date: {event.date}, Is recurring: {event.is_recurring}")
         if event.is_recurring:
+            print(f"Recurrence type: {event.recurrence_type}")
+            print(f"End date: {event.recurrence_end_date}")
+
             # Calculate all dates this event occurs on within the month
             event_date = event.date
             while event_date <= (event.recurrence_end_date or last_day) and event_date <= last_day:
                 if event_date >= first_day:
                     if event.recurrence_type == 'daily':
                         calendar_events[event_date]['daily'].append(event)
+                        print(f"Added daily event to {event_date}")
                     elif event.recurrence_type == 'weekly':
                         calendar_events[event_date]['weekly'].append(event)
+                        print(f"Added weekly event to {event_date}")
 
                 # Move to next occurrence
                 if event.recurrence_type == 'daily':
@@ -213,11 +225,7 @@ def iftar_map():
             # Single event
             if first_day <= event.date <= last_day:
                 calendar_events[event.date]['single'].append(event)
-
-    print(f"Generated calendar for {current_date.strftime('%B %Y')}")
-    print(f"First day: {first_day}, Last day: {last_day}")
-    print(f"Number of days in calendar: {len(calendar_events)}")
-    print(f"Number of events found: {len(events)}")
+                print(f"Added single event to {event.date}")
 
     # Get all mosques for filtering
     mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()

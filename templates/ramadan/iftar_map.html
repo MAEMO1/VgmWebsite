@@ -105,54 +105,54 @@
                 <div class="card-body p-3">
                     <div class="table-responsive">
                         <table class="table table-bordered mb-0">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">{{ _('Ma') }}</th>
-                                    <th class="text-center">{{ _('Di') }}</th>
-                                    <th class="text-center">{{ _('Wo') }}</th>
-                                    <th class="text-center">{{ _('Do') }}</th>
-                                    <th class="text-center">{{ _('Vr') }}</th>
-                                    <th class="text-center">{{ _('Za') }}</th>
-                                    <th class="text-center">{{ _('Zo') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for week in calendar %}
-                                <tr style="height: 120px;">
-                                    {% for day in week %}
-                                    <td class="position-relative p-2" style="width: 14.28%">
-                                        {% if day != 0 %}
-                                            {% set current_day = current_date.replace(day=day) %}
-                                            {% set day_events = calendar_events[current_day] %}
+                        <thead>
+                            <tr>
+                                <th class="text-center">{{ _('Ma') }}</th>
+                                <th class="text-center">{{ _('Di') }}</th>
+                                <th class="text-center">{{ _('Wo') }}</th>
+                                <th class="text-center">{{ _('Do') }}</th>
+                                <th class="text-center">{{ _('Vr') }}</th>
+                                <th class="text-center">{{ _('Za') }}</th>
+                                <th class="text-center">{{ _('Zo') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for week in calendar %}
+                            <tr style="height: 120px;">
+                                {% for day in week %}
+                                <td class="position-relative p-2" style="width: 14.28%">
+                                    {% if day != 0 %}
+                                        {% set current_day = current_date.replace(day=day) %}
+                                        {% set day_events = calendar_events[current_day] %}
 
-                                            <div class="h-100 d-flex flex-column border {% if current_day == today %}border-primary{% else %}border-light{% endif %} rounded p-2"
-                                                 onclick="showDayDetails('{{ current_day.strftime("%Y-%m-%d") }}')"
-                                                 style="cursor: pointer;">
-                                                <div class="text-end mb-2">{{ day }}</div>
-                                                {% if day_events %}
-                                                    <div class="d-flex justify-content-center gap-1 mt-auto">
-                                                        {% if day_events.daily %}
-                                                            <span class="badge bg-success rounded-circle" style="width: 8px; height: 8px;" 
-                                                                  title="{{ _('Dagelijkse iftars') }}"></span>
-                                                        {% endif %}
-                                                        {% if day_events.weekly %}
-                                                            <span class="badge bg-primary rounded-circle" style="width: 8px; height: 8px;"
-                                                                  title="{{ _('Wekelijkse iftars') }}"></span>
-                                                        {% endif %}
-                                                        {% if day_events.single %}
-                                                            <span class="badge bg-warning rounded-circle" style="width: 8px; height: 8px;"
-                                                                  title="{{ _('Eenmalige iftars') }}"></span>
-                                                        {% endif %}
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                        {% endif %}
-                                    </td>
-                                    {% endfor %}
-                                </tr>
+                                        <div class="h-100 d-flex flex-column border {% if current_day == today %}border-primary{% else %}border-light{% endif %} rounded p-2"
+                                             onclick="showDayDetails('{{ current_day.strftime("%Y-%m-%d") }}')"
+                                             style="cursor: pointer;">
+                                            <div class="text-end mb-2">{{ day }}</div>
+                                            {% if day_events %}
+                                                <div class="d-flex justify-content-center gap-1 mt-auto">
+                                                    {% if day_events.daily %}
+                                                        <span class="badge bg-success rounded-circle" style="width: 8px; height: 8px;" 
+                                                              title="{{ _('Dagelijkse iftars') }}"></span>
+                                                    {% endif %}
+                                                    {% if day_events.weekly %}
+                                                        <span class="badge bg-primary rounded-circle" style="width: 8px; height: 8px;"
+                                                              title="{{ _('Wekelijkse iftars') }}"></span>
+                                                    {% endif %}
+                                                    {% if day_events.single %}
+                                                        <span class="badge bg-warning rounded-circle" style="width: 8px; height: 8px;"
+                                                              title="{{ _('Eenmalige iftars') }}"></span>
+                                                    {% endif %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                </td>
                                 {% endfor %}
-                            </tbody>
-                        </table>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                     </div>
                 </div>
             </div>
