@@ -6,12 +6,27 @@ from flask_login import login_required, current_user
 from flask_babel import _
 from werkzeug.utils import secure_filename
 from app import db
-from models import User, IfterEvent, IfterRegistration, RamadanQuranResource, RamadanVideo, RamadanProgram
+from models import User, IfterEvent, IfterRegistration, RamadanQuranResource, RamadanVideo, RamadanProgram, PrayerTime
 
 ramadan = Blueprint('ramadan', __name__)
 
 def allowed_file(filename, allowed_extensions={'png', 'jpg', 'jpeg'}):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+
+@ramadan.route('/')
+def index():
+    # Get today's prayer times
+    today = date.today()
+    prayer_times = PrayerTime.query.filter_by(date=today).all()
+
+    # Get upcoming Ramadan programs
+    programs = RamadanProgram.query.filter(
+        RamadanProgram.start_date >= datetime.now()
+    ).order_by(RamadanProgram.start_date).limit(3).all()
+
+    return render_template('ramadan/index.html',
+                         prayer_times=prayer_times,
+                         programs=programs)
 
 @ramadan.route('/iftar-map')
 def iftar_map():
@@ -106,7 +121,7 @@ def add_iftar():
             # Handle image upload
             image = request.files.get('iftar_image')
             image_url = None
-            if image and allowed_file(image.filename):
+            if image and allowed_file(image.filename, {'png', 'jpg', 'jpeg'}):
                 filename = secure_filename(f"iftar_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{image.filename}")
                 image_path = os.path.join('static', 'uploads', 'iftar', filename)
                 os.makedirs(os.path.dirname(image_path), exist_ok=True)
@@ -145,6 +160,6 @@ def add_iftar():
             flash(_('Er is een fout opgetreden bij het toevoegen van het iftar evenement.'), 'error')
 
     # Get list of mosques for admin selection
-    mosques = User.query.filter_by(user_type='mosque', is_verified=True).all() if current_user.is_admin else None
+    mosques = User.query.filter_by(user_type='mosque', is_verified=True).all() if current_user.is_authenticated and current_user.is_admin else None
 
     return render_template('ramadan/add_iftar.html', mosques=mosques)
