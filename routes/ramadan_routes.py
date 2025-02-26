@@ -24,9 +24,15 @@ def index():
         RamadanProgram.start_date >= datetime.now()
     ).order_by(RamadanProgram.start_date).limit(3).all()
 
+    # Get upcoming iftar events
+    upcoming_iftars = IfterEvent.query.filter(
+        IfterEvent.date >= today
+    ).order_by(IfterEvent.date).limit(3).all()
+
     return render_template('ramadan/index.html',
                          prayer_times=prayer_times,
-                         programs=programs)
+                         programs=programs,
+                         upcoming_iftars=upcoming_iftars)
 
 @ramadan.route('/quran-resources')
 def quran_resources():
