@@ -17,6 +17,20 @@ class User(UserMixin, db.Model):
     is_admin = db.Column(db.Boolean, default=False)
     user_type = db.Column(db.String(20), nullable=False)  # 'visitor' or 'mosque'
 
+    # Mosque-specific fields
+    mosque_name = db.Column(db.String(200))
+    mosque_street = db.Column(db.String(100))
+    mosque_number = db.Column(db.String(10))
+    mosque_postal = db.Column(db.String(10))
+    mosque_city = db.Column(db.String(100))
+    mosque_phone = db.Column(db.String(20))
+    mosque_image = db.Column(db.String(500))
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
+    is_verified = db.Column(db.Boolean, default=False)
+    verification_status = db.Column(db.String(20), default='pending')
+    verification_note = db.Column(db.Text)
+
     # Add mosque_preferences relationship
     mosque_preferences = db.relationship('MosqueNotificationPreference',
                                       foreign_keys='MosqueNotificationPreference.user_id',
@@ -33,19 +47,6 @@ class User(UserMixin, db.Model):
     notify_obituaries = db.Column(db.Boolean, default=False)
     notify_funeral_updates = db.Column(db.Boolean, default=False)
 
-    # Mosque-specific fields
-    mosque_name = db.Column(db.String(200))
-    mosque_street = db.Column(db.String(100))
-    mosque_number = db.Column(db.String(10))
-    mosque_postal = db.Column(db.String(10))
-    mosque_city = db.Column(db.String(100))
-    mosque_phone = db.Column(db.String(20))
-    mosque_image = db.Column(db.String(500))
-    latitude = db.Column(db.Float)
-    longitude = db.Column(db.Float)
-    is_verified = db.Column(db.Boolean, default=False)
-    verification_status = db.Column(db.String(20), default='pending')
-    verification_note = db.Column(db.Text)
 
     # Add new relationships
     board_members = db.relationship('MosqueBoardMember', backref='mosque', lazy='dynamic')
@@ -83,6 +84,14 @@ class User(UserMixin, db.Model):
         if self.user_type == 'mosque':
             return f"{self.mosque_street} {self.mosque_number}, {self.mosque_postal} {self.mosque_city}"
         return None
+
+    def to_dict(self):
+        """Convert User object to a JSON serializable dictionary"""
+        return {
+            'id': self.id,
+            'mosque_name': self.mosque_name,
+            'full_address': self.get_full_address()
+        }
 
 class MosqueImage(db.Model):
     id = db.Column(db.Integer, primary_key=True)

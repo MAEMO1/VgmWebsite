@@ -153,12 +153,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listener for mosque selection to update address
     const mosqueSelect = document.getElementById('mosque_id');
     const locationInput = document.getElementById('location');
-    const mosques = {{ mosques|tojson|safe }};
+    const mosques = {{ mosques_data|tojson|safe }};
 
     mosqueSelect.addEventListener('change', function() {
         const selectedMosque = mosques.find(m => m.id === parseInt(this.value));
         if (selectedMosque) {
-            locationInput.value = selectedMosque.get_full_address();
+            locationInput.value = selectedMosque.full_address;
         } else {
             locationInput.value = '';
         }

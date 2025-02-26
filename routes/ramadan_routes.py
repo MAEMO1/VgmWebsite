@@ -213,9 +213,11 @@ def add_iftar():
     # Get mosque data - either the current user's mosque or selected mosque for admin
     if current_user.is_admin:
         mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
+        mosques_data = [mosque.to_dict() for mosque in mosques]  # Serialize mosque data
         current_mosque = None  # Will be set based on form selection
     else:
         mosques = None
+        mosques_data = []
         current_mosque = current_user
 
     if request.method == 'POST':
@@ -267,6 +269,7 @@ def add_iftar():
 
     return render_template('ramadan/add_iftar.html', 
                          mosques=mosques,
+                         mosques_data=mosques_data,  # Pass serialized data
                          current_mosque=current_mosque)
 
 
