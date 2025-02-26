@@ -166,16 +166,16 @@
                                             {% if day_events %}
                                                 <div class="d-flex justify-content-center gap-1 mt-auto">
                                                     {% if day_events.daily %}
-                                                        <span class="badge bg-success rounded-circle" style="width: 8px; height: 8px;" 
-                                                              title="{{ _('Dagelijkse iftars') }}"></span>
+                                                        <div class="badge bg-success rounded-circle" style="width: 10px; height: 10px;" 
+                                                             title="{{ _('Dagelijkse iftars') }} ({{ day_events.daily|length }})"></div>
                                                     {% endif %}
                                                     {% if day_events.weekly %}
-                                                        <span class="badge bg-primary rounded-circle" style="width: 8px; height: 8px;"
-                                                              title="{{ _('Wekelijkse iftars') }}"></span>
+                                                        <div class="badge bg-primary rounded-circle" style="width: 10px; height: 10px;"
+                                                             title="{{ _('Wekelijkse iftars') }} ({{ day_events.weekly|length }})"></div>
                                                     {% endif %}
                                                     {% if day_events.single %}
-                                                        <span class="badge bg-warning rounded-circle" style="width: 8px; height: 8px;"
-                                                              title="{{ _('Eenmalige iftars') }}"></span>
+                                                        <div class="badge bg-warning rounded-circle" style="width: 10px; height: 10px;"
+                                                             title="{{ _('Eenmalige iftars') }} ({{ day_events.single|length }})"></div>
                                                     {% endif %}
                                                 </div>
                                             {% endif %}
