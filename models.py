@@ -447,6 +447,7 @@ class IfterEvent(db.Model):
     registration_deadline = db.Column(db.DateTime)
     dietary_options = db.Column(db.Boolean, default=False)
     notes = db.Column(db.Text)
+    image_url = db.Column(db.String(500))  # Add image_url field
 
     # Recurring event fields
     is_recurring = db.Column(db.Boolean, default=False)

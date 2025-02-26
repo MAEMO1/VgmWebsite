@@ -210,6 +210,14 @@ def add_iftar():
         flash(_('U heeft geen toegang tot deze pagina.'), 'error')
         return redirect(url_for('ramadan.iftar_map'))
 
+    # Get mosque data - either the current user's mosque or selected mosque for admin
+    if current_user.is_admin:
+        mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
+        current_mosque = None  # Will be set based on form selection
+    else:
+        mosques = None
+        current_mosque = current_user
+
     if request.method == 'POST':
         try:
             # Handle image upload
@@ -222,13 +230,17 @@ def add_iftar():
                 image.save(image_path)
                 image_url = url_for('static', filename=f'uploads/iftar/{filename}')
 
+            # Get mosque for the iftar
+            mosque_id = request.form.get('mosque_id') if current_user.is_admin else current_user.id
+            mosque = User.query.get(mosque_id)
+
             # Create new iftar event
             iftar = IfterEvent(
-                mosque_id=request.form.get('mosque_id') if current_user.is_admin else current_user.id,
+                mosque_id=mosque_id,
                 date=datetime.strptime(request.form.get('date'), '%Y-%m-%d').date(),
                 start_time=datetime.strptime(request.form.get('start_time'), '%H:%M').time(),
                 end_time=datetime.strptime(request.form.get('end_time'), '%H:%M').time() if request.form.get('end_time') else None,
-                location=request.form.get('location'),
+                location=request.form.get('location') or mosque.get_full_address(),
                 capacity=int(request.form.get('capacity')) if request.form.get('capacity') else None,
                 is_family_friendly=bool(request.form.get('is_family_friendly')),
                 is_recurring=bool(request.form.get('is_recurring')),
@@ -253,7 +265,6 @@ def add_iftar():
             print(f"Error adding iftar: {e}")
             flash(_('Er is een fout opgetreden bij het toevoegen van het iftar evenement.'), 'error')
 
-    # Get list of mosques for admin selection
-    mosques = User.query.filter_by(user_type='mosque', is_verified=True).all() if current_user.is_authenticated and current_user.is_admin else None
-
-    return render_template('ramadan/add_iftar.html', mosques=mosques)
+    return render_template('ramadan/add_iftar.html', 
+                         mosques=mosques,
+                         current_mosque=current_mosque)

@@ -44,8 +44,10 @@
 
                 <div class="mb-3">
                     <label for="location" class="form-label">{{ _('Locatie in de moskee') }}</label>
-                    <input type="text" class="form-control" id="location" name="location">
-                    <small class="form-text">{{ _('Bijvoorbeeld: Hoofdzaal, Gemeenschapsruimte') }}</small>
+                    <input type="text" class="form-control" id="location" name="location" 
+                           value="{% if not current_user.is_admin %}{{ current_mosque.get_full_address() }}{% endif %}"
+                           placeholder="{{ _('Bijvoorbeeld: Hoofdzaal, Gemeenschapsruimte') }}">
+                    <small class="form-text">{{ _('Laat leeg om het standaard moskee adres te gebruiken') }}</small>
                 </div>
 
                 <div class="mb-3">
@@ -146,6 +148,22 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('registration_deadline').required = true;
         }
     });
+
+    {% if current_user.is_admin %}
+    // Add event listener for mosque selection to update address
+    const mosqueSelect = document.getElementById('mosque_id');
+    const locationInput = document.getElementById('location');
+    const mosques = {{ mosques|tojson|safe }};
+
+    mosqueSelect.addEventListener('change', function() {
+        const selectedMosque = mosques.find(m => m.id === parseInt(this.value));
+        if (selectedMosque) {
+            locationInput.value = selectedMosque.get_full_address();
+        } else {
+            locationInput.value = '';
+        }
+    });
+    {% endif %}
 });
 </script>
 {% endblock %}
