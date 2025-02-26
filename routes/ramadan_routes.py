@@ -182,16 +182,6 @@ def iftar_map():
     # Materialize the query results
     events = list(query.all())  # Convert to list to ensure query is executed once
 
-    # Debug prints
-    print(f"\nProcessing events for {current_date.strftime('%B %Y')}")
-    print(f"Date range: {first_day} to {last_day}")
-    print(f"Found {len(events)} events")
-    print("Query filters:")
-    print(f"- Family only: {family_only}")
-    print(f"- Selected mosque: {selected_mosque}")
-    print(f"- Iftar type: {iftar_type}")
-    print("\nEvent details:")
-
     # Create calendar events dictionary
     calendar_events = {}
     current_day = first_day
@@ -202,6 +192,16 @@ def iftar_map():
             'single': []
         }
         current_day += timedelta(days=1)
+
+    # Debug prints
+    print(f"\nProcessing events for {current_date.strftime('%B %Y')}")
+    print(f"Date range: {first_day} to {last_day}")
+    print(f"Found {len(events)} events")
+    print("Query filters:")
+    print(f"- Family only: {family_only}")
+    print(f"- Selected mosque: {selected_mosque}")
+    print(f"- Iftar type: {iftar_type}")
+    print("\nEvent details:")
 
     # Populate events
     for event in events:

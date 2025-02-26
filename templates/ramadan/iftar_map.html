@@ -154,6 +154,11 @@
                                         {% set current_day = current_date.replace(day=day) %}
                                         {% set day_events = calendar_events[current_day] %}
 
+                                        <!-- Debug: Print day events data -->
+                                        {% if current_user.is_admin %}
+                                        <!-- {{ current_day }}: {{ day_events }} -->
+                                        {% endif %}
+
                                         <div class="h-100 d-flex flex-column border {% if current_day == today %}border-primary{% else %}border-light{% endif %} rounded p-2"
                                              onclick="showDayDetails('{{ current_day.strftime("%Y-%m-%d") }}')"
                                              style="cursor: pointer;">
