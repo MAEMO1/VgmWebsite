@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('Ramadan 1445/2024 - VGM') }}{% endblock %}
+{% block title %}{{ _('Ramadan 1446/2025 - VGM') }}{% endblock %}
 
 {% block styles %}
 <style>
@@ -63,193 +63,6 @@
     font-weight: 300;
 }
 
-/* Prayer Times Widget */
-.times-widget {
-    background: white;
-    border-radius: 1rem;
-    padding: 2rem;
-    margin-top: -4rem;
-    position: relative;
-    z-index: 3;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.time-block {
-    text-align: center;
-    padding: 1.5rem;
-    background: var(--background-light);
-    border-radius: 0.75rem;
-    margin-bottom: 1rem;
-}
-
-.time-label {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--primary-color);
-    margin-bottom: 0.5rem;
-}
-
-.time-value {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--text-primary);
-}
-
-/* Iftar Calendar */
-.iftar-calendar {
-    background: white;
-    border-radius: 1rem;
-    padding: 2rem;
-    margin-top: 3rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.iftar-title {
-    font-size: 2rem;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 2rem;
-    color: var(--text-primary);
-}
-
-.iftar-card {
-    background: var(--background-light);
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    border: 1px solid var(--border-color);
-    transition: transform 0.3s ease;
-}
-
-.iftar-card:hover {
-    transform: translateY(-2px);
-}
-
-.iftar-date {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--primary-color);
-    margin-bottom: 0.5rem;
-}
-
-.iftar-mosque {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-}
-
-.iftar-details {
-    color: var(--text-secondary);
-    margin-bottom: 1rem;
-}
-
-.iftar-badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 1rem;
-    font-size: 0.875rem;
-    margin-right: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.badge-family {
-    background: #e3f2fd;
-    color: #1976d2;
-}
-
-.badge-registration {
-    background: #fff3e0;
-    color: #f57c00;
-}
-
-.badge-capacity {
-    background: #e8f5e9;
-    color: #388e3c;
-}
-
-/* Ramadan Resources Section */
-.ramadan-section {
-    padding: 4rem 0;
-    background: var(--background-light);
-    margin-top: 3rem;
-    border-radius: 1rem;
-}
-
-.section-title {
-    font-size: 2.25rem;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 3rem;
-    color: var(--text-primary);
-}
-
-.resource-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    padding: 0 2rem;
-}
-
-.resource-card {
-    background: white;
-    border-radius: 1rem;
-    padding: 2rem;
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.resource-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-}
-
-.resource-icon {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--background-light);
-    border-radius: 50%;
-    color: var(--primary-color);
-}
-
-.resource-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: var(--text-primary);
-}
-
-.resource-description {
-    color: var(--text-secondary);
-    margin-bottom: 1.5rem;
-    line-height: 1.6;
-}
-
-.add-iftar-btn {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: var(--primary-color);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease;
-    z-index: 1000;
-}
-
-.add-iftar-btn:hover {
-    transform: scale(1.1);
-}
-
 /* Events Section */
 .events-section {
     padding: 4rem 0;
@@ -300,11 +113,6 @@
         font-size: 1.25rem;
     }
 
-    .times-widget {
-        margin-top: -2rem;
-        padding: 1.5rem;
-    }
-
     .quran-verse {
         font-size: 1.1rem;
         padding: 1rem;
@@ -351,13 +159,19 @@
     border-radius: 0.5rem;
     object-fit: cover;
 }
+
 .upcoming-iftars {
-
+    max-height: 400px;
+    overflow-y: auto;
 }
+
 .iftar-preview-card {
-
+    transition: transform 0.2s ease;
 }
 
+.iftar-preview-card:hover {
+    transform: translateY(-2px);
+}
 </style>
 {% endblock %}
 
@@ -377,32 +191,6 @@
 </section>
 
 <div class="container">
-    <!-- Prayer Times Widget -->
-    <div class="times-widget">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="time-block">
-                    <div class="time-label">{{ _('Suhoor') }}</div>
-                    {% for prayer in prayer_times %}
-                        {% if prayer.prayer_name == 'Fajr' %}
-                            <div class="time-value">{{ prayer.time.strftime('%H:%M') }}</div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="time-block">
-                    <div class="time-label">{{ _('Iftar') }}</div>
-                    {% for prayer in prayer_times %}
-                        {% if prayer.prayer_name == 'Maghrib' %}
-                            <div class="time-value">{{ prayer.time.strftime('%H:%M') }}</div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- VGM Iftar Map Section -->
     <div class="iftar-map-preview">
         <h2 class="section-title">{{ _('VGM Iftarkaart') }}</h2>
