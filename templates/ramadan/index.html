@@ -407,7 +407,7 @@
             <div class="col-md-6">
                 <h3>{{ _('Vind een Iftar bij u in de buurt') }}</h3>
                 <p>{{ _('Bekijk alle iftar locaties op de kaart, filter op gezinsvriendelijke opties, en registreer u eenvoudig voor deelname.') }}</p>
-                <a href="{{ url_for('main.iftar_map') }}" class="iftar-map-link">
+                <a href="{{ url_for('ramadan.iftar_map') }}" class="iftar-map-link">
                     <i class="fas fa-map-marked-alt me-2"></i> {{ _('Open Iftarkaart') }}
                 </a>
             </div>
@@ -431,7 +431,7 @@
                             <p><i class="fas fa-calendar me-2"></i>{{ program.start_date.strftime('%d-%m-%Y %H:%M') }}</p>
                             <p><i class="fas fa-map-marker-alt me-2"></i>{{ program.location }}</p>
                         </div>
-                        <a href="{{ url_for('main.ramadan_schedule') }}" class="btn btn-primary">
+                        <a href="{{ url_for('ramadan.schedule') }}" class="btn btn-primary">
                             {{ _('Bekijk Programma') }}
                         </a>
                     </div>
@@ -451,7 +451,7 @@
                 </div>
                 <h3 class="resource-title">{{ _('Koran & Dua') }}</h3>
                 <p class="resource-description">{{ _('Dagelijkse Koran-recitaties en duʿāʾ voor tijdens de Ramadan') }}</p>
-                <a href="{{ url_for('main.quran_resources') }}" class="btn btn-primary">{{ _('Bekijk Meer') }}</a>
+                <a href="{{ url_for('ramadan.quran_resources') }}" class="btn btn-primary">{{ _('Bekijk Meer') }}</a>
             </div>
 
             <div class="resource-card">
@@ -460,7 +460,7 @@
                 </div>
                 <h3 class="resource-title">{{ _('Video\'s & Lezingen') }}</h3>
                 <p class="resource-description">{{ _('Inspirerende video\'s en lezingen over de Ramadan') }}</p>
-                <a href="{{ url_for('main.ramadan_videos') }}" class="btn btn-primary">{{ _('Bekijk Video\'s') }}</a>
+                <a href="{{ url_for('ramadan.videos') }}" class="btn btn-primary">{{ _('Bekijk Video\'s') }}</a>
             </div>
 
             <div class="resource-card">
@@ -469,14 +469,14 @@
                 </div>
                 <h3 class="resource-title">{{ _('Programma') }}</h3>
                 <p class="resource-description">{{ _('Volledige programma van alle Ramadan-activiteiten') }}</p>
-                <a href="{{ url_for('main.ramadan_schedule') }}" class="btn btn-primary">{{ _('Bekijk Planning') }}</a>
+                <a href="{{ url_for('ramadan.schedule') }}" class="btn btn-primary">{{ _('Bekijk Planning') }}</a>
             </div>
         </div>
     </section>
 </div>
 
 {% if current_user.is_authenticated and (current_user.user_type == 'mosque' or current_user.is_admin) %}
-    <a href="{{ url_for('main.add_iftar') }}" class="add-iftar-btn" title="{{ _('Voeg Iftar Toe') }}">
+    <a href="{{ url_for('ramadan.add_iftar') }}" class="add-iftar-btn" title="{{ _('Voeg Iftar Toe') }}">
         <i class="fas fa-plus"></i>
     </a>
 {% endif %}
