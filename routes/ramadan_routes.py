@@ -181,6 +181,16 @@ def iftar_map():
 
     events = query.all()
 
+    # Debug prints
+    print(f"\nProcessing events for {current_date.strftime('%B %Y')}")
+    print(f"Date range: {first_day} to {last_day}")
+    print(f"Found {len(events)} events")
+    print("Query filters:")
+    print(f"- Family only: {family_only}")
+    print(f"- Selected mosque: {selected_mosque}")
+    print(f"- Iftar type: {iftar_type}")
+    print("\nEvent details:")
+
     # Create calendar events dictionary
     calendar_events = {}
     current_day = first_day
@@ -191,11 +201,6 @@ def iftar_map():
             'single': []
         }
         current_day += timedelta(days=1)
-
-    # Debug prints
-    print(f"\nProcessing events for {current_date.strftime('%B %Y')}")
-    print(f"Date range: {first_day} to {last_day}")
-    print(f"Found {len(events)} events")
 
     # Populate events
     for event in events:
@@ -226,6 +231,11 @@ def iftar_map():
             if first_day <= event.date <= last_day:
                 calendar_events[event.date]['single'].append(event)
                 print(f"Added single event to {event.date}")
+
+    print("\nCalendar events summary:")
+    for day, events in calendar_events.items():
+        if any(events.values()):
+            print(f"{day}: Daily={len(events['daily'])}, Weekly={len(events['weekly'])}, Single={len(events['single'])}")
 
     # Get all mosques for filtering
     mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
