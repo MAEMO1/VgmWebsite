@@ -1,12 +1,12 @@
 <div class="iftar-card">
     {% if current_user.is_authenticated and (current_user.is_admin or current_user.id == iftar.mosque_id) %}
     <div class="iftar-actions">
-        <a href="{{ url_for('main.edit_iftar', iftar_id=iftar.id) }}" 
+        <a href="{{ url_for('ramadan.edit_iftar', iftar_id=iftar.id) }}" 
            class="edit-iftar" 
            title="{{ _('Bewerk iftar') }}">
             <i class="fas fa-edit"></i>
         </a>
-        <form action="{{ url_for('main.delete_iftar', iftar_id=iftar.id) }}" method="POST" 
+        <form action="{{ url_for('ramadan.delete_iftar', iftar_id=iftar.id) }}" method="POST" 
               onsubmit="return confirm('{{ _('Weet je zeker dat je dit iftar evenement wilt verwijderen?') }}');" 
               class="d-inline">
             <button type="submit" class="delete-iftar" title="{{ _('Verwijder iftar') }}">
