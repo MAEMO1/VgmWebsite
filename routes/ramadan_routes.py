@@ -179,7 +179,8 @@ def iftar_map():
         elif iftar_type == 'single':
             query = query.filter(IfterEvent.is_recurring == False)
 
-    events = query.all()
+    # Materialize the query results
+    events = list(query.all())  # Convert to list to ensure query is executed once
 
     # Debug prints
     print(f"\nProcessing events for {current_date.strftime('%B %Y')}")

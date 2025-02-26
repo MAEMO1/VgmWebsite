@@ -1,0 +1,85 @@
+Mogelijke Oorzaken en Oplossingen voor Niet-Zichtbare Iftar-Events in de Kalender
+Een veelvoorkomend probleem bij Flask/Jinja2-gebaseerde kalenders is dat nieuw toegevoegde events (zoals iftars) wel in de database staan en door de server naar de template worden gestuurd, maar toch niet zichtbaar zijn in de HTML-weergave. Hieronder analyseren we vier mogelijke oorzaken – van Jinja2-rendering tot CSS/JavaScript – en geven we aanbevelingen voor debuggen en oplossingen.
+1. Jinja2 Rendering Problemen
+Mogelijke oorzaak: Er kan iets misgaan bij het renderen van de data in de Jinja2-template, waardoor bepaalde events niet worden getoond. Bijvoorbeeld:
+Verkeerd omgaan met data-iterators: Als de lijst met events een cursor of generator is (bijv. direct een database cursor of lazy query), kan die al “verbruikt” zijn voordat de template rendert. Bijvoorbeeld, als in de view-functie of elders al over de cursor is geloopt of sum()/len() is gebruikt, is de iterator leeg tegen de tijd dat Jinja2 hem probeert weer te geven​
+STACKOVERFLOW.COM
+. In zo’n geval verschijnen nieuwe items niet, omdat de lijst effectief leeg is geraakt.
+Verkeerde variabelnaam of scope: Controleer of de variabele naam waarmee je de events naar de template stuurt overeenkomt met die in de template. Een typefout of mismatch betekent dat Jinja2 een lege lijst ziet.
+Conditionele logica in de template: Een fout in een Jinja2-if statement kan ervoor zorgen dat events worden overgeslagen. Bijvoorbeeld, het gebruiken van dubbele accolades binnen een {% if %} (zoals {% if {{event.date}} == dag %}) is onjuist – Jinja2 verwacht geen {{ }} binnen een if conditie​
+COMMUNITY.DATAOPS.LIVE
+. Dit kan ertoe leiden dat de conditie nooit als waar wordt gezien en de event niet rendert.
+Attribuutreferenties: Controleer dat de template de juiste attributen van het event-object gebruikt. Als event.title bijvoorbeeld leeg is of verkeerd gespeld, zie je niets. Jinja2 geeft doorgaans geen fout voor een onbekend attribuut; het resulteert in een lege string.
+Aanbevelingen/Oplossingen:
+Data concreet maken: Zorg dat je de queryresultaten materialiseert (bijv. gebruik fetchall() of .all() op een SQLAlchemy Query) en eventueel omzet naar een lijst voordat je ze doorgeeft aan de template. Dit voorkomt dat een cursor/leescursor leeg raakt​
+STACKOVERFLOW.COM
+.
+Template-logic dubbelchecken: Bekijk de Jinja2-template grondig. Is de loop correct opgezet ({% for event in events %}) en wordt deze gesloten met {% endfor %}? Staat er niet per ongeluk een return of break op de verkeerde plek? Zorg dat alle if/else-blokken correct zijn genest en dat nieuwe eventtypes (zoals “iftar”) niet door een filter buiten beschouwing gelaten worden.
+Debug info in de template: Voor debugging kun je tijdelijk alle events in de template afdrukken om te zien wat Jinja2 ontvangt. Bijvoorbeeld: {{ events|length }} om het aantal events te tonen, of loop over events en toon bijvoorbeeld {{ event.id }} om te bevestigen dat de nieuwe iftar erbij zit. Dit helpt vast te stellen of het probleem in de data of de weergave zit.
+2. HTML- en Bootstrap-structuur
+Mogelijke oorzaak: Problemen in de HTML-opmaak van de kalender (met of zonder Bootstrap) kunnen ervoor zorgen dat bepaalde inhoud niet zichtbaar is. Een kalender wordt vaak als tabel opgebouwd, en kleine HTML-fouten kunnen grote gevolgen hebben:
+Verkeerd geneste elementen: Als een <tr> of <td> niet op de juiste plaats gesloten wordt, kan de browser de tabelstructuur breken. Onjuist geneste of ontbrekende tags kunnen ertoe leiden dat content buiten de zichtbare tabel valt of helemaal niet gerenderd wordt​
+DEVELOPER.MOZILLA.ORG
+. Bijvoorbeeld, een vergeten </td> kan ervoor zorgen dat de rest van de tabelinhoud als één cel wordt gezien of helemaal niet verschijnt. Correcte nesteling is cruciaal: volgens de HTML-specificatie moeten tabellen rij (<tr>) en cel (<td>) elementen netjes genest hebben; je mag bijvoorbeeld geen content direct binnen <table> plaatsen buiten een <td>​
+STACKOVERFLOW.COM
+.
+Tabellen en rijen verbergen: Sommige kalenderimplementaties markeren dagen buiten de huidige maand of lege dagen met een speciale class (zoals .noday of .hidden) die de cellen verbergt. Als een nieuw iftar-event per ongeluk in zo’n verborgen cel of rij terechtkomt (bijvoorbeeld door een verkeerde datum of verkeerde maandcalc), zal het niet zichtbaar zijn.
+Bootstrap-specifieke structuur: Als je Bootstrap’s grid of table classes gebruikt, let dan op dat je geen <div class="row"> of andere grid-elementen binnen <table> plaatst op een verkeerde manier. In een tabel horen data binnen <td> of <th> te staan. Gebruik eventueel <div> binnen een <td> als je extra opmaak nodig hebt, maar niet eromheen. Een verkeerd geplaatste container kan onvoorziene layout-problemen geven.
+Aanbevelingen/Oplossingen:
+HTML-output inspecteren: Gebruik de browser Developer Tools (Elements/DOM Inspector) om de gerenderde HTML te bekijken. Controleer of elke kalenderdag als aparte tabelcel is weergegeven en of de iftar-event HTML daadwerkelijk binnen de juiste <td> staat. Let op ontbrekende of overlappende tags. De browser probeert wel fouten te herstellen, maar dat kan tot onverwachte structuur leiden​
+DEVELOPER.MOZILLA.ORG
+​
+DEVELOPER.MOZILLA.ORG
+.
+Validatie: Kopieer de HTML (of laat de pagina-URL) in een HTML-validator (zoals de W3C Markup Validation Service). Dit helpt om ongelieerde tags, verkeerde nesting of syntaxisfouten te vinden die met het blote oog lastig te zien zijn. Los alle gemelde fouten op – vaak zal daarna de tabelweergave correct werken en zullen de events verschijnen.
+Tabelopmaak corrigeren: Zorg dat de kalenderopmaak consistent is. Elke weekrij moet beginnen met <tr> en eindigen met </tr>. Binnen elke rij moeten 7 <td> elementen staan (voor elke dag), waarin de dagnummering en eventuele events worden geplaatst. Nieuwe events moeten toegevoegd worden binnen het juiste <td> van de betreffende dag. Als je in Jinja2 events toevoegt, doe dat binnen de loop die de cellen rendert, niet erbuiten. Eventueel kun je per dag een sub-loop maken:
+jinja2
+Kopiëren
+<td>
+  {{ day.day }}  {# dag nummer weergeven #}
+  {% for event in events if event.date == day.date() %}  
+     <!-- Event HTML hier -->  
+  {% endfor %}
+</td>
+Hiermee blijft de structuur intact en worden events direct in de cel van de juiste datum geplaatst.
+CSS-klassen controleren: Zoek in de HTML naar classes of inline styles die op de cellen van toepassing zijn. Bijvoorbeeld, een class als .hidden of een inline style="display:none" op de cel of zijn ouders zou de content onzichtbaar maken. Verwijder of pas dergelijke attributen aan als ze onterecht staan.
+3. CSS- en JavaScript-conflicten
+Mogelijke oorzaak: Zelfs als de HTML structurieel klopt, kunnen CSS- of JavaScript-issues de zichtbaarheid van de iftars verhinderen:
+CSS die events verbergt: Er kan een CSS-regel actief zijn die (al dan niet onbedoeld) de iftar-elementen verbergt. Bijvoorbeeld, misschien hebben de event-elementen een class die elders als utility-class wordt gebruikt om elementen te verbergen (.d-none in Bootstrap 4/5, .hidden in oudere versies, of een op maat gemaakte CSS met display: none). In zo'n geval wordt de inhoud niet getoond omdat een bovenliggende stijl dit tegenhoudt. Ook kan het zijn dat de tekstkleur gelijk is aan de achtergrond (bijv. witte tekst op een witte cel), waardoor het lijkt alsof het event er niet is.
+Overlopende of overlappende elementen: Als de kalendercel een vaste hoogte heeft en er geen rekening is gehouden met extra content, kan de iftar-text “erbuiten” vallen en verborgen worden door overflow: hidden. Controleer of CSS voor de table-cellen expliciet hoogte of overloop instelt.
+JavaScript-fouten: Een runtime-fout in JavaScript kan andere delen van de pagina beïnvloeden. Bijvoorbeeld, als je een kalenderplugin of script gebruikt om events interactief te maken (hover, modal, etc.), kan een JS-fout voorkomen dat het script de events toont of stylet. Hoewel de events server-side zijn gerenderd, zou een kapot script bijvoorbeeld meteen de container leegmaken of manipuleren. Ook kan een conflict tussen twee scripts ervoor zorgen dat bepaalde DOM-manipulaties niet gebeuren.
+Niet geüpdatete script-data: In een meer dynamische kalender kan het nodig zijn dat je JavaScript op de client op de hoogte stelt van nieuwe events (bijvoorbeeld via AJAX of door een nieuw dataset mee te geven). Als je kalender puur server-side rendert (wat bij Jinja2 meestal het geval is), is dit minder van toepassing. Maar als je hybride werkt (server-side render + client-side enhancements), controleer dan of de nieuwe iftar events in de JSON of dataset van de kalenderplugin zitten.
+Aanbevelingen/Oplossingen:
+Inspecteer met Developer Tools: Gebruik de “Elements/CSS” inspector om te kijken welke CSS-regels van toepassing zijn op het HTML-element van de iftar. Als je ziet dat er een regel display: none of visibility: hidden actief is, weet je dat dat het probleem is. Bijvoorbeeld, als een ouder <tr> of <td> per ongeluk display:none heeft, zal de inhoud nooit zichtbaar zijn​
+SITEPOINT.COM
+. Verwijder of override die CSS (bijv. met display: table-row voor een verborgen rij, of display: table-cell voor een verborgen cel). Ook kun je via de inspector tijdelijk styles uitzetten om te zien of de event dan verschijnt.
+Controleer classes/namen: Zorg dat de CSS-class die je aan iftar-events geeft niet botst met bestaande Bootstrap classes. Bijvoorbeeld een class genaamd .event is op zichzelf prima, maar een class als .label of .badge kan in Bootstrap specifieke styling of hiding hebben. Gebruik unieke, beschrijvende classnamen voor eigen styles (bv. .calendar-event.iftar).
+Console voor JavaScript: Open de browserconsole (F12, tab “Console”) en refresh de pagina. Let op eventuele foutmeldingen (rood gemarkeerd). Een JavaScript error kan bijvoorbeeld verwijzen naar een functie die undefined is. Los dergelijke fouten op; ze kunnen de uitvoer van overige scripts blokkeren. Als je eigen script de kalender markup manipuleert, voeg dan console.log statements toe rond de kritieke stukken code om te zien of ze worden aangeroepen en of de juiste data binnenkomt.
+CSS specificity/opmaak fixen: Mochten de events wel in de DOM staan maar verkeerd opgemaakt zijn, pas de CSS aan. Bijvoorbeeld, als ze geen ruimte krijgen, geef ze een block-level element (zoals een <div> of <p> om de tekst) of voeg marges/toegestane overflow toe zodat de inhoud zichtbaar wordt.
+Herinitialisatie (indien van toepassing): Als je een kalenderbibliotheek gebruikt (bv. FullCalendar of bootstrap-calendar) die normaliter via JavaScript events tekent, zorg dan dat na toevoegen van een iftar-event de kalender opnieuw geladen of geüpdatet wordt. In een puur Jinja2-render scenario is dit niet nodig, maar in een gemengd scenario kan dit een stap zijn (bijvoorbeeld door na POST een redirect te doen zodat de pagina opnieuw rendert, of via AJAX de nieuwe event toe te voegen aan de kalenderweergave).
+4. Debugging Technieken
+Om erachter te komen waar het misgaat (server-side of client-side) en waarom de iftars niet zichtbaar zijn, kun je de volgende technieken gebruiken:
+Server-side logging: Plaats tijdelijk debugprints in je Flask-route vlak voor render_template, om te controleren dat de nieuw toegevoegde iftar in de data zit. Bijvoorbeeld:
+python
+Kopiëren
+app.logger.debug(f"Events voor kalender: {events}")
+of simpelweg print(events). Controleer de console/output voor het iftar-item. Als het daar al ontbreekt, zit het probleem in de database-query of logica vóór het renderen. Is het daar aanwezig, dan zit het probleem waarschijnlijk in de template of front-end.
+Jinja2 template debugging: Zoals eerder genoemd, kun je in de template zelf tijdelijk informatie tonen. Je kunt bijvoorbeeld bovenaan de kalender-template een blok toevoegen:
+jinja2
+Kopiëren
+<!-- Debug: {{ events|length }} events passed in -->
+of zelfs de hele lijst dumpen (bijvoorbeeld in een HTML-comment) om te zien of de iftar erbij staat. Dit bevestigt dat Jinja2 de data ontvangt. Vergeet niet deze debug-code later weer te verwijderen.
+HTML inspecteren: Open de pagina in de browser, klik rechts en kies “Element inspecteren” (of vergelijkbaar). Zoek in de DOM naar herkenbare inhoud van de iftar (bijvoorbeeld de naam van het event, of een uniek stukje tekst ervan). Je kunt in de devtools meestal met Ctrl+F de HTML doorzoeken. Geval A: Je vindt de tekst wel in de HTML, maar het is niet zichtbaar op de pagina. Dan is de data goed gerenderd, maar wordt hij verstopt door CSS/structuur. Inspecteer de parent elementen en CSS-styles (zie punt 2 en 3) om te zien waarom het niet zichtbaar is (bijv. verborgen, buiten beeld, etc.). Geval B: Je vindt de tekst niet in de HTML-output. Dan heeft de template het event niet gerenderd – focus op de Jinja2 logica (punt 1) om te zien waarom de loop/voorwaarde het niet output.
+Browserconsole voor errors: Open de JavaScript console en refresh de pagina. Kijk of er fouten verschijnen die gerelateerd kunnen zijn. Een JS-fout kan bijv. de HTML-manipulatie stoppen of styling niet toepassen. Los de fout op en test opnieuw.
+Gebruik van Developer Tools – DOM vs. Source: Realiseer je dat de “View Source” van de browser de ruwe HTML laat zien zoals door de server gestuurd, en de DOM-inspectie laat zien hoe de browser het heeft geïnterpreteerd/hersteld. Beide kunnen nuttig zijn. Als de ruwe source al geen iftar bevat, is het server-side; als de source wel iets toont maar in de DOM is het ergens anders terechtgekomen, is er waarschijnlijk een nesting-fout waardoor de browser de elementen verplaatst heeft. Moderne browsers kunnen bij fouten bijvoorbeeld een element onderaan de pagina plaatsen als het buiten een tabel rij valt. Vergelijk de source en DOM-weergave om zulke problemen te spotten​
+DEVELOPER.MOZILLA.ORG
+.
+HTML/CSS validators of formatters: Kopieer de relevante HTML sectie (de kalender tabel) in een tool die de structuur zichtbaar maakt of valideert. Dit kan helpen onopgemerkte fouten te vinden.
+Stap-voor-stap uitsluiten: Als het probleem hardnekkig is, probeer dan delen uit te schakelen om te zien wanneer de iftar wél verschijnt. Bijvoorbeeld, neem een kopie van de template en verwijder tijdelijk alle CSS-bestanden om te kijken of de tekst dan zichtbaar wordt (zo ja, dan was CSS de boosdoener). Of render de kalender eens met minimale data (één iftar event) in een vereenvoudigde template, om te controleren of de basisweergave werkt.
+Concrete code-aanpassingen op basis van debugging: Zodra je met bovengenoemde technieken de oorzaak te pakken hebt, kun je gericht de code aanpassen. Enkele mogelijke wijzigingen:
+Als de Jinja2-loop niet goed gaat, herzie de template-code (bijv. gebruik de juiste variabelen, verwijder overbodige conditions, of splits de logic zodat je per dag events ophaalt in plaats van binnen één grote loop).
+Indien de tabelstructuur fout was, pas de HTML in de template aan (voeg ontbrekende tags toe, verplaats event-invoeging naar de juiste plek binnen de <td>, etc.). Test daarna opnieuw.
+Vond je een CSS-class die alles verbergt (bijv. een per ongeluk meegegeven class="d-none"), verwijder of vervang die class voor de event-elementen. Evenzo, pas CSS aan als de styling onbedoeld de tekst onzichtbaar maakt (kleur, overflow).
+Bij JavaScript-problemen: verwijder of fix de kapotte script-functie. Bijvoorbeeld, als een script onterecht elementen verbergt of een error geeft, corrigeer de selector of logica. In veel gevallen van een statische kalender is JavaScript niet essentieel voor het tonen van de data, dus tijdelijk uitschakelen kan helpen bevestigen dat JS het probleem was.
+Conclusie
+Nieuwe iftar-events die niet zichtbaar zijn, vormen meestal een indicatie van een klein maar significant probleem in de weergaveketen. Door systematisch te kijken naar de Jinja2-rendering (komt de data goed binnen en wordt ze correct gebruikt?), de HTML-structuur (staat alles op de juiste plek in de tabel?), de invloed van CSS/JS (wordt iets verstopt of overschreven?), en door effectief te debuggen met developer tools en logging, kun je de oorzaak vinden. Pas de code vervolgens gericht aan – bijvoorbeeld door het corrigeren van de template-logica of het aanpassen van CSS/HTML-structuur – zodat de iftars voortaan correct in de kalender worden weergegeven. Met deze aanpak zou elke nieuw toegevoegde iftar zichtbaar moeten worden op de plek en manier zoals bedoeld.

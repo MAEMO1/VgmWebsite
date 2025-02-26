@@ -14,6 +14,17 @@
         Single Event IDs: {{ events.single|map(attribute='id')|list }}
         {% endif %}
     {% endfor %}
+
+    Current Date: {{ current_date }}
+    Family Only: {{ family_only }}
+    Selected Mosque: {{ selected_mosque }}
+    Iftar Type: {{ iftar_type }}
+
+    Calendar Structure:
+    {% for week in calendar %}
+        Week: {{ loop.index }}
+        Days: {{ week|join(', ') }}
+    {% endfor %}
     </pre>
 </div>
 {% endif %}
