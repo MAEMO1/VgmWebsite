@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 
 class PrayerTimeService:
     MAWAQIT_BASE_URL = "https://mawaqit.net"
+    ALADHAN_API_URL = "http://api.aladhan.com/v1/calendar"
 
     @staticmethod
     def get_prayer_times_for_range(source: str, start_date: date, end_date: date, city: str = "Gent") -> Optional[Dict[date, Dict]]:
@@ -14,13 +15,28 @@ class PrayerTimeService:
         Fetch prayer times for a date range
         """
         try:
-            # First try with the specific mosque ID for Gent
-            mosque_id = "moskee-gent-vlaanderen"  # Example ID, should be configured
-            logging.info(f"Trying direct mosque ID: {mosque_id}")
+            # First try Mawaqit
+            prayer_times = PrayerTimeService._get_mawaqit_times(start_date, end_date, city)
+            if prayer_times:
+                return prayer_times
 
+            # If Mawaqit fails, use Aladhan API as fallback
+            return PrayerTimeService._get_aladhan_times(start_date, end_date, city)
+
+        except Exception as e:
+            logging.error(f"Error fetching prayer times: {e}")
+            logging.error("Stack trace:", exc_info=True)
+            return None
+
+    @staticmethod
+    def _get_mawaqit_times(start_date: date, end_date: date, city: str) -> Optional[Dict[date, Dict]]:
+        """
+        Try to get prayer times from Mawaqit website
+        """
+        try:
             # Try multiple URL formats
             urls_to_try = [
-                f"{PrayerTimeService.MAWAQIT_BASE_URL}/en/mosque/{mosque_id}",
+                f"{PrayerTimeService.MAWAQIT_BASE_URL}/en/mosque/moskee-gent-vlaanderen",
                 f"{PrayerTimeService.MAWAQIT_BASE_URL}/en/{city.lower()}",
                 f"{PrayerTimeService.MAWAQIT_BASE_URL}/en/belgium/{city.lower()}"
             ]
@@ -41,16 +57,16 @@ class PrayerTimeService:
 
             if not mosque_found:
                 logging.error("Could not find mosque page with any URL format")
-                return PrayerTimeService._calculate_prayer_times(start_date, end_date, city)
+                return None
 
-            # Now get prayer times for this mosque
+            # Get prayer times
             times_url = f"{mosque_url}/prayer-times"
             logging.info(f"Fetching prayer times from: {times_url}")
 
             times_response = requests.get(times_url, headers=headers)
             if times_response.status_code != 200:
                 logging.error(f"Failed to get prayer times: {times_response.content}")
-                return PrayerTimeService._calculate_prayer_times(start_date, end_date, city)
+                return None
 
             # Parse prayer times from HTML
             prayer_times = {}
@@ -59,7 +75,7 @@ class PrayerTimeService:
 
             if not times_table:
                 logging.error("Prayer times table not found in response")
-                return PrayerTimeService._calculate_prayer_times(start_date, end_date, city)
+                return None
 
             for row in times_table.find_all('tr')[1:]:  # Skip header row
                 cols = row.find_all('td')
@@ -90,40 +106,73 @@ class PrayerTimeService:
                         logging.error(f"Row content: {cols}")
                         continue
 
-            if not prayer_times:
-                logging.error("No prayer times extracted from the table")
-                return PrayerTimeService._calculate_prayer_times(start_date, end_date, city)
-
             return prayer_times
 
         except Exception as e:
-            logging.error(f"Error fetching prayer times: {e}")
-            logging.error("Stack trace:", exc_info=True)
-            return PrayerTimeService._calculate_prayer_times(start_date, end_date, city)
+            logging.error(f"Error fetching Mawaqit times: {e}")
+            return None
 
     @staticmethod
-    def _calculate_prayer_times(start_date: date, end_date: date, city: str) -> Dict[date, Dict]:
+    def _get_aladhan_times(start_date: date, end_date: date, city: str) -> Dict[date, Dict]:
         """
-        Fallback method to calculate prayer times when API fails
-        Uses a basic calculation method as fallback
+        Get prayer times from Aladhan API using Hanafi calculation method
         """
-        logging.info("Using fallback prayer time calculation")
+        logging.info("Using Aladhan API as fallback")
         prayer_times = {}
 
-        # Example fixed times for testing - these should be properly calculated
-        test_times = {
-            'fajr': '05:30',
-            'sunrise': '07:00',
-            'dhuhr': '12:30',
-            'asr': '15:30',
-            'maghrib': '18:00',
-            'isha': '19:30'
-        }
+        try:
+            # Gent coordinates
+            latitude = 51.0543422
+            longitude = 3.7174243
 
-        current_date = start_date
-        while current_date <= end_date:
-            prayer_times[current_date] = test_times.copy()
-            current_date += timedelta(days=1)
+            # Calculate month and year for the API request
+            month = start_date.month
+            year = start_date.year
+
+            params = {
+                'latitude': latitude,
+                'longitude': longitude,
+                'method': 2,  # ISNA calculation method.  Note:  The intention specified Hanafi, but Aladhan uses a different method numbering.  ISNA is a common and close alternative.
+                'month': month,
+                'year': year,
+                'school': 1,  # Hanafi
+                'adjustment': 0
+            }
+
+            response = requests.get(PrayerTimeService.ALADHAN_API_URL, params=params)
+            if response.status_code == 200:
+                data = response.json()
+                for day_data in data.get('data', []):
+                    timings = day_data.get('timings', {})
+                    gregorian_date = day_data.get('date', {}).get('gregorian', {})
+
+                    try:
+                        day_date = datetime.strptime(
+                            gregorian_date.get('date', ''), 
+                            '%d-%m-%Y'
+                        ).date()
+
+                        # Only include dates within our requested range
+                        if start_date <= day_date <= end_date:
+                            prayer_times[day_date] = {
+                                'fajr': timings.get('Fajr', '').split(' ')[0],
+                                'sunrise': timings.get('Sunrise', '').split(' ')[0],
+                                'dhuhr': timings.get('Dhuhr', '').split(' ')[0],
+                                'asr': timings.get('Asr', '').split(' ')[0],
+                                'maghrib': timings.get('Maghrib', '').split(' ')[0],
+                                'isha': timings.get('Isha', '').split(' ')[0]
+                            }
+                            logging.debug(f"Added Aladhan times for {day_date}")
+                    except Exception as e:
+                        logging.error(f"Error processing Aladhan day data: {e}")
+                        continue
+
+            else:
+                logging.error(f"Aladhan API error: {response.status_code}")
+                logging.error(f"Response: {response.text}")
+
+        except Exception as e:
+            logging.error(f"Error fetching Aladhan times: {e}")
 
         return prayer_times
 
@@ -150,7 +199,7 @@ class PrayerTimeService:
         if not dates:
             return {}
 
-        # Process dates in smaller batches to avoid overwhelming the website
+        # Process dates in smaller batches to avoid overwhelming the API
         batch_size = 7  # Process a week at a time
         result = {}
 
