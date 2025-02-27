@@ -26,15 +26,29 @@ class PrayerTimeService:
             logging.info(f"Search request URL: {search_url}")
             logging.info(f"Search parameters: {search_params}")
 
-            search_response = requests.get(search_url, params=search_params)
+            # Add headers to specify JSON response
+            headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+
+            search_response = requests.get(search_url, params=search_params, headers=headers)
             logging.info(f"Search response status: {search_response.status_code}")
+
+            # Log raw response for debugging
+            logging.debug(f"Raw search response: {search_response.text}")
 
             if search_response.status_code != 200:
                 logging.error(f"Mosque search failed: {search_response.content}")
                 return None
 
-            search_data = search_response.json()
-            logging.debug(f"Search response data: {search_data}")
+            try:
+                search_data = search_response.json()
+                logging.debug(f"Search response data: {search_data}")
+            except Exception as je:
+                logging.error(f"Failed to parse search response JSON: {je}")
+                logging.error(f"Raw response content: {search_response.text}")
+                return None
 
             if not search_data or not search_data.get('data'):
                 logging.error("No mosques found in search results")
@@ -60,15 +74,23 @@ class PrayerTimeService:
             logging.info(f"Prayer times request URL: {times_url}")
             logging.info(f"Prayer times parameters: {times_params}")
 
-            times_response = requests.get(times_url, params=times_params)
+            times_response = requests.get(times_url, params=times_params, headers=headers)
             logging.info(f"Prayer times response status: {times_response.status_code}")
+
+            # Log raw response for debugging
+            logging.debug(f"Raw prayer times response: {times_response.text}")
 
             if times_response.status_code != 200:
                 logging.error(f"Failed to get prayer times: {times_response.content}")
                 return None
 
-            data = times_response.json()
-            logging.debug(f"Prayer times response data: {data}")
+            try:
+                data = times_response.json()
+                logging.debug(f"Prayer times response data: {data}")
+            except Exception as je:
+                logging.error(f"Failed to parse prayer times JSON: {je}")
+                logging.error(f"Raw response content: {times_response.text}")
+                return None
 
             prayer_times = {}
             for day_data in data.get('data', []):
@@ -97,6 +119,7 @@ class PrayerTimeService:
 
         except Exception as e:
             logging.error(f"Error fetching prayer times: {e}")
+            logging.error(f"Stack trace:", exc_info=True)
             return None
 
     @staticmethod
@@ -147,8 +170,8 @@ class PrayerTimeService:
                     logging.error(f"No prayer times found for date {request_date}")
                     result[request_date] = None
 
-        if None in result.values():
-            missing_dates = [d.strftime("%Y-%m-%d") for d, t in result.items() if t is None]
-            logging.error(f"Missing prayer times for dates: {missing_dates}")
+            if None in result.values():
+                missing_dates = [d.strftime("%Y-%m-%d") for d, t in result.items() if t is None]
+                logging.error(f"Missing prayer times for dates: {missing_dates}")
 
         return result
