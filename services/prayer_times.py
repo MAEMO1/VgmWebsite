@@ -6,27 +6,23 @@ import logging
 from bs4 import BeautifulSoup
 
 class PrayerTimeService:
-    MAWAQIT_BASE_URL = "https://mawaqit.net/api/2.0"
     ALADHAN_API_URL = "http://api.aladhan.com/v1/calendar"
+    MAWAQIT_BASE_URL = "https://mawaqit.net/api/2.0"  # Kept as backup
 
     @staticmethod
     def get_prayer_times_for_range(source: str, start_date: date, end_date: date, city: str = "Gent") -> Optional[Dict[date, Dict]]:
         """
-        Fetch prayer times for a date range
+        Fetch prayer times for a date range using Aladhan API with Diyanet calculation method
         """
         try:
-            # First try official Mawaqit API
-            prayer_times = PrayerTimeService._get_mawaqit_api_times(start_date, end_date, city)
+            # Use Aladhan API as primary source with Diyanet calculation method
+            prayer_times = PrayerTimeService._get_aladhan_times(start_date, end_date, city)
             if prayer_times:
                 return prayer_times
 
-            # If API fails, try scraping Mawaqit website
-            prayer_times = PrayerTimeService._get_mawaqit_website_times(start_date, end_date, city)
-            if prayer_times:
-                return prayer_times
-
-            # If both Mawaqit sources fail, use Aladhan API as fallback
-            return PrayerTimeService._get_aladhan_times(start_date, end_date, city)
+            # Fallback to Mawaqit only if Aladhan fails
+            logging.warning("Aladhan API failed, falling back to Mawaqit")
+            return PrayerTimeService._get_mawaqit_api_times(start_date, end_date, city)
 
         except Exception as e:
             logging.error(f"Error fetching prayer times: {e}")
@@ -185,13 +181,13 @@ class PrayerTimeService:
     @staticmethod
     def _get_aladhan_times(start_date: date, end_date: date, city: str) -> Dict[date, Dict]:
         """
-        Final fallback using Aladhan API
+        Get prayer times from Aladhan API using Diyanet calculation method
         """
-        logging.info("Using Aladhan API as final fallback")
+        logging.info("Using Aladhan API with Diyanet method")
         prayer_times = {}
 
         try:
-            # Gent coordinates
+            # Precise coordinates for Gent city center
             latitude = 51.0543422
             longitude = 3.7174243
 
@@ -202,16 +198,23 @@ class PrayerTimeService:
             params = {
                 'latitude': latitude,
                 'longitude': longitude,
-                'method': 2,  # ISNA method
+                'method': 5,  # Diyanet calculation method
                 'month': month,
                 'year': year,
+                'adjustment': 0,
                 'school': 1,  # Hanafi
-                'adjustment': 0
+                'midnightMode': 0,  # Standard midnight mode
+                'timezonestring': 'Europe/Brussels',
+                'latitudeAdjustmentMethod': 3  # Angle-based method
             }
 
+            logging.info(f"Requesting Aladhan API with params: {params}")
             response = requests.get(PrayerTimeService.ALADHAN_API_URL, params=params)
+
             if response.status_code == 200:
                 data = response.json()
+                logging.debug(f"Received data from Aladhan API: {data}")
+
                 for day_data in data.get('data', []):
                     timings = day_data.get('timings', {})
                     gregorian_date = day_data.get('date', {}).get('gregorian', {})
@@ -223,6 +226,7 @@ class PrayerTimeService:
                         ).date()
 
                         if start_date <= day_date <= end_date:
+                            # Remove trailing '(CET)', '(CEST)' from times
                             prayer_times[day_date] = {
                                 'fajr': timings.get('Fajr', '').split(' ')[0],
                                 'sunrise': timings.get('Sunrise', '').split(' ')[0],
@@ -231,12 +235,24 @@ class PrayerTimeService:
                                 'maghrib': timings.get('Maghrib', '').split(' ')[0],
                                 'isha': timings.get('Isha', '').split(' ')[0]
                             }
+                            logging.info(f"Added prayer times for {day_date}: {prayer_times[day_date]}")
                     except Exception as e:
-                        logging.error(f"Error processing Aladhan data: {e}")
+                        logging.error(f"Error processing Aladhan data for day: {e}")
+                        logging.error(f"Problematic day data: {day_data}")
                         continue
+
+            else:
+                logging.error(f"Aladhan API error: {response.status_code}")
+                logging.error(f"Error response: {response.text}")
+
+            if not prayer_times:
+                logging.error("No prayer times retrieved from Aladhan API")
+                return None
 
         except Exception as e:
             logging.error(f"Error with Aladhan API: {e}")
+            logging.error("Stack trace:", exc_info=True)
+            return None
 
         return prayer_times
 
@@ -263,30 +279,46 @@ class PrayerTimeService:
         if not dates:
             return {}
 
-        # Process in weekly batches
-        batch_size = 7
+        # Process in monthly batches to minimize API calls
         result = {}
+        current_month = None
+        month_dates = []
 
-        for i in range(0, len(dates), batch_size):
-            batch_dates = dates[i:i + batch_size]
-            start_date = min(batch_dates)
-            end_date = max(batch_dates)
+        for request_date in sorted(dates):
+            if current_month != request_date.month:
+                # Process previous month's batch
+                if month_dates:
+                    start_date = min(month_dates)
+                    end_date = max(month_dates)
+                    batch_times = PrayerTimeService.get_prayer_times_for_range(source, start_date, end_date, city)
 
-            logging.info(f"Processing batch from {start_date} to {end_date}")
+                    for date in month_dates:
+                        if batch_times and date in batch_times:
+                            result[date] = batch_times[date].get(prayer_name.lower())
+                        else:
+                            result[date] = None
+
+                # Start new month
+                current_month = request_date.month
+                month_dates = [request_date]
+            else:
+                month_dates.append(request_date)
+
+        # Process last month's batch
+        if month_dates:
+            start_date = min(month_dates)
+            end_date = max(month_dates)
             batch_times = PrayerTimeService.get_prayer_times_for_range(source, start_date, end_date, city)
 
-            for request_date in batch_dates:
-                if batch_times and request_date in batch_times:
-                    prayer_times = batch_times[request_date]
-                    result[request_date] = prayer_times.get(prayer_name.lower())
-                    if result[request_date] is None:
-                        logging.error(f"Prayer time {prayer_name} not found for {request_date}")
+            for date in month_dates:
+                if batch_times and date in batch_times:
+                    result[date] = batch_times[date].get(prayer_name.lower())
                 else:
-                    logging.error(f"No prayer times found for {request_date}")
-                    result[request_date] = None
+                    result[date] = None
 
-            if None in result.values():
-                missing_dates = [d.strftime("%Y-%m-%d") for d, t in result.items() if t is None]
-                logging.error(f"Missing prayer times for dates: {missing_dates}")
+        # Log any missing times
+        if None in result.values():
+            missing_dates = [d.strftime("%Y-%m-%d") for d, t in result.items() if t is None]
+            logging.error(f"Missing prayer times for dates: {missing_dates}")
 
         return result
