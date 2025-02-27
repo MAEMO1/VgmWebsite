@@ -9,7 +9,6 @@ from werkzeug.utils import secure_filename
 from app import db
 from models import User, IfterEvent, RamadanProgram, PrayerTime, RamadanQuranResource, RamadanVideo
 
-
 ramadan = Blueprint('ramadan', __name__)
 
 def get_ramadan_dates(year=2025):
@@ -181,6 +180,7 @@ def iftar_map():
     # Prepare events for the map and calendar
     map_events = []
 
+    # Populate events
     for event in events:
         if event.is_recurring:
             event_date = event.date
@@ -244,6 +244,40 @@ def iftar_map():
             'map_events': map_events
         })
 
+    # Create sorted events list for list view
+    sorted_events = []
+    for event in events:
+        # Add basic event info
+        event_dict = {
+            'type': 'single',
+            'mosque': event.mosque,
+            'date': event.date,
+            'start_time': event.start_time,
+            'end_time': event.end_time,
+            'location': event.location,
+            'is_family_friendly': event.is_family_friendly,
+            'registration_required': event.registration_required
+        }
+
+        if event.is_recurring:
+            event_dict['type'] = event.recurrence_type
+            # Add all occurrences within Ramadan
+            current_date = event.date
+            while current_date <= min(event.recurrence_end_date or ramadan_end, ramadan_end):
+                if ramadan_start <= current_date <= ramadan_end:
+                    event_copy = event_dict.copy()
+                    event_copy['date'] = current_date
+                    sorted_events.append(event_copy)
+                if event.recurrence_type == 'daily':
+                    current_date += timedelta(days=1)
+                else:  # weekly
+                    current_date += timedelta(days=7)
+        else:
+            sorted_events.append(event_dict)
+
+    # Sort events by date and time
+    sorted_events.sort(key=lambda x: (x['date'], x['start_time']))
+
     return render_template('ramadan/iftar_map.html',
                          calendar=cal,
                          calendar_events=calendar_events,
@@ -255,6 +289,7 @@ def iftar_map():
                          mosques=mosques,
                          google_maps_api_key=google_maps_api_key,
                          events_json=json.dumps(map_events),
+                         sorted_events=sorted_events,
                          ramadan_start=ramadan_start,
                          ramadan_end=ramadan_end)
 
