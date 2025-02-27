@@ -139,10 +139,6 @@ def iftar_map():
 
     # Get Ramadan dates
     ramadan_start, ramadan_end = get_ramadan_dates()
-    current_date = ramadan_start
-
-    # Get the calendar for Ramadan month
-    cal = calendar.monthcalendar(current_date.year, current_date.month)
 
     # Calculate period filter dates
     today = date.today()
@@ -159,63 +155,60 @@ def iftar_map():
         period_start = ramadan_start
         period_end = ramadan_end
 
-    # Build the base query
-    query = IfterEvent.query.filter(
-        IfterEvent.date >= period_start,
-        IfterEvent.date <= period_end
-    )
+    # Build the base query for actual events
+    base_query = IfterEvent.query
 
     # Apply filters
     if family_only:
-        query = query.filter(IfterEvent.is_family_friendly == True)
-
+        base_query = base_query.filter(IfterEvent.is_family_friendly == True)
     if selected_mosque:
-        query = query.filter(IfterEvent.mosque_id == selected_mosque)
-
+        base_query = base_query.filter(IfterEvent.mosque_id == selected_mosque)
     if iftar_type != 'all':
         if iftar_type == 'daily':
-            query = query.filter(IfterEvent.is_recurring == True, 
-                                  IfterEvent.recurrence_type == 'daily')
+            base_query = base_query.filter(IfterEvent.is_recurring == True, 
+                                       IfterEvent.recurrence_type == 'daily')
         elif iftar_type == 'weekly':
-            query = query.filter(IfterEvent.is_recurring == True, 
-                                  IfterEvent.recurrence_type == 'weekly')
+            base_query = base_query.filter(IfterEvent.is_recurring == True, 
+                                       IfterEvent.recurrence_type == 'weekly')
         elif iftar_type == 'single':
-            query = query.filter(IfterEvent.is_recurring == False)
+            base_query = base_query.filter(IfterEvent.is_recurring == False)
 
-    # Get all events for the period
-    events = query.all()
+    # Get all events
+    events = base_query.all()
 
-    # Create calendar events dictionary
+    # Initialize containers for processed events
     calendar_events = {}
     for day in (ramadan_start + timedelta(n) for n in range((ramadan_end - ramadan_start).days + 1)):
         calendar_events[day] = {
-            'daily': set(),  # Using sets to prevent duplicates
+            'daily': set(),
             'weekly': set(),
             'single': set()
         }
 
-    # Prepare events for the map and calendar
     map_events = []
     sorted_events = []
 
-    # Process all events
+    # Process each event
     for event in events:
+        event_dates = set()  # Keep track of processed dates to avoid duplicates
+
         if event.is_recurring:
-            event_date = event.date
-            while event_date <= min(event.recurrence_end_date or ramadan_end, ramadan_end):
-                if period_start <= event_date <= period_end:  # Check if date is within selected period
+            current_date = event.date
+            while current_date <= min(event.recurrence_end_date or ramadan_end, ramadan_end):
+                if period_start <= current_date <= period_end and current_date not in event_dates:
+                    event_dates.add(current_date)
                     event_type = event.recurrence_type
 
-                    # Add to calendar events
-                    if ramadan_start <= event_date <= ramadan_end:
-                        calendar_events[event_date][event_type].add(event.id)
+                    # Only add to calendar if within Ramadan period
+                    if ramadan_start <= current_date <= ramadan_end:
+                        calendar_events[current_date][event_type].add(event.id)
 
                     # Add to map events
                     map_events.append({
                         'type': event_type,
                         'id': event.id,
                         'mosque_name': event.mosque.mosque_name,
-                        'date': event_date.strftime('%Y-%m-%d'),
+                        'date': current_date.strftime('%Y-%m-%d'),
                         'start_time': event.start_time.strftime('%H:%M'),
                         'location': event.location,
                         'is_family_friendly': event.is_family_friendly,
@@ -223,11 +216,11 @@ def iftar_map():
                         'longitude': event.mosque.longitude
                     })
 
-                    # Add to sorted events for list view
+                    # Add to sorted events
                     sorted_events.append({
                         'type': event_type,
                         'mosque': event.mosque,
-                        'date': event_date,
+                        'date': current_date,
                         'start_time': event.start_time,
                         'end_time': event.end_time,
                         'location': event.location,
@@ -237,12 +230,15 @@ def iftar_map():
 
                 # Move to next occurrence
                 if event.recurrence_type == 'daily':
-                    event_date += timedelta(days=1)
+                    current_date += timedelta(days=1)
                 elif event.recurrence_type == 'weekly':
-                    event_date += timedelta(days=7)
-        else:
-            # Single event
-            if period_start <= event.date <= period_end:  # Check if date is within selected period
+                    current_date += timedelta(days=7)
+
+        else:  # Single event
+            if period_start <= event.date <= period_end and event.date not in event_dates:
+                event_dates.add(event.date)
+
+                # Only add to calendar if within Ramadan period
                 if ramadan_start <= event.date <= ramadan_end:
                     calendar_events[event.date]['single'].add(event.id)
 
@@ -295,14 +291,12 @@ def iftar_map():
         })
 
     return render_template('ramadan/iftar_map.html',
-                         calendar=cal,
                          calendar_events=calendar_events,
                          family_only=family_only,
                          iftar_type=iftar_type,
                          period=period,
                          selected_mosque=selected_mosque,
-                         current_date=current_date,
-                         today=date.today(),
+                         today=today,
                          mosques=mosques,
                          google_maps_api_key=google_maps_api_key,
                          events_json=json.dumps(map_events),
