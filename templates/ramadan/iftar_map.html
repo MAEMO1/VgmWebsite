@@ -183,7 +183,7 @@
             <!-- List View -->
             <div class="card">
                 <div class="card-header bg-white py-3">
-                    <h4 class="mb-0">{{ _('Iftar Evenementen') }}</h4>
+                    <h4 class="mb-0">{{ _('Iftar') }}</h4>
                 </div>
                 <div class="card-body">
                     {% set current_list_date = None %}
@@ -209,6 +209,11 @@
                                     <p class="mb-1">
                                         <i class="fas fa-map-marker-alt me-2"></i>
                                         {{ event.location }}
+                                        {% if event.women_entrance %}
+                                            <br>
+                                            <i class="fas fa-door-open me-2"></i>
+                                            {{ _('Gescheiden toegang beschikbaar') }}
+                                        {% endif %}
                                     </p>
                                 </div>
                                 <div>
