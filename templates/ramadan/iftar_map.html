@@ -1,35 +1,17 @@
 {% extends "base.html" %}
 
-<!-- Debug info -->
-{% if current_user.is_admin %}
-<div class="d-none">
-    <pre>
-    Calendar Events Debug:
-    {% for date, events in calendar_events.items() %}
-        {{ date }}:
-        Daily Events: {{ events.daily|length }}
-        Weekly Events: {{ events.weekly|length }}
-        Single Events: {{ events.single|length }}
-        {% if events.single %}
-        Single Event IDs: {{ events.single|map(attribute='id')|list }}
-        {% endif %}
-    {% endfor %}
-
-    Current Date: {{ current_date }}
-    Family Only: {{ family_only }}
-    Selected Mosque: {{ selected_mosque }}
-    Iftar Type: {{ iftar_type }}
-
-    Calendar Structure:
-    {% for week in calendar %}
-        Week: {{ loop.index }}
-        Days: {{ week|join(', ') }}
-    {% endfor %}
-    </pre>
-</div>
-{% endif %}
-
 {% block title %}{{ _('VGM Iftarkaart - Ramadan 1446/2025') }}{% endblock %}
+
+{% block styles %}
+<style>
+#map {
+    height: 400px;
+    width: 100%;
+    margin-bottom: 2rem;
+    border-radius: 8px;
+}
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="container-fluid py-4">
@@ -45,6 +27,13 @@
                     <i class="fas fa-plus"></i> {{ _('Voeg Iftar Toe') }}
                 </a>
                 {% endif %}
+            </div>
+
+            <!-- Map View -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div id="map"></div>
+                </div>
             </div>
 
             <!-- Filters -->
@@ -154,13 +143,6 @@
                                             {% set current_day = current_date.replace(day=day) %}
                                             {% set day_events = calendar_events.get(current_day, {'daily': [], 'weekly': [], 'single': []}) %}
 
-                                            <!-- Debug display -->
-                                            {% if current_user.is_admin %}
-                                            <div class="d-none">
-                                                Day: {{ day }}, Events: {{ day_events }}
-                                            </div>
-                                            {% endif %}
-
                                             <div class="h-100 d-flex flex-column justify-content-between border {% if current_day == today %}border-primary{% else %}border-light{% endif %} rounded p-2"
                                                  onclick="showDayDetails('{{ current_day.strftime("%Y-%m-%d") }}')"
                                                  style="cursor: pointer;">
@@ -219,7 +201,72 @@
 
 {% block scripts %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap" async defer></script>
 <script>
+let map;
+let markers = [];
+const events = {{ events_json|safe }};
+
+function initMap() {
+    // Default center on Netherlands
+    const netherlands = { lat: 52.1326, lng: 5.2913 };
+
+    map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 7,
+        center: netherlands,
+    });
+
+    // Add markers for all events
+    events.forEach(event => {
+        if (event.latitude && event.longitude) {
+            const marker = new google.maps.Marker({
+                position: { lat: event.latitude, lng: event.longitude },
+                map: map,
+                title: event.mosque_name,
+                icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    fillColor: getEventColor(event.type),
+                    fillOpacity: 1,
+                    strokeWeight: 0,
+                    scale: 8
+                }
+            });
+
+            const infowindow = new google.maps.InfoWindow({
+                content: `
+                    <div class="info-window">
+                        <h5>${event.mosque_name}</h5>
+                        <p>${event.date} - ${event.start_time}</p>
+                        <p>${event.location}</p>
+                        ${event.is_family_friendly ? '<span class="badge bg-success">Gezinsvriendelijk</span>' : ''}
+                        <br>
+                        <a href="#" onclick="showDayDetails('${event.date}')">Meer details</a>
+                    </div>
+                `
+            });
+
+            marker.addListener("click", () => {
+                infowindow.open(map, marker);
+            });
+
+            markers.push(marker);
+        }
+    });
+}
+
+function getEventColor(type) {
+    switch(type) {
+        case 'daily':
+            return '#198754'; // bg-success
+        case 'weekly':
+            return '#0d6efd'; // bg-primary
+        case 'single':
+            return '#ffc107'; // bg-warning
+        default:
+            return '#0d6efd';
+    }
+}
+
 function showDayDetails(date) {
     const modal = document.getElementById('dayDetailsModal');
     const title = document.getElementById('dayDetailsTitle');
