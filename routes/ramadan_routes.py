@@ -149,10 +149,10 @@ def iftar_map():
         period_start = today
         period_end = today + timedelta(days=2)
     elif period == 'week':
-        period_start = today - timedelta(days=today.weekday())  # Start of week (Monday)
-        period_end = period_start + timedelta(days=6)  # End of week (Sunday)
+        period_start = today
+        period_end = today + timedelta(days=6)
     else:  # 'all'
-        period_start = ramadan_start
+        period_start = today  # Changed from ramadan_start to today
         period_end = ramadan_end
 
     # Build the base query for actual events
@@ -193,13 +193,23 @@ def iftar_map():
         event_dates = set()  # Keep track of processed dates to avoid duplicates
 
         if event.is_recurring:
-            current_date = event.date
+            # For recurring events, start from the maximum of event.date and today
+            current_date = max(event.date, today)
+
             while current_date <= min(event.recurrence_end_date or ramadan_end, ramadan_end):
                 if period_start <= current_date <= period_end and current_date not in event_dates:
+                    # Skip dates that have already passed
+                    if current_date < today:
+                        if event.recurrence_type == 'daily':
+                            current_date += timedelta(days=1)
+                        elif event.recurrence_type == 'weekly':
+                            current_date += timedelta(days=7)
+                        continue
+
                     event_dates.add(current_date)
                     event_type = event.recurrence_type
 
-                    # Only add to calendar if within Ramadan period
+                    # Only add to calendar if within Ramadan period and not in the past
                     if ramadan_start <= current_date <= ramadan_end:
                         calendar_events[current_date][event_type].add(event.id)
 
@@ -235,6 +245,10 @@ def iftar_map():
                     current_date += timedelta(days=7)
 
         else:  # Single event
+            # Skip events in the past
+            if event.date < today:
+                continue
+
             if period_start <= event.date <= period_end and event.date not in event_dates:
                 event_dates.add(event.date)
 
@@ -291,18 +305,18 @@ def iftar_map():
         })
 
     return render_template('ramadan/iftar_map.html',
-                         calendar_events=calendar_events,
-                         family_only=family_only,
-                         iftar_type=iftar_type,
-                         period=period,
-                         selected_mosque=selected_mosque,
-                         today=today,
-                         mosques=mosques,
-                         google_maps_api_key=google_maps_api_key,
-                         events_json=json.dumps(map_events),
-                         sorted_events=sorted_events,
-                         ramadan_start=ramadan_start,
-                         ramadan_end=ramadan_end)
+                       calendar_events=calendar_events,
+                       family_only=family_only,
+                       iftar_type=iftar_type,
+                       period=period,
+                       selected_mosque=selected_mosque,
+                       today=today,
+                       mosques=mosques,
+                       google_maps_api_key=google_maps_api_key,
+                       events_json=json.dumps(map_events),
+                       sorted_events=sorted_events,
+                       ramadan_start=ramadan_start,
+                       ramadan_end=ramadan_end)
 
 @ramadan.route('/iftar/add', methods=['GET', 'POST'])
 @login_required
