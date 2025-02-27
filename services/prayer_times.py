@@ -5,9 +5,13 @@ from typing import Dict, Optional, List
 import logging
 from bs4 import BeautifulSoup
 
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 class PrayerTimeService:
     ALADHAN_API_URL = "http://api.aladhan.com/v1/calendar"
-    MAWAQIT_BASE_URL = "https://mawaqit.net/api/2.0"  # Kept as backup
+    MAWAQIT_BASE_URL = "https://mawaqit.net/api/2.0"
 
     @staticmethod
     def get_prayer_times_for_range(source: str, start_date: date, end_date: date, city: str = "Gent") -> Optional[Dict[date, Dict]]:
@@ -15,18 +19,20 @@ class PrayerTimeService:
         Fetch prayer times for a date range using Aladhan API with Diyanet calculation method
         """
         try:
-            # Use Aladhan API as primary source with Diyanet calculation method
-            prayer_times = PrayerTimeService._get_aladhan_times(start_date, end_date, city)
-            if prayer_times:
-                return prayer_times
+            # Use Aladhan API as primary source
+            logger.info(f"Fetching prayer times for {start_date} to {end_date} using {source}")
 
-            # Fallback to Mawaqit only if Aladhan fails
-            logging.warning("Aladhan API failed, falling back to Mawaqit")
+            if source == 'diyanet':
+                prayer_times = PrayerTimeService._get_aladhan_times(start_date, end_date, city)
+                if prayer_times:
+                    return prayer_times
+                logger.warning("Aladhan API failed, falling back to Mawaqit")
+
+            # Use Mawaqit as fallback or if specifically requested
             return PrayerTimeService._get_mawaqit_api_times(start_date, end_date, city)
 
         except Exception as e:
-            logging.error(f"Error fetching prayer times: {e}")
-            logging.error("Stack trace:", exc_info=True)
+            logger.error(f"Error fetching prayer times: {e}", exc_info=True)
             return None
 
     @staticmethod
@@ -46,22 +52,22 @@ class PrayerTimeService:
                 'User-Agent': 'Mozilla/5.0'
             }
 
-            logging.info(f"Searching for mosque in {city}")
+            logger.info(f"Searching for mosque in {city}")
             search_response = requests.get(search_url, params=search_params, headers=headers)
 
             if search_response.status_code != 200:
-                logging.error(f"Mosque search failed: {search_response.status_code}")
+                logger.error(f"Mosque search failed: {search_response.status_code}")
                 return None
 
             search_data = search_response.json()
             if not search_data.get('mosques'):
-                logging.error("No mosques found in search")
+                logger.error("No mosques found in search")
                 return None
 
             mosque = search_data['mosques'][0]
             mosque_uuid = mosque.get('uuid')
             if not mosque_uuid:
-                logging.error("No mosque UUID found")
+                logger.error("No mosque UUID found")
                 return None
 
             # Get prayer times for mosque
@@ -71,11 +77,11 @@ class PrayerTimeService:
                 'end': end_date.strftime('%Y-%m-%d')
             }
 
-            logging.info(f"Fetching prayer times for mosque {mosque_uuid}")
+            logger.info(f"Fetching prayer times for mosque {mosque_uuid}")
             times_response = requests.get(times_url, params=times_params, headers=headers)
 
             if times_response.status_code != 200:
-                logging.error(f"Failed to get prayer times: {times_response.status_code}")
+                logger.error(f"Failed to get prayer times: {times_response.status_code}")
                 return None
 
             times_data = times_response.json()
@@ -93,13 +99,13 @@ class PrayerTimeService:
                         'isha': day_data['isha']
                     }
                 except Exception as e:
-                    logging.error(f"Error processing day data: {e}")
+                    logger.error(f"Error processing day data: {e}")
                     continue
 
             return prayer_times
 
         except Exception as e:
-            logging.error(f"Error with Mawaqit API: {e}")
+            logger.error(f"Error with Mawaqit API: {e}")
             return None
 
     @staticmethod
@@ -122,7 +128,7 @@ class PrayerTimeService:
 
             mosque_found = False
             for url in urls_to_try:
-                logging.info(f"Trying URL: {url}")
+                logger.info(f"Trying URL: {url}")
                 response = requests.get(url, headers=headers)
                 if response.status_code == 200:
                     mosque_found = True
@@ -130,7 +136,7 @@ class PrayerTimeService:
                     break
 
             if not mosque_found:
-                logging.error("Could not find mosque page")
+                logger.error("Could not find mosque page")
                 return None
 
             # Get prayer times
@@ -138,7 +144,7 @@ class PrayerTimeService:
             times_response = requests.get(times_url, headers=headers)
 
             if times_response.status_code != 200:
-                logging.error(f"Failed to get prayer times page: {times_response.status_code}")
+                logger.error(f"Failed to get prayer times page: {times_response.status_code}")
                 return None
 
             # Parse prayer times from HTML
@@ -146,7 +152,7 @@ class PrayerTimeService:
             times_table = soup.find('table', {'class': ['prayer-times', 'timetable']})
 
             if not times_table:
-                logging.error("Prayer times table not found")
+                logger.error("Prayer times table not found")
                 return None
 
             prayer_times = {}
@@ -169,21 +175,21 @@ class PrayerTimeService:
                             'isha': cols[6].text.strip()
                         }
                     except Exception as e:
-                        logging.error(f"Error processing row: {e}")
+                        logger.error(f"Error processing row: {e}")
                         continue
 
             return prayer_times
 
         except Exception as e:
-            logging.error(f"Error scraping Mawaqit website: {e}")
+            logger.error(f"Error scraping Mawaqit website: {e}")
             return None
 
     @staticmethod
-    def _get_aladhan_times(start_date: date, end_date: date, city: str) -> Dict[date, Dict]:
+    def _get_aladhan_times(start_date: date, end_date: date, city: str) -> Optional[Dict[date, Dict]]:
         """
         Get prayer times from Aladhan API using Diyanet calculation method
         """
-        logging.info(f"Using Aladhan API with Diyanet method for period {start_date} to {end_date}")
+        logger.info(f"Using Aladhan API with Diyanet method for {start_date} to {end_date}")
         prayer_times = {}
 
         try:
@@ -197,7 +203,7 @@ class PrayerTimeService:
                 month = current_date.month
                 year = current_date.year
 
-                logging.info(f"Fetching prayer times for {year}-{month:02d}")
+                logger.info(f"Fetching prayer times for {year}-{month:02d}")
 
                 params = {
                     'latitude': latitude,
@@ -213,12 +219,12 @@ class PrayerTimeService:
                     'iso8601': True  # Use ISO format for better parsing
                 }
 
-                logging.info(f"Requesting Aladhan API with params: {params}")
+                logger.debug(f"Requesting Aladhan API with params: {params}")
                 response = requests.get(PrayerTimeService.ALADHAN_API_URL, params=params)
 
                 if response.status_code == 200:
                     data = response.json()
-                    logging.debug(f"Received data from Aladhan API for {year}-{month:02d}")
+                    logger.debug(f"Received data from Aladhan API for {year}-{month:02d}")
 
                     for day_data in data.get('data', []):
                         timings = day_data.get('timings', {})
@@ -231,7 +237,7 @@ class PrayerTimeService:
                             ).date()
 
                             if start_date <= day_date <= end_date:
-                                # Remove timezone indicators and use clean time strings
+                                # Clean time strings by removing timezone indicators
                                 prayer_times[day_date] = {
                                     'fajr': timings.get('Fajr', '').split(' ')[0],
                                     'sunrise': timings.get('Sunrise', '').split(' ')[0],
@@ -240,15 +246,15 @@ class PrayerTimeService:
                                     'maghrib': timings.get('Maghrib', '').split(' ')[0],
                                     'isha': timings.get('Isha', '').split(' ')[0]
                                 }
-                                logging.info(f"Added prayer times for {day_date}: {prayer_times[day_date]}")
+                                logger.info(f"Added prayer times for {day_date}: {prayer_times[day_date]}")
                         except Exception as e:
-                            logging.error(f"Error processing day data: {e}")
-                            logging.error(f"Problematic day data: {day_data}")
+                            logger.error(f"Error processing day data: {e}")
+                            logger.error(f"Problematic day data: {day_data}")
                             continue
 
                 else:
-                    logging.error(f"Aladhan API error: {response.status_code}")
-                    logging.error(f"Error response: {response.text}")
+                    logger.error(f"Aladhan API error: {response.status_code}")
+                    logger.error(f"Error response: {response.text}")
 
                 # Move to first day of next month
                 if current_date.month == 12:
@@ -257,12 +263,11 @@ class PrayerTimeService:
                     current_date = current_date.replace(month=current_date.month + 1, day=1)
 
             if not prayer_times:
-                logging.error("No prayer times retrieved from Aladhan API")
+                logger.error("No prayer times retrieved from Aladhan API")
                 return None
 
         except Exception as e:
-            logging.error(f"Error with Aladhan API: {e}")
-            logging.error("Stack trace:", exc_info=True)
+            logger.error(f"Error with Aladhan API: {e}", exc_info=True)
             return None
 
         return prayer_times
@@ -272,14 +277,14 @@ class PrayerTimeService:
         """
         Get specific prayer time for a date
         """
-        logging.info(f"Getting {prayer_name} time for {prayer_date}")
+        logger.info(f"Getting {prayer_name} time for {prayer_date}")
         times = PrayerTimeService.get_prayer_times_for_range(source, prayer_date, prayer_date, city)
 
         if times and prayer_date in times:
             prayer_times = times[prayer_date]
             if prayer_name.lower() in prayer_times:
                 return prayer_times[prayer_name.lower()]
-            logging.error(f"Prayer {prayer_name} not found in times")
+            logger.error(f"Prayer {prayer_name} not found in times")
         return None
 
     @staticmethod
@@ -289,6 +294,8 @@ class PrayerTimeService:
         """
         if not dates:
             return {}
+
+        logger.info(f"Fetching batch prayer times for {len(dates)} dates")
 
         # Process in monthly batches to minimize API calls
         result = {}
@@ -330,6 +337,6 @@ class PrayerTimeService:
         # Log any missing times
         if None in result.values():
             missing_dates = [d.strftime("%Y-%m-%d") for d, t in result.items() if t is None]
-            logging.error(f"Missing prayer times for dates: {missing_dates}")
+            logger.error(f"Missing prayer times for dates: {missing_dates}")
 
         return result
