@@ -4,14 +4,30 @@ from datetime import datetime, date, timedelta
 from typing import Dict, Optional, List
 import logging
 from bs4 import BeautifulSoup
+from services.ai_service import AIService
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 class PrayerTimeService:
-    ALADHAN_API_URL = "http://api.aladhan.com/v1/calendar"
-    MAWAQIT_BASE_URL = "https://mawaqit.net/api/2.0"
+    def __init__(self):
+        self.ai_service = AIService()
+        self.ALADHAN_API_URL = "http://api.aladhan.com/v1/calendar"
+        self.MAWAQIT_BASE_URL = "https://mawaqit.net/api/2.0"
+
+    async def analyze_time_variations(self, prayer_times: Dict) -> None:
+        """
+        Use Claude to analyze prayer time variations
+        """
+        try:
+            analysis = await self.ai_service.analyze_prayer_times(prayer_times)
+            if analysis:
+                logger.info(f"Prayer time analysis: {analysis}")
+                return analysis
+        except Exception as e:
+            logger.error(f"Error analyzing prayer times: {e}")
+            return None
 
     @staticmethod
     def get_prayer_times_for_range(source: str, start_date: date, end_date: date, city: str = "Gent") -> Optional[Dict[date, Dict]]:
@@ -19,7 +35,6 @@ class PrayerTimeService:
         Fetch prayer times for a date range using Aladhan API with Diyanet calculation method
         """
         try:
-            # Use Aladhan API as primary source
             logger.info(f"Fetching prayer times for {start_date} to {end_date} using {source}")
 
             if source == 'diyanet':
@@ -28,7 +43,6 @@ class PrayerTimeService:
                     return prayer_times
                 logger.warning("Aladhan API failed, falling back to Mawaqit")
 
-            # Use Mawaqit as fallback or if specifically requested
             return PrayerTimeService._get_mawaqit_api_times(start_date, end_date, city)
 
         except Exception as e:

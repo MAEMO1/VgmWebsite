@@ -14,6 +14,111 @@ class AIService:
         )
         logger.info("AIService initialized with Anthropic client")
 
+    async def analyze_calendar_issue(self, calendar_data: dict) -> Optional[str]:
+        """
+        Analyze calendar data for duplicate events and other issues
+        """
+        try:
+            prompt = f"""
+            Please analyze this calendar data for issues:
+
+            {calendar_data}
+
+            Focus on:
+            1. Identifying duplicate events
+            2. Validating event recurrence logic
+            3. Checking date range handling
+            4. Verifying event type categorization
+
+            Provide specific recommendations for:
+            1. Fixing duplicate entries
+            2. Improving recurrence handling
+            3. Optimizing date range processing
+            """
+
+            response = self.client.messages.create(
+                model="claude-3-5-sonnet-20241022",  # Using latest model
+                max_tokens=1024,
+                messages=[{"role": "user", "content": prompt}]
+            )
+
+            logger.info("Successfully received calendar analysis from Claude")
+            return response.content[0].text
+
+        except Exception as e:
+            logger.error(f"Error analyzing calendar data: {e}")
+            return None
+
+    async def analyze_prayer_times(self, prayer_data: dict) -> Optional[str]:
+        """
+        Analyze prayer time data for consistency and variation
+        """
+        try:
+            prompt = f"""
+            Please analyze this prayer time data:
+
+            {prayer_data}
+
+            Focus on:
+            1. Checking time variations between days
+            2. Validating calculation methods
+            3. Verifying timezone handling
+            4. Analyzing source consistency
+
+            Provide specific recommendations for:
+            1. Ensuring proper time variations
+            2. Improving API integration
+            3. Handling multiple prayer time sources
+            """
+
+            response = self.client.messages.create(
+                model="claude-3-5-sonnet-20241022",  # Using latest model
+                max_tokens=1024,
+                messages=[{"role": "user", "content": prompt}]
+            )
+
+            logger.info("Successfully received prayer time analysis from Claude")
+            return response.content[0].text
+
+        except Exception as e:
+            logger.error(f"Error analyzing prayer times: {e}")
+            return None
+
+    async def validate_calendar_logic(self, code_snippet: str) -> Optional[str]:
+        """
+        Validate calendar processing logic
+        """
+        try:
+            prompt = f"""
+            Please analyze this calendar processing code:
+
+            {code_snippet}
+
+            Focus on:
+            1. Event recurrence handling
+            2. Date range processing
+            3. Duplicate prevention
+            4. Data structure efficiency
+
+            Provide specific recommendations for:
+            1. Improving recurrence logic
+            2. Optimizing data structures
+            3. Preventing duplicate entries
+            """
+
+            response = self.client.messages.create(
+                model="claude-3-5-sonnet-20241022",  # Using latest model
+                max_tokens=1024,
+                messages=[{"role": "user", "content": prompt}]
+            )
+
+            logger.info("Successfully received code analysis from Claude")
+            return response.content[0].text
+
+        except Exception as e:
+            logger.error(f"Error validating calendar logic: {e}")
+            return None
+
     def get_translation_feedback(self, source_text: str, translated_text: str, source_lang: str, target_lang: str) -> Optional[str]:
         """
         Get AI feedback on translation quality
