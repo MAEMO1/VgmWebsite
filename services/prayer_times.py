@@ -198,14 +198,15 @@ class PrayerTimeService:
             params = {
                 'latitude': latitude,
                 'longitude': longitude,
-                'method': 5,  # Diyanet calculation method
+                'method': 13,  # Diyanet İşleri Başkanlığı method
                 'month': month,
                 'year': year,
                 'adjustment': 0,
                 'school': 1,  # Hanafi
                 'midnightMode': 0,  # Standard midnight mode
                 'timezonestring': 'Europe/Brussels',
-                'latitudeAdjustmentMethod': 3  # Angle-based method
+                'latitudeAdjustmentMethod': 3,  # Angle-based method
+                'iso8601': True  # Use ISO format for better parsing
             }
 
             logging.info(f"Requesting Aladhan API with params: {params}")
@@ -226,7 +227,7 @@ class PrayerTimeService:
                         ).date()
 
                         if start_date <= day_date <= end_date:
-                            # Remove trailing '(CET)', '(CEST)' from times
+                            # Remove timezone indicators and use clean time strings
                             prayer_times[day_date] = {
                                 'fajr': timings.get('Fajr', '').split(' ')[0],
                                 'sunrise': timings.get('Sunrise', '').split(' ')[0],
@@ -237,7 +238,7 @@ class PrayerTimeService:
                             }
                             logging.info(f"Added prayer times for {day_date}: {prayer_times[day_date]}")
                     except Exception as e:
-                        logging.error(f"Error processing Aladhan data for day: {e}")
+                        logging.error(f"Error processing day data: {e}")
                         logging.error(f"Problematic day data: {day_data}")
                         continue
 

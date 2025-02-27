@@ -204,18 +204,20 @@ def iftar_map():
                     current_date += timedelta(days=days_to_next)
 
             while current_date <= min(event.recurrence_end_date or ramadan_end, ramadan_end):
+                # Generate a unique key for this occurrence
                 date_key = (event.id, current_date)
+
+                # Only process if within period and not already processed
                 if period_start <= current_date <= period_end and date_key not in processed_dates:
                     processed_dates.add(date_key)
-                    event_type = event.recurrence_type
 
-                    # Only add to calendar if within Ramadan period
+                    # Add to calendar events if within Ramadan period
                     if ramadan_start <= current_date <= ramadan_end:
-                        calendar_events[current_date][event_type].add(event.id)
+                        calendar_events[current_date][event.recurrence_type].add(event.id)
 
                     # Add to map events
                     map_events.append({
-                        'type': event_type,
+                        'type': event.recurrence_type,
                         'id': event.id,
                         'mosque_name': event.mosque.mosque_name,
                         'date': current_date.strftime('%Y-%m-%d'),
@@ -228,7 +230,7 @@ def iftar_map():
 
                     # Add to sorted events
                     sorted_events.append({
-                        'type': event_type,
+                        'type': event.recurrence_type,
                         'mosque': event.mosque,
                         'date': current_date,
                         'start_time': event.start_time,
@@ -238,7 +240,7 @@ def iftar_map():
                         'registration_required': event.registration_required
                     })
 
-                # Move to next occurrence
+                # Move to next occurrence based on recurrence type
                 if event.recurrence_type == 'daily':
                     current_date += timedelta(days=1)
                 elif event.recurrence_type == 'weekly':
@@ -249,14 +251,18 @@ def iftar_map():
             if event.date < today:
                 continue
 
+            # Generate a unique key for this event
             date_key = (event.id, event.date)
+
+            # Only process if within period and not already processed
             if period_start <= event.date <= period_end and date_key not in processed_dates:
                 processed_dates.add(date_key)
 
-                # Only add to calendar if within Ramadan period
+                # Add to calendar events if within Ramadan period
                 if ramadan_start <= event.date <= ramadan_end:
                     calendar_events[event.date]['single'].add(event.id)
 
+                # Add to map events
                 map_events.append({
                     'type': 'single',
                     'id': event.id,
@@ -269,6 +275,7 @@ def iftar_map():
                     'longitude': event.mosque.longitude
                 })
 
+                # Add to sorted events
                 sorted_events.append({
                     'type': 'single',
                     'mosque': event.mosque,
