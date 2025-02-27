@@ -255,6 +255,33 @@ def iftar_map():
                     'longitude': event.mosque.longitude
                 })
 
+    # Prepare sorted events for list view
+    sorted_events = []
+    for event in events:
+        if event.is_recurring:
+            # Calculate all dates this event occurs on within the month
+            event_date = event.date
+            while event_date <= (event.recurrence_end_date or last_day) and event_date <= last_day:
+                if event_date >= first_day:
+                    event_copy = event
+                    event_copy.date = event_date  # Temporarily set the date for sorting
+                    event_copy.type = event.recurrence_type
+                    sorted_events.append(event_copy)
+
+                # Move to next occurrence
+                if event.recurrence_type == 'daily':
+                    event_date += timedelta(days=1)
+                elif event.recurrence_type == 'weekly':
+                    event_date += timedelta(days=7)
+        else:
+            # Single event
+            if first_day <= event.date <= last_day:
+                event.type = 'single'
+                sorted_events.append(event)
+
+    # Sort events by date and time
+    sorted_events.sort(key=lambda x: (x.date, x.start_time))
+
     # Get all mosques for filtering
     mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
 
@@ -273,7 +300,8 @@ def iftar_map():
                          today=date.today(),
                          mosques=mosques,
                          google_maps_api_key=google_maps_api_key,
-                         events_json=json.dumps(map_events))
+                         events_json=json.dumps(map_events),
+                         sorted_events=sorted_events)
 
 @ramadan.route('/iftar/add', methods=['GET', 'POST'])
 @login_required
@@ -366,7 +394,6 @@ def add_iftar():
                          mosques=mosques,
                          mosques_data=mosques_data,  # Pass serialized data
                          current_mosque=current_mosque)
-
 
 
 @ramadan.route('/iftar/<int:iftar_id>/edit', methods=['GET', 'POST'])
