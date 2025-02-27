@@ -1,0 +1,489 @@
+# VGM Iftar Systeem - Oplossingsplan
+
+## 1. Oplossing voor Dubbele Iftar Events
+
+### Probleem: Incorrecte recurrence-logica
+De huidige implementatie van terugkerende events creëert dubbele vermeldingen en plaatst events op incorrecte datums.
+
+### Voorgestelde oplossing:
+
+```python
+# 1. Verbeterde IfterCalendar klasse
+class IfterCalendar:
+    def __init__(self, db):
+        self.db = db
+        
+    def generate_event_instances(self, event):
+        """Genereer alle instanties van een terugkerend event zonder duplicaten"""
+        if not event.is_recurring:
+            return [event]  # Niet-terugkerend event direct teruggeven
+            
+        instances = []
+        start_date = event.start_date
+        end_date = event.end_date or (start_date + timedelta(days=30))  # Default periode van 30 dagen
+        
+        # Bepaal recurrence pattern
+        if event.recurrence_type == 'daily':
+            delta = timedelta(days=1)
+        elif event.recurrence_type == 'weekly':
+            delta = timedelta(days=7)
+        else:
+            # Andere recurrence patterns hier afhandelen
+            return [event]
+            
+        # Genereer unieke instances
+        current_date = start_date
+        seen_dates = set()  # Voor duplicate detection
+        
+        while current_date <= end_date:
+            if current_date not in seen_dates:
+                seen_dates.add(current_date)
+                
+                # Maak een nieuwe instance met de juiste datum
+                instance = copy.deepcopy(event)
+                instance.instance_date = current_date
+                instance.id = f"{event.id}_{current_date.strftime('%Y%m%d')}"
+                instances.append(instance)
+                
+            current_date += delta
+            
+        return instances
+    
+    def get_events_for_period(self, start_date, end_date):
+        """Haal events op voor een specifieke periode, zonder duplicaten"""
+        # Basis events ophalen
+        base_events = self.db.query(Event).filter(
+            (Event.start_date <= end_date) & 
+            ((Event.end_date >= start_date) | (Event.end_date.is_(None)))
+        ).all()
+        
+        # Unieke event instances genereren
+        unique_events = {}  # dictionary om duplicaten bij te houden
+        
+        for event in base_events:
+            instances = self.generate_event_instances(event)
+            
+            for instance in instances:
+                instance_date = instance.instance_date or instance.start_date
+                
+                # Alleen toevoegen als binnen bereik en nog niet gezien
+                if start_date <= instance_date <= end_date:
+                    key = f"{instance.original_id}_{instance_date.strftime('%Y%m%d')}"
+                    if key not in unique_events:
+                        unique_events[key] = instance
+                        
+        return list(unique_events.values())
+```
+
+### Implementatiestrategie:
+1. Refactor de bestaande IfterCalendar klasse met bovenstaande logica
+2. Voeg unit tests toe om verschillende scenario's te verifiëren
+3. Implementeer een migratiescript voor bestaande events
+4. Voeg validatie toe bij event-creatie
+
+## 2. Oplossing voor Inconsistente Gebedstijden
+
+### Probleem: Synchronisatie- en timingproblemen tussen API's
+
+### Voorgestelde oplossing:
+
+```python
+# 1. Verbeterde PrayerTimesService met fallback mechanisme
+class PrayerTimesService:
+    def __init__(self, cache_service):
+        self.cache_service = cache_service
+        self.diyanet_client = DiyanetClient()
+        self.mawaqit_client = MawaqitClient()
+        
+    async def get_prayer_times(self, date, location, mosque_id=None):
+        """Haal gebedstijden op met fallback mechanisme en caching"""
+        cache_key = f"prayer_times_{location}_{date.strftime('%Y%m%d')}"
+        
+        # Check cache eerst
+        cached_times = self.cache_service.get(cache_key)
+        if cached_times:
+            return cached_times
+            
+        prayer_times = None
+        errors = []
+        
+        # Primaire bron: Diyanet API
+        try:
+            prayer_times = await self.diyanet_client.get_prayer_times(date, location)
+        except Exception as e:
+            errors.append(f"Diyanet API error: {str(e)}")
+        
+        # Fallback naar Mawaqit indien nodig
+        if not prayer_times and mosque_id:
+            try:
+                prayer_times = await self.mawaqit_client.get_prayer_times(date, mosque_id)
+            except Exception as e:
+                errors.append(f"Mawaqit API error: {str(e)}")
+                
+        # Valideer resultaten
+        if prayer_times:
+            if self._validate_prayer_times(prayer_times):
+                # Cache resultaten voor 24 uur
+                self.cache_service.set(cache_key, prayer_times, expiry=60*60*24)
+                return prayer_times
+            else:
+                errors.append("Invalid prayer times format received")
+        
+        # Log fouten
+        if errors:
+            logger.error(f"Prayer times errors: {'; '.join(errors)}")
+            
+        # Return last known good data als fallback
+        return self.cache_service.get_last_known_good(location) or self._get_estimated_times(date, location)
+    
+    def _validate_prayer_times(self, prayer_times):
+        """Valideer dat de gebedstijden correct zijn geformatteerd"""
+        required_prayers = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha']
+        
+        # Check of alle verplichte gebeden aanwezig zijn
+        for prayer in required_prayers:
+            if prayer not in prayer_times:
+                return False
+                
+        # Valideer tijdformaat en volgorde
+        try:
+            times = []
+            for prayer in required_prayers:
+                time_str = prayer_times[prayer]
+                time_obj = datetime.strptime(time_str, "%H:%M").time()
+                times.append(time_obj)
+                
+            # Controleer of tijden in oplopende volgorde zijn
+            for i in range(1, len(times)):
+                if times[i] < times[i-1]:
+                    # Isha kan na middernacht zijn, dus speciale check
+                    if i == len(times)-1 and times[i].hour < 4:  # Isha voor Fajr
+                        continue
+                    return False
+                    
+            return True
+        except:
+            return False
+    
+    def _get_estimated_times(self, date, location):
+        """Bereken geschatte gebedstijden als alle bronnen falen"""
+        # Implementeer eenvoudige berekening gebaseerd op locatie en datum
+        # Dit is een absolute laatste redmiddel
+        pass
+```
+
+### Implementatiestrategie:
+1. Implementeer de verbeterde PrayerTimesService met fallback logica
+2. Voeg een CacheService toe met TTL en last-known-good mechanisme
+3. Implementeer logging van API-fouten voor monitoring
+4. Voeg clients toe voor Diyanet en Mawaqit API's met retry-logica
+5. Implementeer een validatiemechanisme voor gebedstijden
+
+## 3. Architectuurverbeteringen
+
+### Voorgestelde wijzigingen:
+
+```python
+# 1. Betere scheiding van verantwoordelijkheden
+# app/services/event_service.py
+class EventService:
+    def __init__(self, db, calendar_service):
+        self.db = db
+        self.calendar_service = calendar_service
+    
+    def create_event(self, event_data):
+        """Creëer een nieuw event met validatie"""
+        # Validatie
+        errors = self._validate_event_data(event_data)
+        if errors:
+            return False, errors
+            
+        # Event aanmaken
+        event = Event(**event_data)
+        self.db.add(event)
+        
+        try:
+            self.db.commit()
+            return True, event
+        except Exception as e:
+            self.db.rollback()
+            return False, [str(e)]
+    
+    def _validate_event_data(self, data):
+        """Valideer event data voor creatie/update"""
+        errors = []
+        
+        # Basis validatie
+        if not data.get('title'):
+            errors.append("Title is required")
+            
+        if not data.get('start_date'):
+            errors.append("Start date is required")
+            
+        # Recurrence validatie
+        if data.get('is_recurring'):
+            if not data.get('recurrence_type'):
+                errors.append("Recurrence type is required for recurring events")
+                
+            if not data.get('end_date'):
+                errors.append("End date is required for recurring events")
+                
+            # Controleer of de end_date na de start_date ligt
+            if data.get('end_date') and data.get('start_date'):
+                if data['end_date'] < data['start_date']:
+                    errors.append("End date must be after start date")
+        
+        return errors
+
+# 2. AsyncEventProcessor voor betere performance
+# app/services/async_event_processor.py
+class AsyncEventProcessor:
+    def __init__(self, db, prayer_service):
+        self.db = db
+        self.prayer_service = prayer_service
+        self.queue = asyncio.Queue()
+        self.is_running = False
+        
+    async def start(self):
+        """Start de event processor"""
+        self.is_running = True
+        asyncio.create_task(self._process_queue())
+        
+    async def stop(self):
+        """Stop de event processor"""
+        self.is_running = False
+        
+    async def enqueue_event_update(self, event_id):
+        """Voeg een event toe aan de queue voor asynchroon updaten"""
+        await self.queue.put(event_id)
+        
+    async def _process_queue(self):
+        """Verwerk events in de queue"""
+        while self.is_running:
+            try:
+                event_id = await self.queue.get()
+                event = self.db.query(Event).get(event_id)
+                
+                if event:
+                    # Update prayer times
+                    if event.mosque_id:
+                        prayer_times = await self.prayer_service.get_prayer_times(
+                            event.instance_date or event.start_date,
+                            event.location,
+                            event.mosque_id
+                        )
+                        
+                        # Update event met gebedstijden
+                        event.prayer_times = prayer_times
+                        self.db.commit()
+                        
+                self.queue.task_done()
+            except Exception as e:
+                logger.error(f"Error processing event {event_id}: {str(e)}")
+                self.queue.task_done()
+                
+            # Voorkom CPU thrashing
+            await asyncio.sleep(0.1)
+```
+
+### Implementatiestrategie:
+1. Implementeer de EventService en AsyncEventProcessor klassen
+2. Refactor bestaande code om deze services te gebruiken
+3. Voeg logging en monitoring toe
+4. Implementeer unit tests voor elk onderdeel
+
+## 4. Frontend Verbeteringen
+
+### Voorgestelde wijzigingen:
+
+```javascript
+// 1. Betere event rendering in kalender
+function renderCalendarEvents(events) {
+    // Reset bestaande events
+    calendar.removeAllEvents();
+    
+    // Groepeer events per datum/tijd om duplicaten te detecteren
+    const eventMap = new Map();
+    
+    events.forEach(event => {
+        const key = `${event.instance_date || event.start_date}_${event.title}_${event.mosque_id}`;
+        
+        // Alleen toevoegen als nog niet gezien
+        if (!eventMap.has(key)) {
+            eventMap.set(key, event);
+            
+            // Voeg toe aan kalender
+            calendar.addEvent({
+                id: event.id,
+                title: event.title,
+                start: event.instance_date || event.start_date,
+                allDay: event.all_day,
+                extendedProps: {
+                    description: event.description,
+                    mosque: event.mosque_name,
+                    prayerTimes: event.prayer_times
+                }
+            });
+        }
+    });
+}
+
+// 2. Verbeterde gebedstijden weergave
+function renderPrayerTimes(prayerTimes, container) {
+    if (!prayerTimes) {
+        container.innerHTML = '<div class="alert alert-warning">Gebedstijden niet beschikbaar</div>';
+        return;
+    }
+    
+    // Toon bron van gebedstijden
+    const source = prayerTimes.source || 'Onbekend';
+    
+    let html = `
+        <div class="prayer-times-card">
+            <div class="prayer-times-source">Bron: ${source}</div>
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Gebed</th>
+                        <th>Tijd</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+    
+    // Voeg tijden toe
+    const prayers = [
+        { key: 'fajr', name: 'Fajr' },
+        { key: 'sunrise', name: 'Zonsopgang' },
+        { key: 'dhuhr', name: 'Dhuhr' },
+        { key: 'asr', name: 'Asr' },
+        { key: 'maghrib', name: 'Maghrib' },
+        { key: 'isha', name: 'Isha' }
+    ];
+    
+    prayers.forEach(prayer => {
+        const time = prayerTimes[prayer.key] || '—';
+        html += `
+            <tr>
+                <td>${prayer.name}</td>
+                <td>${time}</td>
+            </tr>
+        `;
+    });
+    
+    html += `
+                </tbody>
+            </table>
+        </div>
+    `;
+    
+    container.innerHTML = html;
+}
+```
+
+### Implementatiestrategie:
+1. Update de JavaScript-code voor event rendering
+2. Verbeter de gebedstijden weergave
+3. Voeg client-side validatie toe voor formulieren
+4. Implementeer betere foutafhandeling en gebruikersfeedback
+
+## 5. Monitoring en Logging
+
+### Voorgestelde wijzigingen:
+
+```python
+# 1. Setup structured logging
+import logging
+import structlog
+from flask import Flask, g, request
+
+def setup_logging(app: Flask):
+    """Setup gestructureerde logging voor de applicatie"""
+    structlog.configure(
+        processors=[
+            structlog.stdlib.add_log_level,
+            structlog.stdlib.add_logger_name,
+            structlog.processors.TimeStamper(fmt="iso"),
+            structlog.processors.JSONRenderer(),
+        ],
+        context_class=dict,
+        logger_factory=structlog.stdlib.LoggerFactory(),
+    )
+    
+    # Request context processor
+    @app.before_request
+    def add_request_info():
+        g.start_time = time.time()
+        g.request_id = request.headers.get('X-Request-ID') or str(uuid.uuid4())
+        
+    # Request logging
+    @app.after_request
+    def log_request(response):
+        log = structlog.get_logger('api.request')
+        
+        request_time = time.time() - g.start_time
+        status_code = response.status_code
+        
+        log.info(
+            'api_request',
+            method=request.method,
+            path=request.path,
+            status_code=status_code,
+            duration_ms=int(request_time * 1000),
+            request_id=g.request_id,
+        )
+        
+        # Voeg request ID toe aan response headers
+        response.headers['X-Request-ID'] = g.request_id
+        return response
+        
+    # Error logging
+    @app.errorhandler(Exception)
+    def handle_exception(e):
+        log = structlog.get_logger('api.error')
+        
+        log.error(
+            'uncaught_exception',
+            exc_info=True,
+            request_id=g.get('request_id', 'unknown'),
+            url=request.path,
+            method=request.method,
+        )
+        
+        # Return appropriate error response
+        return jsonify({"error": "Internal server error"}), 500
+
+# 2. Add metrics collection
+from prometheus_flask_exporter import PrometheusMetrics
+
+def setup_metrics(app: Flask):
+    """Setup Prometheus metrics voor de applicatie"""
+    metrics = PrometheusMetrics(app)
+    
+    # Standaard metrics
+    metrics.info('app_info', 'Application info', version='1.0.0')
+    
+    # Custom metrics
+    prayer_time_fetch_duration = metrics.summary(
+        'prayer_time_fetch_duration_seconds',
+        'Time spent fetching prayer times',
+        labels={'source': lambda: request.view_args.get('source', 'unknown')}
+    )
+    
+    event_creation_counter = metrics.counter(
+        'event_creation_total',
+        'Number of events created',
+        labels={'recurring': lambda: 'true' if request.json.get('is_recurring') else 'false'}
+    )
+    
+    return metrics, {
+        'prayer_time_fetch_duration': prayer_time_fetch_duration,
+        'event_creation_counter': event_creation_counter
+    }
+```
+
+### Implementatiestrategie:
+1. Implementeer gestructureerde logging voor alle componenten
+2. Voeg Prometheus metrics toe voor monitoring van API en services
+3. Implementeer een dashboard voor real-time monitoring
+4. Configureer alerts voor kritieke fouten
