@@ -71,6 +71,33 @@
     font-size: 0.85rem;
 }
 
+.date-header {
+    background-color: #f8f9fa;
+    padding: 0.75rem 1rem;
+    margin-top: 1rem;
+    border-radius: 4px;
+    font-weight: 500;
+    color: #495057;
+}
+
+.list-view-item {
+    background: white;
+    border-left: 4px solid transparent;
+    margin-bottom: 0.5rem;
+    padding: 1rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.list-view-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.list-view-item.daily { border-left-color: #198754; }
+.list-view-item.weekly { border-left-color: #0d6efd; }
+.list-view-item.single { border-left-color: #ffc107; }
+
 .modal-body {
     max-height: 70vh;
     overflow-y: auto;
@@ -145,12 +172,60 @@
             </div>
         </div>
 
-        <!-- Main Content -->
         <div class="col-lg-7">
             <!-- Map View -->
             <div class="card mb-4">
                 <div class="card-body p-0">
                     <div id="map"></div>
+                </div>
+            </div>
+
+            <!-- List View -->
+            <div class="card">
+                <div class="card-header bg-white py-3">
+                    <h4 class="mb-0">{{ _('Iftar Evenementen') }}</h4>
+                </div>
+                <div class="card-body">
+                    {% set current_list_date = None %}
+                    {% for event in sorted_events %}
+                        {% if current_list_date != event.date %}
+                            {% set current_list_date = event.date %}
+                            <div class="date-header">
+                                {{ event.date.strftime('%A %d %B %Y')|title }}
+                            </div>
+                        {% endif %}
+
+                        <div class="list-view-item {{ event.type }}">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 class="mb-1">{{ event.mosque.mosque_name }}</h5>
+                                    <p class="mb-1">
+                                        <i class="far fa-clock me-2"></i>
+                                        {{ event.start_time.strftime('%H:%M') }}
+                                        {% if event.end_time %}
+                                            - {{ event.end_time.strftime('%H:%M') }}
+                                        {% endif %}
+                                    </p>
+                                    <p class="mb-1">
+                                        <i class="fas fa-map-marker-alt me-2"></i>
+                                        {{ event.location }}
+                                    </p>
+                                </div>
+                                <div>
+                                    {% if event.is_family_friendly %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-users"></i> {{ _('Gezinsvriendelijk') }}
+                                        </span>
+                                    {% endif %}
+                                    {% if event.registration_required %}
+                                        <span class="badge bg-info">
+                                            <i class="fas fa-clipboard-list"></i> {{ _('Registratie vereist') }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -252,7 +327,7 @@
 <script>
 let map;
 let markers = [];
-const events = {{ events_json|safe }};
+let events = {{ events_json|safe }};
 
 function initMap() {
     const netherlands = { lat: 52.1326, lng: 5.2913 };
@@ -271,7 +346,7 @@ function initMap() {
     updateMarkers(events);
 }
 
-function updateMarkers(events) {
+function updateMarkers(newEvents) {
     // Clear existing markers
     markers.forEach(marker => marker.setMap(null));
     markers = [];
@@ -279,7 +354,7 @@ function updateMarkers(events) {
     const bounds = new google.maps.LatLngBounds();
     let hasValidMarkers = false;
 
-    events.forEach(event => {
+    newEvents.forEach(event => {
         if (event.latitude && event.longitude) {
             hasValidMarkers = true;
             const position = { lat: event.latitude, lng: event.longitude };
@@ -320,7 +395,6 @@ function updateMarkers(events) {
     // Fit bounds if we have valid markers
     if (hasValidMarkers) {
         map.fitBounds(bounds);
-        // Don't zoom in too far on single markers
         const listener = google.maps.event.addListener(map, "idle", () => {
             if (map.getZoom() > 12) map.setZoom(12);
             google.maps.event.removeListener(listener);
@@ -372,7 +446,7 @@ function showDayDetails(date) {
                     html += `
                         <div class="card mb-3 border-${type === 'daily' ? 'success' : type === 'weekly' ? 'primary' : 'warning'}">
                             <div class="card-body">
-                                <h6 class="card-title">${event.mosque.mosque_name}</h6>
+                                <h6 class="card-title">${event.mosque_name}</h6>
                                 <p class="card-text">
                                     <i class="far fa-clock me-2"></i>${event.start_time}
                                     <br>
@@ -410,11 +484,11 @@ document.getElementById('filterForm').addEventListener('submit', async function(
 
         if (response.ok) {
             const data = await response.json();
+            events = data.map_events; // Update the global events variable
             updateMarkers(data.map_events);
 
-            // Update the URL without reloading the page
-            const newUrl = `${window.location.pathname}?${params.toString()}`;
-            window.history.pushState({ path: newUrl }, '', newUrl);
+            // Reload the page to update the calendar and list view
+            window.location.reload();
         }
     } catch (error) {
         console.error('Error updating events:', error);
