@@ -8,6 +8,7 @@ from flask_babel import _
 from werkzeug.utils import secure_filename
 from app import db
 from models import User, IfterEvent, RamadanProgram, PrayerTime, RamadanQuranResource, RamadanVideo
+from services.prayer_times import PrayerTimeService #added import
 
 ramadan = Blueprint('ramadan', __name__)
 
@@ -328,10 +329,6 @@ def add_iftar():
 
     if request.method == 'POST':
         try:
-            # Debug log: Print form data
-            print("\nProcessing Iftar Add Request:")
-            print(f"Form data: {request.form}")
-
             # Handle image upload
             image = request.files.get('iftar_image')
             image_url = None
@@ -346,27 +343,51 @@ def add_iftar():
             mosque_id = request.form.get('mosque_id') if current_user.is_admin else current_user.id
             mosque = User.query.get(mosque_id)
 
-            print(f"Creating iftar for mosque: {mosque.mosque_name} (ID: {mosque_id})")
-
-            # Create new iftar event
+            # Get the date and determine the start time based on time type
             date_str = request.form.get('date')
-            start_time_str = request.form.get('start_time')
-            end_time_str = request.form.get('end_time')
+            event_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+            time_type = request.form.get('time_type')
 
-            print(f"Date: {date_str}, Start time: {start_time_str}, End time: {end_time_str}")
+            if time_type == 'prayer':
+                # Get prayer time and calculate start time
+                prayer_name = request.form.get('prayer_name')
+                prayer_source = request.form.get('prayer_source')
+                prayer_offset = int(request.form.get('prayer_offset', 0))
+
+                # Get prayer time from service
+                prayer_time_str = PrayerTimeService.get_prayer_time(
+                    source=prayer_source,
+                    date=event_date,
+                    prayer_name=prayer_name,
+                    city="Gent"  # Default to Gent
+                )
+
+                if not prayer_time_str:
+                    flash(_('Kon de gebedstijd niet ophalen. Gebruik een specifiek tijdstip.'), 'error')
+                    return redirect(url_for('ramadan.add_iftar'))
+
+                # Convert prayer time string to time object and add offset
+                prayer_time = datetime.strptime(prayer_time_str, '%H:%M').time()
+                start_time = (datetime.combine(date.today(), prayer_time) + 
+                            timedelta(minutes=prayer_offset)).time()
+            else:
+                # Use specific time from form
+                start_time = datetime.strptime(request.form.get('start_time'), '%H:%M').time()
+
+            end_time = (datetime.strptime(request.form.get('end_time'), '%H:%M').time() 
+                       if request.form.get('end_time') else None)
 
             # Handle recurrence settings
             is_recurring = bool(request.form.get('is_recurring'))
             recurrence_type = request.form.get('recurrence_type') if is_recurring else None
-            recurrence_end_date = datetime.strptime(request.form.get('recurrence_end_date'), '%Y-%m-%d').date() if request.form.get('recurrence_end_date') else None
-
-            print(f"Recurrence settings - Is recurring: {is_recurring}, Type: {recurrence_type}, End date: {recurrence_end_date}")
+            recurrence_end_date = (datetime.strptime(request.form.get('recurrence_end_date'), '%Y-%m-%d').date() 
+                                 if request.form.get('recurrence_end_date') else None)
 
             iftar = IfterEvent(
                 mosque_id=mosque_id,
-                date=datetime.strptime(date_str, '%Y-%m-%d').date(),
-                start_time=datetime.strptime(start_time_str, '%H:%M').time(),
-                end_time=datetime.strptime(end_time_str, '%H:%M').time() if end_time_str else None,
+                date=event_date,
+                start_time=start_time,
+                end_time=end_time,
                 location=request.form.get('location') or mosque.get_full_address(),
                 capacity=int(request.form.get('capacity')) if request.form.get('capacity') else None,
                 is_family_friendly=bool(request.form.get('is_family_friendly')),
@@ -374,33 +395,33 @@ def add_iftar():
                 recurrence_type=recurrence_type,
                 recurrence_end_date=recurrence_end_date,
                 registration_required=bool(request.form.get('registration_required')),
-                registration_deadline=datetime.strptime(request.form.get('registration_deadline'), '%Y-%m-%dT%H:%M') if request.form.get('registration_deadline') else None,
+                registration_deadline=datetime.strptime(request.form.get('registration_deadline'), '%Y-%m-%dT%H:%M') 
+                                    if request.form.get('registration_deadline') else None,
                 dietary_options=bool(request.form.get('dietary_options')),
                 notes=request.form.get('notes'),
                 women_entrance=request.form.get('women_entrance'),
-                image_url=image_url
+                image_url=image_url,
+                prayer_based_timing=time_type == 'prayer',
+                prayer_name=prayer_name if time_type == 'prayer' else None,
+                prayer_source=prayer_source if time_type == 'prayer' else None,
+                prayer_offset=prayer_offset if time_type == 'prayer' else None
             )
 
             db.session.add(iftar)
             db.session.commit()
 
-            print(f"Successfully created iftar with ID: {iftar.id}")
-            flash(_('Iftar evenement succesvol toegevoegd.'), 'success')
+            flash(_('Iftar succesvol toegevoegd.'), 'success')
             return redirect(url_for('ramadan.iftar_map'))
 
         except Exception as e:
             db.session.rollback()
             print(f"Error adding iftar: {e}")
-            print(f"Exception details: {str(e.__class__.__name__)}")
-            import traceback
-            print(f"Traceback: {traceback.format_exc()}")
-            flash(_('Er is een fout opgetreden bij het toevoegen van het iftar evenement.'), 'error')
+            flash(_('Er is een fout opgetreden bij het toevoegen van de iftar.'), 'error')
 
     return render_template('ramadan/add_iftar.html', 
                          mosques=mosques,
-                         mosques_data=mosques_data,  # Pass serialized data
+                         mosques_data=mosques_data,
                          current_mosque=current_mosque)
-
 
 
 @ramadan.route('/iftar/<int:iftar_id>/edit', methods=['GET', 'POST'])

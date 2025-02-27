@@ -27,18 +27,51 @@
                     <input type="date" class="form-control" id="date" name="date" required>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="start_time" class="form-label">{{ _('Starttijd') }}</label>
-                            <input type="time" class="form-control" id="start_time" name="start_time" required>
+                <div class="mb-3">
+                    <label for="time_type" class="form-label">{{ _('Tijdstip Type') }}</label>
+                    <select class="form-select" id="time_type" name="time_type" required>
+                        <option value="specific">{{ _('Specifiek tijdstip') }}</option>
+                        <option value="prayer">{{ _('Na gebed') }}</option>
+                    </select>
+                </div>
+
+                <div id="specific_time_container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="start_time" class="form-label">{{ _('Starttijd') }}</label>
+                                <input type="time" class="form-control" id="start_time" name="start_time">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="end_time" class="form-label">{{ _('Eindtijd') }}</label>
+                                <input type="time" class="form-control" id="end_time" name="end_time">
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="end_time" class="form-label">{{ _('Eindtijd') }} <small class="text-muted">({{ _('Optioneel') }})</small></label>
-                            <input type="time" class="form-control" id="end_time" name="end_time">
-                        </div>
+                </div>
+
+                <div id="prayer_time_container" style="display: none;">
+                    <div class="mb-3">
+                        <label for="prayer_name" class="form-label">{{ _('Gebed') }}</label>
+                        <select class="form-select" id="prayer_name" name="prayer_name">
+                            <option value="maghrib">{{ _('Maghrib') }}</option>
+                            <option value="isha">{{ _('Isha') }}</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="prayer_offset" class="form-label">{{ _('Minuten na gebed') }}</label>
+                        <input type="number" class="form-control" id="prayer_offset" name="prayer_offset" 
+                               value="0" min="0" max="120">
+                        <small class="form-text">{{ _('Aantal minuten na het gebed') }}</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="prayer_source" class="form-label">{{ _('Gebedstijden Bron') }}</label>
+                        <select class="form-select" id="prayer_source" name="prayer_source">
+                            <option value="mawaqeet">{{ _('Mawaqeet') }}</option>
+                            <option value="diyanet">{{ _('Diyanet') }}</option>
+                        </select>
                     </div>
                 </div>
 
@@ -52,7 +85,7 @@
                 <div class="mb-3">
                     <label for="iftar_image" class="form-label">{{ _('Afbeelding') }}</label>
                     <input type="file" class="form-control" id="iftar_image" name="iftar_image" accept="image/png,image/jpeg">
-                    <small class="form-text">{{ _('Upload een afbeelding voor dit iftar evenement (PNG, JPG)') }}</small>
+                    <small class="form-text">{{ _('Upload een afbeelding voor dit iftar (PNG, JPG)') }}</small>
                 </div>
 
                 <div class="mb-3">
@@ -135,7 +168,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const recurringOptions = document.getElementById('recurring-options');
     const registrationRequired = document.getElementById('registration_required');
     const registrationOptions = document.getElementById('registration-options');
+    const timeType = document.getElementById('time_type');
+    const specificTimeContainer = document.getElementById('specific_time_container');
+    const prayerTimeContainer = document.getElementById('prayer_time_container');
 
+    // Handle recurring event options
     isRecurring.addEventListener('change', function() {
         recurringOptions.style.display = this.checked ? 'block' : 'none';
         if (this.checked) {
@@ -144,10 +181,26 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Handle registration options
     registrationRequired.addEventListener('change', function() {
         registrationOptions.style.display = this.checked ? 'block' : 'none';
         if (this.checked) {
             document.getElementById('registration_deadline').required = true;
+        }
+    });
+
+    // Handle time type selection
+    timeType.addEventListener('change', function() {
+        if (this.value === 'specific') {
+            specificTimeContainer.style.display = 'block';
+            prayerTimeContainer.style.display = 'none';
+            document.getElementById('start_time').required = true;
+            document.getElementById('prayer_name').required = false;
+        } else {
+            specificTimeContainer.style.display = 'none';
+            prayerTimeContainer.style.display = 'block';
+            document.getElementById('start_time').required = false;
+            document.getElementById('prayer_name').required = true;
         }
     });
 
@@ -166,6 +219,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     {% endif %}
+
+    // Initialize time type display on page load
+    timeType.dispatchEvent(new Event('change'));
 });
 </script>
 {% endblock %}

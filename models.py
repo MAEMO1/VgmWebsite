@@ -449,14 +449,20 @@ class IfterEvent(db.Model):
     start_time = db.Column(db.Time, nullable=False)
     end_time = db.Column(db.Time)
     location = db.Column(db.String(200))
-    women_entrance = db.Column(db.String(200))  # New field for women's entrance
+    women_entrance = db.Column(db.String(200))  # Specific entrance for women
     capacity = db.Column(db.Integer)
     is_family_friendly = db.Column(db.Boolean, default=True)
     registration_required = db.Column(db.Boolean, default=False)
     registration_deadline = db.Column(db.DateTime)
     dietary_options = db.Column(db.Boolean, default=False)
     notes = db.Column(db.Text)
-    image_url = db.Column(db.String(500))  # Add image_url field
+    image_url = db.Column(db.String(500))
+
+    # Prayer-based timing fields
+    prayer_based_timing = db.Column(db.Boolean, default=False)
+    prayer_name = db.Column(db.String(20))  # maghrib, isha
+    prayer_source = db.Column(db.String(20))  # mawaqeet, diyanet
+    prayer_offset = db.Column(db.Integer)  # minutes after prayer
 
     # Recurring event fields
     is_recurring = db.Column(db.Boolean, default=False)
