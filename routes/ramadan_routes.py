@@ -153,10 +153,10 @@ def iftar_map():
         period_start = today
         period_end = today + timedelta(days=6)
     else:  # 'all'
-        period_start = today  # Start from today
+        period_start = today
         period_end = ramadan_end
 
-    # Initialize containers for events
+    # Initialize fresh containers for the current period
     calendar_events = {}
     for day in (ramadan_start + timedelta(n) for n in range((ramadan_end - ramadan_start).days + 1)):
         calendar_events[day] = {
@@ -165,10 +165,12 @@ def iftar_map():
             'single': set()
         }
 
-    # Get base query for actual events
-    base_query = IfterEvent.query
+    map_events = []
+    sorted_events = []
+    processed_occurrences = set()  # Track unique event occurrences
 
-    # Apply filters
+    # Build and apply filters
+    base_query = IfterEvent.query
     if family_only:
         base_query = base_query.filter(IfterEvent.is_family_friendly == True)
     if selected_mosque:
@@ -183,47 +185,38 @@ def iftar_map():
         elif iftar_type == 'single':
             base_query = base_query.filter(IfterEvent.is_recurring == False)
 
-    # Get all events
-    events = base_query.all()
-
-    # Prepare containers for processed events
-    map_events = []
-    sorted_events = []
-    processed_dates = set()  # Track processed dates to prevent duplicates
-
-    # Process each event
-    for event in events:
-        # Skip events in the past
+    # Get events and process each one
+    for event in base_query.all():
+        # Skip past non-recurring events
         if not event.is_recurring and event.date < today:
             continue
 
-        # For recurring events
+        # Handle recurring events
         if event.is_recurring:
-            # Start from the event date or today, whichever is later
+            # Start from today or event start date, whichever is later
             current_date = max(event.date, today)
 
-            # For weekly events, find the next occurrence from today
+            # For weekly events, calculate next occurrence
             if event.recurrence_type == 'weekly' and current_date > event.date:
                 days_since_start = (current_date - event.date).days
                 days_to_next = 7 - (days_since_start % 7)
                 if days_to_next < 7:
                     current_date += timedelta(days=days_to_next)
 
-            # Process each occurrence
+            # Process occurrences within period
             while current_date <= min(event.recurrence_end_date or ramadan_end, period_end):
-                if current_date > period_end:
-                    break
+                occurrence_key = (event.id, current_date)
 
-                date_key = (event.id, current_date)
-                if date_key not in processed_dates:
-                    processed_dates.add(date_key)
+                # Only process if not already handled
+                if occurrence_key not in processed_occurrences:
+                    processed_occurrences.add(occurrence_key)
 
-                    # Add to calendar events if within Ramadan period
-                    if ramadan_start <= current_date <= ramadan_end:
-                        calendar_events[current_date][event.recurrence_type].add(event.id)
-
-                    # Add to map and sorted events
                     if period_start <= current_date <= period_end:
+                        # Add to calendar events if within Ramadan period
+                        if ramadan_start <= current_date <= ramadan_end:
+                            calendar_events[current_date][event.recurrence_type].add(event.id)
+
+                        # Add to map and sorted events
                         map_events.append({
                             'type': event.recurrence_type,
                             'id': event.id,
@@ -247,18 +240,19 @@ def iftar_map():
                             'registration_required': event.registration_required
                         })
 
-                # Move to next occurrence
+                # Move to next occurrence based on recurrence type
                 if event.recurrence_type == 'daily':
                     current_date += timedelta(days=1)
                 elif event.recurrence_type == 'weekly':
                     current_date += timedelta(days=7)
 
-        # For non-recurring events
+        # Handle single events
         else:
             if period_start <= event.date <= period_end:
-                date_key = (event.id, event.date)
-                if date_key not in processed_dates:
-                    processed_dates.add(date_key)
+                occurrence_key = (event.id, event.date)
+
+                if occurrence_key not in processed_occurrences:
+                    processed_occurrences.add(occurrence_key)
 
                     # Add to calendar events if within Ramadan period
                     if ramadan_start <= event.date <= ramadan_end:
@@ -302,9 +296,6 @@ def iftar_map():
     # Get all mosques for filtering
     mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
 
-    # Get Google Maps API key from environment
-    google_maps_api_key = os.environ.get('GOOGLE_MAPS_API_KEY')
-
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         # Return JSON response for AJAX requests
         return jsonify({
@@ -321,7 +312,7 @@ def iftar_map():
                        selected_mosque=selected_mosque,
                        today=today,
                        mosques=mosques,
-                       google_maps_api_key=google_maps_api_key,
+                       google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'),
                        events_json=json.dumps(map_events),
                        sorted_events=sorted_events,
                        ramadan_start=ramadan_start,
