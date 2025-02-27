@@ -10,6 +10,7 @@ from werkzeug.utils import secure_filename
 from app import db
 from models import User, IfterEvent, RamadanProgram, PrayerTime
 from services.prayer_times import PrayerTimeService
+from services.ifter_calendar import IfterCalendar
 from services.ai_service import AIService
 
 # Configure logging
@@ -17,30 +18,6 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 ramadan = Blueprint('ramadan', __name__)
-
-class IfterCalendar:
-    """Handles all iftar event processing and calendar management"""
-
-    def __init__(self, db):
-        self.db = db
-        self.prayer_service = PrayerTimeService()
-
-    def get_events_for_period(self, start_date, end_date, mosque_id=None, family_only=False, event_type='all'):
-        base_query = IfterEvent.query
-        if family_only:
-            base_query = base_query.filter(IfterEvent.is_family_friendly == True)
-        if mosque_id:
-            base_query = base_query.filter(IfterEvent.mosque_id == mosque_id)
-        if event_type != 'all':
-            if event_type == 'daily':
-                base_query = base_query.filter(IfterEvent.is_recurring == True, IfterEvent.recurrence_type == 'daily')
-            elif event_type == 'weekly':
-                base_query = base_query.filter(IfterEvent.is_recurring == True, IfterEvent.recurrence_type == 'weekly')
-            elif event_type == 'single':
-                base_query = base_query.filter(IfterEvent.is_recurring == False)
-        
-        events = base_query.filter(IfterEvent.date >= start_date, IfterEvent.date <= end_date).all()
-        return [event.to_dict() for event in events]
 
 
 @ramadan.route('/iftar-map')
@@ -72,7 +49,7 @@ def iftar_map():
             period_start = today
             period_end = ramadan_end
 
-        # Initialize calendar manager with database
+        # Initialize calendar manager
         calendar = IfterCalendar(db)
 
         # Get filtered events
@@ -108,7 +85,7 @@ def iftar_map():
         # Handle AJAX requests
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({
-                'events': [event for event in events if event['date'] >= today],
+                'events': events,
                 'prayer_times': prayer_times
             })
 
@@ -300,7 +277,7 @@ def add_iftar():
             start_date = datetime.strptime(request.form.get('date'), '%Y-%m-%d').date()
             is_recurring = bool(request.form.get('is_recurring'))
             recurrence_type = request.form.get('recurrence_type') if is_recurring else None
-            recurrence_end_date = (datetime.strptime(request.form.get('recurrence_end_date'), '%Y-%m-%d').date() 
+            recurrence_end_date = (datetime.strptime(request.form.get('recurrence_end_date'), '%Y-%m-%d').date()
                               if request.form.get('recurrence_end_date') else None)
 
             # Calculate all dates for recurring events
@@ -345,7 +322,7 @@ def add_iftar():
                     for event_date in dates:
                         # Get the specific prayer time for this date
                         prayer_time = datetime.strptime(prayer_times[event_date], '%H:%M').time()
-                        start_time = (datetime.combine(date.today(), prayer_time) + 
+                        start_time = (datetime.combine(date.today(), prayer_time) +
                                     timedelta(minutes=prayer_offset)).time()
 
                         iftar = IfterEvent(
@@ -357,7 +334,7 @@ def add_iftar():
                             capacity=int(request.form.get('capacity')) if request.form.get('capacity') else None,
                             is_family_friendly=bool(request.form.get('is_family_friendly')),
                             registration_required=bool(request.form.get('registration_required')),
-                            registration_deadline=datetime.strptime(request.form.get('registration_deadline'), '%Y-%m-%dT%H:%M') 
+                            registration_deadline=datetime.strptime(request.form.get('registration_deadline'), '%Y-%m-%dT%H:%M')
                                                 if request.form.get('registration_deadline') else None,
                             dietary_options=bool(request.form.get('dietary_options')),
                             notes=request.form.get('notes'),
@@ -382,7 +359,7 @@ def add_iftar():
                 # Handle specific time
                 try:
                     start_time = datetime.strptime(request.form.get('start_time'), '%H:%M').time()
-                    end_time = (datetime.strptime(request.form.get('end_time'), '%H:%M').time() 
+                    end_time = (datetime.strptime(request.form.get('end_time'), '%H:%M').time()
                                if request.form.get('end_time') else None)
 
                     # Create an iftar event for each date
@@ -396,7 +373,7 @@ def add_iftar():
                             capacity=int(request.form.get('capacity')) if request.form.get('capacity') else None,
                             is_family_friendly=bool(request.form.get('is_family_friendly')),
                             registration_required=bool(request.form.get('registration_required')),
-                            registration_deadline=datetime.strptime(request.form.get('registration_deadline'), '%Y-%m-%dT%H:%M') 
+                            registration_deadline=datetime.strptime(request.form.get('registration_deadline'), '%Y-%m-%dT%H:%M')
                                                 if request.form.get('registration_deadline') else None,
                             dietary_options=bool(request.form.get('dietary_options')),
                             notes=request.form.get('notes'),
@@ -429,7 +406,7 @@ def add_iftar():
             print(f"Error adding iftar: {e}")
             return redirect(url_for('ramadan.add_iftar'))
 
-    return render_template('ramadan/add_iftar.html', 
+    return render_template('ramadan/add_iftar.html',
                          mosques=mosques,
                          mosques_data=mosques_data,
                          current_mosque=current_mosque,
@@ -555,7 +532,7 @@ def analyze_calendar():
             'diyanet', ramadan_start, ramadan_end, 'Gent'
         )
 
-        # Run analysis 
+        # Run analysis
         calendar_analysis, prayer_analysis, code_analysis = analyze_issues(
             events, prayer_times
         )
