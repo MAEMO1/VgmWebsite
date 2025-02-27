@@ -153,10 +153,19 @@ def iftar_map():
         period_start = today
         period_end = today + timedelta(days=6)
     else:  # 'all'
-        period_start = today  # Changed from ramadan_start to today
+        period_start = today  # Start from today
         period_end = ramadan_end
 
-    # Build the base query for actual events
+    # Initialize containers for events
+    calendar_events = {}
+    for day in (ramadan_start + timedelta(n) for n in range((ramadan_end - ramadan_start).days + 1)):
+        calendar_events[day] = {
+            'daily': set(),
+            'weekly': set(),
+            'single': set()
+        }
+
+    # Get base query for actual events
     base_query = IfterEvent.query
 
     # Apply filters
@@ -177,50 +186,90 @@ def iftar_map():
     # Get all events
     events = base_query.all()
 
-    # Initialize containers for processed events
-    calendar_events = {}
-    for day in (ramadan_start + timedelta(n) for n in range((ramadan_end - ramadan_start).days + 1)):
-        calendar_events[day] = {
-            'daily': set(),
-            'weekly': set(),
-            'single': set()
-        }
-
+    # Prepare containers for processed events
     map_events = []
     sorted_events = []
-    processed_dates = set()  # Track all processed dates to prevent duplicates
+    processed_dates = set()  # Track processed dates to prevent duplicates
 
     # Process each event
     for event in events:
+        # Skip events in the past
+        if not event.is_recurring and event.date < today:
+            continue
+
+        # For recurring events
         if event.is_recurring:
-            # For recurring events, start from event date or today, whichever is later
+            # Start from the event date or today, whichever is later
             current_date = max(event.date, today)
 
-            # Calculate the weekly offset if needed
+            # For weekly events, find the next occurrence from today
             if event.recurrence_type == 'weekly' and current_date > event.date:
                 days_since_start = (current_date - event.date).days
                 days_to_next = 7 - (days_since_start % 7)
                 if days_to_next < 7:
                     current_date += timedelta(days=days_to_next)
 
-            while current_date <= min(event.recurrence_end_date or ramadan_end, ramadan_end):
-                # Generate a unique key for this occurrence
-                date_key = (event.id, current_date)
+            # Process each occurrence
+            while current_date <= min(event.recurrence_end_date or ramadan_end, period_end):
+                if current_date > period_end:
+                    break
 
-                # Only process if within period and not already processed
-                if period_start <= current_date <= period_end and date_key not in processed_dates:
+                date_key = (event.id, current_date)
+                if date_key not in processed_dates:
                     processed_dates.add(date_key)
 
                     # Add to calendar events if within Ramadan period
                     if ramadan_start <= current_date <= ramadan_end:
                         calendar_events[current_date][event.recurrence_type].add(event.id)
 
-                    # Add to map events
+                    # Add to map and sorted events
+                    if period_start <= current_date <= period_end:
+                        map_events.append({
+                            'type': event.recurrence_type,
+                            'id': event.id,
+                            'mosque_name': event.mosque.mosque_name,
+                            'date': current_date.strftime('%Y-%m-%d'),
+                            'start_time': event.start_time.strftime('%H:%M'),
+                            'location': event.location,
+                            'is_family_friendly': event.is_family_friendly,
+                            'latitude': event.mosque.latitude,
+                            'longitude': event.mosque.longitude
+                        })
+
+                        sorted_events.append({
+                            'type': event.recurrence_type,
+                            'mosque': event.mosque,
+                            'date': current_date,
+                            'start_time': event.start_time,
+                            'end_time': event.end_time,
+                            'location': event.location,
+                            'is_family_friendly': event.is_family_friendly,
+                            'registration_required': event.registration_required
+                        })
+
+                # Move to next occurrence
+                if event.recurrence_type == 'daily':
+                    current_date += timedelta(days=1)
+                elif event.recurrence_type == 'weekly':
+                    current_date += timedelta(days=7)
+
+        # For non-recurring events
+        else:
+            if period_start <= event.date <= period_end:
+                date_key = (event.id, event.date)
+                if date_key not in processed_dates:
+                    processed_dates.add(date_key)
+
+                    # Add to calendar events if within Ramadan period
+                    if ramadan_start <= event.date <= ramadan_end:
+                        calendar_events[event.date]['single'].add(event.id)
+
+                    # Add to map and sorted events
                     map_events.append({
-                        'type': event.recurrence_type,
+                        'type': 'single',
                         'id': event.id,
                         'mosque_name': event.mosque.mosque_name,
-                        'date': current_date.strftime('%Y-%m-%d'),
+                        'date': event.date.strftime('%Y-%m-%d'),
                         'start_time': event.start_time.strftime('%H:%M'),
                         'location': event.location,
                         'is_family_friendly': event.is_family_friendly,
@@ -228,64 +277,16 @@ def iftar_map():
                         'longitude': event.mosque.longitude
                     })
 
-                    # Add to sorted events
                     sorted_events.append({
-                        'type': event.recurrence_type,
+                        'type': 'single',
                         'mosque': event.mosque,
-                        'date': current_date,
+                        'date': event.date,
                         'start_time': event.start_time,
                         'end_time': event.end_time,
                         'location': event.location,
                         'is_family_friendly': event.is_family_friendly,
                         'registration_required': event.registration_required
                     })
-
-                # Move to next occurrence based on recurrence type
-                if event.recurrence_type == 'daily':
-                    current_date += timedelta(days=1)
-                elif event.recurrence_type == 'weekly':
-                    current_date += timedelta(days=7)
-
-        else:  # Single event
-            # Skip events in the past
-            if event.date < today:
-                continue
-
-            # Generate a unique key for this event
-            date_key = (event.id, event.date)
-
-            # Only process if within period and not already processed
-            if period_start <= event.date <= period_end and date_key not in processed_dates:
-                processed_dates.add(date_key)
-
-                # Add to calendar events if within Ramadan period
-                if ramadan_start <= event.date <= ramadan_end:
-                    calendar_events[event.date]['single'].add(event.id)
-
-                # Add to map events
-                map_events.append({
-                    'type': 'single',
-                    'id': event.id,
-                    'mosque_name': event.mosque.mosque_name,
-                    'date': event.date.strftime('%Y-%m-%d'),
-                    'start_time': event.start_time.strftime('%H:%M'),
-                    'location': event.location,
-                    'is_family_friendly': event.is_family_friendly,
-                    'latitude': event.mosque.latitude,
-                    'longitude': event.mosque.longitude
-                })
-
-                # Add to sorted events
-                sorted_events.append({
-                    'type': 'single',
-                    'mosque': event.mosque,
-                    'date': event.date,
-                    'start_time': event.start_time,
-                    'end_time': event.end_time,
-                    'location': event.location,
-                    'is_family_friendly': event.is_family_friendly,
-                    'registration_required': event.registration_required
-                })
 
     # Sort events by date and time
     sorted_events.sort(key=lambda x: (x['date'], x['start_time']))
