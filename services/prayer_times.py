@@ -3,9 +3,10 @@ import requests
 from datetime import datetime, date, timedelta
 from typing import Dict, Optional, List
 import logging
+from bs4 import BeautifulSoup
 
 class PrayerTimeService:
-    MAWAQIT_API_URL = "https://www.mawaqit.net/api/v2"
+    MAWAQIT_BASE_URL = "https://mawaqit.net"
 
     @staticmethod
     def get_prayer_times_for_range(source: str, start_date: date, end_date: date, city: str = "Gent") -> Optional[Dict[date, Dict]]:
@@ -13,113 +14,85 @@ class PrayerTimeService:
         Fetch prayer times for a date range
         """
         try:
-            # First get the mosque UUID using the search endpoint
+            # First get the mosque URL using the search endpoint
             logging.info(f"Searching for mosque in {city}")
-            search_url = f"{PrayerTimeService.MAWAQIT_API_URL}/search"
-            search_params = {
-                "query": city,
-                "type": "mosques",
-                "country": "BE",
-                "limit": 1
-            }
+            search_url = f"{PrayerTimeService.MAWAQIT_BASE_URL}/en/{city}"
 
             logging.info(f"Search request URL: {search_url}")
-            logging.info(f"Search parameters: {search_params}")
 
-            # Add headers to specify JSON response
+            # Add headers to mimic browser request
             headers = {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'User-Agent': 'Mozilla/5.0',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
             }
 
-            search_response = requests.get(search_url, params=search_params, headers=headers)
+            search_response = requests.get(search_url, headers=headers)
             logging.info(f"Search response status: {search_response.status_code}")
-
-            # Log raw response for debugging
-            logging.debug(f"Raw search response: {search_response.text}")
 
             if search_response.status_code != 200:
                 logging.error(f"Mosque search failed: {search_response.content}")
                 return None
 
-            try:
-                search_data = search_response.json()
-                logging.debug(f"Search response data: {search_data}")
-            except Exception as je:
-                logging.error(f"Failed to parse search response JSON: {je}")
-                logging.error(f"Raw response content: {search_response.text}")
+            # Parse HTML to get mosque ID
+            soup = BeautifulSoup(search_response.text, 'html.parser')
+            mosque_link = soup.find('a', href=lambda x: x and '/en/' in x and city.lower() in x.lower())
+
+            if not mosque_link:
+                logging.error("No mosque found in search results")
                 return None
 
-            if not search_data or not search_data.get('data'):
-                logging.error("No mosques found in search results")
-                return None
-
-            mosque = search_data['data'][0]
-            mosque_uuid = mosque.get('uuid')
-
-            if not mosque_uuid:
-                logging.error("No mosque UUID found in search result")
-                return None
-
-            logging.info(f"Found mosque UUID: {mosque_uuid}")
+            mosque_url = mosque_link['href']
+            mosque_id = mosque_url.split('/')[-1]
+            logging.info(f"Found mosque ID: {mosque_id}")
 
             # Now get prayer times for this mosque
             days = (end_date - start_date).days + 1
-            times_url = f"{PrayerTimeService.MAWAQIT_API_URL}/mosque/{mosque_uuid}/prayer-times"
-            times_params = {
-                "date": start_date.strftime("%Y-%m-%d"),
-                "days": days
-            }
+            times_url = f"{PrayerTimeService.MAWAQIT_BASE_URL}/prayer-times/{mosque_id}"
 
-            logging.info(f"Prayer times request URL: {times_url}")
-            logging.info(f"Prayer times parameters: {times_params}")
-
-            times_response = requests.get(times_url, params=times_params, headers=headers)
+            times_response = requests.get(times_url, headers=headers)
             logging.info(f"Prayer times response status: {times_response.status_code}")
-
-            # Log raw response for debugging
-            logging.debug(f"Raw prayer times response: {times_response.text}")
 
             if times_response.status_code != 200:
                 logging.error(f"Failed to get prayer times: {times_response.content}")
                 return None
 
-            try:
-                data = times_response.json()
-                logging.debug(f"Prayer times response data: {data}")
-            except Exception as je:
-                logging.error(f"Failed to parse prayer times JSON: {je}")
-                logging.error(f"Raw response content: {times_response.text}")
+            # Parse prayer times from HTML
+            prayer_times = {}
+            soup = BeautifulSoup(times_response.text, 'html.parser')
+            times_table = soup.find('table', class_='prayer-times')
+
+            if not times_table:
+                logging.error("Prayer times table not found in response")
                 return None
 
-            prayer_times = {}
-            for day_data in data.get('data', []):
-                try:
-                    day_date = datetime.strptime(day_data['date'], '%Y-%m-%d').date()
-                    times = day_data.get('times', {})
-                    prayer_times[day_date] = {
-                        'fajr': times.get('fajr'),
-                        'sunrise': times.get('sunrise'),
-                        'dhuhr': times.get('dhuhr'),
-                        'asr': times.get('asr'),
-                        'maghrib': times.get('maghrib'),
-                        'isha': times.get('isha')
-                    }
-                    logging.debug(f"Processed times for {day_date}: {prayer_times[day_date]}")
-                except Exception as e:
-                    logging.error(f"Error processing day data: {e}")
-                    logging.error(f"Problematic day data: {day_data}")
-                    continue
+            for row in times_table.find_all('tr')[1:]:  # Skip header row
+                cols = row.find_all('td')
+                if len(cols) >= 7:  # Date + 6 prayer times
+                    try:
+                        day_date = datetime.strptime(cols[0].text.strip(), '%d/%m/%Y').date()
+                        prayer_times[day_date] = {
+                            'fajr': cols[1].text.strip(),
+                            'sunrise': cols[2].text.strip(),
+                            'dhuhr': cols[3].text.strip(),
+                            'asr': cols[4].text.strip(),
+                            'maghrib': cols[5].text.strip(),
+                            'isha': cols[6].text.strip()
+                        }
+                        logging.debug(f"Processed times for {day_date}: {prayer_times[day_date]}")
+                    except Exception as e:
+                        logging.error(f"Error processing row: {e}")
+                        logging.error(f"Row content: {cols}")
+                        continue
 
             if not prayer_times:
-                logging.error("No prayer times found in response")
+                logging.error("No prayer times extracted from the table")
                 return None
 
             return prayer_times
 
         except Exception as e:
             logging.error(f"Error fetching prayer times: {e}")
-            logging.error(f"Stack trace:", exc_info=True)
+            logging.error("Stack trace:", exc_info=True)
             return None
 
     @staticmethod
@@ -145,7 +118,7 @@ class PrayerTimeService:
         if not dates:
             return {}
 
-        # Process dates in smaller batches to avoid overwhelming the API
+        # Process dates in smaller batches to avoid overwhelming the website
         batch_size = 7  # Process a week at a time
         result = {}
 
