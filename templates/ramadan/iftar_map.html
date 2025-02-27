@@ -142,6 +142,16 @@
                         </div>
 
                         <div class="col-md-3">
+                            <label for="period" class="form-label">{{ _('Periode') }}</label>
+                            <select class="form-select" name="period" id="period">
+                                <option value="all" {% if period == 'all' %}selected{% endif %}>{{ _('Volledige Ramadan') }}</option>
+                                <option value="day" {% if period == 'day' %}selected{% endif %}>{{ _('Vandaag') }}</option>
+                                <option value="three_days" {% if period == 'three_days' %}selected{% endif %}>{{ _('Komende 3 dagen') }}</option>
+                                <option value="week" {% if period == 'week' %}selected{% endif %}>{{ _('Deze week') }}</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
                             <label for="mosque_id" class="form-label">{{ _('Moskee') }}</label>
                             <select class="form-select" name="mosque_id" id="mosque_id">
                                 <option value="">{{ _('Alle Moskeeën') }}</option>
@@ -154,16 +164,13 @@
                         </div>
 
                         <div class="col-md-3 d-flex align-items-end">
-                            <div class="form-check">
+                            <div class="form-check me-3">
                                 <input type="checkbox" class="form-check-input" id="family_filter" name="filter" 
                                        value="family" {% if family_only %}checked{% endif %}>
                                 <label class="form-check-label" for="family_filter">
                                     {{ _('Alleen Gezinsvriendelijk') }}
                                 </label>
                             </div>
-                        </div>
-
-                        <div class="col-md-3 d-flex align-items-end">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-filter"></i> {{ _('Filter') }}
                             </button>

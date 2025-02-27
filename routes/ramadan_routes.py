@@ -134,6 +134,7 @@ def iftar_map():
     family_only = request.args.get('filter') == 'family'
     iftar_type = request.args.get('type', 'all')
     selected_mosque = request.args.get('mosque_id', type=int)
+    period = request.args.get('period', 'all')
 
     # Get Ramadan dates
     ramadan_start, ramadan_end = get_ramadan_dates()
@@ -142,10 +143,25 @@ def iftar_map():
     # Get the calendar for Ramadan month
     cal = calendar.monthcalendar(current_date.year, current_date.month)
 
+    # Calculate period filter dates
+    today = date.today()
+    if period == 'day':
+        period_start = today
+        period_end = today
+    elif period == 'three_days':
+        period_start = today
+        period_end = today + timedelta(days=2)
+    elif period == 'week':
+        period_start = today - timedelta(days=today.weekday())  # Start of week (Monday)
+        period_end = period_start + timedelta(days=6)  # End of week (Sunday)
+    else:  # 'all'
+        period_start = ramadan_start
+        period_end = ramadan_end
+
     # Build the base query
     query = IfterEvent.query.filter(
-        IfterEvent.date >= ramadan_start,
-        IfterEvent.date <= ramadan_end
+        IfterEvent.date >= period_start,
+        IfterEvent.date <= period_end
     )
 
     # Apply filters
@@ -283,6 +299,7 @@ def iftar_map():
                          calendar_events=calendar_events,
                          family_only=family_only,
                          iftar_type=iftar_type,
+                         period=period,
                          selected_mosque=selected_mosque,
                          current_date=current_date,
                          today=date.today(),
