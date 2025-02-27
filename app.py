@@ -33,11 +33,15 @@ def create_app():
     # Configure secret key
     app.secret_key = os.environ.get("SESSION_SECRET", "dev_key_123")
 
-    # Configure PostgreSQL database
+    # Configure PostgreSQL database with robust connection handling
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
     app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-        "pool_recycle": 300,
-        "pool_pre_ping": True,
+        "pool_pre_ping": True,  # Enable connection health checks
+        "pool_recycle": 300,    # Recycle connections every 5 minutes
+        "pool_timeout": 30,     # Connection timeout after 30 seconds
+        "pool_size": 20,        # Maximum number of connections
+        "max_overflow": 5,      # Allow 5 connections above pool_size when needed
+        "echo": True           # Log SQL queries for debugging
     }
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -57,39 +61,46 @@ def create_app():
     login_manager.login_message_category = 'info'
 
     with app.app_context():
-        # Import routes after app context is created
-        from routes import routes as main_routes
-        from routes.event_routes import events
-        from routes.obituary_routes import obituaries
-        from routes.blog_routes import blog
-        from routes.translation_routes import translation_bp
-        from routes.message_routes import messages
-        from routes.donation_routes import donations
-        from routes.ramadan_routes import ramadan
-
-        # Register blueprints
-        app.register_blueprint(main_routes)
-        app.register_blueprint(events, url_prefix='/events')
-        app.register_blueprint(obituaries, url_prefix='/obituaries')
-        app.register_blueprint(blog, url_prefix='/blog')
-        app.register_blueprint(translation_bp)
-        app.register_blueprint(messages, url_prefix='/messages')
-        app.register_blueprint(donations)
-        app.register_blueprint(ramadan, url_prefix='/ramadan')
-
         try:
-            # Import models and create tables
-            from models import User, Event, EventRegistration, EventNotification, PrayerTime, Obituary, ObituaryNotification, BlogPost, Message, FundraisingCampaign
-            db.create_all()
-            logger.info("Database tables created successfully")
+            # Import routes after app context is created
+            from routes import routes as main_routes
+            from routes.event_routes import events
+            from routes.obituary_routes import obituaries
+            from routes.blog_routes import blog
+            from routes.translation_routes import translation_bp
+            from routes.message_routes import messages
+            from routes.donation_routes import donations
+            from routes.ramadan_routes import ramadan
 
-            # Initialize mosques data
-            from routes.routes import initialize_mosques
-            initialize_mosques()
-            logger.info("Mosques initialized successfully")
+            # Register blueprints
+            app.register_blueprint(main_routes)
+            app.register_blueprint(events, url_prefix='/events')
+            app.register_blueprint(obituaries, url_prefix='/obituaries')
+            app.register_blueprint(blog, url_prefix='/blog')
+            app.register_blueprint(translation_bp)
+            app.register_blueprint(messages, url_prefix='/messages')
+            app.register_blueprint(donations)
+            app.register_blueprint(ramadan, url_prefix='/ramadan')
+
+            try:
+                # Import models and create tables
+                from models import User, Event, EventRegistration, EventNotification, PrayerTime, Obituary, ObituaryNotification, BlogPost, Message, FundraisingCampaign
+                db.create_all()
+                logger.info("Database tables created successfully")
+
+                # Initialize mosques data
+                from routes.routes import initialize_mosques
+                initialize_mosques()
+                logger.info("Mosques initialized successfully")
+
+            except Exception as e:
+                logger.error(f"Error during database initialization: {e}")
+                logger.error("Stack trace:", exc_info=True)
+                raise
 
         except Exception as e:
             logger.error(f"Error during app initialization: {e}")
+            logger.error("Stack trace:", exc_info=True)
             raise
 
         return app
