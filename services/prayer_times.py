@@ -85,8 +85,10 @@ class PrayerTimeService:
         Get specific prayer time for a single date
         """
         times = PrayerTimeService.get_prayer_times_for_range(source, prayer_date, prayer_date, city)
-        if times and prayer_date in times and prayer_name.lower() in times[prayer_date]:
-            return times[prayer_date][prayer_name.lower()]
+        if times and prayer_date in times:
+            prayer_times = times[prayer_date]
+            if prayer_name.lower() in prayer_times and prayer_times[prayer_name.lower()]:
+                return prayer_times[prayer_name.lower()]
         return None
 
     @staticmethod
@@ -97,21 +99,25 @@ class PrayerTimeService:
         if not dates:
             return {}
 
-        # Sort dates and get range
-        sorted_dates = sorted(dates)
-        start_date = sorted_dates[0]
-        end_date = sorted_dates[-1]
-
-        # Fetch all times in range
-        all_times = PrayerTimeService.get_prayer_times_for_range(source, start_date, end_date, city)
-
-        # Extract requested prayer times for specified dates
+        # Process dates in smaller batches to avoid overwhelming the API
+        batch_size = 30  # Process 30 days at a time
         result = {}
-        for request_date in dates:
-            if all_times and request_date in all_times:
-                result[request_date] = all_times[request_date].get(prayer_name.lower())
-            else:
-                result[request_date] = None
+
+        for i in range(0, len(dates), batch_size):
+            batch_dates = dates[i:i + batch_size]
+            start_date = min(batch_dates)
+            end_date = max(batch_dates)
+
+            # Fetch times for this batch
+            batch_times = PrayerTimeService.get_prayer_times_for_range(source, start_date, end_date, city)
+
+            # Extract requested prayer times for specified dates in this batch
+            for request_date in batch_dates:
+                if batch_times and request_date in batch_times:
+                    prayer_times = batch_times[request_date]
+                    result[request_date] = prayer_times.get(prayer_name.lower())
+                else:
+                    result[request_date] = None
 
         if None in result.values():
             logging.error(f"Missing prayer times for dates: {[d for d, t in result.items() if t is None]}")

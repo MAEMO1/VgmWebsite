@@ -175,10 +175,10 @@ def iftar_map():
     if iftar_type != 'all':
         if iftar_type == 'daily':
             query = query.filter(IfterEvent.is_recurring == True, 
-                              IfterEvent.recurrence_type == 'daily')
+                                  IfterEvent.recurrence_type == 'daily')
         elif iftar_type == 'weekly':
             query = query.filter(IfterEvent.is_recurring == True, 
-                              IfterEvent.recurrence_type == 'weekly')
+                                  IfterEvent.recurrence_type == 'weekly')
         elif iftar_type == 'single':
             query = query.filter(IfterEvent.is_recurring == False)
 
