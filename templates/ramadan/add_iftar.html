@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('Voeg Iftar Toe - Ramadan 1445/2024') }}{% endblock %}
+{% block title %}{{ _('Voeg iftar toe - Ramadan 1445/2024') }}{% endblock %}
 
 {% block content %}
 <div class="container py-4">
@@ -74,6 +74,24 @@
                 </div>
 
                 <div class="form-check mb-3">
+                    <input type="checkbox" class="form-check-input" id="registration_required" name="registration_required">
+                    <label class="form-check-label" for="registration_required">{{ _('Registratie vereist') }}</label>
+                </div>
+
+                <div id="registration-options" class="card mb-3" style="display: none;">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="registration_deadline" class="form-label">{{ _('Deadline voor registratie') }}</label>
+                            <input type="datetime-local" class="form-control" id="registration_deadline" name="registration_deadline">
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="dietary_options" name="dietary_options">
+                            <label class="form-check-label" for="dietary_options">{{ _('Dieetwensen mogelijk') }}</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-check mb-3">
                     <input type="checkbox" class="form-check-input" id="is_recurring" name="is_recurring">
                     <label class="form-check-label" for="is_recurring">{{ _('Terugkerend evenement') }}</label>
                 </div>
@@ -94,24 +112,6 @@
                     </div>
                 </div>
 
-                <div class="form-check mb-3">
-                    <input type="checkbox" class="form-check-input" id="registration_required" name="registration_required">
-                    <label class="form-check-label" for="registration_required">{{ _('Registratie vereist') }}</label>
-                </div>
-
-                <div id="registration-options" class="card mb-3" style="display: none;">
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <label for="registration_deadline" class="form-label">{{ _('Deadline voor registratie') }}</label>
-                            <input type="datetime-local" class="form-control" id="registration_deadline" name="registration_deadline">
-                        </div>
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="dietary_options" name="dietary_options">
-                            <label class="form-check-label" for="dietary_options">{{ _('Dieetwensen mogelijk') }}</label>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="mb-3">
                     <label for="notes" class="form-label">{{ _('Opmerkingen') }}</label>
                     <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
@@ -126,7 +126,6 @@
         </div>
     </div>
 </div>
-
 {% endblock %}
 
 {% block scripts %}
@@ -169,6 +168,4 @@ document.addEventListener('DOMContentLoaded', function() {
     {% endif %}
 });
 </script>
-{% endblock %}
-
 {% endblock %}
