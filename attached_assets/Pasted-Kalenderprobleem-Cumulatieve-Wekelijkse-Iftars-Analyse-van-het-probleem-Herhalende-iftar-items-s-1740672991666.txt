@@ -1,0 +1,78 @@
+Kalenderprobleem (Cumulatieve Wekelijkse Iftars)
+
+Analyse van het probleem
+
+Herhalende iftar-items stapelen zich op doordat de logica voor het vermijden van dubbele toevoegingen niet correct wordt toegepast. Hoewel er een processed_dates-set is voorzien om dubbele datums te filteren, wordt die waarschijnlijk telkens opnieuw geïnitialiseerd of verkeerd gebruikt. Dit betekent dat bij elke update of weekwissel de set leeg is en eerdere datums niet herkend worden, waardoor dezelfde iftar-events opnieuw worden toegevoegd ￼. Mogelijke oorzaken zijn:
+	•	Scope van processed_dates: Als de set binnen een functie of loop telkens opnieuw aangemaakt wordt, verliest hij zijn geheugen tussen oproepen. Dit zorgt ervoor dat eerder verwerkte datums niet in de set zitten op het moment van de volgende update, waardoor dubbele entries niet worden tegengehouden ￼.
+	•	Ophalen van events per week: De functie die de iftars ophaalt, haalt mogelijk cumulatief alle iftars tot en met die week op in plaats van alleen de nieuwe week. In week 2 zou je dan events van week 1 en week 2 terugkrijgen. Als de processed_dates-set niet persistent is, voegt de code week 1-items opnieuw toe (nu als duplicaten).
+	•	UI die events bijhoudt: Het kan zijn dat de kalender of UI eerder toegevoegde events niet wist bij het laden van een nieuwe week. Hierdoor blijven events van vorige weken staan en komen de nieuwe erbovenop, wat de illusie van opstapeling geeft.
+
+Aanbevolen oplossing
+
+Zorg ervoor dat elke iftar slechts één keer wordt toegevoegd door de levensduur en het gebruik van processed_dates te corrigeren, en voorkom dat vorige data steeds opnieuw verwerkt worden. Enkele concrete acties:
+	•	Houd processed_dates persistent: Initialiseer de processed_dates-set éénmalig (bijv. als globale variabele of in een hogere scope), in plaats van binnen de opvraag-loop. Zo onthoudt de applicatie welke datums al verwerkt zijn over meerdere updates ￼. Voorbeeld: definieer processed_dates = set() buiten de functie die iftars ophaalt, en controleer binnen de functie elke event-datum tegen deze set voordat je deze toevoegt. Voeg de datum toe aan de set zodra een nieuw event is verwerkt.
+	•	Unieke sleutel per iftar: Gebruik een eenduidige identifier (zoals een datumstring zonder tijd of een combinatie van datum+id) om te vergelijken. Het is belangrijk dat dezelfde iftar op twee momenten precies dezelfde sleutel heeft. Bijvoorbeeld: gebruik alleen de datum (YYYY-MM-DD) als key in processed_dates in plaats van een volledige timestamp met tijd, zodat kleine tijdsverschillen niet tot dubbele keys leiden.
+	•	Voorkom cumulatieve opvraging: Pas de logica aan zodat je per week alleen de events van die week ophaalt in plaats van cumulatief. Dan is het probleem van opstapeling grotendeels weg. Je kunt bijvoorbeeld bij het wisselen van week de lijst met getoonde iftars leegmaken voordat je de nieuwe week laadt. In code kan dat zo eruitzien:
+
+# Bij het laden van een nieuwe week:
+calendar_events.clear()             # bestaande events verwijderen
+processed_dates.clear()             # (indien je unieke accumulatie niet wenst over weken heen)
+for event in fetch_iftars_for(week):  # alleen events van die week ophalen
+    date = event.date
+    if date not in processed_dates:
+        calendar_events.append(event)
+        processed_dates.add(date)
+
+Hiermee begin je elke weekweergave vers, of behoud je alleen unieke events. Het gebruik van een set om verwerkte events bij te houden is een correct deduplicatiepatroon ￼, maar het moet consistent toegepast worden (dus niet elke keer resetten als je juist een cumulatieve lijst over meerdere weken wilt opbouwen).
+
+	•	Controleer de UI-refresh: Indien de UI of kalendercomponent events onthoudt, zorg dan dat je oude entries verwijdert bij het renderen van een nieuwe week. Dit voorkomt dat dezelfde iftar van vorige weken blijft staan. Veel kalenderbibliotheken bieden functies om events te verwijderen of te vervangen in plaats van steeds toe te voegen.
+
+Door bovenstaande aanpassingen zal elk iftar-event slechts één keer toegevoegd worden. De kern is dat de processed_dates-set zijn werk kan doen door hem niet onnodig te herinitialiseren en door consistente keys te gebruiken voor vergelijking ￼. Zo worden dubbele iftars effectief genegeerd en stapelen herhalingen niet langer op.
+
+Gebedstijdenprobleem (Identieke tijden op verschillende dagen)
+
+Analyse van het probleem
+
+Als de gebedstijden voor verschillende dagen identiek zijn, duidt dat erop dat de data per dag niet correct of niet dynamisch wordt opgehaald. In principe horen de tijden per dag te variëren, aangezien ze gebaseerd zijn op de positie van de zon die elke dag verandert ￼. Enkele mogelijke oorzaken:
+	•	Verkeerd API-gebruik: Waarschijnlijk wordt bij het opvragen van de Aladhan API steeds dezelfde datum of parameter gebruikt. Bijvoorbeeld, een loop die elke dag zou moeten ophalen maar waarbij de datum/timestamp niet geüpdatet wordt, resulteert in telkens dezelfde dagresultaten. Een ander voorbeeld is het gebruik van de verkeerde endpoint: wellicht wordt een maandkalender opgehaald maar vervolgens wordt telkens dezelfde dag eruit gelezen.
+	•	Statische tabel vs. berekening: De vraag stelt of de API een standaardtabel hanteert. De Aladhan API maakt gebruik van algoritmische berekeningen voor elke dag (op basis van astronomische formules en gekozen methode) en niet van een simpele statische tabel voor alle dagen ￼. Dat betekent dat onder gelijkblijvende instellingen de tijden van dag tot dag in het algemeen enkele minuten verschillen. Het feit dat in de output alle dagen exact gelijk zijn, wijst eerder op een bug in de applicatie-logica dan op een tekortkoming van de API zelf.
+	•	Controle van API-output: Ter verificatie kun je handmatig twee verschillende datums opvragen via de API voor dezelfde locatie. Je zou kleine verschillen moeten zien (bijvoorbeeld Fajr een paar minuten vroeger of later). Uit een voorbeeld van de Aladhan Ramadan-kalender blijkt duidelijk dat de gebedstijden per dag verschillen – Fajr op 1 maart 2025 is 05:14, terwijl op 2 maart 2025 Fajr 05:13 is, enzovoort ￼. Dit bevestigt dat de API dag-specifieke berekeningen geeft en dat identieke tijden op verschillende dagen ongewoon zijn.
+
+Aanbevolen oplossing
+
+Zorg ervoor dat de applicatie voor elke datum daadwerkelijk de unieke gegevens van die datum ophaalt en gebruikt. Enkele stappen en aanpassingen om dit probleem op te lossen:
+	•	Datumparameter dynamisch maken: Controleer de code die de API aanroept. Als er een loop is over meerdere dagen, zorg dat de datum (of timestamp) parameter voor elke iteratie wordt bijgewerkt. Bijvoorbeeld, in pseudo-code:
+
+from datetime import datetime, timedelta
+
+base_date = datetime(2025, 3, 1)
+for d in range(7):  # een week
+    date = base_date + timedelta(days=d)
+    timestamp = int(date.timestamp())
+    response = requests.get(f"https://api.aladhan.com/v1/timings/{timestamp}?latitude=...&longitude=...&method=...").json()
+    print(date.date(), response['data']['timings']['Fajr'])
+
+Hier zal timestamp elke iteratie anders zijn, waardoor de API voor elke dag berekent. Controleer dat in jouw code een vergelijkbaar mechanisme bestaat en dat niet per ongeluk steeds dezelfde datum of hetzelfde timestamp wordt gebruikt.
+
+	•	Gebruik de kalender-endpoint voor meerdere dagen: Aladhan biedt endpoints om een hele maand in één keer op te halen (bijv. v1/calendar met maand en jaar). Als je die gebruikt, krijg je een lijst van dagen terug. Zorg er dan voor dat je voor elke dag in die lijst de juiste tijden uitleest. Loop over de resultaten per dag en vul de UI voor elke datum afzonderlijk. Dit voorkomt dat je één set tijden per ongeluk voor alle dagen toepast. De Aladhan documentatie geeft aan dat je met de calendar-functie een lijst van dagelijkse timings ontvangt die je kunt itereren ￼.
+	•	Geen caching van verkeerde data: Controleer of er ergens caching plaatsvindt. Als bijvoorbeeld de eerste dagresultaten in een variabele zijn opgeslagen en vervolgens hergebruikt, zal elke dag hetzelfde tonen. Zorg dat elke dagverse data gebruikt wordt of cache per dag uniek (met includering van de datum in de cache key).
+	•	Validatie van methode en instelling: Hoewel het probleem hoogstwaarschijnlijk in de data-opvraag zit, verifieer ook dat de method (berekeningsmethode) en eventuele hoogte-aanpassingen correct zijn ingesteld. Een verkeerde configuratie zou niet leiden tot identieke tijden op verschillende dagen, maar wel tot afwijkingen van verwachtte lokale tijden. Als de tijden elke dag exact gelijk zijn tot op de minuut, is dat vrijwel zeker onjuist gebruik van de API, aangezien echte gebedstijden door het jaar heen dagelijks fluctueren ￼.
+
+Codewijziging voorbeeld: Stel dat de huidige code er ongeveer zo uitziet (pseudo-code):
+
+# Huidige (foutieve) aanpak – bijvoorbeeld:
+for day in dagen_range:
+    response = get_prayer_times(city)
+    toon_tijden_op_UI(response)
+
+waarbij get_prayer_times(city) misschien elke keer dezelfde dag (bijv. vandaag) ophaalt. Dit moet worden aangepast naar iets dat de dag specificeert, zoals:
+
+for datum in datums_range:
+    response = get_prayer_times(city, date=datum)
+    toon_tijden_op_UI(response)
+
+Zorg dat de functie of API-aanroep een datumparameter accepteert (of gebruik de timestamp in de URL zoals bij Aladhan).
+
+Concreet, voor de Aladhan API kun je de timings endpoint per dag aanroepen met een datum/timestamp, of de calendar endpoint per maand. Een correcte aanroep voor elke dag zou er bijvoorbeeld uitzien als: GET https://api.aladhan.com/v1/timingsByCity?city=Amsterdam&country=Netherlands&method=2&date=2023-03-01 (datum variërend per dag), of via timestamp zoals in het vorige codevoorbeeld. Controleer in de response of de datum overeenkomt met de gevraagde dag (de JSON bevat ook de gebruikte date).
+
+Door deze aanpassingen zullen de gebedstijden per dag weer kloppen. Je applicatie vraagt nu echt dag-specifieke informatie op in plaats van éénmalig gegevens te hergebruiken. Aangezien de gebedstijdenberekening afhankelijk is van de kalenderdatum en geografische positie ￼, en de Aladhan API de berekeningen voor elke dag uitvoert ￼, zullen de tijden bij correcte implementatie zichtbaar verschillen van dag tot dag (zoals verwacht, bijvoorbeeld Fajr en Maghrib die elke dag een paar minuten verschuiven ￼). Hiermee is het probleem van statische of identieke gebedstijden opgelost.
