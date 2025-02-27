@@ -134,7 +134,7 @@ def iftar_map():
     family_only = request.args.get('filter') == 'family'
     iftar_type = request.args.get('type', 'all')
     selected_mosque = request.args.get('mosque_id', type=int)
-    period = request.args.get('period', 'all')
+    period = request.args.get('period', 'three_days')  # Default to three days
 
     # Get Ramadan dates
     ramadan_start, ramadan_end = get_ramadan_dates()
@@ -241,24 +241,12 @@ def iftar_map():
                 })
 
     # Convert sets to lists for JSON serialization
-    for day in calendar_events:
-        calendar_events[day] = {
+    calendar_events_json = {}
+    for day, events_by_type in calendar_events.items():
+        calendar_events_json[day.strftime('%Y-%m-%d')] = {
             event_type: list(events)
-            for event_type, events in calendar_events[day].items()
+            for event_type, events in events_by_type.items()
         }
-
-    # Get all mosques for filtering
-    mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
-
-    # Get Google Maps API key from environment
-    google_maps_api_key = os.environ.get('GOOGLE_MAPS_API_KEY')
-
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        # Return JSON response for AJAX requests
-        return jsonify({
-            'calendar_events': calendar_events,
-            'map_events': map_events
-        })
 
     # Create sorted events list for list view
     sorted_events = []
@@ -293,6 +281,19 @@ def iftar_map():
 
     # Sort events by date and time
     sorted_events.sort(key=lambda x: (x['date'], x['start_time']))
+
+    # Get all mosques for filtering
+    mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
+
+    # Get Google Maps API key from environment
+    google_maps_api_key = os.environ.get('GOOGLE_MAPS_API_KEY')
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        # Return JSON response for AJAX requests
+        return jsonify({
+            'calendar_events': calendar_events_json,
+            'map_events': map_events
+        })
 
     return render_template('ramadan/iftar_map.html',
                          calendar=cal,

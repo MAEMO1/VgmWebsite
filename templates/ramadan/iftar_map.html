@@ -469,30 +469,15 @@ function showDayDetails(date) {
 }
 
 // Filter form handling
-document.getElementById('filterForm').addEventListener('submit', async function(e) {
+document.getElementById('filterForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
+    // Get form data
     const formData = new FormData(this);
     const params = new URLSearchParams(formData);
 
-    try {
-        const response = await fetch(`${window.location.pathname}?${params.toString()}`, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            events = data.map_events; // Update the global events variable
-            updateMarkers(data.map_events);
-
-            // Reload the page to update the calendar and list view
-            window.location.reload();
-        }
-    } catch (error) {
-        console.error('Error updating events:', error);
-    }
+    // Redirect to the filtered URL
+    window.location.href = `${window.location.pathname}?${params.toString()}`;
 });
 </script>
 {% endblock %}
