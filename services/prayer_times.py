@@ -183,7 +183,7 @@ class PrayerTimeService:
         """
         Get prayer times from Aladhan API using Diyanet calculation method
         """
-        logging.info("Using Aladhan API with Diyanet method")
+        logging.info(f"Using Aladhan API with Diyanet method for period {start_date} to {end_date}")
         prayer_times = {}
 
         try:
@@ -191,60 +191,70 @@ class PrayerTimeService:
             latitude = 51.0543422
             longitude = 3.7174243
 
-            # Calculate month and year
-            month = start_date.month
-            year = start_date.year
+            # Process each month in the date range
+            current_date = start_date
+            while current_date <= end_date:
+                month = current_date.month
+                year = current_date.year
 
-            params = {
-                'latitude': latitude,
-                'longitude': longitude,
-                'method': 13,  # Diyanet İşleri Başkanlığı method
-                'month': month,
-                'year': year,
-                'adjustment': 0,
-                'school': 1,  # Hanafi
-                'midnightMode': 0,  # Standard midnight mode
-                'timezonestring': 'Europe/Brussels',
-                'latitudeAdjustmentMethod': 3,  # Angle-based method
-                'iso8601': True  # Use ISO format for better parsing
-            }
+                logging.info(f"Fetching prayer times for {year}-{month:02d}")
 
-            logging.info(f"Requesting Aladhan API with params: {params}")
-            response = requests.get(PrayerTimeService.ALADHAN_API_URL, params=params)
+                params = {
+                    'latitude': latitude,
+                    'longitude': longitude,
+                    'method': 13,  # Diyanet İşleri Başkanlığı method
+                    'month': month,
+                    'year': year,
+                    'adjustment': 0,
+                    'school': 1,  # Hanafi
+                    'midnightMode': 0,  # Standard midnight mode
+                    'timezonestring': 'Europe/Brussels',
+                    'latitudeAdjustmentMethod': 3,  # Angle-based method
+                    'iso8601': True  # Use ISO format for better parsing
+                }
 
-            if response.status_code == 200:
-                data = response.json()
-                logging.debug(f"Received data from Aladhan API: {data}")
+                logging.info(f"Requesting Aladhan API with params: {params}")
+                response = requests.get(PrayerTimeService.ALADHAN_API_URL, params=params)
 
-                for day_data in data.get('data', []):
-                    timings = day_data.get('timings', {})
-                    gregorian_date = day_data.get('date', {}).get('gregorian', {})
+                if response.status_code == 200:
+                    data = response.json()
+                    logging.debug(f"Received data from Aladhan API for {year}-{month:02d}")
 
-                    try:
-                        day_date = datetime.strptime(
-                            gregorian_date.get('date', ''), 
-                            '%d-%m-%Y'
-                        ).date()
+                    for day_data in data.get('data', []):
+                        timings = day_data.get('timings', {})
+                        gregorian_date = day_data.get('date', {}).get('gregorian', {})
 
-                        if start_date <= day_date <= end_date:
-                            # Remove timezone indicators and use clean time strings
-                            prayer_times[day_date] = {
-                                'fajr': timings.get('Fajr', '').split(' ')[0],
-                                'sunrise': timings.get('Sunrise', '').split(' ')[0],
-                                'dhuhr': timings.get('Dhuhr', '').split(' ')[0],
-                                'asr': timings.get('Asr', '').split(' ')[0],
-                                'maghrib': timings.get('Maghrib', '').split(' ')[0],
-                                'isha': timings.get('Isha', '').split(' ')[0]
-                            }
-                            logging.info(f"Added prayer times for {day_date}: {prayer_times[day_date]}")
-                    except Exception as e:
-                        logging.error(f"Error processing day data: {e}")
-                        logging.error(f"Problematic day data: {day_data}")
-                        continue
+                        try:
+                            day_date = datetime.strptime(
+                                gregorian_date.get('date', ''), 
+                                '%d-%m-%Y'
+                            ).date()
 
-            else:
-                logging.error(f"Aladhan API error: {response.status_code}")
-                logging.error(f"Error response: {response.text}")
+                            if start_date <= day_date <= end_date:
+                                # Remove timezone indicators and use clean time strings
+                                prayer_times[day_date] = {
+                                    'fajr': timings.get('Fajr', '').split(' ')[0],
+                                    'sunrise': timings.get('Sunrise', '').split(' ')[0],
+                                    'dhuhr': timings.get('Dhuhr', '').split(' ')[0],
+                                    'asr': timings.get('Asr', '').split(' ')[0],
+                                    'maghrib': timings.get('Maghrib', '').split(' ')[0],
+                                    'isha': timings.get('Isha', '').split(' ')[0]
+                                }
+                                logging.info(f"Added prayer times for {day_date}: {prayer_times[day_date]}")
+                        except Exception as e:
+                            logging.error(f"Error processing day data: {e}")
+                            logging.error(f"Problematic day data: {day_data}")
+                            continue
+
+                else:
+                    logging.error(f"Aladhan API error: {response.status_code}")
+                    logging.error(f"Error response: {response.text}")
+
+                # Move to first day of next month
+                if current_date.month == 12:
+                    current_date = current_date.replace(year=current_date.year + 1, month=1, day=1)
+                else:
+                    current_date = current_date.replace(month=current_date.month + 1, day=1)
 
             if not prayer_times:
                 logging.error("No prayer times retrieved from Aladhan API")
