@@ -14,6 +14,55 @@ class AIService:
         )
         logger.info("AIService initialized with Anthropic client")
 
+    def analyze_architecture_proposal(self, current_structure: dict) -> Optional[str]:
+        """
+        Analyze the proposal to separate the iftar functionality into a standalone app
+        """
+        try:
+            prompt = f"""
+            Please analyze this architectural proposal for a mosque management platform:
+
+            Current Structure:
+            {current_structure}
+
+            The proposal is to separate the iftar calendar functionality into a standalone app.
+
+            Please analyze considering:
+            1. Modularity and maintainability
+            2. Data sharing and integration challenges
+            3. User experience impact
+            4. Development complexity
+            5. Performance implications
+            6. Future scalability
+
+            Focus specifically on:
+            1. Whether separation would reduce current complexity
+            2. How to handle shared data (users, mosques, prayer times)
+            3. Integration options with the main platform
+            4. Impact on the development process
+            5. Effect on user navigation and experience
+
+            Provide concrete recommendations on:
+            1. Whether to proceed with separation
+            2. If yes, what components should be separated
+            3. How to maintain data consistency
+            4. Best integration approach
+            5. Migration strategy
+            """
+
+            response = self.client.messages.create(
+                model="claude-3.7",
+                max_tokens=2048,
+                messages=[{"role": "user", "content": prompt}]
+            )
+
+            logger.info("Successfully received architecture analysis from Claude")
+            return response.content[0].text
+
+        except Exception as e:
+            logger.error(f"Error analyzing architecture proposal: {e}")
+            return None
+
     async def analyze_calendar_issue(self, calendar_data: dict) -> Optional[str]:
         """
         Analyze calendar data for duplicate events and other issues
@@ -37,7 +86,7 @@ class AIService:
             """
 
             response = self.client.messages.create(
-                model="claude-3.7",  # Updated model
+                model="claude-3.7",
                 max_tokens=1024,
                 messages=[{"role": "user", "content": prompt}]
             )
@@ -72,7 +121,7 @@ class AIService:
             """
 
             response = self.client.messages.create(
-                model="claude-3.7",  # Updated model
+                model="claude-3.7",
                 max_tokens=1024,
                 messages=[{"role": "user", "content": prompt}]
             )
@@ -107,7 +156,7 @@ class AIService:
             """
 
             response = self.client.messages.create(
-                model="claude-3.7",  # Updated model
+                model="claude-3.7",
                 max_tokens=1024,
                 messages=[{"role": "user", "content": prompt}]
             )
@@ -141,7 +190,7 @@ class AIService:
             """
 
             response = self.client.messages.create(
-                model="claude-3.7",  # Updated model
+                model="claude-3.7",
                 max_tokens=1024,
                 messages=[{"role": "user", "content": prompt}]
             )
@@ -173,7 +222,7 @@ class AIService:
             """
 
             response = self.client.messages.create(
-                model="claude-3.7",  # Updated model
+                model="claude-3.7",
                 max_tokens=512,
                 messages=[{"role": "user", "content": prompt}]
             )
@@ -205,7 +254,7 @@ class AIService:
             """
 
             response = self.client.messages.create(
-                model="claude-3.7",  # Updated model
+                model="claude-3.7",
                 max_tokens=1024,
                 messages=[{"role": "user", "content": prompt}]
             )
