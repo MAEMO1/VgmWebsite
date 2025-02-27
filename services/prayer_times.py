@@ -13,8 +13,6 @@ class PrayerTimeService:
         """
         if source == "mawaqit":
             return PrayerTimeService._get_mawaqit_times_range(start_date, end_date, city)
-        elif source == "diyanet":
-            return PrayerTimeService._get_diyanet_times_range(start_date, end_date, city)
         return None
 
     @staticmethod
@@ -62,47 +60,6 @@ class PrayerTimeService:
 
         except Exception as e:
             print(f"Error fetching Mawaqit times: {e}")
-            return None
-
-    @staticmethod
-    def _get_diyanet_times_range(start_date: date, end_date: date, city: str) -> Optional[Dict[date, Dict]]:
-        """
-        Fetch prayer times from Diyanet API for a date range
-        """
-        try:
-            # Calculate number of days
-            days = (end_date - start_date).days + 1
-
-            # Example API endpoint - replace with actual Diyanet API
-            response = requests.get(
-                f"https://api.diyanet.gov.tr/prayer-times",
-                params={
-                    "city": city,
-                    "country": "Belgium",
-                    "start_date": start_date.strftime("%Y-%m-%d"),
-                    "days": days
-                }
-            )
-
-            if response.status_code == 200:
-                data = response.json()
-                prayer_times = {}
-
-                # Process each day's prayer times
-                for day_data in data:
-                    day_date = datetime.strptime(day_data['date'], '%Y-%m-%d').date()
-                    prayer_times[day_date] = {
-                        'fajr': day_data['fajr'],
-                        'sunrise': day_data['sunrise'],
-                        'dhuhr': day_data['dhuhr'],
-                        'asr': day_data['asr'],
-                        'maghrib': day_data['maghrib'],
-                        'isha': day_data['isha']
-                    }
-                return prayer_times
-
-        except Exception as e:
-            print(f"Error fetching Diyanet times: {e}")
             return None
 
     @staticmethod
