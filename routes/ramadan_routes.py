@@ -396,8 +396,9 @@ def add_iftar():
                         flash(_('Gebedstijden ontbreken voor sommige datums. Controleer of alle datums binnen het toegestane bereik vallen.'), 'error')
                         return redirect(url_for('ramadan.add_iftar'))
 
-                    # Create an iftar event for each date
+                    # Create an iftar event for each date with its specific prayer time
                     for event_date in dates:
+                        # Get the specific prayer time for this date
                         prayer_time = datetime.strptime(prayer_times[event_date], '%H:%M').time()
                         start_time = (datetime.combine(date.today(), prayer_time) + 
                                     timedelta(minutes=prayer_offset)).time()
@@ -405,7 +406,7 @@ def add_iftar():
                         iftar = IfterEvent(
                             mosque_id=mosque_id,
                             date=event_date,
-                            start_time=start_time,
+                            start_time=start_time,  # Using date-specific prayer time
                             end_time=datetime.strptime(request.form.get('end_time'), '%H:%M').time() if request.form.get('end_time') else None,
                             location=request.form.get('location') or mosque.get_full_address(),
                             capacity=int(request.form.get('capacity')) if request.form.get('capacity') else None,
