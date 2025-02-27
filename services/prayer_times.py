@@ -2,6 +2,7 @@ import os
 import requests
 from datetime import datetime, date, timedelta
 from typing import Dict, Optional, List
+import logging
 
 class PrayerTimeService:
     MAWAQIT_API_URL = "https://api.mawaqit.net/api/v1"
@@ -21,45 +22,68 @@ class PrayerTimeService:
         Fetch prayer times from Mawaqit API for a date range
         """
         try:
-            # Calculate number of days
-            days = (end_date - start_date).days + 1
+            api_key = os.environ.get("MAWAQIT_API_KEY")
+            if not api_key:
+                logging.error("Mawaqit API key not found in environment variables")
+                return None
 
-            # Example API endpoint - replace with actual Mawaqit API
+            # Mawaqit API endpoint for prayer times
             response = requests.get(
                 f"{PrayerTimeService.MAWAQIT_API_URL}/prayer-times",
                 params={
+                    "from": start_date.strftime("%Y-%m-%d"),
+                    "to": end_date.strftime("%Y-%m-%d"),
                     "city": city,
-                    "country": "Belgium",
-                    "start_date": start_date.strftime("%Y-%m-%d"),
-                    "days": days
+                    "country": "Belgium"
                 },
                 headers={
-                    "Accept": "application/json"
+                    "Accept": "application/json",
+                    "Authorization": f"Bearer {api_key}"
                 }
             )
 
+            logging.info(f"Mawaqit API Response: {response.status_code}")
             if response.status_code == 200:
-                data = response.json()
-                prayer_times = {}
+                try:
+                    data = response.json()
+                    logging.info(f"Mawaqit API Data: {data}")
+                    prayer_times = {}
 
-                # Process each day's prayer times
-                for day_data in data['prayer_times']:
-                    day_date = datetime.strptime(day_data['date'], '%Y-%m-%d').date()
-                    prayer_times[day_date] = {
-                        'fajr': day_data['fajr'],
-                        'sunrise': day_data['sunrise'],
-                        'dhuhr': day_data['dhuhr'],
-                        'asr': day_data['asr'],
-                        'maghrib': day_data['maghrib'],
-                        'isha': day_data['isha']
-                    }
-                return prayer_times
+                    # Process each day's prayer times based on actual Mawaqit API format
+                    for day_data in data.get('prayer_times', []):
+                        try:
+                            day_date = datetime.strptime(day_data['date'], '%Y-%m-%d').date()
+                            prayer_times[day_date] = {
+                                'fajr': day_data.get('fajr'),
+                                'sunrise': day_data.get('sunrise'),
+                                'dhuhr': day_data.get('dhuhr'),
+                                'asr': day_data.get('asr'),
+                                'maghrib': day_data.get('maghrib'),
+                                'isha': day_data.get('isha')
+                            }
+                        except KeyError as ke:
+                            logging.error(f"Missing key in day data: {ke}")
+                            continue
+                        except ValueError as ve:
+                            logging.error(f"Invalid date format: {ve}")
+                            continue
+
+                    if prayer_times:
+                        return prayer_times
+                    logging.error("No prayer times found in response")
+                    return None
+
+                except Exception as je:
+                    logging.error(f"Error parsing JSON response: {je}")
+                    return None
             else:
-                print(f"Mawaqit API error: {response.status_code}")
+                logging.error(f"Mawaqit API error: {response.status_code}")
+                if response.content:
+                    logging.error(f"Error response: {response.content}")
                 return None
 
         except Exception as e:
-            print(f"Error fetching Mawaqit times: {e}")
+            logging.error(f"Error fetching Mawaqit times: {e}")
             return None
 
     @staticmethod
@@ -95,5 +119,8 @@ class PrayerTimeService:
                 result[request_date] = all_times[request_date].get(prayer_name.lower())
             else:
                 result[request_date] = None
+
+        if None in result.values():
+            logging.error(f"Missing prayer times for dates: {[d for d, t in result.items() if t is None]}")
 
         return result

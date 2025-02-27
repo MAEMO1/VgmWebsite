@@ -320,8 +320,8 @@ def add_iftar():
     # Get mosque data - either the current user's mosque or selected mosque for admin
     if current_user.is_admin:
         mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
-        mosques_data = [mosque.to_dict() for mosque in mosques]  # Serialize mosque data
-        current_mosque = None  # Will be set based on form selection
+        mosques_data = [mosque.to_dict() for mosque in mosques]
+        current_mosque = None
     else:
         mosques = None
         mosques_data = []
@@ -365,90 +365,115 @@ def add_iftar():
             # Handle prayer-based timing
             time_type = request.form.get('time_type')
             if time_type == 'prayer':
-                # Get prayer times for all dates at once
-                prayer_name = request.form.get('prayer_name', 'maghrib')  # Default to maghrib
-                prayer_source = request.form.get('prayer_source', 'mawaqit')  # Default to mawaqit
-                prayer_offset = int(request.form.get('prayer_offset', 0))
+                try:
+                    # Get prayer times for all dates at once
+                    prayer_name = request.form.get('prayer_name', 'maghrib')  # Default to maghrib
+                    prayer_source = request.form.get('prayer_source', 'mawaqit')  # Default to mawaqit
+                    prayer_offset = int(request.form.get('prayer_offset', 0))
 
-                # Fetch all prayer times efficiently
-                prayer_times = PrayerTimeService.get_prayer_times_batch(
-                    source=prayer_source,
-                    dates=dates,
-                    prayer_name=prayer_name,
-                    city="Gent"  # Default to Gent
-                )
+                    # Fetch all prayer times efficiently
+                    prayer_times = PrayerTimeService.get_prayer_times_batch(
+                        source=prayer_source,
+                        dates=dates,
+                        prayer_name=prayer_name,
+                        city="Gent"  # Default to Gent
+                    )
 
-                if not prayer_times or None in prayer_times.values():
-                    flash(_('Kon niet alle gebedstijden ophalen. Controleer de datums en probeer opnieuw.'), 'error')
+                    if not prayer_times:
+                        flash(_('De gebedstijden konden niet worden opgehaald. Controleer of de Mawaqit API correct is geconfigureerd.'), 'error')
+                        return redirect(url_for('ramadan.add_iftar'))
+
+                    missing_dates = [d for d, t in prayer_times.items() if t is None]
+                    if missing_dates:
+                        flash(_('Gebedstijden ontbreken voor sommige datums. Controleer of alle datums binnen het toegestane bereik vallen.'), 'error')
+                        return redirect(url_for('ramadan.add_iftar'))
+
+                    # Create an iftar event for each date
+                    for event_date in dates:
+                        prayer_time = datetime.strptime(prayer_times[event_date], '%H:%M').time()
+                        start_time = (datetime.combine(date.today(), prayer_time) + 
+                                    timedelta(minutes=prayer_offset)).time()
+
+                        iftar = IfterEvent(
+                            mosque_id=mosque_id,
+                            date=event_date,
+                            start_time=start_time,
+                            end_time=datetime.strptime(request.form.get('end_time'), '%H:%M').time() if request.form.get('end_time') else None,
+                            location=request.form.get('location') or mosque.get_full_address(),
+                            capacity=int(request.form.get('capacity')) if request.form.get('capacity') else None,
+                            is_family_friendly=bool(request.form.get('is_family_friendly')),
+                            registration_required=bool(request.form.get('registration_required')),
+                            registration_deadline=datetime.strptime(request.form.get('registration_deadline'), '%Y-%m-%dT%H:%M') 
+                                                if request.form.get('registration_deadline') else None,
+                            dietary_options=bool(request.form.get('dietary_options')),
+                            notes=request.form.get('notes'),
+                            women_entrance=request.form.get('women_entrance'),
+                            image_url=image_url,
+                            prayer_based_timing=True,
+                            prayer_name=prayer_name,
+                            prayer_source=prayer_source,
+                            prayer_offset=prayer_offset,
+                            is_recurring=is_recurring,
+                            recurrence_type=recurrence_type,
+                            recurrence_end_date=recurrence_end_date
+                        )
+                        db.session.add(iftar)
+
+                except ValueError as ve:
+                    flash(_('Er is een fout opgetreden bij het verwerken van de gebedstijden. Controleer of alle tijden correct zijn ingevoerd.'), 'error')
+                    print(f"Error processing prayer times: {ve}")
                     return redirect(url_for('ramadan.add_iftar'))
 
-                # Create an iftar event for each date
-                for event_date in dates:
-                    prayer_time = datetime.strptime(prayer_times[event_date], '%H:%M').time()
-                    start_time = (datetime.combine(date.today(), prayer_time) + 
-                                timedelta(minutes=prayer_offset)).time()
-
-                    iftar = IfterEvent(
-                        mosque_id=mosque_id,
-                        date=event_date,
-                        start_time=start_time,
-                        end_time=datetime.strptime(request.form.get('end_time'), '%H:%M').time() if request.form.get('end_time') else None,
-                        location=request.form.get('location') or mosque.get_full_address(),
-                        capacity=int(request.form.get('capacity')) if request.form.get('capacity') else None,
-                        is_family_friendly=bool(request.form.get('is_family_friendly')),
-                        registration_required=bool(request.form.get('registration_required')),
-                        registration_deadline=datetime.strptime(request.form.get('registration_deadline'), '%Y-%m-%dT%H:%M') 
-                                            if request.form.get('registration_deadline') else None,
-                        dietary_options=bool(request.form.get('dietary_options')),
-                        notes=request.form.get('notes'),
-                        women_entrance=request.form.get('women_entrance'),
-                        image_url=image_url,
-                        prayer_based_timing=True,
-                        prayer_name=prayer_name,
-                        prayer_source=prayer_source,
-                        prayer_offset=prayer_offset,
-                        is_recurring=is_recurring,
-                        recurrence_type=recurrence_type,
-                        recurrence_end_date=recurrence_end_date
-                    )
-                    db.session.add(iftar)
             else:
                 # Handle specific time
-                start_time = datetime.strptime(request.form.get('start_time'), '%H:%M').time()
-                end_time = (datetime.strptime(request.form.get('end_time'), '%H:%M').time() 
-                           if request.form.get('end_time') else None)
+                try:
+                    start_time = datetime.strptime(request.form.get('start_time'), '%H:%M').time()
+                    end_time = (datetime.strptime(request.form.get('end_time'), '%H:%M').time() 
+                               if request.form.get('end_time') else None)
 
-                # Create an iftar event for each date
-                for event_date in dates:
-                    iftar = IfterEvent(
-                        mosque_id=mosque_id,
-                        date=event_date,
-                        start_time=start_time,
-                        end_time=end_time,
-                        location=request.form.get('location') or mosque.get_full_address(),
-                        capacity=int(request.form.get('capacity')) if request.form.get('capacity') else None,
-                        is_family_friendly=bool(request.form.get('is_family_friendly')),
-                        registration_required=bool(request.form.get('registration_required')),
-                        registration_deadline=datetime.strptime(request.form.get('registration_deadline'), '%Y-%m-%dT%H:%M') 
-                                            if request.form.get('registration_deadline') else None,
-                        dietary_options=bool(request.form.get('dietary_options')),
-                        notes=request.form.get('notes'),
-                        women_entrance=request.form.get('women_entrance'),
-                        image_url=image_url,
-                        is_recurring=is_recurring,
-                        recurrence_type=recurrence_type,
-                        recurrence_end_date=recurrence_end_date
-                    )
-                    db.session.add(iftar)
+                    # Create an iftar event for each date
+                    for event_date in dates:
+                        iftar = IfterEvent(
+                            mosque_id=mosque_id,
+                            date=event_date,
+                            start_time=start_time,
+                            end_time=end_time,
+                            location=request.form.get('location') or mosque.get_full_address(),
+                            capacity=int(request.form.get('capacity')) if request.form.get('capacity') else None,
+                            is_family_friendly=bool(request.form.get('is_family_friendly')),
+                            registration_required=bool(request.form.get('registration_required')),
+                            registration_deadline=datetime.strptime(request.form.get('registration_deadline'), '%Y-%m-%dT%H:%M') 
+                                                if request.form.get('registration_deadline') else None,
+                            dietary_options=bool(request.form.get('dietary_options')),
+                            notes=request.form.get('notes'),
+                            women_entrance=request.form.get('women_entrance'),
+                            image_url=image_url,
+                            is_recurring=is_recurring,
+                            recurrence_type=recurrence_type,
+                            recurrence_end_date=recurrence_end_date
+                        )
+                        db.session.add(iftar)
 
-            db.session.commit()
-            flash(_('Iftar succesvol toegevoegd.'), 'success')
-            return redirect(url_for('ramadan.iftar_map'))
+                except ValueError as ve:
+                    flash(_('Er is een fout opgetreden bij het verwerken van de tijden. Controleer of alle tijden correct zijn ingevoerd.'), 'error')
+                    print(f"Error processing times: {ve}")
+                    return redirect(url_for('ramadan.add_iftar'))
+
+            try:
+                db.session.commit()
+                flash(_('Iftar succesvol toegevoegd.'), 'success')
+                return redirect(url_for('ramadan.iftar_map'))
+            except Exception as e:
+                db.session.rollback()
+                flash(_('Er is een fout opgetreden bij het opslaan van de iftar.'), 'error')
+                print(f"Error saving iftar: {e}")
+                return redirect(url_for('ramadan.add_iftar'))
 
         except Exception as e:
             db.session.rollback()
-            print(f"Error adding iftar: {e}")
             flash(_('Er is een fout opgetreden bij het toevoegen van de iftar.'), 'error')
+            print(f"Error adding iftar: {e}")
+            return redirect(url_for('ramadan.add_iftar'))
 
     return render_template('ramadan/add_iftar.html', 
                          mosques=mosques,
