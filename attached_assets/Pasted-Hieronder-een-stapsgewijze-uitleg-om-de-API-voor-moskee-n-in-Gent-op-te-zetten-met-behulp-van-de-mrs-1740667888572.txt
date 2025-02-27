@@ -1,0 +1,47 @@
+Hieronder een stapsgewijze uitleg om de API voor moskeeën in Gent op te zetten met behulp van de mrsofiane/mawaqit-api:
+
+Repository Clonen en Installeren
+
+Clone de repository:
+bash
+Kopiëren
+git clone https://github.com/mrsofiane/mawaqit-api.git
+Ga naar de map en installeer de benodigde afhankelijkheden. Als het een Node.js-project is, voer dan bijvoorbeeld uit:
+bash
+Kopiëren
+npm install
+Configuratie
+
+Zoek naar een voorbeeld-configuratiebestand, zoals .env.example of config.example.json, en kopieer dit naar een werkbestand (bijv. .env of config.json).
+Stel in dit bestand de relevante parameters in. Voor moskeeën in Gent moet je bijvoorbeeld instellen dat de applicatie alleen data voor Gent ophaalt. Dit kan op verschillende manieren:
+Via een variabele: Voeg een regel toe zoals
+env
+Kopiëren
+CITY=Gent
+of
+env
+Kopiëren
+REGION=Gent
+Via een filter in de code: Sommige implementaties laden alle moskeeën en filteren op basis van een veld (bijv. city of location). Controleer in de documentatie of seed-data of je een filteroptie kunt instellen zodat alleen moskeeën uit Gent worden gebruikt.
+Seed Data of Database
+
+Indien de API afhankelijk is van vooraf ingestelde moskee-gegevens (via een database of een JSON-seedbestand), controleer dan of er entries voor Gent aanwezig zijn.
+Zo niet, voeg handmatig de gegevens van de moskeeën in Gent toe aan de seed-data, zodat de API deze kan retourneren.
+Server Starten
+
+Start de server zoals beschreven in de README (bijvoorbeeld met npm start of een ander commando).
+Controleer in de console of de applicatie zonder fouten opstart.
+API-Test
+
+Test de API door een endpoint te openen in je browser of met een tool als Postman. Bijvoorbeeld:
+bash
+Kopiëren
+http://localhost:3000/api/mosques?city=Gent
+Hiermee zou de API de gegevens van moskeeën in Gent moeten retourneren. Als de filtering goed is ingesteld, krijg je alleen de relevante data te zien.
+Validatie en Fijnstelling
+
+Controleer of de response voldoet aan je verwachtingen en dat er geen onnodige data wordt teruggegeven.
+Pas zonodig de filtering of configuratie aan in de code of in de configuratiebestanden.
+Deze stappen zijn gebaseerd op de algemene opzet in de mrsofiane/mawaqit-api repository. Raadpleeg de README en documentatie in de repository voor specifieke details en eventuele extra instellingen die nodig zijn voor jouw gewenste configuratie (zoals authenticatie, foutafhandeling of logging).
+
+Mocht je nog verdere toelichting nodig hebben over een specifiek onderdeel, laat het gerust weten!
