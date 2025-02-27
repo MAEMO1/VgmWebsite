@@ -81,7 +81,7 @@ class AIService:
             return response.content[0].text
 
         except Exception as e:
-            logger.error(f"Error analyzing prayer times: {e}")
+            logger.error(f"Error getting prayer times analysis: {e}")
             return None
 
     async def validate_calendar_logic(self, code_snippet: str) -> Optional[str]:

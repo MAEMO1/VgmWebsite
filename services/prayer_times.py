@@ -246,7 +246,7 @@ class PrayerTimeService:
 
                         try:
                             day_date = datetime.strptime(
-                                gregorian_date.get('date', ''), 
+                                gregorian_date.get('date', ''),
                                 '%d-%m-%Y'
                             ).date()
 

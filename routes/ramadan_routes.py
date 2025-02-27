@@ -10,10 +10,45 @@ from werkzeug.utils import secure_filename
 from app import db
 from models import User, IfterEvent, RamadanProgram, PrayerTime, RamadanQuranResource, RamadanVideo
 from services.prayer_times import PrayerTimeService
+from services.ai_service import AIService
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+
+async def analyze_issues(events, prayer_times):
+    """
+    Analyze both calendar and prayer time issues using Claude
+    """
+    ai_service = AIService()
+
+    # Analyze calendar data
+    calendar_analysis = await ai_service.analyze_calendar_issue({
+        'events': [event.to_dict() for event in events],
+        'unique_dates': len(set(event.date for event in events)),
+        'total_events': len(events),
+        'recurring_events': len([e for e in events if e.is_recurring]),
+        'processed_occurrences': {}
+    })
+
+    # Analyze prayer times
+    prayer_analysis = await ai_service.analyze_prayer_times(prayer_times)
+
+    # Validate calendar logic
+    code_analysis = await ai_service.validate_calendar_logic("""
+    # Current calendar processing logic
+    processed_occurrences = {}
+    for event in events:
+        if event.is_recurring:
+            current_date = max(event.date, today)
+            while current_date <= min(event.recurrence_end_date or ramadan_end, period_end):
+                occurrence_key = f"{event.id}_{current_date}_{event.recurrence_type}"
+                if occurrence_key not in processed_occurrences:
+                    processed_occurrences[occurrence_key] = True
+                    calendar_events[current_date][event.recurrence_type].add(event.id)
+    """)
+
+    return calendar_analysis, prayer_analysis, code_analysis
 
 ramadan = Blueprint('ramadan', __name__)
 
@@ -563,3 +598,40 @@ def add_event_to_lists(event, current_date, event_type, map_events, sorted_event
         'is_family_friendly': event.is_family_friendly,
         'registration_required': event.registration_required
     })
+
+@ramadan.route('/analyze')
+@login_required
+async def analyze_calendar():
+    """
+    Debug endpoint to analyze calendar and prayer time issues
+    """
+    try:
+        # Get events and prayer times
+        events = IfterEvent.query.all()
+
+        # Get prayer times for analysis period
+        ramadan_start, ramadan_end = get_ramadan_dates()
+        prayer_service = PrayerTimeService()
+        prayer_times = prayer_service.get_prayer_times_for_range(
+            'diyanet', ramadan_start, ramadan_end, 'Gent'
+        )
+
+        # Run analysis
+        calendar_analysis, prayer_analysis, code_analysis = await analyze_issues(
+            events, prayer_times
+        )
+
+        # Log results
+        logger.info("Calendar Analysis:", calendar_analysis)
+        logger.info("Prayer Time Analysis:", prayer_analysis)
+        logger.info("Code Analysis:", code_analysis)
+
+        return jsonify({
+            'calendar_analysis': calendar_analysis,
+            'prayer_analysis': prayer_analysis,
+            'code_analysis': code_analysis
+        })
+
+    except Exception as e:
+        logger.error(f"Error during analysis: {e}")
+        return jsonify({'error': str(e)}), 500
