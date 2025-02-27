@@ -8,7 +8,7 @@ from sqlalchemy.orm import DeclarativeBase
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
@@ -31,7 +31,7 @@ def create_app():
     app = Flask(__name__)
 
     # Configure secret key
-    app.secret_key = os.environ.get("SESSION_SECRET", "dev_key_123")
+    app.secret_key = os.environ.get("SESSION_SECRET")
 
     # Configure PostgreSQL database with robust connection handling
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
@@ -40,8 +40,7 @@ def create_app():
         "pool_recycle": 300,    # Recycle connections every 5 minutes
         "pool_timeout": 30,     # Connection timeout after 30 seconds
         "pool_size": 20,        # Maximum number of connections
-        "max_overflow": 5,      # Allow 5 connections above pool_size when needed
-        "echo": True           # Log SQL queries for debugging
+        "max_overflow": 5       # Allow 5 connections above pool_size when needed
     }
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -87,12 +86,6 @@ def create_app():
                 from models import User, Event, EventRegistration, EventNotification, PrayerTime, Obituary, ObituaryNotification, BlogPost, Message, FundraisingCampaign
                 db.create_all()
                 logger.info("Database tables created successfully")
-
-                # Initialize mosques data
-                from routes.routes import initialize_mosques
-                initialize_mosques()
-                logger.info("Mosques initialized successfully")
-
             except Exception as e:
                 logger.error(f"Error during database initialization: {e}")
                 logger.error("Stack trace:", exc_info=True)
