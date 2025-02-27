@@ -6,7 +6,7 @@
 <div class="container py-4">
     <div class="card">
         <div class="card-header">
-            <h2 class="card-title mb-0">{{ _('Voeg Iftar Evenement Toe') }}</h2>
+            <h2 class="card-title mb-0">{{ _('Voeg iftar toe') }}</h2>
         </div>
         <div class="card-body">
             <form method="POST" enctype="multipart/form-data" action="{{ url_for('ramadan.add_iftar') }}">
@@ -62,7 +62,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="women_entrance" class="form-label">{{ _('Optioneel: specifieke ingang voor vrouwen als deze verschilt van de hoofdingang') }}</label>
+                    <label for="women_entrance" class="form-label">{{ _('Specifieke ingang voor vrouwen') }}</label>
                     <input type="text" class="form-control" id="women_entrance" name="women_entrance" 
                            placeholder="{{ _('Straat en nummer') }}">
                     <small class="form-text">{{ _('Optioneel: specifieke ingang voor vrouwen als deze verschilt van de hoofdingang') }}</small>
@@ -126,6 +126,8 @@
         </div>
     </div>
 </div>
+
+{% endblock %}
 
 {% block scripts %}
 <script>
