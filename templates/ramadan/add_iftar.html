@@ -68,8 +68,11 @@
                     <div class="mb-3">
                         <label for="prayer_source" class="form-label">{{ _('Gebedstijden Bron') }}</label>
                         <select class="form-select" id="prayer_source" name="prayer_source">
-                            <option value="mawaqit">{{ _('Mawaqit') }}</option>
+                            {% for value, label in prayer_sources %}
+                                <option value="{{ value }}">{{ label }}</option>
+                            {% endfor %}
                         </select>
+                        <small class="form-text">{{ _('Kies de bron voor gebedstijden berekening') }}</small>
                     </div>
                 </div>
 

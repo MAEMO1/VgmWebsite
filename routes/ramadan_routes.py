@@ -368,7 +368,7 @@ def add_iftar():
                 try:
                     # Get prayer times for all dates at once
                     prayer_name = request.form.get('prayer_name', 'maghrib')  # Default to maghrib
-                    prayer_source = request.form.get('prayer_source', 'mawaqit')  # Default to mawaqit
+                    prayer_source = request.form.get('prayer_source', 'diyanet')  # Default to diyanet
                     prayer_offset = int(request.form.get('prayer_offset', 0))
 
                     # Fetch all prayer times efficiently
@@ -380,7 +380,7 @@ def add_iftar():
                     )
 
                     if not prayer_times:
-                        flash(_('De gebedstijden konden niet worden opgehaald. Controleer of de Mawaqit API correct is geconfigureerd.'), 'error')
+                        flash(_('De gebedstijden konden niet worden opgehaald. Controleer of de API correct is geconfigureerd.'), 'error')
                         return redirect(url_for('ramadan.add_iftar'))
 
                     missing_dates = [d for d, t in prayer_times.items() if t is None]
@@ -478,8 +478,11 @@ def add_iftar():
     return render_template('ramadan/add_iftar.html', 
                          mosques=mosques,
                          mosques_data=mosques_data,
-                         current_mosque=current_mosque)
-
+                         current_mosque=current_mosque,
+                         prayer_sources=[
+                             ('mawaqit', _('Mawaqit')),
+                             ('diyanet', _('Diyanet (via Aladhan)'))
+                         ])
 
 @ramadan.route('/iftar/<int:iftar_id>/edit', methods=['GET', 'POST'])
 @login_required
