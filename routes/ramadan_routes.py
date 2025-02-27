@@ -41,7 +41,7 @@ class IfterCalendar:
             }
             current += timedelta(days=1)
 
-    async def load_prayer_times(self):
+    def load_prayer_times(self):
         """Load prayer times for the entire period"""
         try:
             prayer_times = self.prayer_service.get_prayer_times_for_range(
@@ -52,9 +52,6 @@ class IfterCalendar:
                 for date_key in self.events_by_date:
                     if date_key in prayer_times:
                         self.events_by_date[date_key]['prayer_times'] = prayer_times[date_key]
-
-            # Analyze variations
-            await self.prayer_service.analyze_time_variations(prayer_times)
 
         except Exception as e:
             logger.error(f"Error loading prayer times: {e}")
@@ -174,7 +171,7 @@ class IfterCalendar:
         return sorted(sorted_events, key=lambda x: (x['date'], x['start_time']))
 
 @ramadan.route('/iftar-map')
-async def iftar_map():
+def iftar_map():
     """Main iftar map route with improved event handling"""
     try:
         # Get filter parameters
@@ -205,8 +202,8 @@ async def iftar_map():
         # Initialize calendar manager
         calendar = IfterCalendar(period_start, period_end)
 
-        # Load prayer times asynchronously
-        await calendar.load_prayer_times()
+        # Load prayer times
+        calendar.load_prayer_times()
 
         # Build and apply filters
         base_query = IfterEvent.query
@@ -267,7 +264,6 @@ def get_ramadan_dates(year=2025):
     ramadan_start = date(2025, 3, 1)  # 1 Ramadan 1446
     ramadan_end = date(2025, 3, 30)   # 30 Ramadan 1446
     return ramadan_start, ramadan_end
-
 
 @ramadan.route('/')
 def index():
@@ -622,14 +618,14 @@ def delete_iftar(iftar_id):
 def allowed_file(filename, allowed_extensions={'png', 'jpg', 'jpeg'}):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
-async def analyze_issues(events, prayer_times):
+def analyze_issues(events, prayer_times):
     """
     Analyze both calendar and prayer time issues using Claude
     """
     ai_service = AIService()
 
     # Analyze calendar data
-    calendar_analysis = await ai_service.analyze_calendar_issue({
+    calendar_analysis = ai_service.analyze_calendar_issue({
         'events': [event.to_dict() for event in events],
         'unique_dates': len(set(event.date for event in events)),
         'total_events': len(events),
@@ -638,10 +634,10 @@ async def analyze_issues(events, prayer_times):
     })
 
     # Analyze prayer times
-    prayer_analysis = await ai_service.analyze_prayer_times(prayer_times)
+    prayer_analysis = ai_service.analyze_prayer_times(prayer_times)
 
     # Validate calendar logic -  This section remains largely unchanged as the core logic is handled in the IfterCalendar class now.
-    code_analysis = await ai_service.validate_calendar_logic("""
+    code_analysis = ai_service.validate_calendar_logic("""
     # Current calendar processing logic
     processed_occurrences = {}
     for event in events:
@@ -658,7 +654,7 @@ async def analyze_issues(events, prayer_times):
 
 @ramadan.route('/analyze')
 @login_required
-async def analyze_calendar():
+def analyze_calendar():
     """
     Debug endpoint to analyze calendar and prayer time issues
     """
@@ -674,7 +670,7 @@ async def analyze_calendar():
         )
 
         # Run analysis 
-        calendar_analysis, prayer_analysis, code_analysis = await analyze_issues(
+        calendar_analysis, prayer_analysis, code_analysis = analyze_issues(
             events, prayer_times
         )
 
