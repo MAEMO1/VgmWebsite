@@ -8,7 +8,7 @@ from flask_login import login_required, current_user
 from flask_babel import _
 from werkzeug.utils import secure_filename
 from app import db
-from models import User, IfterEvent, RamadanProgram, PrayerTime, RamadanQuranResource, RamadanVideo
+from models import User, IfterEvent, RamadanProgram, PrayerTime
 from services.prayer_times import PrayerTimeService
 from services.ai_service import AIService
 
@@ -18,229 +18,256 @@ logger = logging.getLogger(__name__)
 
 ramadan = Blueprint('ramadan', __name__)
 
+class IfterCalendar:
+    """Handles all iftar event processing and calendar management"""
+
+    def __init__(self, start_date: date, end_date: date):
+        self.start_date = start_date
+        self.end_date = end_date
+        self.prayer_service = PrayerTimeService()
+        self.events_by_date = {}
+        self.processed_keys = set()
+        self._initialize_calendar()
+
+    def _initialize_calendar(self):
+        """Initialize empty calendar structure"""
+        current = self.start_date
+        while current <= self.end_date:
+            self.events_by_date[current] = {
+                'daily': [],
+                'weekly': [],
+                'single': [],
+                'prayer_times': None
+            }
+            current += timedelta(days=1)
+
+    async def load_prayer_times(self):
+        """Load prayer times for the entire period"""
+        try:
+            prayer_times = self.prayer_service.get_prayer_times_for_range(
+                'diyanet', self.start_date, self.end_date, 'Gent'
+            )
+
+            if prayer_times:
+                for date_key in self.events_by_date:
+                    if date_key in prayer_times:
+                        self.events_by_date[date_key]['prayer_times'] = prayer_times[date_key]
+
+            # Analyze variations
+            await self.prayer_service.analyze_time_variations(prayer_times)
+
+        except Exception as e:
+            logger.error(f"Error loading prayer times: {e}")
+
+    def process_event(self, event: IfterEvent, today: date) -> None:
+        """Process a single event and its occurrences"""
+        try:
+            # Skip past non-recurring events
+            if not event.is_recurring and event.date < today:
+                return
+
+            if event.is_recurring:
+                self._process_recurring_event(event, today)
+            else:
+                self._process_single_event(event)
+
+        except Exception as e:
+            logger.error(f"Error processing event {event.id}: {e}")
+
+    def _process_recurring_event(self, event: IfterEvent, today: date) -> None:
+        """Handle recurring event processing"""
+        current_date = max(event.date, today, self.start_date)
+        end_date = min(event.recurrence_end_date or self.end_date, self.end_date)
+
+        # Adjust start for weekly events
+        if event.recurrence_type == 'weekly' and current_date > event.date:
+            days_since_start = (current_date - event.date).days
+            days_to_next = 7 - (days_since_start % 7)
+            if days_to_next < 7:
+                current_date += timedelta(days=days_to_next)
+
+        while current_date <= end_date:
+            event_key = f"{event.id}_{current_date}_{event.recurrence_type}"
+
+            if event_key not in self.processed_keys:
+                self.processed_keys.add(event_key)
+
+                if current_date in self.events_by_date:
+                    event_data = self._create_event_data(event, current_date)
+                    self.events_by_date[current_date][event.recurrence_type].append(event_data)
+
+            # Move to next occurrence
+            if event.recurrence_type == 'daily':
+                current_date += timedelta(days=1)
+            elif event.recurrence_type == 'weekly':
+                current_date += timedelta(days=7)
+
+    def _process_single_event(self, event: IfterEvent) -> None:
+        """Handle single event processing"""
+        if self.start_date <= event.date <= self.end_date:
+            event_key = f"{event.id}_{event.date}_single"
+
+            if event_key not in self.processed_keys:
+                self.processed_keys.add(event_key)
+
+                if event.date in self.events_by_date:
+                    event_data = self._create_event_data(event, event.date)
+                    self.events_by_date[event.date]['single'].append(event_data)
+
+    def _create_event_data(self, event: IfterEvent, current_date: date) -> dict:
+        """Create standardized event data structure"""
+        return {
+            'id': event.id,
+            'type': 'single' if not event.is_recurring else event.recurrence_type,
+            'mosque': event.mosque,
+            'mosque_name': event.mosque.mosque_name,
+            'date': current_date,
+            'start_time': event.start_time,
+            'end_time': event.end_time,
+            'location': event.location,
+            'is_family_friendly': event.is_family_friendly,
+            'registration_required': event.registration_required,
+            'latitude': event.mosque.latitude,
+            'longitude': event.mosque.longitude
+        }
+
+    def get_calendar_data(self) -> dict:
+        """Get formatted calendar data"""
+        return {
+            date.strftime('%Y-%m-%d'): {
+                'events': {
+                    event_type: events
+                    for event_type, events in day_data.items()
+                    if event_type != 'prayer_times'
+                },
+                'prayer_times': day_data['prayer_times']
+            }
+            for date, day_data in self.events_by_date.items()
+        }
+
+    def get_map_events(self) -> list:
+        """Get events formatted for map display"""
+        map_events = []
+        for date_data in self.events_by_date.values():
+            for event_type in ['daily', 'weekly', 'single']:
+                for event in date_data[event_type]:
+                    map_events.append({
+                        'type': event['type'],
+                        'id': event['id'],
+                        'mosque_name': event['mosque_name'],
+                        'date': event['date'].strftime('%Y-%m-%d'),
+                        'start_time': event['start_time'].strftime('%H:%M'),
+                        'location': event['location'],
+                        'is_family_friendly': event['is_family_friendly'],
+                        'latitude': event['latitude'],
+                        'longitude': event['longitude']
+                    })
+        return map_events
+
+    def get_sorted_events(self) -> list:
+        """Get chronologically sorted events"""
+        sorted_events = []
+        for date_data in self.events_by_date.values():
+            for event_type in ['daily', 'weekly', 'single']:
+                sorted_events.extend(date_data[event_type])
+
+        return sorted(sorted_events, key=lambda x: (x['date'], x['start_time']))
+
+@ramadan.route('/iftar-map')
+async def iftar_map():
+    """Main iftar map route with improved event handling"""
+    try:
+        # Get filter parameters
+        family_only = request.args.get('filter') == 'family'
+        iftar_type = request.args.get('type', 'all')
+        selected_mosque = request.args.get('mosque_id', type=int)
+        period = request.args.get('period', 'three_days')
+
+        # Get Ramadan dates and today
+        ramadan_start, ramadan_end = get_ramadan_dates()
+        today = date.today()
+
+        logger.debug(f"Processing request - filters: family={family_only}, type={iftar_type}, mosque={selected_mosque}, period={period}")
+
+        # Calculate period dates
+        if period == 'day':
+            period_start = period_end = today
+        elif period == 'three_days':
+            period_start = today
+            period_end = today + timedelta(days=2)
+        elif period == 'week':
+            period_start = today
+            period_end = today + timedelta(days=6)
+        else:
+            period_start = today
+            period_end = ramadan_end
+
+        # Initialize calendar manager
+        calendar = IfterCalendar(period_start, period_end)
+
+        # Load prayer times asynchronously
+        await calendar.load_prayer_times()
+
+        # Build and apply filters
+        base_query = IfterEvent.query
+        if family_only:
+            base_query = base_query.filter(IfterEvent.is_family_friendly == True)
+        if selected_mosque:
+            base_query = base_query.filter(IfterEvent.mosque_id == selected_mosque)
+        if iftar_type != 'all':
+            if iftar_type == 'daily':
+                base_query = base_query.filter(IfterEvent.is_recurring == True,
+                                           IfterEvent.recurrence_type == 'daily')
+            elif iftar_type == 'weekly':
+                base_query = base_query.filter(IfterEvent.is_recurring == True,
+                                           IfterEvent.recurrence_type == 'weekly')
+            elif iftar_type == 'single':
+                base_query = base_query.filter(IfterEvent.is_recurring == False)
+
+        # Process events
+        events = base_query.all()
+        logger.debug(f"Found {len(events)} matching events")
+
+        for event in events:
+            calendar.process_event(event, today)
+
+        # Get mosque data for filtering
+        mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
+
+        # Handle AJAX requests
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({
+                'calendar_events': calendar.get_calendar_data(),
+                'map_events': calendar.get_map_events(),
+                'sorted_events': calendar.get_sorted_events()
+            })
+
+        # Render template
+        return render_template('ramadan/iftar_map.html',
+                           calendar_data=calendar.get_calendar_data(),
+                           family_only=family_only,
+                           iftar_type=iftar_type,
+                           period=period,
+                           selected_mosque=selected_mosque,
+                           today=today,
+                           mosques=mosques,
+                           google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'),
+                           events_json=json.dumps(calendar.get_map_events()),
+                           sorted_events=calendar.get_sorted_events(),
+                           ramadan_start=ramadan_start,
+                           ramadan_end=ramadan_end)
+
+    except Exception as e:
+        logger.error(f"Error in iftar_map route: {e}")
+        flash(_('Er is een fout opgetreden bij het laden van de iftar kaart.'), 'error')
+        return redirect(url_for('main.index'))
+
 def get_ramadan_dates(year=2025):
+    """Get Ramadan start and end dates"""
     ramadan_start = date(2025, 3, 1)  # 1 Ramadan 1446
     ramadan_end = date(2025, 3, 30)   # 30 Ramadan 1446
     return ramadan_start, ramadan_end
 
-class EventOccurrence:
-    def __init__(self, event, occurrence_date):
-        self.event = event
-        self.date = occurrence_date
-        self.mosque = event.mosque
-        self.start_time = event.start_time
-        self.end_time = event.end_time
-        self.location = event.location
-        self.is_family_friendly = event.is_family_friendly
-        self.registration_required = event.registration_required
-        self.type = 'single' if not event.is_recurring else event.recurrence_type
-
-    def to_dict(self):
-        return {
-            'type': self.type,
-            'id': self.event.id,
-            'mosque_name': self.mosque.mosque_name,
-            'date': self.date.strftime('%Y-%m-%d'),
-            'start_time': self.start_time.strftime('%H:%M'),
-            'location': self.location,
-            'is_family_friendly': self.is_family_friendly,
-            'latitude': self.mosque.latitude,
-            'longitude': self.mosque.longitude
-        }
-
-class CalendarManager:
-    def __init__(self, start_date: date, end_date: date):
-        self.start_date = start_date
-        self.end_date = end_date
-        self.calendar_days = {}
-        self.occurrences = []
-        self._initialize_calendar()
-
-    def _initialize_calendar(self):
-        current = self.start_date
-        while current <= self.end_date:
-            self.calendar_days[current] = {
-                'daily': set(),
-                'weekly': set(),
-                'single': set()
-            }
-            current += timedelta(days=1)
-
-    def add_event(self, event: IfterEvent) -> None:
-        if not event.is_recurring:
-            if self.start_date <= event.date <= self.end_date:
-                occurrence = EventOccurrence(event, event.date)
-                self._add_occurrence(occurrence)
-            return
-
-        current = max(event.date, self.start_date)
-        end_date = min(event.recurrence_end_date or self.end_date, self.end_date)
-
-        if event.recurrence_type == 'weekly':
-            # Adjust start date for weekly events
-            days_since_start = (current - event.date).days
-            if days_since_start > 0:
-                days_to_next = 7 - (days_since_start % 7)
-                if days_to_next < 7:
-                    current += timedelta(days=days_to_next)
-
-        while current <= end_date:
-            occurrence = EventOccurrence(event, current)
-            self._add_occurrence(occurrence)
-
-            if event.recurrence_type == 'daily':
-                current += timedelta(days=1)
-            elif event.recurrence_type == 'weekly':
-                current += timedelta(days=7)
-
-    def _add_occurrence(self, occurrence: EventOccurrence) -> None:
-        if occurrence.date in self.calendar_days:
-            self.calendar_days[occurrence.date][occurrence.type].add(occurrence.event.id)
-            self.occurrences.append(occurrence)
-
-    def get_calendar_events(self) -> dict:
-        return {
-            date.strftime('%Y-%m-%d'): {
-                event_type: list(events)
-                for event_type, events in day_events.items()
-            }
-            for date, day_events in self.calendar_days.items()
-        }
-
-    def get_map_events(self) -> list:
-        return [occurrence.to_dict() for occurrence in self.occurrences]
-
-    def get_sorted_events(self) -> list:
-        events = [{
-            'type': occ.type,
-            'mosque': occ.mosque,
-            'date': occ.date,
-            'start_time': occ.start_time,
-            'end_time': occ.end_time,
-            'location': occ.location,
-            'is_family_friendly': occ.is_family_friendly,
-            'registration_required': occ.registration_required
-        } for occ in self.occurrences]
-
-        return sorted(events, key=lambda x: (x['date'], x['start_time']))
-
-@ramadan.route('/iftar-map')
-def iftar_map():
-    # Get filter parameters
-    family_only = request.args.get('filter') == 'family'
-    iftar_type = request.args.get('type', 'all')
-    selected_mosque = request.args.get('mosque_id', type=int)
-    period = request.args.get('period', 'three_days')
-
-    # Get Ramadan dates and today
-    ramadan_start, ramadan_end = get_ramadan_dates()
-    today = date.today()
-
-    logger.debug(f"Filter parameters - family_only: {family_only}, type: {iftar_type}, mosque: {selected_mosque}, period: {period}")
-
-    # Calculate period filter dates
-    if period == 'day':
-        period_start = today
-        period_end = today
-    elif period == 'three_days':
-        period_start = today
-        period_end = today + timedelta(days=2)
-    elif period == 'week':
-        period_start = today
-        period_end = today + timedelta(days=6)
-    else:  # 'all'
-        period_start = today
-        period_end = ramadan_end
-
-    logger.debug(f"Period dates - start: {period_start}, end: {period_end}")
-
-    # Initialize calendar manager
-    calendar = CalendarManager(period_start, period_end)
-
-    # Build base query with filters
-    base_query = IfterEvent.query
-    if family_only:
-        base_query = base_query.filter(IfterEvent.is_family_friendly == True)
-    if selected_mosque:
-        base_query = base_query.filter(IfterEvent.mosque_id == selected_mosque)
-    if iftar_type != 'all':
-        if iftar_type == 'daily':
-            base_query = base_query.filter(IfterEvent.is_recurring == True,
-                                       IfterEvent.recurrence_type == 'daily')
-        elif iftar_type == 'weekly':
-            base_query = base_query.filter(IfterEvent.is_recurring == True,
-                                       IfterEvent.recurrence_type == 'weekly')
-        elif iftar_type == 'single':
-            base_query = base_query.filter(IfterEvent.is_recurring == False)
-
-    # Get and process events
-    events = base_query.all()
-    logger.debug(f"Found {len(events)} events matching filters")
-
-    # Process each event through calendar manager
-    for event in events:
-        if not event.is_recurring and event.date < today:
-            logger.debug(f"Skipping past non-recurring event {event.id}")
-            continue
-        calendar.add_event(event)
-
-    # Get all mosques for filtering
-    mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
-
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        return jsonify({
-            'calendar_events': calendar.get_calendar_events(),
-            'map_events': calendar.get_map_events(),
-            'sorted_events': calendar.get_sorted_events()
-        })
-
-    return render_template('ramadan/iftar_map.html',
-                       calendar_events=calendar.calendar_days,
-                       family_only=family_only,
-                       iftar_type=iftar_type,
-                       period=period,
-                       selected_mosque=selected_mosque,
-                       today=today,
-                       mosques=mosques,
-                       google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'),
-                       events_json=json.dumps(calendar.get_map_events()),
-                       sorted_events=calendar.get_sorted_events(),
-                       ramadan_start=ramadan_start,
-                       ramadan_end=ramadan_end)
-
-async def analyze_issues(events, prayer_times):
-    """
-    Analyze both calendar and prayer time issues using Claude
-    """
-    ai_service = AIService()
-
-    # Analyze calendar data
-    calendar_analysis = await ai_service.analyze_calendar_issue({
-        'events': [event.to_dict() for event in events],
-        'unique_dates': len(set(event.date for event in events)),
-        'total_events': len(events),
-        'recurring_events': len([e for e in events if e.is_recurring]),
-        'processed_occurrences': {}
-    })
-
-    # Analyze prayer times
-    prayer_analysis = await ai_service.analyze_prayer_times(prayer_times)
-
-    # Validate calendar logic
-    code_analysis = await ai_service.validate_calendar_logic("""
-    # Current calendar processing logic
-    processed_occurrences = {}
-    for event in events:
-        if event.is_recurring:
-            current_date = max(event.date, today)
-            while current_date <= min(event.recurrence_end_date or ramadan_end, period_end):
-                occurrence_key = f"{event.id}_{current_date}_{event.recurrence_type}"
-                if occurrence_key not in processed_occurrences:
-                    processed_occurrences[occurrence_key] = True
-                    calendar_events[current_date][event.recurrence_type].add(event.id)
-    """)
-
-    return calendar_analysis, prayer_analysis, code_analysis
 
 @ramadan.route('/')
 def index():
@@ -392,7 +419,7 @@ def add_iftar():
             is_recurring = bool(request.form.get('is_recurring'))
             recurrence_type = request.form.get('recurrence_type') if is_recurring else None
             recurrence_end_date = (datetime.strptime(request.form.get('recurrence_end_date'), '%Y-%m-%d').date() 
-                               if request.form.get('recurrence_end_date') else None)
+                              if request.form.get('recurrence_end_date') else None)
 
             # Calculate all dates for recurring events
             dates = [start_date]
@@ -595,30 +622,39 @@ def delete_iftar(iftar_id):
 def allowed_file(filename, allowed_extensions={'png', 'jpg', 'jpeg'}):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
-def add_event_to_lists(event, current_date, event_type, map_events, sorted_events):
-    """Helper function to add events to map_events and sorted_events lists"""
-    map_events.append({
-        'type': event_type,
-        'id': event.id,
-        'mosque_name': event.mosque.mosque_name,
-        'date': current_date.strftime('%Y-%m-%d'),
-        'start_time': event.start_time.strftime('%H:%M'),
-        'location': event.location,
-        'is_family_friendly': event.is_family_friendly,
-        'latitude': event.mosque.latitude,
-        'longitude': event.mosque.longitude
+async def analyze_issues(events, prayer_times):
+    """
+    Analyze both calendar and prayer time issues using Claude
+    """
+    ai_service = AIService()
+
+    # Analyze calendar data
+    calendar_analysis = await ai_service.analyze_calendar_issue({
+        'events': [event.to_dict() for event in events],
+        'unique_dates': len(set(event.date for event in events)),
+        'total_events': len(events),
+        'recurring_events': len([e for e in events if e.is_recurring]),
+        'processed_occurrences': {}
     })
 
-    sorted_events.append({
-        'type': event_type,
-        'mosque': event.mosque,
-        'date': current_date,
-        'start_time': event.start_time,
-        'end_time': event.end_time,
-        'location': event.location,
-        'is_family_friendly': event.is_family_friendly,
-        'registration_required': event.registration_required
-    })
+    # Analyze prayer times
+    prayer_analysis = await ai_service.analyze_prayer_times(prayer_times)
+
+    # Validate calendar logic -  This section remains largely unchanged as the core logic is handled in the IfterCalendar class now.
+    code_analysis = await ai_service.validate_calendar_logic("""
+    # Current calendar processing logic
+    processed_occurrences = {}
+    for event in events:
+        if event.is_recurring:
+            current_date = max(event.date, today)
+            while current_date <= min(event.recurrence_end_date or ramadan_end, period_end):
+                occurrence_key = f"{event.id}_{current_date}_{event.recurrence_type}"
+                if occurrence_key not in processed_occurrences:
+                    processed_occurrences[occurrence_key] = True
+                    calendar_events[current_date][event.recurrence_type].add(event.id)
+    """)
+
+    return calendar_analysis, prayer_analysis, code_analysis
 
 @ramadan.route('/analyze')
 @login_required

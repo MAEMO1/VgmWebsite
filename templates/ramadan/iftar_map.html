@@ -4,317 +4,361 @@
 
 {% block styles %}
 <style>
+/* Main Layout */
+.main-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Filter Panel */
+.filter-panel {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Calendar Styling */
+.calendar-container {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.calendar-grid {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 3px;
+}
+
+.calendar-day {
+    height: 120px;
+    padding: 0.5rem;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    vertical-align: top;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.calendar-day:hover {
+    background-color: #e9ecef;
+    transform: translateY(-2px);
+}
+
+.calendar-day.today {
+    background-color: #e8f4f8;
+    border: 2px solid #0dcaf0;
+}
+
+.calendar-day.has-events {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+}
+
+/* Event Indicators */
+.event-indicators {
+    display: flex;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+}
+
+.event-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.event-dot.daily { background-color: #198754; }
+.event-dot.weekly { background-color: #0d6efd; }
+.event-dot.single { background-color: #ffc107; }
+
+/* Prayer Times */
+.prayer-times {
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-top: 0.5rem;
+}
+
+.prayer-time {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.25rem;
+}
+
+/* Map Container */
 #map {
     height: 500px;
     width: 100%;
-    border-radius: 8px;
+    border-radius: 12px;
+    margin-bottom: 2rem;
 }
 
-.filter-panel {
+/* Event List */
+.events-list {
     background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-bottom: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 1.5rem;
 }
 
-.calendar-container {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.date-cell {
-    height: 80px;
-    position: relative;
-    padding: 0.5rem;
-}
-
-.date-cell.out-of-ramadan {
+.event-item {
+    padding: 1rem;
+    border-left: 4px solid transparent;
+    margin-bottom: 1rem;
     background-color: #f8f9fa;
-    color: #adb5bd;
+    border-radius: 8px;
+    transition: all 0.2s ease;
 }
 
-.event-indicator {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    display: inline-block;
-    margin: 0 2px;
+.event-item:hover {
+    transform: translateX(5px);
 }
 
-.event-indicator.daily { background-color: #198754; }
-.event-indicator.weekly { background-color: #0d6efd; }
-.event-indicator.single { background-color: #ffc107; }
+.event-item.daily { border-left-color: #198754; }
+.event-item.weekly { border-left-color: #0d6efd; }
+.event-item.single { border-left-color: #ffc107; }
 
-.event-count {
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
-    font-size: 0.75rem;
-    color: #6c757d;
-}
-
+/* Legend */
 .calendar-legend {
     display: flex;
     justify-content: center;
-    gap: 1.5rem;
-    margin: 1rem 0;
-    padding: 0.5rem;
+    gap: 2rem;
+    padding: 1rem;
     background-color: #f8f9fa;
-    border-radius: 4px;
+    border-radius: 8px;
+    margin: 1rem 0;
 }
 
 .legend-item {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.85rem;
 }
 
-.date-header {
-    background-color: #f8f9fa;
-    padding: 0.75rem 1rem;
-    margin-top: 1rem;
-    border-radius: 4px;
-    font-weight: 500;
-    color: #495057;
-}
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-container {
+        padding: 1rem;
+    }
 
-.list-view-item {
-    background: white;
-    border-left: 4px solid transparent;
-    margin-bottom: 0.5rem;
-    padding: 1rem;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-}
+    .calendar-day {
+        height: 100px;
+    }
 
-.list-view-item:hover {
-    transform: translateX(5px);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.list-view-item.daily { border-left-color: #198754; }
-.list-view-item.weekly { border-left-color: #0d6efd; }
-.list-view-item.single { border-left-color: #ffc107; }
-
-.modal-body {
-    max-height: 70vh;
-    overflow-y: auto;
+    .prayer-times {
+        display: none;
+    }
 }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid py-4">
-    <div class="row">
-        <!-- Header -->
-        <div class="col-12 mb-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1 class="h3 mb-0">{{ _('VGM Iftarkaart') }}</h1>
-                {% if current_user.is_authenticated and (current_user.is_admin or current_user.user_type == 'mosque') %}
-                <a href="{{ url_for('ramadan.add_iftar') }}" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> {{ _('Voeg Iftar Toe') }}
-                </a>
-                {% endif %}
-            </div>
-        </div>
+<div class="main-container">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">{{ _('VGM Iftarkaart') }}</h1>
+        {% if current_user.is_authenticated and (current_user.is_admin or current_user.user_type == 'mosque') %}
+        <a href="{{ url_for('ramadan.add_iftar') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>{{ _('Voeg Iftar Toe') }}
+        </a>
+        {% endif %}
+    </div>
 
-        <!-- Filters -->
-        <div class="col-12 mb-4">
-            <div class="filter-panel p-3">
-                <form id="filterForm" class="row g-3">
-                    <div class="col-md-3">
-                        <label for="type" class="form-label">{{ _('Type Iftar') }}</label>
-                        <select class="form-select" name="type" id="type">
-                            <option value="all" {% if iftar_type == 'all' %}selected{% endif %}>{{ _('Alle Types') }}</option>
-                            <option value="daily" {% if iftar_type == 'daily' %}selected{% endif %}>{{ _('Dagelijks') }}</option>
-                            <option value="weekly" {% if iftar_type == 'weekly' %}selected{% endif %}>{{ _('Wekelijks') }}</option>
-                            <option value="single" {% if iftar_type == 'single' %}selected{% endif %}>{{ _('Eenmalig') }}</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-3">
-                        <label for="period" class="form-label">{{ _('Periode') }}</label>
-                        <select class="form-select" name="period" id="period">
-                            <option value="all" {% if period == 'all' %}selected{% endif %}>{{ _('Volledige Ramadan') }}</option>
-                            <option value="day" {% if period == 'day' %}selected{% endif %}>{{ _('Vandaag') }}</option>
-                            <option value="three_days" {% if period == 'three_days' %}selected{% endif %}>{{ _('Komende 3 dagen') }}</option>
-                            <option value="week" {% if period == 'week' %}selected{% endif %}>{{ _('Deze week') }}</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-3">
-                        <label for="mosque_id" class="form-label">{{ _('Moskee') }}</label>
-                        <select class="form-select" name="mosque_id" id="mosque_id">
-                            <option value="">{{ _('Alle Moskeeën') }}</option>
-                            {% for mosque in mosques %}
-                                <option value="{{ mosque.id }}" {% if selected_mosque == mosque.id %}selected{% endif %}>
-                                    {{ mosque.mosque_name }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <div class="col-md-3 d-flex flex-column justify-content-end">
-                        <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="family_filter" name="filter" 
-                                   value="family" {% if family_only %}checked{% endif %}>
-                            <label class="form-check-label" for="family_filter">
-                                {{ _('Alleen Gezinsvriendelijk') }}
-                            </label>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="fas fa-filter me-2"></i>{{ _('Filter Toepassen') }}
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <div class="col-lg-7">
-            <!-- Map View -->
-            <div class="card mb-4">
-                <div class="card-body p-0">
-                    <div id="map"></div>
-                </div>
+    <!-- Filter Panel -->
+    <div class="filter-panel">
+        <form id="filterForm" class="row g-3">
+            <div class="col-md-3">
+                <label for="type" class="form-label">{{ _('Type Iftar') }}</label>
+                <select class="form-select" name="type" id="type">
+                    <option value="all" {% if iftar_type == 'all' %}selected{% endif %}>{{ _('Alle Types') }}</option>
+                    <option value="daily" {% if iftar_type == 'daily' %}selected{% endif %}>{{ _('Dagelijks') }}</option>
+                    <option value="weekly" {% if iftar_type == 'weekly' %}selected{% endif %}>{{ _('Wekelijks') }}</option>
+                    <option value="single" {% if iftar_type == 'single' %}selected{% endif %}>{{ _('Eenmalig') }}</option>
+                </select>
             </div>
 
-            <!-- List View -->
-            <div class="card">
-                <div class="card-header bg-white py-3">
-                    <h4 class="mb-0">{{ _('Iftar') }}</h4>
-                </div>
-                <div class="card-body">
-                    {% set current_list_date = None %}
-                    {% for event in sorted_events %}
-                        {% if current_list_date != event.date %}
-                            {% set current_list_date = event.date %}
-                            <div class="date-header">
-                                {{ event.date.strftime('%A %d %B %Y')|title }}
-                            </div>
-                        {% endif %}
+            <div class="col-md-3">
+                <label for="period" class="form-label">{{ _('Periode') }}</label>
+                <select class="form-select" name="period" id="period">
+                    <option value="all" {% if period == 'all' %}selected{% endif %}>{{ _('Volledige Ramadan') }}</option>
+                    <option value="day" {% if period == 'day' %}selected{% endif %}>{{ _('Vandaag') }}</option>
+                    <option value="three_days" {% if period == 'three_days' %}selected{% endif %}>{{ _('Komende 3 dagen') }}</option>
+                    <option value="week" {% if period == 'week' %}selected{% endif %}>{{ _('Deze week') }}</option>
+                </select>
+            </div>
 
-                        <div class="list-view-item {{ event.type }}">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h5 class="mb-1">{{ event.mosque.mosque_name }}</h5>
-                                    <p class="mb-1">
-                                        <i class="far fa-clock me-2"></i>
-                                        {{ event.start_time.strftime('%H:%M') }}
-                                        {% if event.end_time %}
-                                            - {{ event.end_time.strftime('%H:%M') }}
-                                        {% endif %}
-                                    </p>
-                                    <p class="mb-1">
-                                        <i class="fas fa-map-marker-alt me-2"></i>
-                                        {{ event.location }}
-                                        {% if event.women_entrance %}
-                                            <br>
-                                            <i class="fas fa-door-open me-2"></i>
-                                            {{ _('Specifieke ingang voor vrouwen') }}: {{ event.women_entrance }}
-                                        {% endif %}
-                                    </p>
-                                </div>
-                                <div>
-                                    {% if event.is_family_friendly %}
-                                        <span class="badge bg-success">
-                                            <i class="fas fa-users"></i> {{ _('Gezinsvriendelijk') }}
-                                        </span>
-                                    {% endif %}
-                                    {% if event.registration_required %}
-                                        <span class="badge bg-info">
-                                            <i class="fas fa-clipboard-list"></i> {{ _('Registratie vereist') }}
-                                        </span>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
+            <div class="col-md-3">
+                <label for="mosque_id" class="form-label">{{ _('Moskee') }}</label>
+                <select class="form-select" name="mosque_id" id="mosque_id">
+                    <option value="">{{ _('Alle Moskeeën') }}</option>
+                    {% for mosque in mosques %}
+                    <option value="{{ mosque.id }}" {% if selected_mosque == mosque.id %}selected{% endif %}>
+                        {{ mosque.mosque_name }}
+                    </option>
                     {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-3 d-flex flex-column justify-content-end">
+                <div class="form-check mb-2">
+                    <input type="checkbox" class="form-check-input" id="family_filter" name="filter" 
+                           value="family" {% if family_only %}checked{% endif %}>
+                    <label class="form-check-label" for="family_filter">
+                        {{ _('Alleen Gezinsvriendelijk') }}
+                    </label>
                 </div>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-filter me-2"></i>{{ _('Filter Toepassen') }}
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="row">
+        <!-- Map and List View -->
+        <div class="col-lg-7">
+            <!-- Map -->
+            <div id="map" class="mb-4"></div>
+
+            <!-- Events List -->
+            <div class="events-list">
+                <h4 class="mb-3">{{ _('Geplande Iftars') }}</h4>
+                {% for event in sorted_events %}
+                <div class="event-item {{ event.type }}">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="mb-1">{{ event.mosque.mosque_name }}</h5>
+                            <p class="mb-1">
+                                <i class="far fa-calendar me-2"></i>
+                                {{ event.date.strftime('%A %d %B')|title }}
+                            </p>
+                            <p class="mb-1">
+                                <i class="far fa-clock me-2"></i>
+                                {{ event.start_time.strftime('%H:%M') }}
+                                {% if event.end_time %}
+                                - {{ event.end_time.strftime('%H:%M') }}
+                                {% endif %}
+                            </p>
+                            <p class="mb-1">
+                                <i class="fas fa-map-marker-alt me-2"></i>
+                                {{ event.location }}
+                            </p>
+                        </div>
+                        <div class="d-flex flex-column gap-2">
+                            {% if event.is_family_friendly %}
+                            <span class="badge bg-success">
+                                <i class="fas fa-users me-1"></i>{{ _('Gezinsvriendelijk') }}
+                            </span>
+                            {% endif %}
+                            {% if event.registration_required %}
+                            <span class="badge bg-info">
+                                <i class="fas fa-clipboard-list me-1"></i>{{ _('Registratie vereist') }}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
         </div>
 
+        <!-- Calendar View -->
         <div class="col-lg-5">
-            <!-- Calendar -->
-            <div class="calendar-container p-3">
-                <h4 class="text-center mb-3">{{ _('Ramadan 1446/2025') }}</h4>
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <h4 class="mb-0">{{ _('Ramadan 1446/2025') }}</h4>
+                </div>
 
                 <!-- Calendar Legend -->
                 <div class="calendar-legend">
                     <div class="legend-item">
-                        <span class="event-indicator daily"></span>
+                        <span class="event-dot daily"></span>
                         <span>{{ _('Dagelijks') }}</span>
                     </div>
                     <div class="legend-item">
-                        <span class="event-indicator weekly"></span>
+                        <span class="event-dot weekly"></span>
                         <span>{{ _('Wekelijks') }}</span>
                     </div>
                     <div class="legend-item">
-                        <span class="event-indicator single"></span>
+                        <span class="event-dot single"></span>
                         <span>{{ _('Eenmalig') }}</span>
                     </div>
                 </div>
 
-                <div class="table-responsive">
-                    <table class="table table-bordered mb-0">
-                        <thead>
-                            <tr>
-                                <th class="text-center">{{ _('Ma') }}</th>
-                                <th class="text-center">{{ _('Di') }}</th>
-                                <th class="text-center">{{ _('Wo') }}</th>
-                                <th class="text-center">{{ _('Do') }}</th>
-                                <th class="text-center">{{ _('Vr') }}</th>
-                                <th class="text-center">{{ _('Za') }}</th>
-                                <th class="text-center">{{ _('Zo') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for week in calendar %}
-                            <tr>
-                                {% for day in week %}
-                                <td class="date-cell {% if day == 0 %}out-of-ramadan{% endif %}">
-                                    {% if day != 0 %}
-                                        {% set this_date = ramadan_start.replace(day=day) %}
-                                        {% if this_date >= ramadan_start and this_date <= ramadan_end %}
-                                            {% set day_events = calendar_events.get(this_date, {'daily': [], 'weekly': [], 'single': []}) %}
-                                            <div class="d-flex flex-column h-100" onclick="showDayDetails('{{ this_date.strftime("%Y-%m-%d") }}')" style="cursor: pointer;">
-                                                <div class="text-end mb-2">{{ day }}</div>
-                                                {% if day_events.daily or day_events.weekly or day_events.single %}
-                                                    <div class="d-flex justify-content-center gap-1 mt-auto">
-                                                        {% if day_events.daily %}
-                                                            <span class="event-indicator daily" title="{{ _('Dagelijkse iftars') }} ({{ day_events.daily|length }})"></span>
-                                                        {% endif %}
-                                                        {% if day_events.weekly %}
-                                                            <span class="event-indicator weekly" title="{{ _('Wekelijkse iftars') }} ({{ day_events.weekly|length }})"></span>
-                                                        {% endif %}
-                                                        {% if day_events.single %}
-                                                            <span class="event-indicator single" title="{{ _('Eenmalige iftars') }} ({{ day_events.single|length }})"></span>
-                                                        {% endif %}
-                                                    </div>
-                                                    <div class="event-count">
-                                                        {{ day_events.daily|length + day_events.weekly|length + day_events.single|length }}
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                        {% else %}
-                                            <div class="text-muted text-end">{{ day }}</div>
-                                        {% endif %}
+                <!-- Calendar Grid -->
+                <table class="calendar-grid">
+                    <thead>
+                        <tr>
+                            <th>{{ _('Ma') }}</th>
+                            <th>{{ _('Di') }}</th>
+                            <th>{{ _('Wo') }}</th>
+                            <th>{{ _('Do') }}</th>
+                            <th>{{ _('Vr') }}</th>
+                            <th>{{ _('Za') }}</th>
+                            <th>{{ _('Zo') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for week in calendar_data.weeks %}
+                        <tr>
+                            {% for day in week %}
+                            <td class="calendar-day {% if day.is_today %}today{% endif %} {% if day.has_events %}has-events{% endif %}"
+                                onclick="showDayDetails('{{ day.date }}')">
+                                <div class="d-flex justify-content-between">
+                                    <span>{{ day.day }}</span>
+                                    {% if day.has_events %}
+                                    <span class="badge bg-primary">{{ day.event_count }}</span>
                                     {% endif %}
-                                </td>
-                                {% endfor %}
-                            </tr>
+                                </div>
+
+                                {% if day.has_events %}
+                                <div class="event-indicators">
+                                    {% if day.events.daily %}
+                                    <span class="event-dot daily" title="{{ _('Dagelijkse iftars') }}"></span>
+                                    {% endif %}
+                                    {% if day.events.weekly %}
+                                    <span class="event-dot weekly" title="{{ _('Wekelijkse iftars') }}"></span>
+                                    {% endif %}
+                                    {% if day.events.single %}
+                                    <span class="event-dot single" title="{{ _('Eenmalige iftars') }}"></span>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+
+                                {% if day.prayer_times %}
+                                <div class="prayer-times">
+                                    <div class="prayer-time">
+                                        <span>Maghrib:</span>
+                                        <span>{{ day.prayer_times.maghrib }}</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </td>
                             {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Event Details Modal -->
-<div class="modal fade" id="eventModal" tabindex="-1">
+<!-- Day Details Modal -->
+<div class="modal fade" id="dayModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -335,10 +379,11 @@ let markers = [];
 let events = {{ events_json|safe }};
 
 function initMap() {
-    const netherlands = { lat: 52.1326, lng: 5.2913 };
+    // Center on Belgium
+    const belgium = { lat: 50.8503, lng: 4.3517 };
     map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 7,
-        center: netherlands,
+        zoom: 8,
+        center: belgium,
         styles: [
             {
                 featureType: "poi",
@@ -351,7 +396,7 @@ function initMap() {
     updateMarkers(events);
 }
 
-function updateMarkers(newEvents) {
+function updateMarkers(events) {
     // Clear existing markers
     markers.forEach(marker => marker.setMap(null));
     markers = [];
@@ -359,7 +404,7 @@ function updateMarkers(newEvents) {
     const bounds = new google.maps.LatLngBounds();
     let hasValidMarkers = false;
 
-    newEvents.forEach(event => {
+    events.forEach(event => {
         if (event.latitude && event.longitude) {
             hasValidMarkers = true;
             const position = { lat: event.latitude, lng: event.longitude };
@@ -382,7 +427,7 @@ function updateMarkers(newEvents) {
                 content: `
                     <div class="info-window">
                         <h5>${event.mosque_name}</h5>
-                        <p>${event.date} - ${event.start_time}</p>
+                        <p>${event.date} ${event.start_time}</p>
                         <p>${event.location}</p>
                         ${event.is_family_friendly ? '<span class="badge bg-success">Gezinsvriendelijk</span>' : ''}
                     </div>
@@ -397,7 +442,6 @@ function updateMarkers(newEvents) {
         }
     });
 
-    // Fit bounds if we have valid markers
     if (hasValidMarkers) {
         map.fitBounds(bounds);
         const listener = google.maps.event.addListener(map, "idle", () => {
@@ -412,76 +456,65 @@ function getEventColor(type) {
         case 'daily': return '#198754';
         case 'weekly': return '#0d6efd';
         case 'single': return '#ffc107';
-        default: return '#0d6efd';
+        default: return '#6c757d';
     }
 }
 
 function showDayDetails(date) {
-    const modal = new bootstrap.Modal(document.getElementById('eventModal'));
-    const modalTitle = document.querySelector('#eventModal .modal-title');
-    const modalBody = document.querySelector('#eventModal .modal-body');
+    const modal = new bootstrap.Modal(document.getElementById('dayModal'));
+    const modalTitle = document.querySelector('#dayModal .modal-title');
+    const modalBody = document.querySelector('#dayModal .modal-body');
 
-    // Format the date in Dutch
     const dateObj = new Date(date);
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     modalTitle.textContent = dateObj.toLocaleDateString('nl-NL', options);
 
-    // Filter events for the selected date
     const dayEvents = events.filter(event => event.date === date);
+    const eventsByType = {
+        daily: dayEvents.filter(e => e.type === 'daily'),
+        weekly: dayEvents.filter(e => e.type === 'weekly'),
+        single: dayEvents.filter(e => e.type === 'single')
+    };
 
-    if (dayEvents.length > 0) {
-        const eventsByType = {
-            daily: dayEvents.filter(e => e.type === 'daily'),
-            weekly: dayEvents.filter(e => e.type === 'weekly'),
-            single: dayEvents.filter(e => e.type === 'single')
-        };
+    let html = '';
+    Object.entries(eventsByType).forEach(([type, typeEvents]) => {
+        if (typeEvents.length > 0) {
+            const typeLabels = {
+                daily: 'Dagelijkse Iftars',
+                weekly: 'Wekelijkse Iftars',
+                single: 'Eenmalige Iftars'
+            };
 
-        let html = '';
-
-        Object.entries(eventsByType).forEach(([type, typeEvents]) => {
-            if (typeEvents.length > 0) {
-                const typeLabels = {
-                    daily: 'Dagelijkse Iftars',
-                    weekly: 'Wekelijkse Iftars',
-                    single: 'Eenmalige Iftars'
-                };
-
-                html += `<h5 class="mb-3">${typeLabels[type]}</h5>`;
-                typeEvents.forEach(event => {
-                    html += `
-                        <div class="card mb-3 border-${type === 'daily' ? 'success' : type === 'weekly' ? 'primary' : 'warning'}">
-                            <div class="card-body">
-                                <h6 class="card-title">${event.mosque_name}</h6>
-                                <p class="card-text">
-                                    <i class="far fa-clock me-2"></i>${event.start_time}
-                                    <br>
-                                    <i class="fas fa-map-marker-alt me-2"></i>${event.location}
-                                </p>
-                                ${event.is_family_friendly ? '<span class="badge bg-success"><i class="fas fa-users"></i> Gezinsvriendelijk</span>' : ''}
-                            </div>
+            html += `<h5 class="mb-3">${typeLabels[type]}</h5>`;
+            typeEvents.forEach(event => {
+                html += `
+                    <div class="event-item ${type} mb-3">
+                        <h6 class="mb-2">${event.mosque_name}</h6>
+                        <p class="mb-2">
+                            <i class="far fa-clock me-2"></i>${event.start_time}
+                        </p>
+                        <p class="mb-2">
+                            <i class="fas fa-map-marker-alt me-2"></i>${event.location}
+                        </p>
+                        <div class="d-flex gap-2">
+                            ${event.is_family_friendly ? 
+                              '<span class="badge bg-success"><i class="fas fa-users me-1"></i>Gezinsvriendelijk</span>' : ''}
                         </div>
-                    `;
-                });
-            }
-        });
+                    </div>
+                `;
+            });
+        }
+    });
 
-        modalBody.innerHTML = html;
-    } else {
-        modalBody.innerHTML = '<p class="text-muted">Geen iftars gevonden voor deze dag.</p>';
-    }
-
+    modalBody.innerHTML = html || '<p class="text-muted">Geen iftars gevonden voor deze dag.</p>';
     modal.show();
 }
 
 // Filter form handling
 document.getElementById('filterForm').addEventListener('submit', function(e) {
     e.preventDefault();
-
-    // Get form data
     const formData = new FormData(this);
     const params = new URLSearchParams(formData);
-
-    // Redirect to the filtered URL
     window.location.href = `${window.location.pathname}?${params.toString()}`;
 });
 </script>
