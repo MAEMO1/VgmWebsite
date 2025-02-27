@@ -21,154 +21,27 @@ ramadan = Blueprint('ramadan', __name__)
 class IfterCalendar:
     """Handles all iftar event processing and calendar management"""
 
-    def __init__(self, start_date: date, end_date: date):
-        self.start_date = start_date
-        self.end_date = end_date
+    def __init__(self, db):
+        self.db = db
         self.prayer_service = PrayerTimeService()
-        self.events_by_date = {}
-        self.processed_keys = set()
-        self._initialize_calendar()
 
-    def _initialize_calendar(self):
-        """Initialize empty calendar structure"""
-        current = self.start_date
-        while current <= self.end_date:
-            self.events_by_date[current] = {
-                'daily': [],
-                'weekly': [],
-                'single': [],
-                'prayer_times': None
-            }
-            current += timedelta(days=1)
+    def get_events_for_period(self, start_date, end_date, mosque_id=None, family_only=False, event_type='all'):
+        base_query = IfterEvent.query
+        if family_only:
+            base_query = base_query.filter(IfterEvent.is_family_friendly == True)
+        if mosque_id:
+            base_query = base_query.filter(IfterEvent.mosque_id == mosque_id)
+        if event_type != 'all':
+            if event_type == 'daily':
+                base_query = base_query.filter(IfterEvent.is_recurring == True, IfterEvent.recurrence_type == 'daily')
+            elif event_type == 'weekly':
+                base_query = base_query.filter(IfterEvent.is_recurring == True, IfterEvent.recurrence_type == 'weekly')
+            elif event_type == 'single':
+                base_query = base_query.filter(IfterEvent.is_recurring == False)
+        
+        events = base_query.filter(IfterEvent.date >= start_date, IfterEvent.date <= end_date).all()
+        return [event.to_dict() for event in events]
 
-    def load_prayer_times(self):
-        """Load prayer times for the entire period"""
-        try:
-            prayer_times = self.prayer_service.get_prayer_times_for_range(
-                'diyanet', self.start_date, self.end_date, 'Gent'
-            )
-
-            if prayer_times:
-                for date_key in self.events_by_date:
-                    if date_key in prayer_times:
-                        self.events_by_date[date_key]['prayer_times'] = prayer_times[date_key]
-
-        except Exception as e:
-            logger.error(f"Error loading prayer times: {e}")
-
-    def process_event(self, event: IfterEvent, today: date) -> None:
-        """Process a single event and its occurrences"""
-        try:
-            # Skip past non-recurring events
-            if not event.is_recurring and event.date < today:
-                return
-
-            if event.is_recurring:
-                self._process_recurring_event(event, today)
-            else:
-                self._process_single_event(event)
-
-        except Exception as e:
-            logger.error(f"Error processing event {event.id}: {e}")
-
-    def _process_recurring_event(self, event: IfterEvent, today: date) -> None:
-        """Handle recurring event processing"""
-        current_date = max(event.date, today, self.start_date)
-        end_date = min(event.recurrence_end_date or self.end_date, self.end_date)
-
-        # Adjust start for weekly events
-        if event.recurrence_type == 'weekly' and current_date > event.date:
-            days_since_start = (current_date - event.date).days
-            days_to_next = 7 - (days_since_start % 7)
-            if days_to_next < 7:
-                current_date += timedelta(days=days_to_next)
-
-        while current_date <= end_date:
-            event_key = f"{event.id}_{current_date}_{event.recurrence_type}"
-
-            if event_key not in self.processed_keys:
-                self.processed_keys.add(event_key)
-
-                if current_date in self.events_by_date:
-                    event_data = self._create_event_data(event, current_date)
-                    self.events_by_date[current_date][event.recurrence_type].append(event_data)
-
-            # Move to next occurrence
-            if event.recurrence_type == 'daily':
-                current_date += timedelta(days=1)
-            elif event.recurrence_type == 'weekly':
-                current_date += timedelta(days=7)
-
-    def _process_single_event(self, event: IfterEvent) -> None:
-        """Handle single event processing"""
-        if self.start_date <= event.date <= self.end_date:
-            event_key = f"{event.id}_{event.date}_single"
-
-            if event_key not in self.processed_keys:
-                self.processed_keys.add(event_key)
-
-                if event.date in self.events_by_date:
-                    event_data = self._create_event_data(event, event.date)
-                    self.events_by_date[event.date]['single'].append(event_data)
-
-    def _create_event_data(self, event: IfterEvent, current_date: date) -> dict:
-        """Create standardized event data structure"""
-        return {
-            'id': event.id,
-            'type': 'single' if not event.is_recurring else event.recurrence_type,
-            'mosque': event.mosque,
-            'mosque_name': event.mosque.mosque_name,
-            'date': current_date,
-            'start_time': event.start_time,
-            'end_time': event.end_time,
-            'location': event.location,
-            'is_family_friendly': event.is_family_friendly,
-            'registration_required': event.registration_required,
-            'latitude': event.mosque.latitude,
-            'longitude': event.mosque.longitude
-        }
-
-    def get_calendar_data(self) -> dict:
-        """Get formatted calendar data"""
-        return {
-            date.strftime('%Y-%m-%d'): {
-                'events': {
-                    event_type: events
-                    for event_type, events in day_data.items()
-                    if event_type != 'prayer_times'
-                },
-                'prayer_times': day_data['prayer_times']
-            }
-            for date, day_data in self.events_by_date.items()
-        }
-
-    def get_map_events(self) -> list:
-        """Get events formatted for map display"""
-        map_events = []
-        for date_data in self.events_by_date.values():
-            for event_type in ['daily', 'weekly', 'single']:
-                for event in date_data[event_type]:
-                    map_events.append({
-                        'type': event['type'],
-                        'id': event['id'],
-                        'mosque_name': event['mosque_name'],
-                        'date': event['date'].strftime('%Y-%m-%d'),
-                        'start_time': event['start_time'].strftime('%H:%M'),
-                        'location': event['location'],
-                        'is_family_friendly': event['is_family_friendly'],
-                        'latitude': event['latitude'],
-                        'longitude': event['longitude']
-                    })
-        return map_events
-
-    def get_sorted_events(self) -> list:
-        """Get chronologically sorted events"""
-        sorted_events = []
-        for date_data in self.events_by_date.values():
-            for event_type in ['daily', 'weekly', 'single']:
-                sorted_events.extend(date_data[event_type])
-
-        return sorted(sorted_events, key=lambda x: (x['date'], x['start_time']))
 
 @ramadan.route('/iftar-map')
 def iftar_map():
@@ -180,11 +53,11 @@ def iftar_map():
         selected_mosque = request.args.get('mosque_id', type=int)
         period = request.args.get('period', 'three_days')
 
+        logger.debug(f"Processing request - filters: family={family_only}, type={iftar_type}, mosque={selected_mosque}, period={period}")
+
         # Get Ramadan dates and today
         ramadan_start, ramadan_end = get_ramadan_dates()
         today = date.today()
-
-        logger.debug(f"Processing request - filters: family={family_only}, type={iftar_type}, mosque={selected_mosque}, period={period}")
 
         # Calculate period dates
         if period == 'day':
@@ -199,34 +72,35 @@ def iftar_map():
             period_start = today
             period_end = ramadan_end
 
-        # Initialize calendar manager
-        calendar = IfterCalendar(period_start, period_end)
+        # Initialize calendar manager with database
+        calendar = IfterCalendar(db)
 
-        # Load prayer times
-        calendar.load_prayer_times()
+        # Get filtered events
+        events = calendar.get_events_for_period(
+            start_date=period_start,
+            end_date=period_end,
+            mosque_id=selected_mosque,
+            family_only=family_only,
+            event_type=iftar_type
+        )
 
-        # Build and apply filters
-        base_query = IfterEvent.query
-        if family_only:
-            base_query = base_query.filter(IfterEvent.is_family_friendly == True)
-        if selected_mosque:
-            base_query = base_query.filter(IfterEvent.mosque_id == selected_mosque)
-        if iftar_type != 'all':
-            if iftar_type == 'daily':
-                base_query = base_query.filter(IfterEvent.is_recurring == True,
-                                           IfterEvent.recurrence_type == 'daily')
-            elif iftar_type == 'weekly':
-                base_query = base_query.filter(IfterEvent.is_recurring == True,
-                                           IfterEvent.recurrence_type == 'weekly')
-            elif iftar_type == 'single':
-                base_query = base_query.filter(IfterEvent.is_recurring == False)
+        # Get prayer times for the period
+        prayer_service = PrayerTimeService()
+        prayer_times = prayer_service.get_prayer_times_for_range(
+            'diyanet',  # Primary source
+            period_start,
+            period_end,
+            'Gent'
+        )
 
-        # Process events
-        events = base_query.all()
-        logger.debug(f"Found {len(events)} matching events")
-
-        for event in events:
-            calendar.process_event(event, today)
+        if not prayer_times:
+            logger.warning("Failed to get prayer times from primary source, trying fallback")
+            prayer_times = prayer_service.get_prayer_times_for_range(
+                'mawaqit',  # Fallback source
+                period_start,
+                period_end,
+                'Gent'
+            )
 
         # Get mosque data for filtering
         mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
@@ -234,14 +108,14 @@ def iftar_map():
         # Handle AJAX requests
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({
-                'calendar_events': calendar.get_calendar_data(),
-                'map_events': calendar.get_map_events(),
-                'sorted_events': calendar.get_sorted_events()
+                'events': [event for event in events if event['date'] >= today],
+                'prayer_times': prayer_times
             })
 
         # Render template
         return render_template('ramadan/iftar_map.html',
-                           calendar_data=calendar.get_calendar_data(),
+                           events=events,
+                           prayer_times=prayer_times,
                            family_only=family_only,
                            iftar_type=iftar_type,
                            period=period,
@@ -249,13 +123,25 @@ def iftar_map():
                            today=today,
                            mosques=mosques,
                            google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'),
-                           events_json=json.dumps(calendar.get_map_events()),
-                           sorted_events=calendar.get_sorted_events(),
+                           events_json=json.dumps([
+                               {
+                                   'id': event['id'],
+                                   'type': event['type'],
+                                   'mosque_name': event['mosque_name'],
+                                   'date': event['date'].strftime('%Y-%m-%d'),
+                                   'start_time': event['start_time'].strftime('%H:%M'),
+                                   'location': event['location'],
+                                   'is_family_friendly': event['is_family_friendly'],
+                                   'latitude': event['latitude'],
+                                   'longitude': event['longitude']
+                               }
+                               for event in events
+                           ]),
                            ramadan_start=ramadan_start,
                            ramadan_end=ramadan_end)
 
     except Exception as e:
-        logger.error(f"Error in iftar_map route: {e}")
+        logger.error(f"Error in iftar_map route: {e}", exc_info=True)
         flash(_('Er is een fout opgetreden bij het laden van de iftar kaart.'), 'error')
         return redirect(url_for('main.index'))
 
