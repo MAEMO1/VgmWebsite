@@ -1,0 +1,23 @@
+Een veelgebruikte aanpak is om geen officiële “Diyanet Gent API” te integreren (die in feite niet publiek beschikbaar is), maar in plaats daarvan de Diyanet-methode via een betrouwbare, openbare gebedstijden-API zoals Aladhan te benutten. Hierbij kun je het volgende doen:
+
+1. **Gebruik de Aladhan API met de Diyanet-methode:**  
+   De Aladhan API ondersteunt verschillende berekeningsmethodes. Door de parameter `method=5` mee te geven, wordt de Diyanet-methode toegepast. Je kunt de coördinaten voor Gent (bijvoorbeeld latitude 51.0543, longitude 3.7174) gebruiken zodat de berekeningen voor die regio kloppen.
+
+2. **Backend-integratie:**  
+   Bouw in je backend een module of functie die de API-call uitvoert naar de Aladhan API. Voorbeeld-URL:  
+   ```
+   https://api.aladhan.com/v1/timings?latitude=51.0543&longitude=3.7174&method=5&date=YYYY-MM-DD
+   ```  
+   Hiermee krijg je de gebedstijden volgens de Diyanet-standaard binnen Gent. Verwerk de JSON-response en gebruik deze data om de iftar-tijd (bijvoorbeeld het Maghrib-gebed met een eventuele marge) in te vullen.
+
+3. **Keuzemenu in de Admin Interface:**  
+   Voeg in het iftar-invoerscherm (voor zowel de moskee als de admin) een optie toe waarmee kan worden gekozen tussen “Mawaqit” en “Diyanet”. Op basis van de keuze gebruik je dan de juiste API-call:  
+   - **Bij Mawaqit:** Roep je de bestaande Mawaqit API aan.  
+   - **Bij Diyanet:** Gebruik je de hierboven beschreven Aladhan API-call met `method=5`.
+
+4. **Weergave en Fallback:**  
+   Zorg ervoor dat de frontend de ingevulde tijden correct toont en dat er foutafhandeling is voor het geval de API-call geen data oplevert. Dit kan bijvoorbeeld door de laatst bekende tijden te tonen of een melding te geven.
+
+Op deze manier geef je beheerders de flexibiliteit om per iftar of per moskee te kiezen welke bron zij wensen te gebruiken, zonder afhankelijk te zijn van een specifieke “Diyanet Gent API”. Deze aanpak biedt een robuuste, gemakkelijk implementeerbare oplossing met bestaande, goed gedocumenteerde API’s.
+
+Heb je nog meer details of specifieke codevoorbeelden nodig voor een van deze stappen?
