@@ -53,34 +53,47 @@ def iftar_map():
         calendar = IfterCalendar(db)
 
         # Get filtered events
-        events = calendar.get_events_for_period(
-            start_date=period_start,
-            end_date=period_end,
-            mosque_id=selected_mosque,
-            family_only=family_only,
-            event_type=iftar_type
-        )
+        try:
+            events = calendar.get_events_for_period(
+                start_date=period_start,
+                end_date=period_end,
+                mosque_id=selected_mosque,
+                family_only=family_only,
+                event_type=iftar_type
+            )
+            logger.debug(f"Retrieved {len(events)} events for period")
+        except Exception as e:
+            logger.error(f"Error getting events: {e}", exc_info=True)
+            events = []
 
         # Get prayer times for the period
         prayer_service = PrayerTimeService()
-        prayer_times = prayer_service.get_prayer_times_for_range(
-            'diyanet',  # Primary source
-            period_start,
-            period_end,
-            'Gent'
-        )
-
-        if not prayer_times:
-            logger.warning("Failed to get prayer times from primary source, trying fallback")
+        try:
             prayer_times = prayer_service.get_prayer_times_for_range(
-                'mawaqit',  # Fallback source
+                'diyanet',  # Primary source
                 period_start,
                 period_end,
                 'Gent'
             )
 
+            if not prayer_times:
+                logger.warning("Failed to get prayer times from primary source, trying fallback")
+                prayer_times = prayer_service.get_prayer_times_for_range(
+                    'mawaqit',  # Fallback source
+                    period_start,
+                    period_end,
+                    'Gent'
+                )
+        except Exception as e:
+            logger.error(f"Error getting prayer times: {e}", exc_info=True)
+            prayer_times = {}
+
         # Get mosque data for filtering
-        mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
+        try:
+            mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
+        except Exception as e:
+            logger.error(f"Error getting mosques: {e}", exc_info=True)
+            mosques = []
 
         # Handle AJAX requests
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':

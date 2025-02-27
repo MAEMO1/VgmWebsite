@@ -476,6 +476,24 @@ class IfterEvent(db.Model):
     mosque = db.relationship('User', backref='ifter_events')
     registrations = db.relationship('IfterRegistration', backref='ifter_event', lazy='dynamic')
 
+    def to_dict(self):
+        """Convert event to a dictionary format"""
+        return {
+            'id': self.id,
+            'type': 'single' if not self.is_recurring else self.recurrence_type,
+            'mosque_id': self.mosque_id,
+            'mosque_name': self.mosque.mosque_name if self.mosque else None,
+            'date': self.date,
+            'start_time': self.start_time,
+            'end_time': self.end_time,
+            'location': self.location,
+            'is_family_friendly': self.is_family_friendly,
+            'registration_required': self.registration_required,
+            'capacity': self.capacity,
+            'latitude': self.mosque.latitude if self.mosque else None,
+            'longitude': self.mosque.longitude if self.mosque else None
+        }
+
 class IfterRegistration(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ifter_event_id = db.Column(db.Integer, db.ForeignKey('ifter_event.id'), nullable=False)
