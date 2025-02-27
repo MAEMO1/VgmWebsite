@@ -43,11 +43,10 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="location" class="form-label">{{ _('Locatie in de moskee') }}</label>
+                    <label for="location" class="form-label">{{ _('Adres') }}</label>
                     <input type="text" class="form-control" id="location" name="location" 
                            value="{% if not current_user.is_admin %}{{ current_mosque.get_full_address() }}{% endif %}"
-                           placeholder="{{ _('Bijvoorbeeld: Hoofdzaal, Gemeenschapsruimte') }}">
-                    <small class="form-text">{{ _('Laat leeg om het standaard moskee adres te gebruiken') }}</small>
+                           placeholder="{{ _('Straat en huisnummer') }}">
                 </div>
 
                 <div class="mb-3">
@@ -63,8 +62,9 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="women_entrance" class="form-label">{{ _('Aparte ingang voor vrouwen') }}</label>
-                    <input type="text" class="form-control" id="women_entrance" name="women_entrance">
+                    <label for="women_entrance" class="form-label">{{ _('Optioneel: specifieke ingang voor vrouwen als deze verschilt van de hoofdingang') }}</label>
+                    <input type="text" class="form-control" id="women_entrance" name="women_entrance" 
+                           placeholder="{{ _('Bijvoorbeeld: zijingang via ...') }}">
                 </div>
 
                 <div class="form-check mb-3">
