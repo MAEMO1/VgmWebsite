@@ -37,7 +37,7 @@ class AIService:
             """
 
             response = self.client.messages.create(
-                model="claude-3-5-sonnet-20241022",  # Using latest model
+                model="claude-3.7",  # Updated model
                 max_tokens=1024,
                 messages=[{"role": "user", "content": prompt}]
             )
@@ -72,7 +72,7 @@ class AIService:
             """
 
             response = self.client.messages.create(
-                model="claude-3-5-sonnet-20241022",  # Using latest model
+                model="claude-3.7",  # Updated model
                 max_tokens=1024,
                 messages=[{"role": "user", "content": prompt}]
             )
@@ -107,7 +107,7 @@ class AIService:
             """
 
             response = self.client.messages.create(
-                model="claude-3-5-sonnet-20241022",  # Using latest model
+                model="claude-3.7",  # Updated model
                 max_tokens=1024,
                 messages=[{"role": "user", "content": prompt}]
             )
@@ -141,11 +141,11 @@ class AIService:
             """
 
             response = self.client.messages.create(
-                model="claude-3-5-sonnet-20241022",  # Using latest model
+                model="claude-3.7",  # Updated model
                 max_tokens=1024,
                 messages=[{"role": "user", "content": prompt}]
             )
-            
+
             logger.info("Successfully received translation feedback from Claude")
             return response.content[0].text
 
@@ -173,7 +173,7 @@ class AIService:
             """
 
             response = self.client.messages.create(
-                model="claude-3-5-sonnet-20241022",  # Using latest model
+                model="claude-3.7",  # Updated model
                 max_tokens=512,
                 messages=[{"role": "user", "content": prompt}]
             )
@@ -205,7 +205,7 @@ class AIService:
             """
 
             response = self.client.messages.create(
-                model="claude-3-5-sonnet-20241022",  # Using latest model
+                model="claude-3.7",  # Updated model
                 max_tokens=1024,
                 messages=[{"role": "user", "content": prompt}]
             )

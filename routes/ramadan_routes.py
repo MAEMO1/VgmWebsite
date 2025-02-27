@@ -371,7 +371,7 @@ def add_iftar():
             is_recurring = bool(request.form.get('is_recurring'))
             recurrence_type = request.form.get('recurrence_type') if is_recurring else None
             recurrence_end_date = (datetime.strptime(request.form.get('recurrence_end_date'), '%Y-%m-%d').date() 
-                                if request.form.get('recurrence_end_date') else None)
+                               if request.form.get('recurrence_end_date') else None)
 
             # Calculate all dates for recurring events
             dates = [start_date]
@@ -616,7 +616,7 @@ async def analyze_calendar():
             'diyanet', ramadan_start, ramadan_end, 'Gent'
         )
 
-        # Run analysis
+        # Run analysis 
         calendar_analysis, prayer_analysis, code_analysis = await analyze_issues(
             events, prayer_times
         )
