@@ -31,8 +31,99 @@ def index():
     ).order_by(IfterEvent.date).limit(3).all()
 
     return render_template('ramadan/index.html',
+                         prayer_times=prayer_times,
                          programs=programs,
                          upcoming_iftars=upcoming_iftars)
+
+@ramadan.route('/quran-resources')
+def quran_resources():
+    resources = RamadanQuranResource.query.order_by(RamadanQuranResource.created_at.desc()).all()
+    return render_template('ramadan/quran_resources.html', resources=resources)
+
+@ramadan.route('/quran-resources/add', methods=['GET', 'POST'])
+@login_required
+def add_quran_resource():
+    if request.method == 'POST':
+        try:
+            resource = RamadanQuranResource(
+                title=request.form['title'],
+                arabic_text=request.form['arabic_text'],
+                translation=request.form['translation'],
+                explanation=request.form['explanation'],
+                category=request.form['category'],
+                author_id=current_user.id
+            )
+            db.session.add(resource)
+            db.session.commit()
+            flash(_('Quran bron succesvol toegevoegd.'), 'success')
+            return redirect(url_for('ramadan.quran_resources'))
+        except Exception as e:
+            db.session.rollback()
+            flash(_('Er is een fout opgetreden bij het toevoegen van de Quran bron.'), 'error')
+            print(f"Error adding Quran resource: {e}")
+
+    return render_template('ramadan/add_quran_resource.html')
+
+@ramadan.route('/videos')
+def videos():
+    videos = RamadanVideo.query.order_by(RamadanVideo.created_at.desc()).all()
+    return render_template('ramadan/videos.html', videos=videos)
+
+@ramadan.route('/videos/add', methods=['GET', 'POST'])
+@login_required
+def add_video():
+    if request.method == 'POST':
+        try:
+            video = RamadanVideo(
+                title=request.form['title'],
+                description=request.form['description'],
+                video_url=request.form['video_url'],
+                thumbnail_url=request.form['thumbnail_url'],
+                duration=request.form['duration'],
+                speaker=request.form['speaker'],
+                author_id=current_user.id
+            )
+            db.session.add(video)
+            db.session.commit()
+            flash(_('Video succesvol toegevoegd.'), 'success')
+            return redirect(url_for('ramadan.videos'))
+        except Exception as e:
+            db.session.rollback()
+            flash(_('Er is een fout opgetreden bij het toevoegen van de video.'), 'error')
+            print(f"Error adding video: {e}")
+
+    return render_template('ramadan/add_video.html')
+
+@ramadan.route('/schedule')
+def schedule():
+    programs = RamadanProgram.query.order_by(RamadanProgram.start_date).all()
+    return render_template('ramadan/schedule.html', programs=programs)
+
+@ramadan.route('/schedule/add', methods=['GET', 'POST'])
+@login_required
+def add_program():
+    if request.method == 'POST':
+        try:
+            program = RamadanProgram(
+                title=request.form['title'],
+                description=request.form['description'],
+                start_date=datetime.strptime(request.form['start_date'], '%Y-%m-%dT%H:%M'),
+                end_date=datetime.strptime(request.form['end_date'], '%Y-%m-%dT%H:%M') if request.form.get('end_date') else None,
+                location=request.form['location'],
+                organizer_id=current_user.id,
+                image_url=request.form['image_url'] if request.form.get('image_url') else None,
+                category=request.form['category']
+            )
+            db.session.add(program)
+            db.session.commit()
+            flash(_('Programma succesvol toegevoegd.'), 'success')
+            return redirect(url_for('ramadan.schedule'))
+        except Exception as e:
+            db.session.rollback()
+            flash(_('Er is een fout opgetreden bij het toevoegen van het programma.'), 'error')
+            print(f"Error adding program: {e}")
+
+    return render_template('ramadan/add_program.html')
 
 @ramadan.route('/iftar-map')
 def iftar_map():
@@ -275,6 +366,7 @@ def add_iftar():
                          mosques=mosques,
                          mosques_data=mosques_data,  # Pass serialized data
                          current_mosque=current_mosque)
+
 
 
 @ramadan.route('/iftar/<int:iftar_id>/edit', methods=['GET', 'POST'])
