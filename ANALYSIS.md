@@ -35,7 +35,7 @@ De VGM Iftar-kaart applicatie kampt momenteel met twee hoofdproblemen:
 
 ### AI Component: Claude 3.7
 - Analyse van kalenderlogica en duplicaten
-- Architectuurvoorstellen en evaluaties
+- Architectuurvoorstellen en evaluaties 
 - Monitoring van data-inconsistenties
 
 ### Frontend
