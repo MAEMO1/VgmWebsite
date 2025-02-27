@@ -5,7 +5,7 @@ from typing import Dict, Optional, List
 import logging
 
 class PrayerTimeService:
-    MAWAQIT_API_URL = "https://api.mawaqit.net/api/v1"
+    MAWAQIT_API_URL = "https://mrsofiane.me/mawaqit-api"
 
     @staticmethod
     def get_prayer_times_for_range(source: str, start_date: date, end_date: date, city: str = "Gent") -> Optional[Dict[date, Dict]]:
@@ -22,23 +22,15 @@ class PrayerTimeService:
         Fetch prayer times from Mawaqit API for a date range
         """
         try:
-            api_key = os.environ.get("MAWAQIT_API_KEY")
-            if not api_key:
-                logging.error("Mawaqit API key not found in environment variables")
-                return None
-
-            # Mawaqit API endpoint for prayer times
+            # Using the direct API endpoint without authentication
+            # Format date as DD-MM-YYYY as required by the API
             response = requests.get(
-                f"{PrayerTimeService.MAWAQIT_API_URL}/prayer-times",
+                f"{PrayerTimeService.MAWAQIT_API_URL}/times",
                 params={
-                    "from": start_date.strftime("%Y-%m-%d"),
-                    "to": end_date.strftime("%Y-%m-%d"),
+                    "date": start_date.strftime("%d-%m-%Y"),
+                    "days": (end_date - start_date).days + 1,
                     "city": city,
                     "country": "Belgium"
-                },
-                headers={
-                    "Accept": "application/json",
-                    "Authorization": f"Bearer {api_key}"
                 }
             )
 
@@ -49,17 +41,18 @@ class PrayerTimeService:
                     logging.info(f"Mawaqit API Data: {data}")
                     prayer_times = {}
 
-                    # Process each day's prayer times based on actual Mawaqit API format
-                    for day_data in data.get('prayer_times', []):
+                    # Process each day's prayer times based on the API format
+                    for day_data in data.get('times', []):
                         try:
-                            day_date = datetime.strptime(day_data['date'], '%Y-%m-%d').date()
+                            # Convert API date format (DD-MM-YYYY) to our format (YYYY-MM-DD)
+                            day_date = datetime.strptime(day_data['date'], '%d-%m-%Y').date()
                             prayer_times[day_date] = {
                                 'fajr': day_data.get('fajr'),
-                                'sunrise': day_data.get('sunrise'),
-                                'dhuhr': day_data.get('dhuhr'),
+                                'sunrise': day_data.get('chorouk'),
+                                'dhuhr': day_data.get('dohr'),
                                 'asr': day_data.get('asr'),
                                 'maghrib': day_data.get('maghrib'),
-                                'isha': day_data.get('isha')
+                                'isha': day_data.get('icha')
                             }
                         except KeyError as ke:
                             logging.error(f"Missing key in day data: {ke}")
