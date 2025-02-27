@@ -12,42 +12,52 @@ class PrayerTimeService:
         """
         Fetch prayer times for a date range
         """
-        if source == "mawaqit":
-            return PrayerTimeService._get_mawaqit_times_range(start_date, end_date, city)
-        return None
-
-    @staticmethod
-    def _get_mawaqit_times_range(start_date: date, end_date: date, city: str) -> Optional[Dict[date, Dict]]:
-        """
-        Fetch prayer times from Mawaqit API for a date range
-        """
         try:
-            # For now, we'll use a default mosque ID for Gent
-            # This should be configurable per mosque in the future
-            mosque_id = "1234"  # Example mosque ID for testing
+            # We need to get the mosque ID from Mawaqit first
+            search_response = requests.get(
+                f"{PrayerTimeService.MAWAQIT_API_URL}/mosque/search",
+                params={
+                    "q": "Gent",  # Search for mosques in Gent
+                    "limit": 1    # Get first result
+                }
+            )
+
+            if search_response.status_code != 200:
+                logging.error(f"Failed to search for mosque: {search_response.status_code}")
+                return None
+
+            search_data = search_response.json()
+            if not search_data or 'mosques' not in search_data or not search_data['mosques']:
+                logging.error("No mosque found in search results")
+                return None
+
+            mosque_id = search_data['mosques'][0].get('uuid')
+            if not mosque_id:
+                logging.error("No mosque ID found in search result")
+                return None
+
+            # Calculate the number of days
+            days = (end_date - start_date).days + 1
 
             request_params = {
                 "date": start_date.strftime("%Y-%m-%d"),
-                "days": (end_date - start_date).days + 1,
-                "longitude": "3.7174243",  # Gent coordinates
-                "latitude": "51.0543422",
-                "method": 3  # ISNA calculation method
+                "days": days
             }
 
-            logging.info(f"Calling Mawaqit API with parameters: {request_params}")
+            logging.info(f"Calling Mawaqit API for mosque {mosque_id} with parameters: {request_params}")
             api_url = f"{PrayerTimeService.MAWAQIT_API_URL}/mosque/{mosque_id}/prayer-times"
             logging.info(f"API URL: {api_url}")
 
             response = requests.get(api_url, params=request_params)
-
             logging.info(f"Mawaqit API Response Status: {response.status_code}")
+
             if response.status_code == 200:
                 try:
                     data = response.json()
                     logging.debug(f"Full API Response: {data}")
                     prayer_times = {}
 
-                    # Process each day's prayer times based on the API format
+                    # Process each day's prayer times
                     for day_data in data.get('prayer_times', []):
                         try:
                             day_date = datetime.strptime(day_data['date'], '%Y-%m-%d').date()
