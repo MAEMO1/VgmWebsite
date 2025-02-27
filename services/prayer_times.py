@@ -5,7 +5,7 @@ from typing import Dict, Optional, List
 import logging
 
 class PrayerTimeService:
-    MAWAQIT_API_URL = "https://mawaqit.net/api/2.0"
+    MAWAQIT_API_URL = "https://www.mawaqit.net/api/v2"
 
     @staticmethod
     def get_prayer_times_for_range(source: str, start_date: date, end_date: date, city: str = "Gent") -> Optional[Dict[date, Dict]]:
@@ -13,89 +13,90 @@ class PrayerTimeService:
         Fetch prayer times for a date range
         """
         try:
-            # We need to get the mosque ID from Mawaqit first
-            search_response = requests.get(
-                f"{PrayerTimeService.MAWAQIT_API_URL}/mosque/search",
-                params={
-                    "q": "Gent",  # Search for mosques in Gent
-                    "limit": 1    # Get first result
-                }
-            )
+            # First get the mosque UUID using the search endpoint
+            logging.info(f"Searching for mosque in {city}")
+            search_url = f"{PrayerTimeService.MAWAQIT_API_URL}/search"
+            search_params = {
+                "query": city,
+                "type": "mosques",
+                "country": "BE",
+                "limit": 1
+            }
+
+            logging.info(f"Search request URL: {search_url}")
+            logging.info(f"Search parameters: {search_params}")
+
+            search_response = requests.get(search_url, params=search_params)
+            logging.info(f"Search response status: {search_response.status_code}")
 
             if search_response.status_code != 200:
-                logging.error(f"Failed to search for mosque: {search_response.status_code}")
+                logging.error(f"Mosque search failed: {search_response.content}")
                 return None
 
             search_data = search_response.json()
-            if not search_data or 'mosques' not in search_data or not search_data['mosques']:
-                logging.error("No mosque found in search results")
+            logging.debug(f"Search response data: {search_data}")
+
+            if not search_data or not search_data.get('data'):
+                logging.error("No mosques found in search results")
                 return None
 
-            mosque_id = search_data['mosques'][0].get('uuid')
-            if not mosque_id:
-                logging.error("No mosque ID found in search result")
+            mosque = search_data['data'][0]
+            mosque_uuid = mosque.get('uuid')
+
+            if not mosque_uuid:
+                logging.error("No mosque UUID found in search result")
                 return None
 
-            # Calculate the number of days
+            logging.info(f"Found mosque UUID: {mosque_uuid}")
+
+            # Now get prayer times for this mosque
             days = (end_date - start_date).days + 1
-
-            request_params = {
+            times_url = f"{PrayerTimeService.MAWAQIT_API_URL}/mosque/{mosque_uuid}/prayer-times"
+            times_params = {
                 "date": start_date.strftime("%Y-%m-%d"),
                 "days": days
             }
 
-            logging.info(f"Calling Mawaqit API for mosque {mosque_id} with parameters: {request_params}")
-            api_url = f"{PrayerTimeService.MAWAQIT_API_URL}/mosque/{mosque_id}/prayer-times"
-            logging.info(f"API URL: {api_url}")
+            logging.info(f"Prayer times request URL: {times_url}")
+            logging.info(f"Prayer times parameters: {times_params}")
 
-            response = requests.get(api_url, params=request_params)
-            logging.info(f"Mawaqit API Response Status: {response.status_code}")
+            times_response = requests.get(times_url, params=times_params)
+            logging.info(f"Prayer times response status: {times_response.status_code}")
 
-            if response.status_code == 200:
-                try:
-                    data = response.json()
-                    logging.debug(f"Full API Response: {data}")
-                    prayer_times = {}
-
-                    # Process each day's prayer times
-                    for day_data in data.get('prayer_times', []):
-                        try:
-                            day_date = datetime.strptime(day_data['date'], '%Y-%m-%d').date()
-                            prayer_times[day_date] = {
-                                'fajr': day_data.get('fajr'),
-                                'sunrise': day_data.get('sunrise'),
-                                'dhuhr': day_data.get('dhuhr'),
-                                'asr': day_data.get('asr'),
-                                'maghrib': day_data.get('maghrib'),
-                                'isha': day_data.get('isha')
-                            }
-                            logging.debug(f"Processed prayer times for {day_date}: {prayer_times[day_date]}")
-                        except KeyError as ke:
-                            logging.error(f"Missing key in day data: {ke}")
-                            logging.error(f"Day data content: {day_data}")
-                            continue
-                        except ValueError as ve:
-                            logging.error(f"Invalid date format: {ve}")
-                            logging.error(f"Date string received: {day_data.get('date')}")
-                            continue
-
-                    if prayer_times:
-                        return prayer_times
-                    logging.error("No prayer times found in response")
-                    return None
-
-                except Exception as je:
-                    logging.error(f"Error parsing JSON response: {je}")
-                    logging.error(f"Raw response content: {response.content}")
-                    return None
-            else:
-                logging.error(f"Mawaqit API error: {response.status_code}")
-                if response.content:
-                    logging.error(f"Error response: {response.content}")
+            if times_response.status_code != 200:
+                logging.error(f"Failed to get prayer times: {times_response.content}")
                 return None
 
+            data = times_response.json()
+            logging.debug(f"Prayer times response data: {data}")
+
+            prayer_times = {}
+            for day_data in data.get('data', []):
+                try:
+                    day_date = datetime.strptime(day_data['date'], '%Y-%m-%d').date()
+                    times = day_data.get('times', {})
+                    prayer_times[day_date] = {
+                        'fajr': times.get('fajr'),
+                        'sunrise': times.get('sunrise'),
+                        'dhuhr': times.get('dhuhr'),
+                        'asr': times.get('asr'),
+                        'maghrib': times.get('maghrib'),
+                        'isha': times.get('isha')
+                    }
+                    logging.debug(f"Processed times for {day_date}: {prayer_times[day_date]}")
+                except Exception as e:
+                    logging.error(f"Error processing day data: {e}")
+                    logging.error(f"Problematic day data: {day_data}")
+                    continue
+
+            if not prayer_times:
+                logging.error("No prayer times found in response")
+                return None
+
+            return prayer_times
+
         except Exception as e:
-            logging.error(f"Error fetching Mawaqit times: {e}")
+            logging.error(f"Error fetching prayer times: {e}")
             return None
 
     @staticmethod
@@ -103,8 +104,9 @@ class PrayerTimeService:
         """
         Get specific prayer time for a single date
         """
-        logging.info(f"Fetching prayer time for {prayer_date}, prayer: {prayer_name}")
+        logging.info(f"Getting {prayer_name} time for {prayer_date}")
         times = PrayerTimeService.get_prayer_times_for_range(source, prayer_date, prayer_date, city)
+
         if times and prayer_date in times:
             prayer_times = times[prayer_date]
             if prayer_name.lower() in prayer_times and prayer_times[prayer_name.lower()]:
@@ -121,7 +123,7 @@ class PrayerTimeService:
             return {}
 
         # Process dates in smaller batches to avoid overwhelming the API
-        batch_size = 30  # Process 30 days at a time
+        batch_size = 7  # Process a week at a time
         result = {}
 
         for i in range(0, len(dates), batch_size):
