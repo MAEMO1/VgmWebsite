@@ -5,7 +5,7 @@ from typing import Dict, Optional, List
 import logging
 
 class PrayerTimeService:
-    MAWAQIT_API_URL = "https://mrsofiane.me/mawaqit-api"
+    MAWAQIT_API_URL = "https://mawaqit.net/api/2.0"
 
     @staticmethod
     def get_prayer_times_for_range(source: str, start_date: date, end_date: date, city: str = "Gent") -> Optional[Dict[date, Dict]]:
@@ -22,43 +22,51 @@ class PrayerTimeService:
         Fetch prayer times from Mawaqit API for a date range
         """
         try:
-            # Using the direct API endpoint without authentication
-            # Format date as DD-MM-YYYY as required by the API
-            response = requests.get(
-                f"{PrayerTimeService.MAWAQIT_API_URL}/times",
-                params={
-                    "date": start_date.strftime("%d-%m-%Y"),
-                    "days": (end_date - start_date).days + 1,
-                    "city": city,
-                    "country": "Belgium"
-                }
-            )
+            # For now, we'll use a default mosque ID for Gent
+            # This should be configurable per mosque in the future
+            mosque_id = "1234"  # Example mosque ID for testing
 
-            logging.info(f"Mawaqit API Response: {response.status_code}")
+            request_params = {
+                "date": start_date.strftime("%Y-%m-%d"),
+                "days": (end_date - start_date).days + 1,
+                "longitude": "3.7174243",  # Gent coordinates
+                "latitude": "51.0543422",
+                "method": 3  # ISNA calculation method
+            }
+
+            logging.info(f"Calling Mawaqit API with parameters: {request_params}")
+            api_url = f"{PrayerTimeService.MAWAQIT_API_URL}/mosque/{mosque_id}/prayer-times"
+            logging.info(f"API URL: {api_url}")
+
+            response = requests.get(api_url, params=request_params)
+
+            logging.info(f"Mawaqit API Response Status: {response.status_code}")
             if response.status_code == 200:
                 try:
                     data = response.json()
-                    logging.info(f"Mawaqit API Data: {data}")
+                    logging.debug(f"Full API Response: {data}")
                     prayer_times = {}
 
                     # Process each day's prayer times based on the API format
-                    for day_data in data.get('times', []):
+                    for day_data in data.get('prayer_times', []):
                         try:
-                            # Convert API date format (DD-MM-YYYY) to our format (YYYY-MM-DD)
-                            day_date = datetime.strptime(day_data['date'], '%d-%m-%Y').date()
+                            day_date = datetime.strptime(day_data['date'], '%Y-%m-%d').date()
                             prayer_times[day_date] = {
                                 'fajr': day_data.get('fajr'),
-                                'sunrise': day_data.get('chorouk'),
-                                'dhuhr': day_data.get('dohr'),
+                                'sunrise': day_data.get('sunrise'),
+                                'dhuhr': day_data.get('dhuhr'),
                                 'asr': day_data.get('asr'),
                                 'maghrib': day_data.get('maghrib'),
-                                'isha': day_data.get('icha')
+                                'isha': day_data.get('isha')
                             }
+                            logging.debug(f"Processed prayer times for {day_date}: {prayer_times[day_date]}")
                         except KeyError as ke:
                             logging.error(f"Missing key in day data: {ke}")
+                            logging.error(f"Day data content: {day_data}")
                             continue
                         except ValueError as ve:
                             logging.error(f"Invalid date format: {ve}")
+                            logging.error(f"Date string received: {day_data.get('date')}")
                             continue
 
                     if prayer_times:
@@ -68,6 +76,7 @@ class PrayerTimeService:
 
                 except Exception as je:
                     logging.error(f"Error parsing JSON response: {je}")
+                    logging.error(f"Raw response content: {response.content}")
                     return None
             else:
                 logging.error(f"Mawaqit API error: {response.status_code}")
@@ -84,11 +93,13 @@ class PrayerTimeService:
         """
         Get specific prayer time for a single date
         """
+        logging.info(f"Fetching prayer time for {prayer_date}, prayer: {prayer_name}")
         times = PrayerTimeService.get_prayer_times_for_range(source, prayer_date, prayer_date, city)
         if times and prayer_date in times:
             prayer_times = times[prayer_date]
             if prayer_name.lower() in prayer_times and prayer_times[prayer_name.lower()]:
                 return prayer_times[prayer_name.lower()]
+            logging.error(f"Prayer {prayer_name} not found in times: {prayer_times}")
         return None
 
     @staticmethod
@@ -108,6 +119,8 @@ class PrayerTimeService:
             start_date = min(batch_dates)
             end_date = max(batch_dates)
 
+            logging.info(f"Processing batch from {start_date} to {end_date}")
+
             # Fetch times for this batch
             batch_times = PrayerTimeService.get_prayer_times_for_range(source, start_date, end_date, city)
 
@@ -116,10 +129,14 @@ class PrayerTimeService:
                 if batch_times and request_date in batch_times:
                     prayer_times = batch_times[request_date]
                     result[request_date] = prayer_times.get(prayer_name.lower())
+                    if result[request_date] is None:
+                        logging.error(f"Prayer time {prayer_name} not found for date {request_date}")
                 else:
+                    logging.error(f"No prayer times found for date {request_date}")
                     result[request_date] = None
 
         if None in result.values():
-            logging.error(f"Missing prayer times for dates: {[d for d, t in result.items() if t is None]}")
+            missing_dates = [d.strftime("%Y-%m-%d") for d, t in result.items() if t is None]
+            logging.error(f"Missing prayer times for dates: {missing_dates}")
 
         return result
