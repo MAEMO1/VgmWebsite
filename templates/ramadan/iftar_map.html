@@ -19,6 +19,7 @@
 
 .date-cell.out-of-ramadan {
     background-color: #f8f9fa;
+    color: #adb5bd;
 }
 
 .event-indicator {
@@ -172,18 +173,17 @@
                                     <th class="text-center">{{ _('Zo') }}</th>
                                 </tr>
                             </thead>
-                            <tbody id="calendarBody">
+                            <tbody>
                                 {% for week in calendar %}
                                 <tr>
                                     {% for day in week %}
-                                    <td class="date-cell {% if day == 0 or current_date.replace(day=day) < ramadan_start or current_date.replace(day=day) > ramadan_end %}out-of-ramadan{% endif %}">
+                                    <td class="date-cell {% if day == 0 %}out-of-ramadan{% endif %}">
                                         {% if day != 0 %}
-                                            {% set current_day = current_date.replace(day=day) %}
-                                            {% if ramadan_start <= current_day <= ramadan_end %}
-                                                {% set day_events = calendar_events.get(current_day, {'daily': [], 'weekly': [], 'single': []}) %}
-                                                <div class="d-flex flex-column h-100" onclick="showDayDetails('{{ current_day.strftime("%Y-%m-%d") }}')" style="cursor: pointer;">
+                                            {% set this_date = ramadan_start.replace(day=day) %}
+                                            {% if this_date >= ramadan_start and this_date <= ramadan_end %}
+                                                {% set day_events = calendar_events.get(this_date, {'daily': [], 'weekly': [], 'single': []}) %}
+                                                <div class="d-flex flex-column h-100" onclick="showDayDetails('{{ this_date.strftime("%Y-%m-%d") }}')" style="cursor: pointer;">
                                                     <div class="text-end mb-2">{{ day }}</div>
-
                                                     {% if day_events.daily or day_events.weekly or day_events.single %}
                                                         <div class="d-flex justify-content-center gap-1 mt-auto">
                                                             {% if day_events.daily %}
@@ -211,54 +211,6 @@
                                 {% endfor %}
                             </tbody>
                         </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- List View -->
-            <div class="tab-pane fade" id="list-view" role="tabpanel">
-                <div class="card">
-                    <div class="card-body">
-                        {% set current_date = None %}
-                        {% for event in sorted_events %}
-                            {% if current_date != event.date %}
-                                {% set current_date = event.date %}
-                                <div class="date-header">
-                                    {{ event.date.strftime('%A %d %B %Y')|title }}
-                                </div>
-                            {% endif %}
-
-                            <div class="list-view-item {{ event.type }} p-3 mb-2">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h5 class="mb-1">{{ event.mosque.mosque_name }}</h5>
-                                        <p class="mb-1">
-                                            <i class="far fa-clock me-2"></i>
-                                            {{ event.start_time.strftime('%H:%M') }}
-                                            {% if event.end_time %}
-                                                - {{ event.end_time.strftime('%H:%M') }}
-                                            {% endif %}
-                                        </p>
-                                        <p class="mb-1">
-                                            <i class="fas fa-map-marker-alt me-2"></i>
-                                            {{ event.location }}
-                                        </p>
-                                    </div>
-                                    <div>
-                                        {% if event.is_family_friendly %}
-                                            <span class="badge bg-success">
-                                                <i class="fas fa-users"></i> {{ _('Gezinsvriendelijk') }}
-                                            </span>
-                                        {% endif %}
-                                        {% if event.registration_required %}
-                                            <span class="badge bg-info">
-                                                <i class="fas fa-clipboard-list"></i> {{ _('Registratie vereist') }}
-                                            </span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -335,6 +287,19 @@ function updateMarkers(events) {
             markers.push(marker);
         }
     });
+}
+
+function getEventColor(type) {
+    switch(type) {
+        case 'daily':
+            return '#198754'; // bg-success
+        case 'weekly':
+            return '#0d6efd'; // bg-primary
+        case 'single':
+            return '#ffc107'; // bg-warning
+        default:
+            return '#0d6efd';
+    }
 }
 
 function showDayDetails(date) {
