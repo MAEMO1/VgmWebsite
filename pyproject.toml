@@ -27,4 +27,5 @@ dependencies = [
     "flask-mail>=0.10.0",
     "requests>=2.32.3",
     "beautifulsoup4>=4.13.3",
+    "anthropic>=0.47.2",
 ]
