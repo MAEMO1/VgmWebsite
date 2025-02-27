@@ -12,6 +12,7 @@ from services.prayer_times import PrayerTimeService #added import
 
 ramadan = Blueprint('ramadan', __name__)
 
+@staticmethod
 def get_ramadan_dates(year=2025):
     # Ramadan 2025 dates.  This should ideally be fetched dynamically.
     ramadan_start = date(2025, 3, 1)  # 1 Ramadan 1446
@@ -187,29 +188,28 @@ def iftar_map():
 
     map_events = []
     sorted_events = []
+    processed_dates = set()  # Track all processed dates to prevent duplicates
 
     # Process each event
     for event in events:
-        event_dates = set()  # Keep track of processed dates to avoid duplicates
-
         if event.is_recurring:
-            # For recurring events, start from the maximum of event.date and today
+            # For recurring events, start from event date or today, whichever is later
             current_date = max(event.date, today)
 
-            while current_date <= min(event.recurrence_end_date or ramadan_end, ramadan_end):
-                if period_start <= current_date <= period_end and current_date not in event_dates:
-                    # Skip dates that have already passed
-                    if current_date < today:
-                        if event.recurrence_type == 'daily':
-                            current_date += timedelta(days=1)
-                        elif event.recurrence_type == 'weekly':
-                            current_date += timedelta(days=7)
-                        continue
+            # Calculate the weekly offset if needed
+            if event.recurrence_type == 'weekly' and current_date > event.date:
+                days_since_start = (current_date - event.date).days
+                days_to_next = 7 - (days_since_start % 7)
+                if days_to_next < 7:
+                    current_date += timedelta(days=days_to_next)
 
-                    event_dates.add(current_date)
+            while current_date <= min(event.recurrence_end_date or ramadan_end, ramadan_end):
+                date_key = (event.id, current_date)
+                if period_start <= current_date <= period_end and date_key not in processed_dates:
+                    processed_dates.add(date_key)
                     event_type = event.recurrence_type
 
-                    # Only add to calendar if within Ramadan period and not in the past
+                    # Only add to calendar if within Ramadan period
                     if ramadan_start <= current_date <= ramadan_end:
                         calendar_events[current_date][event_type].add(event.id)
 
@@ -249,8 +249,9 @@ def iftar_map():
             if event.date < today:
                 continue
 
-            if period_start <= event.date <= period_end and event.date not in event_dates:
-                event_dates.add(event.date)
+            date_key = (event.id, event.date)
+            if period_start <= event.date <= period_end and date_key not in processed_dates:
+                processed_dates.add(date_key)
 
                 # Only add to calendar if within Ramadan period
                 if ramadan_start <= event.date <= ramadan_end:
