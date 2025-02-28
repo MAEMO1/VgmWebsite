@@ -27,21 +27,10 @@
                             {% endif %}
                         </div>
                         <div class="col-md-4 text-end">
-                            {% if mosque.donation_enabled %}
-                            <a href="{{ url_for('main.donate_mosque', mosque_id=mosque.id) }}" class="btn btn-success mb-2 w-100">
-                                <i class="fas fa-hand-holding-heart"></i> {{ _('Support this Mosque') }}
-                            </a>
-                            {% endif %}
-
                             {% if current_user.is_authenticated and (current_user.is_admin or current_user.id == mosque.id) %}
                             <a href="{{ url_for('main.edit_mosque', mosque_id=mosque.id) }}" class="btn btn-primary w-100">
                                 <i class="fas fa-edit"></i> {{ _('Edit Mosque Information') }}
                             </a>
-                            {% if current_user.id == mosque.id %}
-                            <a href="{{ url_for('main.mosque_donations', mosque_id=mosque.id) }}" class="btn btn-outline-primary mt-2 w-100">
-                                <i class="fas fa-cog"></i> {{ _('Donation Settings') }}
-                            </a>
-                            {% endif %}
                             {% endif %}
                         </div>
                     </div>
@@ -77,11 +66,6 @@
                     <h3>{{ _('About') }}</h3>
                 </div>
                 <div class="card-body">
-                    {% if mosque.foundation_year %}
-                    <h4>{{ _('Establishment') }}</h4>
-                    <p>{{ _('Founded in') }} {{ mosque.foundation_year }}</p>
-                    {% endif %}
-
                     {% if mosque.activities %}
                     <h4>{{ _('Activities') }}</h4>
                     <p>{{ mosque.activities }}</p>
@@ -98,85 +82,6 @@
                     {% endif %}
                 </div>
             </div>
-
-            <!-- Board Members -->
-            {% if mosque.board_members.count() > 0 %}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3>{{ _('Board Members') }}</h3>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        {% for member in mosque.board_members %}
-                        <div class="col-md-6 mb-4">
-                            <div class="board-member">
-                                {% if member.photo_url %}
-                                <img src="{{ member.photo_url }}" alt="{{ member.name }}" class="board-member-photo">
-                                {% endif %}
-                                <h4>{{ member.name }}</h4>
-                                <p class="role">{{ member.role }}</p>
-                                {% if member.contact_email %}
-                                <p><i class="fas fa-envelope"></i> {{ member.contact_email }}</p>
-                                {% endif %}
-                                {% if member.contact_phone %}
-                                <p><i class="fas fa-phone"></i> {{ member.contact_phone }}</p>
-                                {% endif %}
-                                {% if member.bio %}
-                                <p class="bio">{{ member.bio }}</p>
-                                {% endif %}
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-
-            <!-- History -->
-            {% if mosque.history_entries.count() > 0 %}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3>{{ _('History') }}</h3>
-                </div>
-                <div class="card-body">
-                    <div class="timeline">
-                        {% for entry in mosque.history_entries %}
-                        <div class="timeline-item">
-                            <div class="timeline-year">{{ entry.year }}</div>
-                            <div class="timeline-content">
-                                <h4>{{ entry.title }}</h4>
-                                <p>{{ entry.description }}</p>
-                                {% if entry.photo_url %}
-                                <img src="{{ entry.photo_url }}" alt="{{ entry.title }}" class="timeline-photo">
-                                {% endif %}
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-
-            <!-- Donation Section (if enabled) -->
-            {% if mosque.donation_enabled and mosque.donation_description %}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3>{{ _('Support Our Mosque') }}</h3>
-                </div>
-                <div class="card-body">
-                    <p>{{ mosque.donation_description }}</p>
-                    {% if mosque.donation_goal %}
-                    <div class="donation-goal mb-3">
-                        <h4>{{ _('Current Goal') }}: €{{ "{:,.2f}".format(mosque.donation_goal) }}</h4>
-                        <p>{{ mosque.donation_goal_description }}</p>
-                    </div>
-                    {% endif %}
-                    <a href="{{ url_for('main.donate_mosque', mosque_id=mosque.id) }}" class="btn btn-success">
-                        <i class="fas fa-heart"></i> {{ _('Make a Donation') }}
-                    </a>
-                </div>
-            </div>
-            {% endif %}
 
             <!-- Contact Information -->
             <div class="card mb-4">
@@ -195,107 +100,8 @@
                             {% if mosque.mosque_phone %}
                             <p><i class="fas fa-phone"></i> {{ mosque.mosque_phone }}</p>
                             {% endif %}
-                            {% if mosque.mosque_fax %}
-                            <p><i class="fas fa-fax"></i> {{ mosque.mosque_fax }}</p>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-6">
-                            {% if mosque.emergency_contact %}
-                            <p><i class="fas fa-exclamation-circle"></i> {{ _('Emergency Contact') }}: {{ mosque.emergency_contact }}</p>
-                            {% endif %}
-                            {% if mosque.emergency_phone %}
-                            <p><i class="fas fa-phone-alt"></i> {{ _('Emergency Phone') }}: {{ mosque.emergency_phone }}</p>
-                            {% endif %}
                         </div>
                     </div>
-
-                    <!-- Social Media Links -->
-                    {% if mosque.facebook_url or mosque.twitter_url or mosque.instagram_url or mosque.youtube_url or mosque.whatsapp_number %}
-                    <div class="mt-4">
-                        <h4>{{ _('Social Media') }}</h4>
-                        <div class="social-links">
-                            {% if mosque.facebook_url %}
-                            <a href="{{ mosque.facebook_url }}" target="_blank" class="btn btn-outline-primary me-2">
-                                <i class="fab fa-facebook-f"></i>
-                            </a>
-                            {% endif %}
-                            {% if mosque.twitter_url %}
-                            <a href="{{ mosque.twitter_url }}" target="_blank" class="btn btn-outline-info me-2">
-                                <i class="fab fa-twitter"></i>
-                            </a>
-                            {% endif %}
-                            {% if mosque.instagram_url %}
-                            <a href="{{ mosque.instagram_url }}" target="_blank" class="btn btn-outline-danger me-2">
-                                <i class="fab fa-instagram"></i>
-                            </a>
-                            {% endif %}
-                            {% if mosque.youtube_url %}
-                            <a href="{{ mosque.youtube_url }}" target="_blank" class="btn btn-outline-danger me-2">
-                                <i class="fab fa-youtube"></i>
-                            </a>
-                            {% endif %}
-                            {% if mosque.whatsapp_number %}
-                            <a href="https://wa.me/{{ mosque.whatsapp_number }}" target="_blank" class="btn btn-outline-success">
-                                <i class="fab fa-whatsapp"></i>
-                            </a>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Prayer Times Section -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3>{{ _('Prayer Times') }}</h3>
-                </div>
-                <div class="card-body">
-                    <div class="prayer-times">
-                        {% if prayer_times %}
-                        {% for prayer in prayer_times %}
-                        <div class="prayer-time">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span>{{ prayer.prayer_name }}</span>
-                                <span>{{ prayer.time.strftime('%H:%M') }}</span>
-                            </div>
-                        </div>
-                        {% endfor %}
-                        {% else %}
-                        <p>{{ _('Prayer times not available') }}</p>
-                        {% endif %}
-                    </div>
-
-                    {% if mosque.friday_prayer_time %}
-                    <div class="mt-4">
-                        <h4>{{ _('Friday Prayer') }}</h4>
-                        <p>{{ _('Friday prayer is held at') }} {{ mosque.friday_prayer_time.strftime('%H:%M') }}</p>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Events Section -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3>{{ _('Upcoming Events') }}</h3>
-                </div>
-                <div class="card-body">
-                    {% if events %}
-                    <div class="list-group">
-                        {% for event in events %}
-                        <div class="list-group-item">
-                            <h5>{{ event.title }}</h5>
-                            <p class="mb-1">{{ event.description }}</p>
-                            <small class="text-muted">
-                                <i class="fas fa-calendar"></i> {{ event.date.strftime('%d %B %Y at %H:%M') }}
-                            </small>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    {% else %}
-                    <p>{{ _('No upcoming events') }}</p>
-                    {% endif %}
                 </div>
             </div>
         </div>
@@ -320,45 +126,6 @@
                 </div>
             </div>
             {% endif %}
-
-            <!-- Media Gallery -->
-            {% if mosque.photos.count() > 0 %}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3>{{ _('Gallery') }}</h3>
-                </div>
-                <div class="card-body">
-                    <div class="row g-2">
-                        {% for photo in mosque.photos %}
-                        <div class="col-6">
-                            <div class="gallery-item">
-                                <img src="{{ photo.url }}" alt="{{ photo.title }}" class="img-fluid rounded"
-                                     data-bs-toggle="modal" data-bs-target="#photoModal{{ photo.id }}">
-                            </div>
-                        </div>
-
-                        <!-- Photo Modal -->
-                        <div class="modal fade" id="photoModal{{ photo.id }}" tabindex="-1">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">{{ photo.title }}</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <img src="{{ photo.url }}" alt="{{ photo.title }}" class="img-fluid">
-                                        {% if photo.description %}
-                                        <p class="mt-3">{{ photo.description }}</p>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            {% endif %}
         </div>
     </div>
 </div>
@@ -366,135 +133,58 @@
 
 {% block styles %}
 <style>
-.board-member {
-    background: white;
-    border-radius: var(--radius-sm);
+.card {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    padding: 1.25rem;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #2C3E50;
+}
+
+.card-body {
     padding: 1.5rem;
-    height: 100%;
-    box-shadow: var(--card-shadow);
 }
 
-.board-member-photo {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 1rem;
+.display-4 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #2C3E50;
 }
 
-.board-member .role {
-    color: var(--text-secondary);
-    font-weight: 500;
-    margin-bottom: 0.5rem;
+.lead {
+    font-size: 1.2rem;
+    color: #6C757D;
 }
 
-.board-member .bio {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    margin-top: 1rem;
+.btn-primary {
+    background-color: #005A87;
+    border-color: #005A87;
 }
 
-.timeline {
-    position: relative;
-    padding: 2rem 0;
-}
-
-.timeline::before {
-    content: '';
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 2px;
-    height: 100%;
-    background: var(--border-color);
-}
-
-.timeline-item {
-    margin-bottom: 2rem;
-    position: relative;
-    width: 50%;
-    padding-right: 2rem;
-}
-
-.timeline-item:nth-child(even) {
-    margin-left: 50%;
-    padding-right: 0;
-    padding-left: 2rem;
-}
-
-.timeline-year {
-    position: absolute;
-    right: -2rem;
-    top: 0;
-    background: var(--primary-color);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: var(--radius-sm);
-}
-
-.timeline-item:nth-child(even) .timeline-year {
-    right: auto;
-    left: -2rem;
-}
-
-.timeline-content {
-    background: white;
-    padding: 1.5rem;
-    border-radius: var(--radius-sm);
-    box-shadow: var(--card-shadow);
-}
-
-.timeline-photo {
-    width: 100%;
-    border-radius: var(--radius-sm);
-    margin-top: 1rem;
-}
-
-.gallery-item {
-    cursor: pointer;
-    transition: transform 0.3s ease;
-}
-
-.gallery-item:hover {
-    transform: scale(1.05);
-}
-
-.social-links .btn {
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    line-height: 40px;
-    text-align: center;
-    border-radius: 50%;
-}
-
-.social-links .btn i {
-    line-height: inherit;
+.btn-primary:hover {
+    background-color: #004A6F;
+    border-color: #004A6F;
 }
 
 @media (max-width: 768px) {
-    .timeline::before {
-        left: 0;
+    .display-4 {
+        font-size: 2rem;
     }
 
-    .timeline-item {
-        width: 100%;
-        padding-left: 2rem;
-        padding-right: 0;
-    }
-
-    .timeline-item:nth-child(even) {
-        margin-left: 0;
-        padding-left: 2rem;
-    }
-
-    .timeline-year {
-        left: -2rem;
-        right: auto;
-    }
-
-    .timeline-item:nth-child(even) .timeline-year {
-        left: -2rem;
+    .text-end {
+        text-align: left !important;
+        margin-top: 1rem;
     }
 }
 </style>
