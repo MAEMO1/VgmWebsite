@@ -131,7 +131,35 @@ def admin():
     if not current_user.is_admin:
         flash(_('U heeft geen toegang tot deze pagina.'), 'error')
         return redirect(url_for('main.index'))
-    return render_template('admin/index.html')
+
+    # Get pending mosque verifications
+    pending_mosques = User.query.filter_by(
+        user_type='mosque',
+        is_verified=False
+    ).all()
+
+    # Get recent user registrations
+    recent_users = User.query.order_by(
+        User.created_at.desc()
+    ).limit(5).all()
+
+    return render_template('admin/index.html',
+                         pending_mosques=pending_mosques,
+                         recent_users=recent_users)
+
+@routes.route('/admin/verify_mosque/<int:mosque_id>', methods=['POST'])
+@login_required
+def verify_mosque(mosque_id):
+    if not current_user.is_admin:
+        flash(_('U heeft geen toegang tot deze actie.'), 'error')
+        return redirect(url_for('main.index'))
+
+    mosque = User.query.get_or_404(mosque_id)
+    mosque.is_verified = True
+    db.session.commit()
+
+    flash(_('Moskee succesvol geverifieerd.'), 'success')
+    return redirect(url_for('main.admin'))
 
 @routes.route('/profile')
 @login_required
