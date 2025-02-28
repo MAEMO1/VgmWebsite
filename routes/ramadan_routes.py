@@ -6,7 +6,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 from flask_login import current_user, login_required
 from flask_babel import _
 from app import db
-from models import User
+from models import User, RamadanProgram, RamadanQuranResource, RamadanVideo, IfterEvent
 from services.iftar_service import IfterService
 from services.prayer_service import PrayerService
 
@@ -15,6 +15,38 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 ramadan = Blueprint('ramadan', __name__)
+
+@ramadan.route('/')
+def index():
+    """Main Ramadan page"""
+    try:
+        today = date.today()
+
+        # Initialize services
+        prayer_service = PrayerService()
+        iftar_service = IfterService(db)
+
+        # Get today's prayer times
+        prayer_times = prayer_service.get_prayer_times(today)
+
+        # Get upcoming Ramadan programs
+        programs = RamadanProgram.query.filter(
+            RamadanProgram.start_date >= datetime.now()
+        ).order_by(RamadanProgram.start_date).limit(3).all()
+
+        # Get upcoming iftar events
+        end_date = today + timedelta(days=7)
+        upcoming_iftars = iftar_service.get_events_for_period(today, end_date)[:3]
+
+        return render_template('ramadan/index.html',
+                           prayer_times=prayer_times,
+                           programs=programs,
+                           upcoming_iftars=upcoming_iftars)
+
+    except Exception as e:
+        logger.error(f"Error in index route: {e}", exc_info=True)
+        flash(_('Er is een fout opgetreden bij het laden van de Ramadan pagina.'), 'error')
+        return redirect(url_for('main.index'))
 
 def get_ramadan_dates(year=2025):
     """Get Ramadan start and end dates"""
@@ -160,28 +192,6 @@ def debug_iftar():
     except Exception as e:
         logger.error(f"Error in debug route: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 500
-
-@ramadan.route('/')
-def index():
-    # Get today's prayer times
-    today = date.today()
-    prayer_times = PrayerTime.query.filter_by(date=today).all()
-
-    # Get upcoming Ramadan programs
-    programs = RamadanProgram.query.filter(
-        RamadanProgram.start_date >= datetime.now()
-    ).order_by(RamadanProgram.start_date).limit(3).all()
-
-    # Get upcoming iftar events
-    upcoming_iftars = IfterEvent.query.filter(
-        IfterEvent.date >= today
-    ).order_by(IfterEvent.date).limit(3).all()
-
-    return render_template('ramadan/index.html',
-                         prayer_times=prayer_times,
-                         programs=programs,
-                         upcoming_iftars=upcoming_iftars)
-
 
 @ramadan.route('/quran-resources')
 def quran_resources():
