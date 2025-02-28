@@ -55,15 +55,14 @@ def test():
         return render_template('base.html',
                              content="Database connection failed!"), 500
 
-# Temporarily comment out blueprint registration until we fix the model issues
-"""
+# Register ramadan blueprint
 try:
     from routes.ramadan_routes import ramadan
     app.register_blueprint(ramadan, url_prefix='/ramadan')
     logger.info("Successfully registered ramadan blueprint")
 except Exception as e:
     logger.error(f"Failed to register ramadan blueprint: {e}")
-"""
+    raise  # Re-raise the exception to see the full error in logs
 
 if __name__ == "__main__":
     logger.info("Starting Flask application")
