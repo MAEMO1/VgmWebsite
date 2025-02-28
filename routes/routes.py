@@ -108,23 +108,9 @@ def mosques():
     mosque_users = User.query.filter_by(user_type='mosque', is_verified=True).all()
     return render_template('mosques.html', mosques=mosque_users)
 
-@routes.route('/prayer_times')
-def prayer_times():
-    """Temporarily disabled prayer times page"""
-    flash(_('De gebedstijden functionaliteit is momenteel niet beschikbaar.'), 'info')
-    return redirect(url_for('main.index'))
-
-@routes.route('/memorandum')
-def memorandum():
-    """Temporarily disabled memorandum page"""
-    flash(_('Deze pagina is momenteel niet beschikbaar.'), 'info')
-    return redirect(url_for('main.index'))
-
 @routes.route('/about')
 def about():
-    """Temporarily disabled about page"""
-    flash(_('Deze pagina is momenteel niet beschikbaar.'), 'info')
-    return redirect(url_for('main.index'))
+    return render_template('about.html')
 
 @routes.route('/contact', methods=['GET', 'POST'])
 def contact():
@@ -134,7 +120,26 @@ def contact():
         subject = request.form.get('subject')
         message = request.form.get('message')
 
-        flash(_('Thank you for your message. We will get back to you soon.'), 'success')
+        flash(_('Bedankt voor uw bericht. We nemen zo spoedig mogelijk contact met u op.'), 'success')
         return redirect(url_for('main.contact'))
 
     return render_template('contact.html')
+
+@routes.route('/admin')
+@login_required
+def admin():
+    if not current_user.is_admin:
+        flash(_('U heeft geen toegang tot deze pagina.'), 'error')
+        return redirect(url_for('main.index'))
+    return render_template('admin/index.html')
+
+@routes.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html')
+
+@routes.route('/set_language/<language>')
+def set_language(language):
+    from flask import session
+    session['language'] = language
+    return redirect(request.referrer or url_for('main.index'))
