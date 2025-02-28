@@ -1,0 +1,313 @@
+// app.js - Hoofdbestand voor de iftar kaart applicatie
+const express = require('express');
+const sqlite3 = require('sqlite3').verbose();
+const axios = require('axios');
+const dayjs = require('dayjs');
+const cors = require('cors');
+const path = require('path');
+
+// Optioneel: als je adhan.js gebruikt voor gebedstijden berekeningen
+// const { PrayerTimes, Coordinates, CalculationMethod, HighLatitudeRule } = require('adhan');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Database setup
+const db = new sqlite3.Database('./database.sqlite', (err) => {
+  if (err) {
+    console.error('Fout bij verbinden met database:', err.message);
+    return;
+  }
+  console.log('Verbonden met de SQLite database');
+});
+
+// Maak de events tabel met UNIQUE constraint
+db.run(`CREATE TABLE IF NOT EXISTS events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  date TEXT NOT NULL,
+  type TEXT,
+  location TEXT,
+  description TEXT,
+  UNIQUE(title, date)
+)`);
+
+// Kalender service voor het beheren van events
+class KalenderService {
+  constructor(db) {
+    this.db = db;
+  }
+  
+  // Event toevoegen met controle op duplicaten
+  async voegEventToe(event) {
+    return new Promise((resolve, reject) => {
+      // Eerst controleren of event al bestaat
+      this.db.get(
+        'SELECT * FROM events WHERE title = ? AND date = ?',
+        [event.title, event.date],
+        (err, row) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          
+          // Als event al bestaat, update dan alleen als nodig
+          if (row) {
+            this.db.run(
+              'UPDATE events SET type = ?, location = ?, description = ? WHERE id = ?',
+              [event.type, event.location, event.description, row.id],
+              function(err) {
+                if (err) {
+                  reject(err);
+                  return;
+                }
+                resolve({...event, id: row.id, updated: true});
+              }
+            );
+          } else {
+            // Nieuw event toevoegen
+            this.db.run(
+              'INSERT INTO events (title, date, type, location, description) VALUES (?, ?, ?, ?, ?)',
+              [event.title, event.date, event.type, event.location, event.description],
+              function(err) {
+                if (err) {
+                  reject(err);
+                  return;
+                }
+                resolve({...event, id: this.lastID, updated: false});
+              }
+            );
+          }
+        }
+      );
+    });
+  }
+  
+  // Alle events ophalen
+  async getAlleEvents() {
+    return new Promise((resolve, reject) => {
+      this.db.all('SELECT * FROM events ORDER BY date', [], (err, rows) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(rows);
+      });
+    });
+  }
+  
+  // Events ophalen voor een specifieke datum
+  async getEventsByDatum(datum) {
+    return new Promise((resolve, reject) => {
+      this.db.all('SELECT * FROM events WHERE date = ? ORDER BY title', [datum], (err, rows) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(rows);
+      });
+    });
+  }
+  
+  // Events van een specifiek type ophalen
+  async getEventsByType(type) {
+    return new Promise((resolve, reject) => {
+      this.db.all('SELECT * FROM events WHERE type = ? ORDER BY date', [type], (err, rows) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(rows);
+      });
+    });
+  }
+}
+
+// Gebedstijden service voor het ophalen van gebedstijden
+class GebedstijdenService {
+  constructor() {
+    this.cacheData = {}; // Cache om API calls te beperken
+  }
+  
+  async getGebedstijden(datum, stad) {
+    // Formatteer datum (als het een Date object is)
+    const formatteerdatum = datum instanceof Date 
+      ? dayjs(datum).format('DD-MM-YYYY') 
+      : datum;
+    
+    const cacheKey = `${formatteerdatum}_${stad}`;
+    
+    // Check cache eerst
+    if (this.cacheData[cacheKey]) {
+      console.log('Gebedstijden uit cache voor', cacheKey);
+      return this.cacheData[cacheKey];
+    }
+    
+    try {
+      console.log(`Ophalen gebedstijden voor ${stad} op ${formatteerdatum}`);
+      const response = await axios.get(`https://api.aladhan.com/v1/timingsByCity/${formatteerdatum}`, {
+        params: {
+          city: stad,
+          country: 'Netherlands',
+          method: 2 // Islamic Society of North America (ISNA)
+        },
+        timeout: 5000 // 5 seconden timeout
+      });
+      
+      if (response.data && response.data.data && response.data.data.timings) {
+        const gebedstijden = {
+          fajr: response.data.data.timings.Fajr,
+          sunrise: response.data.data.timings.Sunrise,
+          dhuhr: response.data.data.timings.Dhuhr,
+          asr: response.data.data.timings.Asr,
+          maghrib: response.data.data.timings.Maghrib, // Iftar tijd
+          isha: response.data.data.timings.Isha
+        };
+        
+        // Bewaar in cache
+        this.cacheData[cacheKey] = gebedstijden;
+        console.log('Gebedstijden succesvol opgehaald voor', cacheKey);
+        
+        return gebedstijden;
+      } else {
+        console.error('Ongeldig antwoord van gebedstijden API');
+        throw new Error('Ongeldig antwoord van gebedstijden API');
+      }
+    } catch (error) {
+      console.error('Fout bij ophalen gebedstijden:', error.message);
+      
+      // Fallback naar een andere API of bereken zelf
+      return this.getFallbackGebedstijden(datum, stad);
+    }
+  }
+  
+  // Fallback methode als de primaire API faalt
+  async getFallbackGebedstijden(datum, stad) {
+    console.log('Gebruik fallback methode voor gebedstijden');
+    try {
+      // Probeer een alternatieve API
+      const response = await axios.get('https://api.pray.zone/v2/times/day.json', {
+        params: {
+          city: stad,
+          date: dayjs(datum).format('YYYY-MM-DD')
+        },
+        timeout: 5000
+      });
+      
+      if (response.data && response.data.results && response.data.results.datetime && response.data.results.datetime.length > 0) {
+        const tijden = response.data.results.datetime[0].times;
+        
+        const gebedstijden = {
+          fajr: tijden.Fajr,
+          sunrise: tijden.Sunrise,
+          dhuhr: tijden.Dhuhr,
+          asr: tijden.Asr,
+          maghrib: tijden.Maghrib, // Iftar tijd
+          isha: tijden.Isha
+        };
+        
+        console.log('Fallback gebedstijden succesvol opgehaald');
+        return gebedstijden;
+      }
+      
+      // Als ook de alternatieve API faalt, bereken dan met adhan.js of gebruik standaard waarden
+      console.log('Alternatieve API gefaald, gebruik lokale berekening');
+      return this.berekenGebedstijden(datum, stad);
+    } catch (error) {
+      console.error('Fout bij fallback gebedstijden:', error.message);
+      return this.berekenGebedstijden(datum, stad);
+    }
+  }
+  
+  // Bereken gebedstijden lokaal als alle APIs falen
+  // Opmerking: hiervoor heb je adhan.js nodig (npm install adhan)
+  berekenGebedstijden(datum, stad) {
+    console.log('Bereken gebedstijden lokaal');
+    try {
+      // Probeer adhan.js te gebruiken als het beschikbaar is
+      const adhan = require('adhan');
+      
+      // Coördinaten voor Nederlandse steden
+      const coordinaten = {
+        'amsterdam': { latitude: 52.3667, longitude: 4.8945 },
+        'rotterdam': { latitude: 51.9225, longitude: 4.4792 },
+        'den haag': { latitude: 52.0705, longitude: 4.3007 },
+        'utrecht': { latitude: 52.0907, longitude: 5.1214 },
+        // Meer steden toevoegen als nodig
+      };
+      
+      const stadLowerCase = stad.toLowerCase();
+      const coords = coordinaten[stadLowerCase] || coordinaten['amsterdam']; // Default naar Amsterdam
+      
+      const date = dayjs(datum).toDate();
+      const coordinates = new adhan.Coordinates(coords.latitude, coords.longitude);
+      const params = adhan.CalculationMethod.NorthAmerica();
+      params.highLatitudeRule = adhan.HighLatitudeRule.TwilightAngle;
+      
+      const prayerTimes = new adhan.PrayerTimes(coordinates, date, params);
+      
+      const gebedstijden = {
+        fajr: dayjs(prayerTimes.fajr).format('HH:mm'),
+        sunrise: dayjs(prayerTimes.sunrise).format('HH:mm'),
+        dhuhr: dayjs(prayerTimes.dhuhr).format('HH:mm'),
+        asr: dayjs(prayerTimes.asr).format('HH:mm'),
+        maghrib: dayjs(prayerTimes.maghrib).format('HH:mm'), // Iftar tijd
+        isha: dayjs(prayerTimes.isha).format('HH:mm')
+      };
+      
+      console.log('Lokaal berekende gebedstijden:', gebedstijden);
+      return gebedstijden;
+    } catch (error) {
+      console.error('Fout bij berekenen gebedstijden:', error.message);
+      
+      // Als alles faalt, retourneer standaard tijden gebaseerd op seizoen
+      console.log('Kon gebedstijden niet berekenen, gebruik standaard tijden');
+      
+      // Bepaal seizoen voor ruwe schatting
+      const maand = dayjs(datum).month(); // 0-11
+      let iftarTijd = '21:30'; // Standaard zomer iftar tijd
+      
+      // Ruwe schatting gebaseerd op seizoen in Nederland
+      if (maand >= 9 || maand <= 2) { // Herfst/Winter (okt-mrt)
+        iftarTijd = '17:00';
+      } else if (maand >= 3 && maand <= 5) { // Lente (apr-jun)
+        iftarTijd = '19:30';
+      }
+      
+      return {
+        fajr: 'Niet beschikbaar',
+        sunrise: 'Niet beschikbaar',
+        dhuhr: 'Niet beschikbaar',
+        asr: 'Niet beschikbaar',
+        maghrib: iftarTijd, // Geschatte iftar tijd
+        isha: 'Niet beschikbaar'
+      };
+    }
+  }
+}
+
+// Instanties van services maken
+const kalenderService = new KalenderService(db);
+const gebedstijdenService = new GebedstijdenService();
+
+// Route voor het ophalen van de iftar kaart
+app.get('/api/iftar-kaart', async (req, res) => {
+  try {
+    const { datum = dayjs().format('DD-MM-YYYY'), stad = 'Amsterdam' } = req.query;
+    
+    console.log(`Request voor iftar kaart: datum=${datum}, stad=${stad}`);
+    
+    // Probeer gebedstijden op te halen
+    const gebedstijden = await gebedstijdenService.getGebedstijden(datum, stad);
+    
+    // Haal relevante iftar events op
+    const events = await kalenderService.getAlleEvents();
+    const datum_formatted = dayjs(datum, 'DD-MM-YYYY').format('YYYY-MM-DD');
+    const iftarEvents = events.filter(event => 
+      event.type === 'iftar
