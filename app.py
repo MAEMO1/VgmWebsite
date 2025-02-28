@@ -42,15 +42,15 @@ def create_app():
     # Register routes
     @app.route('/')
     def home():
-        return redirect(url_for('ramadan.iftar_map'))
+        return redirect(url_for('main.index'))
 
     @app.route('/test')
     def test():
         return 'De applicatie werkt!'
 
     # Import and register blueprints
-    from routes.ramadan_routes import ramadan
-    app.register_blueprint(ramadan, url_prefix='/ramadan')
+    from routes import routes as main_routes
+    app.register_blueprint(main_routes)
 
     return app
 
@@ -59,7 +59,7 @@ app = create_app()
 
 # Initialize database tables
 with app.app_context():
-    from models import User, IfterEvent
+    from models import User
     db.create_all()
 
 if __name__ == "__main__":

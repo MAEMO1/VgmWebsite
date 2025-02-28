@@ -3,7 +3,8 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_babel import _
-from models import User, IfterEvent
+from models import User
+from extensions import db
 
 routes = Blueprint('main', __name__)
 
@@ -71,28 +72,6 @@ def register_mosque():
             flash(_('Email bestaat al.'), 'error')
             return redirect(url_for('main.register_mosque'))
 
-        # Check if mosque exists in official list
-        official_mosque = User.query.filter(
-            db.and_(
-                User.user_type == 'mosque',
-                User.mosque_name == mosque_name,
-                User.mosque_street == street,
-                User.mosque_number == number,
-                User.is_verified == True
-            )
-        ).first()
-
-        verification_status = 'pending'
-        verification_note = None
-
-        if official_mosque:
-            if official_mosque.email != "info@" + mosque_name.lower().replace(" ", "") + ".be":
-                verification_status = 'requires_review'
-                verification_note = _('Mosque exists in official list but requires admin verification.')
-        else:
-            verification_status = 'requires_review'
-            verification_note = _('Mosque not found in official list. Requires admin verification.')
-
         mosque = User(
             username=mosque_name.lower().replace(" ", "_"),
             email=email,
@@ -104,9 +83,7 @@ def register_mosque():
             mosque_postal=postal,
             mosque_city=city,
             mosque_phone=phone,
-            verification_status=verification_status,
-            verification_note=verification_note,
-            is_verified=False  # All mosques need verification
+            is_verified=False
         )
         db.session.add(mosque)
         db.session.commit()
@@ -126,31 +103,12 @@ def logout():
 
 @routes.route('/')
 def index():
-    today = calendar.datetime.today().date()
-    upcoming_iftars = IfterEvent.query\
-        .filter(IfterEvent.date >= today)\
-        .order_by(IfterEvent.date)\
-        .limit(3)\
-        .all()
-
-    return render_template('ramadan/index.html',
-                       upcoming_iftars=upcoming_iftars)
-
+    return render_template('index.html')
 
 @routes.route('/mosques')
 def mosques():
-    # Get all verified mosque users
     mosque_users = User.query.filter_by(user_type='mosque', is_verified=True).all()
-    return render_template('mosques.html', 
-                         mosques=mosque_users) #Removed google_maps_api_key
-
-@routes.route('/set_language/<language>')
-def set_language(language):
-    if language not in ['en', 'nl', 'ar']:
-        return redirect(url_for('main.index'))
-
-    session['language'] = language
-    return redirect(request.referrer or url_for('main.index'))
+    return render_template('mosques.html', mosques=mosque_users)
 
 @routes.route('/contact', methods=['GET', 'POST'])
 def contact():
@@ -164,8 +122,3 @@ def contact():
         return redirect(url_for('main.contact'))
 
     return render_template('contact.html')
-
-#Removed routes and functions that depend on removed models.  This includes:
-#prayer_times, mosque_detail, edit_mosque, initialize_mosques, about, manage_board_members, upload_board_photo, register_admin, verify_mosque, mosque_donations, donate_vgm, donate_mosque, profile, test_canva
-
-#The profile route is already included at the end of the original code,  no need to add it again.
