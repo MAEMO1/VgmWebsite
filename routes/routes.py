@@ -143,3 +143,8 @@ def set_language(language):
     from flask import session
     session['language'] = language
     return redirect(request.referrer or url_for('main.index'))
+
+@routes.route('/mosque/<int:mosque_id>')
+def mosque_detail(mosque_id):
+    mosque = User.query.filter_by(id=mosque_id, user_type='mosque', is_verified=True).first_or_404()
+    return render_template('mosque_detail.html', mosque=mosque)
