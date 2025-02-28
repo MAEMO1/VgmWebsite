@@ -47,11 +47,9 @@ def create_app():
     with app.app_context():
         # Import blueprints
         from routes import routes as main_routes
-        from routes.ramadan_routes import ramadan
 
         # Register blueprints
         app.register_blueprint(main_routes)
-        app.register_blueprint(ramadan, url_prefix='/ramadan')
 
         # Initialize database
         from models import User

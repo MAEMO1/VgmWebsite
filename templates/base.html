@@ -262,39 +262,12 @@
         }
 
         /* Add special styling for Ramadan and Community menu items */
-        .nav-link.ramadan-link {
-            color: #FF4154 !important;
-            font-weight: 700;
-            position: relative;
-            padding-right: 1.5rem !important;
-        }
-
-        .nav-link.ramadan-link::after {
-            content: '🌙';
-            position: absolute;
-            right: 0.5rem;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
         .nav-link.community-link {
             color: #41B7AC !important;
             font-weight: 600;
         }
 
-        /* Update the dropdown styling for these special items */
-        .dropdown-menu .ramadan-item {
-            color: #FF4154;
-            font-weight: 600;
-            background: rgba(255, 65, 84, 0.1);
-            margin: 0.25rem 0.5rem;
-            border-radius: 6px;
-        }
 
-        .dropdown-menu .ramadan-item:hover {
-            background: rgba(255, 65, 84, 0.2);
-            color: #FF4154;
-        }
     </style>
     {% block styles %}{% endblock %}
 </head>
@@ -364,7 +337,6 @@
                             {{ _('Gemeenschap') }}
                         </a>
                         <ul class="dropdown-menu" aria-label="Community submenu">
-                            <li><a class="dropdown-item ramadan-item" href="{{ url_for('ramadan.index') }}">{{ _('Ramadan 1446/2025') }}</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('main.index') }}">{{ _('Nieuws') }}</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('events.event_list') }}">{{ _('Evenementen') }}</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('obituaries.index') }}">{{ _('Overlijdensberichten') }}</a></li>

@@ -66,7 +66,6 @@ def register_mosque():
         number = request.form.get('number')
         postal = request.form.get('postal')
         city = request.form.get('city')
-        phone = request.form.get('phone')
 
         if User.query.filter_by(email=email).first():
             flash(_('Email bestaat al.'), 'error')
@@ -82,7 +81,6 @@ def register_mosque():
             mosque_number=number,
             mosque_postal=postal,
             mosque_city=city,
-            mosque_phone=phone,
             is_verified=False
         )
         db.session.add(mosque)
