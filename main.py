@@ -1,8 +1,8 @@
 import os
 import logging
 from flask import Flask, render_template, request
-from extensions import db, logger
-from flask_babel import Babel
+from extensions import db, babel, logger
+from flask_babel import _
 
 # create the app
 app = Flask(__name__)
@@ -22,10 +22,15 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 # Configure Babel
 app.config['BABEL_DEFAULT_LOCALE'] = 'nl'
 app.config['BABEL_DEFAULT_TIMEZONE'] = 'Europe/Amsterdam'
-babel = Babel(app, locale_selector=lambda: request.accept_languages.best_match(['nl', 'en', 'ar']))
 
 # Initialize extensions
 db.init_app(app)
+babel.init_app(app)
+
+# Make the translation function available in templates
+@app.context_processor
+def utility_processor():
+    return {'_': _}
 
 @app.route('/')
 def home():

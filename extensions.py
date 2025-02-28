@@ -1,6 +1,7 @@
 import logging
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
+from flask_babel import Babel
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -12,3 +13,4 @@ class Base(DeclarativeBase):
 
 # Create shared instances
 db = SQLAlchemy(model_class=Base)
+babel = Babel()
