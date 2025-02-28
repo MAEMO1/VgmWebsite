@@ -54,43 +54,51 @@ def create_app():
     login_manager.init_app(app)
     babel.init_app(app, locale_selector=get_locale)
 
+    # Configure login manager
+    login_manager.login_view = 'main.login'
+    login_manager.login_message = 'Log in om deze pagina te bekijken.'
+    login_manager.login_message_category = 'info'
+
     with app.app_context():
-        # Import models to register with SQLAlchemy
-        from models import User, IfterEvent, Event, EventRegistration, EventNotification, PrayerTime, Obituary, ObituaryNotification, BlogPost, Message, FundraisingCampaign
+        try:
+            # Import routes after app context is created
+            from routes import routes as main_routes
+            from routes.event_routes import events
+            from routes.obituary_routes import obituaries
+            from routes.blog_routes import blog
+            from routes.translation_routes import translation_bp
+            from routes.message_routes import messages
+            from routes.donation_routes import donations
+            from routes.ramadan_routes import ramadan
 
-        # Create database tables
-        db.create_all()
+            # Register blueprints
+            app.register_blueprint(main_routes)
+            app.register_blueprint(events, url_prefix='/events')
+            app.register_blueprint(obituaries, url_prefix='/obituaries')
+            app.register_blueprint(blog, url_prefix='/blog')
+            app.register_blueprint(translation_bp)
+            app.register_blueprint(messages, url_prefix='/messages')
+            app.register_blueprint(donations)
+            app.register_blueprint(ramadan, url_prefix='/ramadan')
 
-        # Register blueprints
-        from routes import routes as main_routes
-        from routes.event_routes import events
-        from routes.obituary_routes import obituaries
-        from routes.blog_routes import blog
-        from routes.translation_routes import translation_bp
-        from routes.message_routes import messages
-        from routes.donation_routes import donations
-        from routes.ramadan_routes import ramadan
+            try:
+                # Import models and create tables
+                from models import User, Event, EventRegistration, EventNotification, PrayerTime, Obituary, ObituaryNotification, BlogPost, Message, FundraisingCampaign
+                db.create_all()
+                logger.info("Database tables created successfully")
+            except Exception as e:
+                logger.error(f"Error during database initialization: {e}")
+                logger.error("Stack trace:", exc_info=True)
+                raise
 
-        app.register_blueprint(main_routes)
-        app.register_blueprint(events, url_prefix='/events')
-        app.register_blueprint(obituaries, url_prefix='/obituaries')
-        app.register_blueprint(blog, url_prefix='/blog')
-        app.register_blueprint(translation_bp)
-        app.register_blueprint(messages, url_prefix='/messages')
-        app.register_blueprint(donations)
-        app.register_blueprint(ramadan, url_prefix='/ramadan')
+        except Exception as e:
+            logger.error(f"Error during app initialization: {e}")
+            logger.error("Stack trace:", exc_info=True)
+            raise
 
+        return app
 
-        # Add default route.  This should ideally be in routes.py but we'll add it here to make the edited code work.
-        @app.route('/')
-        def home():
-            from flask import redirect, url_for
-            return redirect(url_for('ramadan.iftar_map'))
-
-
-    return app
-
-# Create application instance
+# Create the application instance
 app = create_app()
 
 # User loader callback for Flask-Login
