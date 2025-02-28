@@ -1,21 +1,40 @@
 import os
-from flask import Flask
+import logging
+from flask import Flask, render_template, request
 from extensions import db, logger
+from flask_babel import Babel
 
+# create the app
 app = Flask(__name__)
-# Configure the database
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+# Configure database with SQLite fallback
+database_url = os.environ.get("DATABASE_URL", "sqlite:///dev.db")
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_recycle": 300,
     "pool_pre_ping": True,
 }
+
+# Configure Babel
+app.config['BABEL_DEFAULT_LOCALE'] = 'nl'
+app.config['BABEL_DEFAULT_TIMEZONE'] = 'Europe/Amsterdam'
+babel = Babel(app, locale_selector=lambda: request.accept_languages.best_match(['nl', 'en', 'ar']))
+
 # Initialize extensions
 db.init_app(app)
 
 @app.route('/')
 def home():
     logger.debug("Handling home route")
-    return 'Welcome to VGM Iftar Map!'
+    try:
+        return render_template('base.html', content="Welcome to VGM!")
+    except Exception as e:
+        logger.error(f"Error in home route: {e}")
+        return "Error loading home page", 500
 
 @app.route('/test')
 def test():
@@ -24,10 +43,27 @@ def test():
         # Test database connection
         with db.engine.connect() as conn:
             logger.info("Database connection successful")
-        return 'Flask app and database are working!'
+        return render_template('base.html', 
+                             content="Database connection successful!")
     except Exception as e:
         logger.error(f"Database connection failed: {e}")
-        return 'Flask app is working, but database connection failed!', 500
+        return render_template('base.html',
+                             content="Database connection failed!"), 500
+
+# Register blueprints with proper error handling
+try:
+    from routes.ramadan_routes import ramadan
+    app.register_blueprint(ramadan, url_prefix='/ramadan')
+    logger.info("Successfully registered ramadan blueprint")
+except Exception as e:
+    logger.error(f"Failed to register ramadan blueprint: {e}")
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    logger.info("Starting Flask application")
+    try:
+        with app.app_context():
+            db.create_all()
+            logger.info("Database tables created successfully")
+        app.run(host="0.0.0.0", port=5000, debug=True)
+    except Exception as e:
+        logger.error(f"Failed to start application: {e}", exc_info=True)

@@ -10,304 +10,22 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/image_1740398210906.png') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 
     <style>
-        :root {
-            --primary-color: #005A87;
-            --secondary-color: #41B7AC;
-            --accent-color: #FF4154;
-            --background-light: #F8F9FA;
-            --text-primary: #2C3E50;
-            --text-secondary: #6C757D;
-            --border-color: #E9ECEF;
-            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
-            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
-            --transition: all 0.3s ease;
-        }
-
-        /* Header & Navigation */
-        .navbar {
-            background: var(--white);
-            padding: 0.75rem 0;
-            box-shadow: var(--shadow-sm);
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1030;
-        }
-
-        .navbar-brand {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .logo-container {
-            width: 200px;
-            height: auto;
-            transition: var(--transition);
-        }
-
-        .logo-container:hover {
-            transform: scale(1.05);
-        }
-
-        .logo-img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        /* Navigation Links */
-        .nav-item {
-            position: relative;
-            margin: 0 0.25rem;
-        }
-
-        .nav-link {
-            color: var(--text-primary);
-            font-weight: 500;
-            padding: 0.75rem 1rem;
-            transition: var(--transition);
-            font-size: 1rem;
-        }
-
-        .nav-link:hover {
-            color: var(--primary-color);
-        }
-
-        /* Dropdown Styling */
-        .dropdown-menu {
-            border: none;
-            box-shadow: var(--shadow-md);
-            border-radius: 8px;
-            padding: 0.5rem;
-            min-width: 220px;
-        }
-
-        .dropdown-item {
-            padding: 0.75rem 1rem;
-            color: var(--text-primary);
-            font-weight: 500;
-            border-radius: 6px;
-            transition: var(--transition);
-        }
-
-        .dropdown-item:hover {
-            background-color: var(--background-light);
-            color: var(--primary-color);
-            transform: translateX(4px);
-        }
-
-        /* Search Bar */
-        .search-container {
-            position: relative;
-            max-width: 300px;
-            margin-right: 1rem;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 0.75rem 1rem 0.75rem 2.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 100px;
-            font-size: 0.925rem;
-            transition: var(--transition);
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(0,90,135,0.1);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
-            pointer-events: none;
-        }
-
-        /* Account Menu */
-        .account-menu {
-            padding: 0.5rem;
-            min-width: 260px;
-        }
-
-        .account-header {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .account-name {
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.25rem;
-        }
-
-        .account-email {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        /* Language Selector */
-        .btn-language {
-            padding: 0.75rem;
-            border-radius: 100px;
-            transition: var(--transition);
-        }
-
-        .btn-language:hover {
-            background-color: var(--background-light);
-        }
-
-        /* Mobile Responsiveness */
-        @media (max-width: 992px) {
-            .logo-container {
-                width: 160px;
-            }
-
-            .navbar-collapse {
-                background: white;
-                padding: 1rem;
-                border-radius: 12px;
-                box-shadow: var(--shadow-md);
-                margin-top: 1rem;
-            }
-
-            .search-container {
-                max-width: 100%;
-                margin: 1rem 0;
-            }
-
-            .nav-item {
-                margin: 0;
-            }
-
-            .nav-link {
-                padding: 0.75rem 0;
-            }
-        }
-
-        /* Main Content */
-        main {
-            padding-top: 6rem;
-            min-height: calc(100vh - 80px);
-        }
-
-        /* Footer */
-        .footer {
-            background: var(--white);
-            border-top: 1px solid var(--border-color);
-            padding: 2rem 0;
-            margin-top: 4rem;
-        }
-
-        /* Updated Navigation Button Styling */
-        .nav-link.btn-primary {
-            padding: 0.875rem 1.25rem;
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            color: white !important;
-            border: none;
-            border-radius: 12px;
-            font-size: 0.9375rem;
-            font-weight: 600;
-            letter-spacing: 0.01em;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.1),
-                        0 2px 4px -1px rgba(37, 99, 235, 0.06);
-        }
-
-        .nav-link.btn-primary:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .nav-link.btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 15px -3px rgba(37, 99, 235, 0.2),
-                        0 4px 6px -2px rgba(37, 99, 235, 0.1);
-        }
-
-        .nav-link.btn-primary:hover:before {
-            opacity: 1;
-        }
-
-        .nav-link.btn-primary:active {
-            transform: translateY(1px);
-            box-shadow: 0 2px 4px -1px rgba(37, 99, 235, 0.1);
-        }
-
-        .nav-link.btn-primary span {
-            position: relative;
-            z-index: 1;
-            display: inline-block;
-        }
-
-        /* Add special styling for Ramadan and Community menu items */
-        .nav-link.ramadan-link {
-            color: #FF4154 !important;
-            font-weight: 700;
-            position: relative;
-            padding-right: 1.5rem !important;
-        }
-
-        .nav-link.ramadan-link::after {
-            content: '🌙';
-            position: absolute;
-            right: 0.5rem;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .nav-link.community-link {
-            color: #41B7AC !important;
-            font-weight: 600;
-        }
-
-        /* Update the dropdown styling for these special items */
-        .dropdown-menu .ramadan-item {
-            color: #FF4154;
-            font-weight: 600;
-            background: rgba(255, 65, 84, 0.1);
-            margin: 0.25rem 0.5rem;
-            border-radius: 6px;
-        }
-
-        .dropdown-menu .ramadan-item:hover {
-            background: rgba(255, 65, 84, 0.2);
-            color: #FF4154;
-        }
+        {% include 'base_styles.html' %}
     </style>
     {% block styles %}{% endblock %}
 </head>
 <body>
-    <!-- Skip to main content link -->
-    <a href="#main-content" class="skip-link">Skip to main content</a>
-
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg sticky-top" role="navigation" aria-label="Main navigation">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('main.index') }}" aria-label="VGM Home">
+            <a class="navbar-brand" href="{{ url_for('home') }}" aria-label="VGM Home">
                 <div class="logo-container">
-                    <img src="{{ url_for('static', filename='images/image_1740398210906.png') }}" 
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" 
                          alt="VGM Logo" 
                          class="logo-img"
                          width="200">
@@ -320,56 +38,23 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-                <!-- Search Bar -->
-                <div class="search-container">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="search" class="search-input" placeholder="{{ _('Zoeken...') }}" aria-label="Search">
-                </div>
-
                 <ul class="navbar-nav ms-auto align-items-center">
-                    {% block navbar_content %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.index') }}">{{ _('Home') }}</a>
+                        <a class="nav-link" href="{{ url_for('home') }}">{{ _('Home') }}</a>
                     </li>
-
-                    <!-- About & Info Dropdown -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                           aria-expanded="false" aria-haspopup="true">
-                            {{ _('Over Ons') }}
-                        </a>
-                        <ul class="dropdown-menu" aria-label="About & Info submenu">
-                            <li><a class="dropdown-item" href="{{ url_for('main.about') }}">{{ _('Over VGM') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.memorandum') }}">{{ _('Memorandum') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.contact') }}">{{ _('Contact') }}</a></li>
-                        </ul>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('test') }}">{{ _('Test') }}</a>
                     </li>
-
-                    <!-- Mosques & Prayer Dropdown -->
+                    <!-- Language Selector -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                           aria-expanded="false" aria-haspopup="true">
-                            {{ _('Moskeeën & Gebed') }}
+                        <a class="nav-link btn-language dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false" aria-haspopup="true" aria-label="Select language">
+                            <i class="fas fa-globe"></i>
                         </a>
-                        <ul class="dropdown-menu" aria-label="Mosques & Prayer submenu">
-                            <li><a class="dropdown-item" href="{{ url_for('main.mosques') }}">{{ _('Moskeeën in Gent') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.prayer_times') }}">{{ _('Gebedstijden') }}</a></li>
-                        </ul>
-                    </li>
-
-                    <!-- Community Dropdown -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle community-link" href="#" role="button" data-bs-toggle="dropdown"
-                           aria-expanded="false" aria-haspopup="true">
-                            {{ _('Gemeenschap') }}
-                        </a>
-                        <ul class="dropdown-menu" aria-label="Community submenu">
-                            <li><a class="dropdown-item ramadan-item" href="{{ url_for('ramadan.index') }}">{{ _('Ramadan 1446/2025') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('blog.index') }}">{{ _('Nieuws & Reflecties') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('blog.community') }}">{{ _('Kijk') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('blog.learning_center') }}">{{ _('Leercentrum') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('events.event_list') }}">{{ _('Evenementen') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('obituaries.index') }}">{{ _('Overlijdensberichten') }}</a></li>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-label="Language selection">
+                            <li><a class="dropdown-item" href="{{ url_for('main.set_language', language='en') }}" lang="en">English</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.set_language', language='nl') }}" lang="nl">Nederlands</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.set_language', language='ar') }}" lang="ar">العربية</a></li>
                         </ul>
                     </li>
                     {% if current_user.is_authenticated %}
@@ -416,20 +101,6 @@
                         </a>
                     </li>
                     {% endif %}
-
-                    <!-- Language Selector -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link btn-language dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                           aria-expanded="false" aria-haspopup="true" aria-label="Select language">
-                            <i class="fas fa-globe"></i>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-label="Language selection">
-                            <li><a class="dropdown-item" href="{{ url_for('main.set_language', language='en') }}" lang="en">English</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.set_language', language='nl') }}" lang="nl">Nederlands</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.set_language', language='ar') }}" lang="ar">العربية</a></li>
-                        </ul>
-                    </li>
-                    {% endblock %}
                 </ul>
             </div>
         </div>
@@ -452,7 +123,11 @@
                 {% endif %}
             {% endwith %}
 
-            {% block content %}{% endblock %}
+            {% block content %}
+            {% if content %}
+                <div class="alert alert-info mt-4">{{ content }}</div>
+            {% endif %}
+            {% endblock %}
         </div>
     </main>
 
