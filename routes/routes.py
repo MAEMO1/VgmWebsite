@@ -110,6 +110,18 @@ def mosques():
     mosque_users = User.query.filter_by(user_type='mosque', is_verified=True).all()
     return render_template('mosques.html', mosques=mosque_users)
 
+@routes.route('/memorandum')
+def memorandum():
+    """Temporarily disabled memorandum page"""
+    flash(_('Deze pagina is momenteel niet beschikbaar.'), 'info')
+    return redirect(url_for('main.index'))
+
+@routes.route('/about')
+def about():
+    """Temporarily disabled about page"""
+    flash(_('Deze pagina is momenteel niet beschikbaar.'), 'info')
+    return redirect(url_for('main.index'))
+
 @routes.route('/contact', methods=['GET', 'POST'])
 def contact():
     if request.method == 'POST':

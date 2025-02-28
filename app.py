@@ -39,28 +39,28 @@ def create_app():
         from models import User
         return User.query.get(int(user_id))
 
-    # Register routes
-    @app.route('/')
-    def home():
-        return redirect(url_for('main.index'))
-
+    # Test route
     @app.route('/test')
     def test():
         return 'De applicatie werkt!'
 
-    # Import and register blueprints
-    from routes import routes as main_routes
-    app.register_blueprint(main_routes)
+    with app.app_context():
+        # Import blueprints
+        from routes import routes as main_routes
+        from routes.ramadan_routes import ramadan
+
+        # Register blueprints
+        app.register_blueprint(main_routes)
+        app.register_blueprint(ramadan, url_prefix='/ramadan')
+
+        # Initialize database
+        from models import User
+        db.create_all()
 
     return app
 
 # Create the application instance
 app = create_app()
-
-# Initialize database tables
-with app.app_context():
-    from models import User
-    db.create_all()
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
