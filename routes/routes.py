@@ -1,4 +1,5 @@
 import calendar
+import datetime
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -19,6 +20,10 @@ def login():
 
         user = User.query.filter_by(email=email).first()
         if user and check_password_hash(user.password_hash, password):
+            # Update last login time
+            user.last_login = datetime.utcnow()
+            db.session.commit()
+
             login_user(user)
             flash(_('Succesvol ingelogd!'), 'success')
             return redirect(url_for('main.index'))
