@@ -148,3 +148,42 @@ def set_language(language):
 def mosque_detail(mosque_id):
     mosque = User.query.filter_by(id=mosque_id, user_type='mosque', is_verified=True).first_or_404()
     return render_template('mosque_detail.html', mosque=mosque)
+
+@routes.route('/mosque/<int:mosque_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_mosque(mosque_id):
+    mosque = User.query.filter_by(id=mosque_id, user_type='mosque').first_or_404()
+
+    # Check if user has permission to edit
+    if not current_user.is_admin and current_user.id != mosque_id:
+        flash(_('U heeft geen toegang tot deze pagina.'), 'error')
+        return redirect(url_for('main.mosque_detail', mosque_id=mosque_id))
+
+    if request.method == 'POST':
+        # Update basic information
+        mosque.mosque_name = request.form.get('mosque_name')
+        mosque.mosque_street = request.form.get('street')
+        mosque.mosque_number = request.form.get('number')
+        mosque.mosque_postal = request.form.get('postal')
+        mosque.mosque_city = request.form.get('city')
+        mosque.mosque_phone = request.form.get('phone')
+        mosque.mosque_email = request.form.get('email')
+        mosque.mosque_website = request.form.get('website')
+
+        # Optional fields
+        mosque.mission_statement = request.form.get('mission_statement')
+        mosque.vision_statement = request.form.get('vision_statement')
+        mosque.activities = request.form.get('activities')
+        mosque.facilities = request.form.get('facilities')
+        mosque.languages = request.form.get('languages')
+        mosque.accessibility_features = request.form.get('accessibility_features')
+
+        try:
+            db.session.commit()
+            flash(_('Moskee informatie succesvol bijgewerkt.'), 'success')
+            return redirect(url_for('main.mosque_detail', mosque_id=mosque_id))
+        except Exception as e:
+            db.session.rollback()
+            flash(_('Er is een fout opgetreden bij het bijwerken van de moskee informatie.'), 'error')
+
+    return render_template('edit_mosque.html', mosque=mosque)
