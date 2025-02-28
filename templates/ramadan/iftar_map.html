@@ -399,6 +399,7 @@
 {% endblock %}
 
 {% block scripts %}
+{{ super() }}
 <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap" async defer></script>
 <script>
 let map;
@@ -544,5 +545,67 @@ document.getElementById('filterForm').addEventListener('submit', function(e) {
     const params = new URLSearchParams(formData);
     window.location.href = `${window.location.pathname}?${params.toString()}`;
 });
+
+// Debug function
+function debugIftarKaart() {
+    const debugElement = document.createElement('div');
+    debugElement.id = 'iftar-debug';
+    debugElement.style.position = 'fixed';
+    debugElement.style.bottom = '10px';
+    debugElement.style.right = '10px';
+    debugElement.style.padding = '10px';
+    debugElement.style.background = 'rgba(0,0,0,0.8)';
+    debugElement.style.color = 'white';
+    debugElement.style.zIndex = '9999';
+    debugElement.style.maxHeight = '300px';
+    debugElement.style.overflow = 'auto';
+    debugElement.style.maxWidth = '400px';
+    debugElement.style.fontSize = '12px';
+    debugElement.style.fontFamily = 'monospace';
+
+    document.body.appendChild(debugElement);
+
+    // Log current state
+    const logState = () => {
+        debugElement.innerHTML = '<h4>Iftar Kaart Debug</h4>';
+
+        // Check relevant elements
+        const mapElement = document.getElementById('map');
+        const eventsList = document.querySelector('.events-list');
+
+        debugElement.innerHTML += `
+            <p>Map element: ${mapElement ? 'Present' : 'Missing'}</p>
+            <p>Events list: ${eventsList ? 'Present' : 'Missing'}</p>
+            <p>Events count: ${events ? events.length : 0}</p>
+        `;
+
+        // Test API connection
+        debugElement.innerHTML += `<button onclick="testApi()">Test API Connection</button>`;
+    };
+
+    logState();
+    setInterval(logState, 5000);
+}
+
+async function testApi() {
+    const debugElement = document.getElementById('iftar-debug');
+    try {
+        const response = await fetch('/api/debug-iftar');
+        const data = await response.json();
+        debugElement.innerHTML += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+    } catch (err) {
+        debugElement.innerHTML += `<p>API Error: ${err.message}</p>`;
+    }
+}
+
+// Add debug button
+const debugButton = document.createElement('button');
+debugButton.textContent = 'Debug Mode';
+debugButton.style.position = 'fixed';
+debugButton.style.top = '10px';
+debugButton.style.right = '10px';
+debugButton.style.zIndex = '9999';
+debugButton.addEventListener('click', debugIftarKaart);
+document.body.appendChild(debugButton);
 </script>
 {% endblock %}

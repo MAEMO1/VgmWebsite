@@ -107,42 +107,44 @@ def iftar_map():
 
         # Render template
         return render_template('ramadan/iftar_map.html',
-                           events=events,
-                           prayer_times=prayer_times,
-                           family_only=family_only,
-                           iftar_type=iftar_type,
-                           period=period,
-                           selected_mosque=selected_mosque,
-                           today=today,
-                           mosques=mosques,
-                           google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'),
-                           events_json=json.dumps([
-                               {
-                                   'id': event['id'],
-                                   'type': event['type'],
-                                   'mosque_name': event['mosque_name'],
-                                   'date': event['date'].strftime('%Y-%m-%d'),
-                                   'start_time': event['start_time'].strftime('%H:%M'),
-                                   'location': event['location'],
-                                   'is_family_friendly': event['is_family_friendly'],
-                                   'latitude': event['latitude'],
-                                   'longitude': event['longitude']
-                               }
-                               for event in events
-                           ]),
-                           ramadan_start=ramadan_start,
-                           ramadan_end=ramadan_end)
+                               events=events,
+                               prayer_times=prayer_times,
+                               family_only=family_only,
+                               iftar_type=iftar_type,
+                               period=period,
+                               selected_mosque=selected_mosque,
+                               today=today,
+                               mosques=mosques,
+                               google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'),
+                               events_json=json.dumps([
+                                   {
+                                       'id': event['id'],
+                                       'type': event['type'],
+                                       'mosque_name': event['mosque_name'],
+                                       'date': event['date'].strftime('%Y-%m-%d'),
+                                       'start_time': event['start_time'].strftime('%H:%M'),
+                                       'location': event['location'],
+                                       'is_family_friendly': event['is_family_friendly'],
+                                       'latitude': event['latitude'],
+                                       'longitude': event['longitude']
+                                   }
+                                   for event in events
+                               ]),
+                               ramadan_start=ramadan_start,
+                               ramadan_end=ramadan_end)
 
     except Exception as e:
         logger.error(f"Error in iftar_map route: {e}", exc_info=True)
         flash(_('Er is een fout opgetreden bij het laden van de iftar kaart.'), 'error')
         return redirect(url_for('main.index'))
 
+
 def get_ramadan_dates(year=2025):
     """Get Ramadan start and end dates"""
     ramadan_start = date(2025, 3, 1)  # 1 Ramadan 1446
     ramadan_end = date(2025, 3, 30)   # 30 Ramadan 1446
     return ramadan_start, ramadan_end
+
 
 @ramadan.route('/')
 def index():
@@ -165,10 +167,12 @@ def index():
                          programs=programs,
                          upcoming_iftars=upcoming_iftars)
 
+
 @ramadan.route('/quran-resources')
 def quran_resources():
     resources = RamadanQuranResource.query.order_by(RamadanQuranResource.created_at.desc()).all()
     return render_template('ramadan/quran_resources.html', resources=resources)
+
 
 @ramadan.route('/quran-resources/add', methods=['GET', 'POST'])
 @login_required
@@ -194,10 +198,12 @@ def add_quran_resource():
 
     return render_template('ramadan/add_quran_resource.html')
 
+
 @ramadan.route('/videos')
 def videos():
     videos = RamadanVideo.query.order_by(RamadanVideo.created_at.desc()).all()
     return render_template('ramadan/videos.html', videos=videos)
+
 
 @ramadan.route('/videos/add', methods=['GET', 'POST'])
 @login_required
@@ -224,10 +230,12 @@ def add_video():
 
     return render_template('ramadan/add_video.html')
 
+
 @ramadan.route('/schedule')
 def schedule():
     programs = RamadanProgram.query.order_by(RamadanProgram.start_date).all()
     return render_template('ramadan/schedule.html', programs=programs)
+
 
 @ramadan.route('/schedule/add', methods=['GET', 'POST'])
 @login_required
@@ -294,7 +302,7 @@ def add_iftar():
             is_recurring = bool(request.form.get('is_recurring'))
             recurrence_type = request.form.get('recurrence_type') if is_recurring else None
             recurrence_end_date = (datetime.strptime(request.form.get('recurrence_end_date'), '%Y-%m-%d').date()
-                              if request.form.get('recurrence_end_date') else None)
+                                  if request.form.get('recurrence_end_date') else None)
 
             # Calculate all dates for recurring events
             dates = [start_date]
@@ -431,6 +439,7 @@ def add_iftar():
                              ('diyanet', _('Diyanet (via Aladhan)'))
                          ])
 
+
 @ramadan.route('/iftar/<int:iftar_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_iftar(iftar_id):
@@ -473,6 +482,7 @@ def edit_iftar(iftar_id):
                          iftar=iftar,
                          mosques=mosques)
 
+
 @ramadan.route('/iftar/<int:iftar_id>/delete', methods=['POST'])
 @login_required
 def delete_iftar(iftar_id):
@@ -494,8 +504,10 @@ def delete_iftar(iftar_id):
 
     return redirect(url_for('ramadan.iftar_map'))
 
+
 def allowed_file(filename, allowed_extensions={'png', 'jpg', 'jpeg'}):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+
 
 def analyze_issues(events, prayer_times):
     """
@@ -530,6 +542,7 @@ def analyze_issues(events, prayer_times):
     """)
 
     return calendar_analysis, prayer_analysis, code_analysis
+
 
 @ramadan.route('/analyze')
 @login_required
@@ -567,3 +580,75 @@ def analyze_calendar():
     except Exception as e:
         logger.error(f"Error during analysis: {e}")
         return jsonify({'error': str(e)}), 500
+
+@ramadan.route('/api/debug-iftar')
+def debug_iftar():
+    """Debug route for iftar calendar data"""
+    try:
+        # Request info
+        logger.debug("Starting debug route for iftar calendar")
+        debug_info = {
+            'requestInfo': {
+                'timestamp': datetime.now().isoformat(),
+                'filters': request.args.to_dict()
+            },
+            'databaseConnection': {
+                'status': 'checking'
+            },
+            'prayerTimes': {
+                'status': 'pending'
+            },
+            'events': {
+                'status': 'pending'
+            }
+        }
+
+        # Check database connection
+        try:
+            db.session.execute('SELECT 1')
+            debug_info['databaseConnection']['status'] = 'connected'
+        except Exception as e:
+            debug_info['databaseConnection']['status'] = 'error'
+            debug_info['databaseConnection']['error'] = str(e)
+
+        # Test prayer times service
+        try:
+            prayer_service = PrayerTimeService()
+            test_date = date.today()
+            prayer_times = prayer_service.get_prayer_times_for_range('diyanet', test_date, test_date, 'Gent')
+            debug_info['prayerTimes'].update({
+                'status': 'success' if prayer_times else 'no_data',
+                'sample': prayer_times.get(test_date) if prayer_times else None
+            })
+        except Exception as e:
+            debug_info['prayerTimes'].update({
+                'status': 'error',
+                'error': str(e)
+            })
+
+        # Test event retrieval
+        try:
+            calendar = IfterCalendar(db)
+            events = calendar.get_events_for_period(
+                start_date=date.today(),
+                end_date=date.today() + timedelta(days=7)
+            )
+            debug_info['events'].update({
+                'status': 'success',
+                'count': len(events),
+                'sample': events[0].to_dict() if events else None
+            })
+        except Exception as e:
+            debug_info['events'].update({
+                'status': 'error',
+                'error': str(e)
+            })
+
+        return jsonify(debug_info)
+
+    except Exception as e:
+        logger.error(f"Error in debug route: {e}", exc_info=True)
+        return jsonify({
+            'error': 'Debug route error',
+            'message': str(e)
+        }), 500
