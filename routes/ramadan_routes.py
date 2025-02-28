@@ -71,8 +71,8 @@ def iftar_map():
         try:
             prayer_times = prayer_service.get_prayer_times_for_range(
                 'diyanet',  # Primary source
-                period_start,
-                period_end,
+                ramadan_start,  # Use full Ramadan period for prayer times
+                ramadan_end,
                 'Gent'
             )
 
@@ -80,8 +80,8 @@ def iftar_map():
                 logger.warning("Failed to get prayer times from primary source, trying fallback")
                 prayer_times = prayer_service.get_prayer_times_for_range(
                     'mawaqit',  # Fallback source
-                    period_start,
-                    period_end,
+                    ramadan_start,
+                    ramadan_end,
                     'Gent'
                 )
         except Exception as e:
@@ -101,6 +101,9 @@ def iftar_map():
                 'events': events,
                 'prayer_times': prayer_times
             })
+
+        # Add timedelta to template context
+        app.jinja_env.globals.update(timedelta=timedelta)
 
         # Render template
         return render_template('ramadan/iftar_map.html',

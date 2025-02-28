@@ -236,41 +236,8 @@
             <!-- Events List -->
             <div class="events-list">
                 <h4 class="mb-3">{{ _('Geplande Iftars') }}</h4>
-                {% for event in sorted_events %}
-                <div class="event-item {{ event.type }}">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h5 class="mb-1">{{ event.mosque.mosque_name }}</h5>
-                            <p class="mb-1">
-                                <i class="far fa-calendar me-2"></i>
-                                {{ event.date.strftime('%A %d %B')|title }}
-                            </p>
-                            <p class="mb-1">
-                                <i class="far fa-clock me-2"></i>
-                                {{ event.start_time.strftime('%H:%M') }}
-                                {% if event.end_time %}
-                                - {{ event.end_time.strftime('%H:%M') }}
-                                {% endif %}
-                            </p>
-                            <p class="mb-1">
-                                <i class="fas fa-map-marker-alt me-2"></i>
-                                {{ event.location }}
-                            </p>
-                        </div>
-                        <div class="d-flex flex-column gap-2">
-                            {% if event.is_family_friendly %}
-                            <span class="badge bg-success">
-                                <i class="fas fa-users me-1"></i>{{ _('Gezinsvriendelijk') }}
-                            </span>
-                            {% endif %}
-                            {% if event.registration_required %}
-                            <span class="badge bg-info">
-                                <i class="fas fa-clipboard-list me-1"></i>{{ _('Registratie vereist') }}
-                            </span>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
+                {% for event in events %}
+                    {% include 'ramadan/includes/iftar_card.html' %}
                 {% endfor %}
             </div>
         </div>
@@ -312,43 +279,103 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for week in calendar_data.weeks %}
-                        <tr>
-                            {% for day in week %}
-                            <td class="calendar-day {% if day.is_today %}today{% endif %} {% if day.has_events %}has-events{% endif %}"
-                                onclick="showDayDetails('{{ day.date }}')">
-                                <div class="d-flex justify-content-between">
-                                    <span>{{ day.day }}</span>
-                                    {% if day.has_events %}
-                                    <span class="badge bg-primary">{{ day.event_count }}</span>
-                                    {% endif %}
-                                </div>
+                        {% set current_date = ramadan_start %}
+                        {% set weeks = [] %}
+                        {% set current_week = [] %}
 
-                                {% if day.has_events %}
-                                <div class="event-indicators">
-                                    {% if day.events.daily %}
-                                    <span class="event-dot daily" title="{{ _('Dagelijkse iftars') }}"></span>
-                                    {% endif %}
-                                    {% if day.events.weekly %}
-                                    <span class="event-dot weekly" title="{{ _('Wekelijkse iftars') }}"></span>
-                                    {% endif %}
-                                    {% if day.events.single %}
-                                    <span class="event-dot single" title="{{ _('Eenmalige iftars') }}"></span>
-                                    {% endif %}
-                                </div>
-                                {% endif %}
+                        {# Calculate first day offset #}
+                        {% set first_day_offset = ramadan_start.weekday() %}
 
-                                {% if day.prayer_times %}
-                                <div class="prayer-times">
-                                    <div class="prayer-time">
-                                        <span>Maghrib:</span>
-                                        <span>{{ day.prayer_times.maghrib }}</span>
-                                    </div>
-                                </div>
+                        {# Add empty cells for days before start #}
+                        {% for _ in range(first_day_offset) %}
+                            {% set _ = current_week.append(None) %}
+                        {% endfor %}
+
+                        {# Generate calendar #}
+                        {% while current_date <= ramadan_end %}
+                            {# Get events for current date #}
+                            {% set day_events = {'daily': [], 'weekly': [], 'single': []} %}
+                            {% for event in events %}
+                                {% if event.date == current_date %}
+                                    {% if event.type == 'daily' %}
+                                        {% set _ = day_events.daily.append(event) %}
+                                    {% elif event.type == 'weekly' %}
+                                        {% set _ = day_events.weekly.append(event) %}
+                                    {% else %}
+                                        {% set _ = day_events.single.append(event) %}
+                                    {% endif %}
                                 {% endif %}
-                            </td>
                             {% endfor %}
-                        </tr>
+
+                            {# Add day to current week #}
+                            {% set day_data = {
+                                'date': current_date,
+                                'day': current_date.day,
+                                'is_today': current_date == today,
+                                'has_events': day_events.daily|length > 0 or day_events.weekly|length > 0 or day_events.single|length > 0,
+                                'events': day_events,
+                                'event_count': day_events.daily|length + day_events.weekly|length + day_events.single|length,
+                                'prayer_times': prayer_times.get(current_date, {}) if prayer_times else {}
+                            } %}
+                            {% set _ = current_week.append(day_data) %}
+
+                            {# Start new week if needed #}
+                            {% if current_week|length == 7 %}
+                                {% set _ = weeks.append(current_week) %}
+                                {% set current_week = [] %}
+                            {% endif %}
+
+                            {% set current_date = current_date + timedelta(days=1) %}
+                        {% endwhile %}
+
+                        {# Add remaining days #}
+                        {% if current_week %}
+                            {% for _ in range(7 - current_week|length) %}
+                                {% set _ = current_week.append(None) %}
+                            {% endfor %}
+                            {% set _ = weeks.append(current_week) %}
+                        {% endif %}
+
+                        {# Render calendar #}
+                        {% for week in weeks %}
+                            <tr>
+                                {% for day in week %}
+                                    <td class="calendar-day {% if day and day.is_today %}today{% endif %} {% if day and day.has_events %}has-events{% endif %}"
+                                        {% if day %}onclick="showDayDetails('{{ day.date.strftime('%Y-%m-%d') }}')"{% endif %}>
+                                        {% if day %}
+                                            <div class="d-flex justify-content-between">
+                                                <span>{{ day.day }}</span>
+                                                {% if day.has_events %}
+                                                    <span class="badge bg-primary">{{ day.event_count }}</span>
+                                                {% endif %}
+                                            </div>
+
+                                            {% if day.has_events %}
+                                                <div class="event-indicators">
+                                                    {% if day.events.daily %}
+                                                        <span class="event-dot daily" title="{{ _('Dagelijkse iftars') }}"></span>
+                                                    {% endif %}
+                                                    {% if day.events.weekly %}
+                                                        <span class="event-dot weekly" title="{{ _('Wekelijkse iftars') }}"></span>
+                                                    {% endif %}
+                                                    {% if day.events.single %}
+                                                        <span class="event-dot single" title="{{ _('Eenmalige iftars') }}"></span>
+                                                    {% endif %}
+                                                </div>
+                                            {% endif %}
+
+                                            {% if day.prayer_times %}
+                                                <div class="prayer-times">
+                                                    <div class="prayer-time">
+                                                        <span>Maghrib:</span>
+                                                        <span>{{ day.prayer_times.maghrib }}</span>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                {% endfor %}
+                            </tr>
                         {% endfor %}
                     </tbody>
                 </table>
