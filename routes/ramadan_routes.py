@@ -1,17 +1,14 @@
 import os
 from datetime import datetime, date, timedelta
-import calendar
 import json
 import logging
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
-from flask_login import login_required, current_user
+from flask_login import current_user, login_required
 from flask_babel import _
-from werkzeug.utils import secure_filename
 from app import db
-from models import User, IfterEvent, RamadanProgram, PrayerTime
-from services.prayer_times import PrayerTimeService
-from services.ifter_calendar import IfterCalendar
-from services.ai_service import AIService
+from models import User
+from services.iftar_service import IfterService
+from services.prayer_service import PrayerService
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -19,78 +16,70 @@ logger = logging.getLogger(__name__)
 
 ramadan = Blueprint('ramadan', __name__)
 
+def get_ramadan_dates(year=2025):
+    """Get Ramadan start and end dates"""
+    ramadan_start = date(2025, 3, 1)  # 1 Ramadan 1446
+    ramadan_end = date(2025, 3, 30)   # 30 Ramadan 1446
+    return ramadan_start, ramadan_end
 
 @ramadan.route('/iftar-map')
 def iftar_map():
-    """Main iftar map route with improved event handling"""
+    """Simplified iftar map route"""
     try:
+        logger.debug("Starting iftar map route")
+
         # Get filter parameters
         family_only = request.args.get('filter') == 'family'
-        iftar_type = request.args.get('type', 'all')
         selected_mosque = request.args.get('mosque_id', type=int)
-        period = request.args.get('period', 'three_days')
+        period = request.args.get('period', 'week')  # Default to week view
 
-        logger.debug(f"Processing request - filters: family={family_only}, type={iftar_type}, mosque={selected_mosque}, period={period}")
-
-        # Get Ramadan dates and today
-        ramadan_start, ramadan_end = get_ramadan_dates()
+        # Get today and calculate period dates
         today = date.today()
+        ramadan_start, ramadan_end = get_ramadan_dates()
 
-        # Calculate period dates
         if period == 'day':
             period_start = period_end = today
-        elif period == 'three_days':
-            period_start = today
-            period_end = today + timedelta(days=2)
         elif period == 'week':
             period_start = today
             period_end = today + timedelta(days=6)
-        else:
-            period_start = today
+        else:  # full ramadan
+            period_start = ramadan_start
             period_end = ramadan_end
 
-        # Initialize calendar manager
-        calendar = IfterCalendar(db)
+        logger.debug(f"Date range: {period_start} to {period_end}")
 
-        # Get filtered events
+        # Initialize services
+        iftar_service = IfterService(db)
+        prayer_service = PrayerService()
+
+        # Get events and prayer times
         try:
-            events = calendar.get_events_for_period(
+            events = iftar_service.get_events_for_period(
                 start_date=period_start,
                 end_date=period_end,
                 mosque_id=selected_mosque,
-                family_only=family_only,
-                event_type=iftar_type
+                family_only=family_only
             )
-            logger.debug(f"Retrieved {len(events)} events for period")
+            logger.info(f"Retrieved {len(events)} events")
+
+            prayer_times = prayer_service.get_prayer_times_range(
+                start_date=period_start,
+                end_date=period_end
+            )
+            logger.info(f"Retrieved prayer times for {len(prayer_times)} days")
+
         except Exception as e:
-            logger.error(f"Error getting events: {e}", exc_info=True)
+            logger.error(f"Error retrieving data: {e}", exc_info=True)
             events = []
-
-        # Get prayer times for the period
-        prayer_service = PrayerTimeService()
-        try:
-            prayer_times = prayer_service.get_prayer_times_for_range(
-                'diyanet',  # Primary source
-                ramadan_start,  # Use full Ramadan period for prayer times
-                ramadan_end,
-                'Gent'
-            )
-
-            if not prayer_times:
-                logger.warning("Failed to get prayer times from primary source, trying fallback")
-                prayer_times = prayer_service.get_prayer_times_for_range(
-                    'mawaqit',  # Fallback source
-                    ramadan_start,
-                    ramadan_end,
-                    'Gent'
-                )
-        except Exception as e:
-            logger.error(f"Error getting prayer times: {e}", exc_info=True)
             prayer_times = {}
 
-        # Get mosque data for filtering
+        # Get mosques for filtering
         try:
-            mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
+            mosques = User.query.filter_by(
+                user_type='mosque',
+                is_verified=True
+            ).all()
+            logger.debug(f"Found {len(mosques)} verified mosques")
         except Exception as e:
             logger.error(f"Error getting mosques: {e}", exc_info=True)
             mosques = []
@@ -102,49 +91,75 @@ def iftar_map():
                 'prayer_times': prayer_times
             })
 
-        # Add timedelta to template context
-        app.jinja_env.globals.update(timedelta=timedelta)
-
         # Render template
+        logger.debug("Rendering template with data")
         return render_template('ramadan/iftar_map.html',
-                               events=events,
-                               prayer_times=prayer_times,
-                               family_only=family_only,
-                               iftar_type=iftar_type,
-                               period=period,
-                               selected_mosque=selected_mosque,
-                               today=today,
-                               mosques=mosques,
-                               google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'),
-                               events_json=json.dumps([
-                                   {
-                                       'id': event['id'],
-                                       'type': event['type'],
-                                       'mosque_name': event['mosque_name'],
-                                       'date': event['date'].strftime('%Y-%m-%d'),
-                                       'start_time': event['start_time'].strftime('%H:%M'),
-                                       'location': event['location'],
-                                       'is_family_friendly': event['is_family_friendly'],
-                                       'latitude': event['latitude'],
-                                       'longitude': event['longitude']
-                                   }
-                                   for event in events
-                               ]),
-                               ramadan_start=ramadan_start,
-                               ramadan_end=ramadan_end)
+                           events=events,
+                           prayer_times=prayer_times,
+                           family_only=family_only,
+                           period=period,
+                           selected_mosque=selected_mosque,
+                           today=today,
+                           mosques=mosques,
+                           google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'),
+                           ramadan_start=ramadan_start,
+                           ramadan_end=ramadan_end)
 
     except Exception as e:
         logger.error(f"Error in iftar_map route: {e}", exc_info=True)
         flash(_('Er is een fout opgetreden bij het laden van de iftar kaart.'), 'error')
         return redirect(url_for('main.index'))
 
+# Debug route
+@ramadan.route('/api/debug-iftar')
+def debug_iftar():
+    """Debug endpoint for iftar map"""
+    try:
+        debug_info = {
+            'request': {
+                'timestamp': datetime.now().isoformat(),
+                'args': request.args.to_dict()
+            },
+            'database': {'status': 'checking'},
+            'services': {'status': 'checking'}
+        }
 
-def get_ramadan_dates(year=2025):
-    """Get Ramadan start and end dates"""
-    ramadan_start = date(2025, 3, 1)  # 1 Ramadan 1446
-    ramadan_end = date(2025, 3, 30)   # 30 Ramadan 1446
-    return ramadan_start, ramadan_end
+        # Test database
+        try:
+            db.session.execute('SELECT 1')
+            debug_info['database']['status'] = 'connected'
+        except Exception as e:
+            debug_info['database']['status'] = 'error'
+            debug_info['database']['error'] = str(e)
 
+        # Test services
+        try:
+            iftar_service = IfterService(db)
+            prayer_service = PrayerService()
+
+            test_date = date.today()
+            events = iftar_service.get_events_for_period(
+                test_date, 
+                test_date + timedelta(days=7)
+            )
+            prayer_times = prayer_service.get_prayer_times(test_date)
+
+            debug_info['services'].update({
+                'status': 'ok',
+                'events_count': len(events),
+                'prayer_times_available': bool(prayer_times)
+            })
+        except Exception as e:
+            debug_info['services'].update({
+                'status': 'error',
+                'error': str(e)
+            })
+
+        return jsonify(debug_info)
+
+    except Exception as e:
+        logger.error(f"Error in debug route: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
 
 @ramadan.route('/')
 def index():
@@ -262,6 +277,7 @@ def add_program():
             print(f"Error adding program: {e}")
 
     return render_template('ramadan/add_program.html')
+
 
 
 @ramadan.route('/iftar/add', methods=['GET', 'POST'])
@@ -556,7 +572,7 @@ def analyze_calendar():
 
         # Get prayer times for analysis period
         ramadan_start, ramadan_end = get_ramadan_dates()
-        prayer_service = PrayerTimeService()
+        prayer_service = PrayerService()
         prayer_times = prayer_service.get_prayer_times_for_range(
             'diyanet', ramadan_start, ramadan_end, 'Gent'
         )
@@ -582,7 +598,7 @@ def analyze_calendar():
         return jsonify({'error': str(e)}), 500
 
 @ramadan.route('/api/debug-iftar')
-def debug_iftar():
+def debug_iftar_2(): #Renamed to avoid conflict
     """Debug route for iftar calendar data"""
     try:
         # Request info
@@ -613,7 +629,7 @@ def debug_iftar():
 
         # Test prayer times service
         try:
-            prayer_service = PrayerTimeService()
+            prayer_service = PrayerService()
             test_date = date.today()
             prayer_times = prayer_service.get_prayer_times_for_range('diyanet', test_date, test_date, 'Gent')
             debug_info['prayerTimes'].update({
@@ -652,3 +668,5 @@ def debug_iftar():
             'error': 'Debug route error',
             'message': str(e)
         }), 500
+from werkzeug.utils import secure_filename
+from flask_login import login_required

@@ -1,5 +1,4 @@
-from datetime import datetime, date
-import random
+from datetime import datetime, date, time, timedelta
 from app import db
 from flask_login import UserMixin
 
@@ -14,8 +13,8 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256))
-    is_admin = db.Column(db.Boolean, default=False)
     user_type = db.Column(db.String(20), nullable=False)  # 'visitor' or 'mosque'
+    is_admin = db.Column(db.Boolean, default=False)
 
     # Mosque-specific fields
     mosque_name = db.Column(db.String(200))
@@ -23,13 +22,14 @@ class User(UserMixin, db.Model):
     mosque_number = db.Column(db.String(10))
     mosque_postal = db.Column(db.String(10))
     mosque_city = db.Column(db.String(100))
-    mosque_phone = db.Column(db.String(20))
-    mosque_image = db.Column(db.String(500))
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
     is_verified = db.Column(db.Boolean, default=False)
-    verification_status = db.Column(db.String(20), default='pending')
-    verification_note = db.Column(db.Text)
+
+    def get_full_address(self):
+        if self.user_type == 'mosque':
+            return f"{self.mosque_street} {self.mosque_number}, {self.mosque_postal} {self.mosque_city}"
+        return None
 
     # Add mosque_preferences relationship
     mosque_preferences = db.relationship('MosqueNotificationPreference',
@@ -68,30 +68,6 @@ class User(UserMixin, db.Model):
                                  backref='mosque',
                                  lazy='dynamic')
 
-    # New fields for mosque profiles
-    foundation_year = db.Column(db.Integer)
-    mission_statement = db.Column(db.Text)
-    vision_statement = db.Column(db.Text)
-    activities = db.Column(db.Text)  # List of regular activities
-    facilities = db.Column(db.Text)  # Available facilities
-    languages = db.Column(db.String(200))  # Languages of services/khutbah
-    capacity = db.Column(db.Integer)  # Prayer hall capacity
-    accessibility_features = db.Column(db.Text)  # Accessibility information
-    parking_info = db.Column(db.Text)  # Parking information
-    public_transport = db.Column(db.Text)  # Public transport directions
-
-    def get_full_address(self):
-        if self.user_type == 'mosque':
-            return f"{self.mosque_street} {self.mosque_number}, {self.mosque_postal} {self.mosque_city}"
-        return None
-
-    def to_dict(self):
-        """Convert User object to a JSON serializable dictionary"""
-        return {
-            'id': self.id,
-            'mosque_name': self.mosque_name,
-            'full_address': self.get_full_address()
-        }
 
 class MosqueImage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -443,38 +419,26 @@ class FundraisingCampaign(db.Model):
 
 # Add new IfterEvent model after the Event model
 class IfterEvent(db.Model):
+    """Simplified iftar event model"""
     id = db.Column(db.Integer, primary_key=True)
     mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     date = db.Column(db.Date, nullable=False)
     start_time = db.Column(db.Time, nullable=False)
     end_time = db.Column(db.Time)
     location = db.Column(db.String(200))
-    women_entrance = db.Column(db.String(200))  # Specific entrance for women
-    capacity = db.Column(db.Integer)
     is_family_friendly = db.Column(db.Boolean, default=True)
-    registration_required = db.Column(db.Boolean, default=False)
-    registration_deadline = db.Column(db.DateTime)
-    dietary_options = db.Column(db.Boolean, default=False)
-    notes = db.Column(db.Text)
-    image_url = db.Column(db.String(500))
-
-    # Prayer-based timing fields
-    prayer_based_timing = db.Column(db.Boolean, default=False)
-    prayer_name = db.Column(db.String(20))  # maghrib, isha
-    prayer_source = db.Column(db.String(20))  # mawaqeet, diyanet
-    prayer_offset = db.Column(db.Integer)  # minutes after prayer
+    capacity = db.Column(db.Integer)
 
     # Recurring event fields
     is_recurring = db.Column(db.Boolean, default=False)
     recurrence_type = db.Column(db.String(20))  # 'daily' or 'weekly'
-    recurrence_end_date = db.Column(db.Date)  # When the recurring event ends
+    recurrence_end_date = db.Column(db.Date)
+
+    # Relationship
+    mosque = db.relationship('User', backref='ifter_events')
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
-    # Relationships
-    mosque = db.relationship('User', backref='ifter_events')
-    registrations = db.relationship('IfterRegistration', backref='ifter_event', lazy='dynamic')
 
     def to_dict(self):
         """Convert event to a dictionary format"""
@@ -488,7 +452,6 @@ class IfterEvent(db.Model):
             'end_time': self.end_time,
             'location': self.location,
             'is_family_friendly': self.is_family_friendly,
-            'registration_required': self.registration_required,
             'capacity': self.capacity,
             'latitude': self.mosque.latitude if self.mosque else None,
             'longitude': self.mosque.longitude if self.mosque else None

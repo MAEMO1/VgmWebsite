@@ -2,174 +2,11 @@
 
 {% block title %}{{ _('VGM Iftarkaart - Ramadan 1446/2025') }}{% endblock %}
 
-{% block styles %}
-<style>
-/* Main Layout */
-.main-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 2rem;
-}
-
-/* Filter Panel */
-.filter-panel {
-    background-color: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-/* Calendar Styling */
-.calendar-container {
-    background-color: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.calendar-grid {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 3px;
-}
-
-.calendar-day {
-    height: 120px;
-    padding: 0.5rem;
-    border-radius: 8px;
-    background-color: #f8f9fa;
-    vertical-align: top;
-    position: relative;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.calendar-day:hover {
-    background-color: #e9ecef;
-    transform: translateY(-2px);
-}
-
-.calendar-day.today {
-    background-color: #e8f4f8;
-    border: 2px solid #0dcaf0;
-}
-
-.calendar-day.has-events {
-    background-color: #fff;
-    border: 1px solid #dee2e6;
-}
-
-/* Event Indicators */
-.event-indicators {
-    display: flex;
-    gap: 0.25rem;
-    margin-top: 0.5rem;
-}
-
-.event-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-}
-
-.event-dot.daily { background-color: #198754; }
-.event-dot.weekly { background-color: #0d6efd; }
-.event-dot.single { background-color: #ffc107; }
-
-/* Prayer Times */
-.prayer-times {
-    font-size: 0.75rem;
-    color: #6c757d;
-    margin-top: 0.5rem;
-}
-
-.prayer-time {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.25rem;
-}
-
-/* Map Container */
-#map {
-    height: 500px;
-    width: 100%;
-    border-radius: 12px;
-    margin-bottom: 2rem;
-}
-
-/* Event List */
-.events-list {
-    background-color: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    padding: 1.5rem;
-}
-
-.event-item {
-    padding: 1rem;
-    border-left: 4px solid transparent;
-    margin-bottom: 1rem;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-}
-
-.event-item:hover {
-    transform: translateX(5px);
-}
-
-.event-item.daily { border-left-color: #198754; }
-.event-item.weekly { border-left-color: #0d6efd; }
-.event-item.single { border-left-color: #ffc107; }
-
-/* Legend */
-.calendar-legend {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    padding: 1rem;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    margin: 1rem 0;
-}
-
-.legend-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .main-container {
-        padding: 1rem;
-    }
-
-    .calendar-day {
-        height: 100px;
-    }
-
-    .prayer-times {
-        display: none;
-    }
-}
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="main-container">
+<div class="container-fluid py-4">
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0">{{ _('VGM Iftarkaart') }}</h1>
+        <h1 class="h3">{{ _('VGM Iftarkaart') }}</h1>
         {% if current_user.is_authenticated and (current_user.is_admin or current_user.user_type == 'mosque') %}
         <a href="{{ url_for('ramadan.add_iftar') }}" class="btn btn-primary">
             <i class="fas fa-plus me-2"></i>{{ _('Voeg Iftar Toe') }}
@@ -177,222 +14,133 @@
         {% endif %}
     </div>
 
-    <!-- Filter Panel -->
-    <div class="filter-panel">
-        <form id="filterForm" class="row g-3">
-            <div class="col-md-3">
-                <label for="type" class="form-label">{{ _('Type Iftar') }}</label>
-                <select class="form-select" name="type" id="type">
-                    <option value="all" {% if iftar_type == 'all' %}selected{% endif %}>{{ _('Alle Types') }}</option>
-                    <option value="daily" {% if iftar_type == 'daily' %}selected{% endif %}>{{ _('Dagelijks') }}</option>
-                    <option value="weekly" {% if iftar_type == 'weekly' %}selected{% endif %}>{{ _('Wekelijks') }}</option>
-                    <option value="single" {% if iftar_type == 'single' %}selected{% endif %}>{{ _('Eenmalig') }}</option>
-                </select>
-            </div>
-
-            <div class="col-md-3">
-                <label for="period" class="form-label">{{ _('Periode') }}</label>
-                <select class="form-select" name="period" id="period">
-                    <option value="all" {% if period == 'all' %}selected{% endif %}>{{ _('Volledige Ramadan') }}</option>
-                    <option value="day" {% if period == 'day' %}selected{% endif %}>{{ _('Vandaag') }}</option>
-                    <option value="three_days" {% if period == 'three_days' %}selected{% endif %}>{{ _('Komende 3 dagen') }}</option>
-                    <option value="week" {% if period == 'week' %}selected{% endif %}>{{ _('Deze week') }}</option>
-                </select>
-            </div>
-
-            <div class="col-md-3">
-                <label for="mosque_id" class="form-label">{{ _('Moskee') }}</label>
-                <select class="form-select" name="mosque_id" id="mosque_id">
-                    <option value="">{{ _('Alle Moskeeën') }}</option>
-                    {% for mosque in mosques %}
-                    <option value="{{ mosque.id }}" {% if selected_mosque == mosque.id %}selected{% endif %}>
-                        {{ mosque.mosque_name }}
-                    </option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="col-md-3 d-flex flex-column justify-content-end">
-                <div class="form-check mb-2">
-                    <input type="checkbox" class="form-check-input" id="family_filter" name="filter" 
-                           value="family" {% if family_only %}checked{% endif %}>
-                    <label class="form-check-label" for="family_filter">
-                        {{ _('Alleen Gezinsvriendelijk') }}
-                    </label>
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form id="filterForm" class="row g-3">
+                <div class="col-md-4">
+                    <label for="period" class="form-label">{{ _('Periode') }}</label>
+                    <select class="form-select" name="period" id="period">
+                        <option value="day" {% if period == 'day' %}selected{% endif %}>
+                            {{ _('Vandaag') }}
+                        </option>
+                        <option value="week" {% if period == 'week' %}selected{% endif %}>
+                            {{ _('Deze week') }}
+                        </option>
+                        <option value="all" {% if period == 'all' %}selected{% endif %}>
+                            {{ _('Volledige Ramadan') }}
+                        </option>
+                    </select>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">
-                    <i class="fas fa-filter me-2"></i>{{ _('Filter Toepassen') }}
-                </button>
-            </div>
-        </form>
+
+                <div class="col-md-4">
+                    <label for="mosque_id" class="form-label">{{ _('Moskee') }}</label>
+                    <select class="form-select" name="mosque_id" id="mosque_id">
+                        <option value="">{{ _('Alle Moskeeën') }}</option>
+                        {% for mosque in mosques %}
+                        <option value="{{ mosque.id }}" {% if selected_mosque == mosque.id %}selected{% endif %}>
+                            {{ mosque.mosque_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-4 d-flex align-items-end">
+                    <div class="form-check me-3">
+                        <input type="checkbox" class="form-check-input" id="family_filter" 
+                               name="filter" value="family" {% if family_only %}checked{% endif %}>
+                        <label class="form-check-label" for="family_filter">
+                            {{ _('Alleen Gezinsvriendelijk') }}
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-filter me-2"></i>{{ _('Filter') }}
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <div class="row">
-        <!-- Map and List View -->
-        <div class="col-lg-7">
-            <!-- Map -->
-            <div id="map" class="mb-4"></div>
-
-            <!-- Events List -->
-            <div class="events-list">
-                <h4 class="mb-3">{{ _('Geplande Iftars') }}</h4>
-                {% for event in events %}
-                    {% include 'ramadan/includes/iftar_card.html' %}
-                {% endfor %}
+        <!-- Map View -->
+        <div class="col-lg-8 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div id="map" style="height: 600px"></div>
+                </div>
             </div>
         </div>
 
-        <!-- Calendar View -->
-        <div class="col-lg-5">
-            <div class="calendar-container">
-                <div class="calendar-header">
-                    <h4 class="mb-0">{{ _('Ramadan 1446/2025') }}</h4>
-                </div>
-
-                <!-- Calendar Legend -->
-                <div class="calendar-legend">
-                    <div class="legend-item">
-                        <span class="event-dot daily"></span>
-                        <span>{{ _('Dagelijks') }}</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="event-dot weekly"></span>
-                        <span>{{ _('Wekelijks') }}</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="event-dot single"></span>
-                        <span>{{ _('Eenmalig') }}</span>
-                    </div>
-                </div>
-
-                <!-- Calendar Grid -->
-                <table class="calendar-grid">
-                    <thead>
-                        <tr>
-                            <th>{{ _('Ma') }}</th>
-                            <th>{{ _('Di') }}</th>
-                            <th>{{ _('Wo') }}</th>
-                            <th>{{ _('Do') }}</th>
-                            <th>{{ _('Vr') }}</th>
-                            <th>{{ _('Za') }}</th>
-                            <th>{{ _('Zo') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% set current_date = ramadan_start %}
-                        {% set weeks = [] %}
-                        {% set current_week = [] %}
-
-                        {# Calculate first day offset #}
-                        {% set first_day_offset = ramadan_start.weekday() %}
-
-                        {# Add empty cells for days before start #}
-                        {% for _ in range(first_day_offset) %}
-                            {% set _ = current_week.append(None) %}
-                        {% endfor %}
-
-                        {# Generate calendar #}
-                        {% while current_date <= ramadan_end %}
-                            {# Get events for current date #}
-                            {% set day_events = {'daily': [], 'weekly': [], 'single': []} %}
-                            {% for event in events %}
-                                {% if event.date == current_date %}
-                                    {% if event.type == 'daily' %}
-                                        {% set _ = day_events.daily.append(event) %}
-                                    {% elif event.type == 'weekly' %}
-                                        {% set _ = day_events.weekly.append(event) %}
-                                    {% else %}
-                                        {% set _ = day_events.single.append(event) %}
-                                    {% endif %}
+        <!-- Events List -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">{{ _('Geplande Iftars') }}</h5>
+                    {% if events %}
+                        {% for event in events %}
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title">{{ event.mosque_name }}</h6>
+                                <p class="card-text">
+                                    <i class="far fa-calendar me-2"></i>
+                                    {{ event.date.strftime('%d-%m-%Y') }}
+                                </p>
+                                <p class="card-text">
+                                    <i class="far fa-clock me-2"></i>
+                                    {{ event.start_time.strftime('%H:%M') }}
+                                </p>
+                                <p class="card-text">
+                                    <i class="fas fa-map-marker-alt me-2"></i>
+                                    {{ event.location }}
+                                </p>
+                                {% if event.is_family_friendly %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-users me-1"></i>
+                                    {{ _('Gezinsvriendelijk') }}
+                                </span>
                                 {% endif %}
-                            {% endfor %}
-
-                            {# Add day to current week #}
-                            {% set day_data = {
-                                'date': current_date,
-                                'day': current_date.day,
-                                'is_today': current_date == today,
-                                'has_events': day_events.daily|length > 0 or day_events.weekly|length > 0 or day_events.single|length > 0,
-                                'events': day_events,
-                                'event_count': day_events.daily|length + day_events.weekly|length + day_events.single|length,
-                                'prayer_times': prayer_times.get(current_date, {}) if prayer_times else {}
-                            } %}
-                            {% set _ = current_week.append(day_data) %}
-
-                            {# Start new week if needed #}
-                            {% if current_week|length == 7 %}
-                                {% set _ = weeks.append(current_week) %}
-                                {% set current_week = [] %}
-                            {% endif %}
-
-                            {% set current_date = current_date + timedelta(days=1) %}
-                        {% endwhile %}
-
-                        {# Add remaining days #}
-                        {% if current_week %}
-                            {% for _ in range(7 - current_week|length) %}
-                                {% set _ = current_week.append(None) %}
-                            {% endfor %}
-                            {% set _ = weeks.append(current_week) %}
-                        {% endif %}
-
-                        {# Render calendar #}
-                        {% for week in weeks %}
-                            <tr>
-                                {% for day in week %}
-                                    <td class="calendar-day {% if day and day.is_today %}today{% endif %} {% if day and day.has_events %}has-events{% endif %}"
-                                        {% if day %}onclick="showDayDetails('{{ day.date.strftime('%Y-%m-%d') }}')"{% endif %}>
-                                        {% if day %}
-                                            <div class="d-flex justify-content-between">
-                                                <span>{{ day.day }}</span>
-                                                {% if day.has_events %}
-                                                    <span class="badge bg-primary">{{ day.event_count }}</span>
-                                                {% endif %}
-                                            </div>
-
-                                            {% if day.has_events %}
-                                                <div class="event-indicators">
-                                                    {% if day.events.daily %}
-                                                        <span class="event-dot daily" title="{{ _('Dagelijkse iftars') }}"></span>
-                                                    {% endif %}
-                                                    {% if day.events.weekly %}
-                                                        <span class="event-dot weekly" title="{{ _('Wekelijkse iftars') }}"></span>
-                                                    {% endif %}
-                                                    {% if day.events.single %}
-                                                        <span class="event-dot single" title="{{ _('Eenmalige iftars') }}"></span>
-                                                    {% endif %}
-                                                </div>
-                                            {% endif %}
-
-                                            {% if day.prayer_times %}
-                                                <div class="prayer-times">
-                                                    <div class="prayer-time">
-                                                        <span>Maghrib:</span>
-                                                        <span>{{ day.prayer_times.maghrib }}</span>
-                                                    </div>
-                                                </div>
-                                            {% endif %}
-                                        {% endif %}
-                                    </td>
-                                {% endfor %}
-                            </tr>
+                            </div>
+                        </div>
                         {% endfor %}
-                    </tbody>
-                </table>
+                    {% else %}
+                        <p class="text-muted">{{ _('Geen iftars gevonden voor deze periode.') }}</p>
+                    {% endif %}
+                </div>
             </div>
-        </div>
-    </div>
-</div>
 
-<!-- Day Details Modal -->
-<div class="modal fade" id="dayModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <!-- Prayer Times -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">{{ _('Gebedstijden Vandaag') }}</h5>
+                    {% if prayer_times and today in prayer_times %}
+                        {% set times = prayer_times[today] %}
+                        <div class="list-group">
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Fajr</span>
+                                <span>{{ times.fajr }}</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Dhuhr</span>
+                                <span>{{ times.dhuhr }}</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Asr</span>
+                                <span>{{ times.asr }}</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Maghrib</span>
+                                <span>{{ times.maghrib }}</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Isha</span>
+                                <span>{{ times.isha }}</span>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">{{ _('Geen gebedstijden beschikbaar.') }}</p>
+                    {% endif %}
+                </div>
             </div>
-            <div class="modal-body"></div>
         </div>
     </div>
 </div>
@@ -404,7 +152,7 @@
 <script>
 let map;
 let markers = [];
-let events = {{ events_json|safe }};
+let events = {{ events|tojson|safe }};
 
 function initMap() {
     // Center on Belgium
@@ -412,19 +160,17 @@ function initMap() {
     map = new google.maps.Map(document.getElementById("map"), {
         zoom: 8,
         center: belgium,
-        styles: [
-            {
-                featureType: "poi",
-                elementType: "labels",
-                stylers: [{ visibility: "off" }]
-            }
-        ]
+        styles: [{
+            featureType: "poi",
+            elementType: "labels",
+            stylers: [{ visibility: "off" }]
+        }]
     });
 
-    updateMarkers(events);
+    updateMarkers();
 }
 
-function updateMarkers(events) {
+function updateMarkers() {
     // Clear existing markers
     markers.forEach(marker => marker.setMap(null));
     markers = [];
@@ -435,37 +181,31 @@ function updateMarkers(events) {
     events.forEach(event => {
         if (event.latitude && event.longitude) {
             hasValidMarkers = true;
-            const position = { lat: event.latitude, lng: event.longitude };
+            const position = { 
+                lat: parseFloat(event.latitude), 
+                lng: parseFloat(event.longitude) 
+            };
             bounds.extend(position);
 
             const marker = new google.maps.Marker({
                 position: position,
                 map: map,
-                title: event.mosque_name,
-                icon: {
-                    path: google.maps.SymbolPath.CIRCLE,
-                    fillColor: getEventColor(event.type),
-                    fillOpacity: 1,
-                    strokeWeight: 0,
-                    scale: 8
-                }
+                title: event.mosque_name
             });
 
-            const infowindow = new google.maps.InfoWindow({
-                content: `
-                    <div class="info-window">
-                        <h5>${event.mosque_name}</h5>
-                        <p>${event.date} ${event.start_time}</p>
-                        <p>${event.location}</p>
-                        ${event.is_family_friendly ? '<span class="badge bg-success">Gezinsvriendelijk</span>' : ''}
-                    </div>
-                `
-            });
+            const content = `
+                <div class="info-window">
+                    <h6>${event.mosque_name}</h6>
+                    <p>${event.date} ${event.start_time}</p>
+                    <p>${event.location}</p>
+                    ${event.is_family_friendly ? 
+                      '<span class="badge bg-success">Gezinsvriendelijk</span>' : 
+                      ''}
+                </div>
+            `;
 
-            marker.addListener("click", () => {
-                infowindow.open(map, marker);
-            });
-
+            const infowindow = new google.maps.InfoWindow({ content });
+            marker.addListener("click", () => infowindow.open(map, marker));
             markers.push(marker);
         }
     });
@@ -479,65 +219,6 @@ function updateMarkers(events) {
     }
 }
 
-function getEventColor(type) {
-    switch(type) {
-        case 'daily': return '#198754';
-        case 'weekly': return '#0d6efd';
-        case 'single': return '#ffc107';
-        default: return '#6c757d';
-    }
-}
-
-function showDayDetails(date) {
-    const modal = new bootstrap.Modal(document.getElementById('dayModal'));
-    const modalTitle = document.querySelector('#dayModal .modal-title');
-    const modalBody = document.querySelector('#dayModal .modal-body');
-
-    const dateObj = new Date(date);
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    modalTitle.textContent = dateObj.toLocaleDateString('nl-NL', options);
-
-    const dayEvents = events.filter(event => event.date === date);
-    const eventsByType = {
-        daily: dayEvents.filter(e => e.type === 'daily'),
-        weekly: dayEvents.filter(e => e.type === 'weekly'),
-        single: dayEvents.filter(e => e.type === 'single')
-    };
-
-    let html = '';
-    Object.entries(eventsByType).forEach(([type, typeEvents]) => {
-        if (typeEvents.length > 0) {
-            const typeLabels = {
-                daily: 'Dagelijkse Iftars',
-                weekly: 'Wekelijkse Iftars',
-                single: 'Eenmalige Iftars'
-            };
-
-            html += `<h5 class="mb-3">${typeLabels[type]}</h5>`;
-            typeEvents.forEach(event => {
-                html += `
-                    <div class="event-item ${type} mb-3">
-                        <h6 class="mb-2">${event.mosque_name}</h6>
-                        <p class="mb-2">
-                            <i class="far fa-clock me-2"></i>${event.start_time}
-                        </p>
-                        <p class="mb-2">
-                            <i class="fas fa-map-marker-alt me-2"></i>${event.location}
-                        </p>
-                        <div class="d-flex gap-2">
-                            ${event.is_family_friendly ? 
-                              '<span class="badge bg-success"><i class="fas fa-users me-1"></i>Gezinsvriendelijk</span>' : ''}
-                        </div>
-                    </div>
-                `;
-            });
-        }
-    });
-
-    modalBody.innerHTML = html || '<p class="text-muted">Geen iftars gevonden voor deze dag.</p>';
-    modal.show();
-}
-
 // Filter form handling
 document.getElementById('filterForm').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -546,66 +227,39 @@ document.getElementById('filterForm').addEventListener('submit', function(e) {
     window.location.href = `${window.location.pathname}?${params.toString()}`;
 });
 
-// Debug function
+// Debug Mode
 function debugIftarKaart() {
-    const debugElement = document.createElement('div');
-    debugElement.id = 'iftar-debug';
-    debugElement.style.position = 'fixed';
-    debugElement.style.bottom = '10px';
-    debugElement.style.right = '10px';
-    debugElement.style.padding = '10px';
-    debugElement.style.background = 'rgba(0,0,0,0.8)';
-    debugElement.style.color = 'white';
-    debugElement.style.zIndex = '9999';
-    debugElement.style.maxHeight = '300px';
-    debugElement.style.overflow = 'auto';
-    debugElement.style.maxWidth = '400px';
-    debugElement.style.fontSize = '12px';
-    debugElement.style.fontFamily = 'monospace';
+    const debugEl = document.createElement('div');
+    debugEl.id = 'debug-panel';
+    debugEl.style.cssText = 'position:fixed;bottom:10px;right:10px;padding:10px;' +
+                           'background:rgba(0,0,0,0.8);color:white;z-index:9999;' +
+                           'max-height:300px;overflow:auto;font-family:monospace;';
 
-    document.body.appendChild(debugElement);
-
-    // Log current state
-    const logState = () => {
-        debugElement.innerHTML = '<h4>Iftar Kaart Debug</h4>';
-
-        // Check relevant elements
-        const mapElement = document.getElementById('map');
-        const eventsList = document.querySelector('.events-list');
-
-        debugElement.innerHTML += `
-            <p>Map element: ${mapElement ? 'Present' : 'Missing'}</p>
-            <p>Events list: ${eventsList ? 'Present' : 'Missing'}</p>
-            <p>Events count: ${events ? events.length : 0}</p>
-        `;
-
-        // Test API connection
-        debugElement.innerHTML += `<button onclick="testApi()">Test API Connection</button>`;
+    const updateDebug = async () => {
+        try {
+            const response = await fetch('/api/debug-iftar');
+            const data = await response.json();
+            debugEl.innerHTML = `
+                <h4>Debug Info</h4>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `;
+        } catch (e) {
+            debugEl.innerHTML = `<p>Error: ${e.message}</p>`;
+        }
     };
 
-    logState();
-    setInterval(logState, 5000);
+    document.body.appendChild(debugEl);
+    updateDebug();
+    setInterval(updateDebug, 5000);
 }
 
-async function testApi() {
-    const debugElement = document.getElementById('iftar-debug');
-    try {
-        const response = await fetch('/api/debug-iftar');
-        const data = await response.json();
-        debugElement.innerHTML += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-    } catch (err) {
-        debugElement.innerHTML += `<p>API Error: ${err.message}</p>`;
-    }
+// Add debug button in development
+if (window.location.hostname === 'localhost' || window.location.hostname.includes('repl.co')) {
+    const debugBtn = document.createElement('button');
+    debugBtn.textContent = 'Debug Mode';
+    debugBtn.style.cssText = 'position:fixed;top:10px;right:10px;z-index:9999;';
+    debugBtn.onclick = debugIftarKaart;
+    document.body.appendChild(debugBtn);
 }
-
-// Add debug button
-const debugButton = document.createElement('button');
-debugButton.textContent = 'Debug Mode';
-debugButton.style.position = 'fixed';
-debugButton.style.top = '10px';
-debugButton.style.right = '10px';
-debugButton.style.zIndex = '9999';
-debugButton.addEventListener('click', debugIftarKaart);
-document.body.appendChild(debugButton);
 </script>
 {% endblock %}
