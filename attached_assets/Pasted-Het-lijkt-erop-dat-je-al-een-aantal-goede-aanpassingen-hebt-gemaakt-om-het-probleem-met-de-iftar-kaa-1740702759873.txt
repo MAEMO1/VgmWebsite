@@ -1,0 +1,199 @@
+Het lijkt erop dat je al een aantal goede aanpassingen hebt gemaakt om het probleem met de iftar-kaart op te lossen, maar dat deze nog niet tot het gewenste resultaat hebben geleid. Laat me verder kijken naar mogelijke oorzaken die nog niet zijn aangepakt.
+Hier zijn enkele mogelijke punten die we nog kunnen controleren:
+
+Frontend JavaScript validatie:
+
+Controleer of het frontend JavaScript correct de data ontvangt en verwerkt
+Zorg dat er console.log statements staan om te zien welke data binnenkomt
+Kijk of er JavaScript errors zijn in de browser console
+
+
+API verbinding en CORS issues:
+
+Controleer of de CORS headers correct zijn ingesteld
+Zorg dat de API endpoints correct worden aangeroepen vanuit de frontend
+Voeg extra logging toe om te zien welke requests binnenkomen en wat de responses zijn
+
+
+Externe afhankelijkheden:
+
+Controleer of de gebedstijden API nog steeds beschikbaar is en correct werkt
+Test de API apart om te zien of deze de verwachte data teruggeeft
+Implementeer een robuuster fallback mechanisme
+
+
+Caching problemen:
+
+Leeg browser caches en zorg dat oude bestanden niet worden gebruikt
+Voeg versie parameters toe aan assets om cache invalidatie te forceren
+Controleer server-side caching mechanismen
+
+
+Data transformatie:
+
+Zorg dat datums consistent worden geformatteerd (YYYY-MM-DD vs DD-MM-YYYY)
+Controleer of tijdzones correct worden verwerkt
+Valideer dat de data structuur consistent is tussen frontend en backend
+
+
+
+Laten we een systematische debug aanpak toevoegen aan de route handler:
+javascriptCopy// Debug route voor iftar kaart
+app.get('/api/debug-iftar', async (req, res) => {
+  try {
+    const { datum = dayjs().format('DD-MM-YYYY'), stad = 'Amsterdam' } = req.query;
+    
+    console.log(`DEBUG: Request voor iftar kaart debug: datum=${datum}, stad=${stad}`);
+    
+    // Stapsgewijs debuggen
+    const debugInfo = {
+      requestInfo: {
+        datum: datum,
+        stad: stad,
+        timestamp: new Date().toISOString()
+      },
+      databaseConnection: {
+        status: 'checking'
+      },
+      gebedstijden: {
+        status: 'pending'
+      },
+      events: {
+        status: 'pending'
+      }
+    };
+    
+    // 1. Check database verbinding
+    try {
+      await new Promise((resolve, reject) => {
+        db.get('SELECT 1', [], (err, row) => {
+          if (err) reject(err);
+          else resolve(row);
+        });
+      });
+      debugInfo.databaseConnection.status = 'connected';
+    } catch (dbError) {
+      debugInfo.databaseConnection.status = 'error';
+      debugInfo.databaseConnection.error = dbError.message;
+    }
+    
+    // 2. Probeer gebedstijden op te halen
+    try {
+      const gebedstijden = await gebedstijdenService.getGebedstijden(datum, stad);
+      debugInfo.gebedstijden.status = 'success';
+      debugInfo.gebedstijden.data = gebedstijden;
+    } catch (gebedError) {
+      debugInfo.gebedstijden.status = 'error';
+      debugInfo.gebedstijden.error = gebedError.message;
+    }
+    
+    // 3. Probeer events op te halen
+    try {
+      const events = await kalenderService.getAlleEvents();
+      const datum_formatted = dayjs(datum, 'DD-MM-YYYY').format('YYYY-MM-DD');
+      const iftarEvents = events.filter(event => 
+        event.type === 'iftar' && 
+        dayjs(event.date).format('YYYY-MM-DD') === datum_formatted
+      );
+      
+      debugInfo.events.status = 'success';
+      debugInfo.events.totalCount = events.length;
+      debugInfo.events.iftarEvents = iftarEvents;
+      debugInfo.events.datumFormatted = datum_formatted;
+    } catch (eventsError) {
+      debugInfo.events.status = 'error';
+      debugInfo.events.error = eventsError.message;
+    }
+    
+    res.json(debugInfo);
+  } catch (error) {
+    res.status(500).json({ 
+      error: 'Debug fout', 
+      message: error.message,
+      stack: error.stack
+    });
+  }
+});
+Als je deze debug route implementeert, kun je exact zien waar het probleem zich voordoet.
+Daarnaast zou ik nog een client-side debug tool toevoegen:
+javascriptCopy// Voeg dit toe aan je frontend JavaScript
+function debugIftarKaart() {
+  const debugElement = document.createElement('div');
+  debugElement.id = 'iftar-debug';
+  debugElement.style.position = 'fixed';
+  debugElement.style.bottom = '10px';
+  debugElement.style.right = '10px';
+  debugElement.style.padding = '10px';
+  debugElement.style.background = 'rgba(0,0,0,0.8)';
+  debugElement.style.color = 'white';
+  debugElement.style.zIndex = '9999';
+  debugElement.style.maxHeight = '300px';
+  debugElement.style.overflow = 'auto';
+  debugElement.style.maxWidth = '400px';
+  debugElement.style.fontSize = '12px';
+  debugElement.style.fontFamily = 'monospace';
+  
+  document.body.appendChild(debugElement);
+  
+  // Huidige staat loggen
+  const logState = () => {
+    debugElement.innerHTML = '<h4>Iftar Kaart Debug</h4>';
+    
+    // Controleer of relevante elementen bestaan
+    const mapElement = document.getElementById('iftar-map') || { innerHTML: 'Niet gevonden' };
+    const eventsList = document.getElementById('events-list') || { innerHTML: 'Niet gevonden' };
+    
+    debugElement.innerHTML += `<p>Map element: ${mapElement ? 'Aanwezig' : 'Ontbreekt'}</p>`;
+    debugElement.innerHTML += `<p>Events lijst: ${eventsList ? 'Aanwezig' : 'Ontbreekt'}</p>`;
+    
+    // Log localStorage / sessionStorage data
+    const storedData = localStorage.getItem('iftarData');
+    if (storedData) {
+      try {
+        const parsed = JSON.parse(storedData);
+        debugElement.innerHTML += `<p>Stored data: ${Object.keys(parsed).join(', ')}</p>`;
+      } catch (e) {
+        debugElement.innerHTML += `<p>Stored data parse error: ${e.message}</p>`;
+      }
+    } else {
+      debugElement.innerHTML += `<p>Geen opgeslagen data gevonden</p>`;
+    }
+    
+    // Controleer netwerk requests
+    debugElement.innerHTML += `<button id="debug-fetch">Test API Verbinding</button>`;
+    document.getElementById('debug-fetch').addEventListener('click', () => {
+      fetch('/api/debug-iftar')
+        .then(res => res.json())
+        .then(data => {
+          debugElement.innerHTML += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        })
+        .catch(err => {
+          debugElement.innerHTML += `<p>API Error: ${err.message}</p>`;
+        });
+    });
+  };
+  
+  logState();
+  
+  // Elke 5 seconden updaten
+  setInterval(logState, 5000);
+}
+
+// Voeg een debug knop toe
+const debugButton = document.createElement('button');
+debugButton.textContent = 'Debug Mode';
+debugButton.style.position = 'fixed';
+debugButton.style.top = '10px';
+debugButton.style.right = '10px';
+debugButton.style.zIndex = '9999';
+debugButton.addEventListener('click', debugIftarKaart);
+document.body.appendChild(debugButton);
+Dit zal je helpen om te zien wat er precies gebeurt in de browser.
+Verder zou ik aanraden om de volgende stappen uit te voeren:
+
+Controleer de netwerk tab in browser ontwikkelaarshulpmiddelen om te zien of er 404, 500 of andere fouten optreden
+Controleer of alle externe API calls slagen (gebruik eventueel een API test tool zoals Postman)
+Zorg dat alle paden in je application correct zijn (relatieve vs absolute paden)
+Controleer of de JSON data die wordt teruggegeven correct geformatteerd is
+
+Laat me weten als je naar specifieke delen van de code wilt kijken of als je andere problemen identificeert tijdens het gebruik van de debug tools!
