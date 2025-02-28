@@ -23,370 +23,102 @@
                     <h3>{{ _('Edit Mosque Information') }}</h3>
                 </div>
                 <div class="card-body">
-                    <form method="POST" enctype="multipart/form-data">
-                        <!-- Mission & Vision -->
+                    <form method="POST">
+                        <!-- Basic Information -->
                         <div class="mb-4">
-                            <h4>{{ _('Mission & Vision') }}</h4>
+                            <h4>{{ _('Basic Information') }}</h4>
                             <div class="mb-3">
-                                <label for="mission_statement" class="form-label">{{ _('Mission Statement') }}</label>
-                                <textarea class="form-control" id="mission_statement" name="mission_statement" rows="4">{{ mosque.mission_statement or '' }}</textarea>
-                                <small class="text-muted">{{ _('Your mosque\'s core mission and purpose') }}</small>
+                                <label for="mosque_name" class="form-label">{{ _('Mosque Name') }}</label>
+                                <input type="text" class="form-control" id="mosque_name" name="mosque_name" 
+                                       value="{{ mosque.mosque_name }}" required>
                             </div>
-                            <div class="mb-3">
-                                <label for="vision_statement" class="form-label">{{ _('Vision Statement') }}</label>
-                                <textarea class="form-control" id="vision_statement" name="vision_statement" rows="4">{{ mosque.vision_statement or '' }}</textarea>
-                                <small class="text-muted">{{ _('Your long-term vision for the future') }}</small>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="street" class="form-label">{{ _('Street') }}</label>
+                                        <input type="text" class="form-control" id="street" name="street" 
+                                               value="{{ mosque.mosque_street }}" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="number" class="form-label">{{ _('Number') }}</label>
+                                        <input type="text" class="form-control" id="number" name="number" 
+                                               value="{{ mosque.mosque_number }}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="postal" class="form-label">{{ _('Postal Code') }}</label>
+                                        <input type="text" class="form-control" id="postal" name="postal" 
+                                               value="{{ mosque.mosque_postal }}" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="city" class="form-label">{{ _('City') }}</label>
+                                        <input type="text" class="form-control" id="city" name="city" 
+                                               value="{{ mosque.mosque_city }}" required>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Contact Information -->
                         <div class="mb-4">
                             <h4>{{ _('Contact Information') }}</h4>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="mosque_email" class="form-label">{{ _('Public Email') }}</label>
-                                        <input type="email" class="form-control" id="mosque_email" name="mosque_email" 
-                                               value="{{ mosque.mosque_email or '' }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="mosque_website" class="form-label">{{ _('Website') }}</label>
-                                        <input type="url" class="form-control" id="mosque_website" name="mosque_website" 
-                                               value="{{ mosque.mosque_website or '' }}">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="mosque_phone" class="form-label">{{ _('Phone Number') }}</label>
-                                        <input type="tel" class="form-control" id="mosque_phone" name="mosque_phone" 
-                                               value="{{ mosque.mosque_phone or '' }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="mosque_fax" class="form-label">{{ _('Fax Number') }}</label>
-                                        <input type="tel" class="form-control" id="mosque_fax" name="mosque_fax" 
-                                               value="{{ mosque.mosque_fax or '' }}">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="emergency_contact" class="form-label">{{ _('Emergency Contact Name') }}</label>
-                                        <input type="text" class="form-control" id="emergency_contact" name="emergency_contact" 
-                                               value="{{ mosque.emergency_contact or '' }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="emergency_phone" class="form-label">{{ _('Emergency Phone') }}</label>
-                                        <input type="tel" class="form-control" id="emergency_phone" name="emergency_phone" 
-                                               value="{{ mosque.emergency_phone or '' }}">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Social Media Links -->
-                        <div class="mb-4">
-                            <h4>{{ _('Social Media') }}</h4>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="facebook_url" class="form-label">
-                                            <i class="fab fa-facebook"></i> {{ _('Facebook') }}
-                                        </label>
-                                        <input type="url" class="form-control" id="facebook_url" name="facebook_url" 
-                                               value="{{ mosque.facebook_url or '' }}" placeholder="https://facebook.com/...">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="twitter_url" class="form-label">
-                                            <i class="fab fa-twitter"></i> {{ _('Twitter') }}
-                                        </label>
-                                        <input type="url" class="form-control" id="twitter_url" name="twitter_url" 
-                                               value="{{ mosque.twitter_url or '' }}" placeholder="https://twitter.com/...">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="instagram_url" class="form-label">
-                                            <i class="fab fa-instagram"></i> {{ _('Instagram') }}
-                                        </label>
-                                        <input type="url" class="form-control" id="instagram_url" name="instagram_url" 
-                                               value="{{ mosque.instagram_url or '' }}" placeholder="https://instagram.com/...">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="youtube_url" class="form-label">
-                                            <i class="fab fa-youtube"></i> {{ _('YouTube') }}
-                                        </label>
-                                        <input type="url" class="form-control" id="youtube_url" name="youtube_url" 
-                                               value="{{ mosque.youtube_url or '' }}" placeholder="https://youtube.com/...">
-                                    </div>
-                                </div>
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">{{ _('Phone Number') }}</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" 
+                                       value="{{ mosque.mosque_phone }}">
                             </div>
                             <div class="mb-3">
-                                <label for="whatsapp_number" class="form-label">
-                                    <i class="fab fa-whatsapp"></i> {{ _('WhatsApp Number') }}
-                                </label>
-                                <input type="tel" class="form-control" id="whatsapp_number" name="whatsapp_number" 
-                                       value="{{ mosque.whatsapp_number or '' }}" placeholder="+32...">
+                                <label for="email" class="form-label">{{ _('Email') }}</label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       value="{{ mosque.mosque_email }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="website" class="form-label">{{ _('Website') }}</label>
+                                <input type="url" class="form-control" id="website" name="website" 
+                                       value="{{ mosque.mosque_website }}">
                             </div>
                         </div>
 
-                        <!-- Basic Information -->
+                        <!-- Mission & Vision -->
                         <div class="mb-4">
-                            <h4>{{ _('Basic Information') }}</h4>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="foundation_year" class="form-label">{{ _('Year of Establishment') }}</label>
-                                        <input type="number" class="form-control" id="foundation_year" name="foundation_year" 
-                                               value="{{ mosque.foundation_year or '' }}" min="1000" max="{{ current_year }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="capacity" class="form-label">{{ _('Prayer Hall Capacity') }}</label>
-                                        <input type="number" class="form-control" id="capacity" name="capacity" 
-                                               value="{{ mosque.capacity or '' }}" min="1">
-                                        <small class="text-muted">{{ _('Maximum number of worshippers') }}</small>
-                                    </div>
-                                </div>
+                            <h4>{{ _('Mission & Vision') }}</h4>
+                            <div class="mb-3">
+                                <label for="mission_statement" class="form-label">{{ _('Mission Statement') }}</label>
+                                <textarea class="form-control" id="mission_statement" name="mission_statement" rows="4">{{ mosque.mission_statement or '' }}</textarea>
                             </div>
+                            <div class="mb-3">
+                                <label for="vision_statement" class="form-label">{{ _('Vision Statement') }}</label>
+                                <textarea class="form-control" id="vision_statement" name="vision_statement" rows="4">{{ mosque.vision_statement or '' }}</textarea>
+                            </div>
+                        </div>
+
+                        <!-- Additional Information -->
+                        <div class="mb-4">
+                            <h4>{{ _('Additional Information') }}</h4>
                             <div class="mb-3">
                                 <label for="activities" class="form-label">{{ _('Activities') }}</label>
                                 <textarea class="form-control" id="activities" name="activities" rows="4">{{ mosque.activities or '' }}</textarea>
-                                <small class="text-muted">{{ _('Regular activities and programs offered') }}</small>
                             </div>
                             <div class="mb-3">
                                 <label for="facilities" class="form-label">{{ _('Facilities') }}</label>
                                 <textarea class="form-control" id="facilities" name="facilities" rows="4">{{ mosque.facilities or '' }}</textarea>
-                                <small class="text-muted">{{ _('Available facilities and amenities') }}</small>
                             </div>
                             <div class="mb-3">
                                 <label for="languages" class="form-label">{{ _('Languages') }}</label>
                                 <input type="text" class="form-control" id="languages" name="languages" 
                                        value="{{ mosque.languages or '' }}">
-                                <small class="text-muted">{{ _('Languages used in services and khutbah') }}</small>
                             </div>
-                        </div>
-
-                        <!-- Accessibility & Transportation -->
-                        <div class="mb-4">
-                            <h4>{{ _('Accessibility & Transportation') }}</h4>
                             <div class="mb-3">
                                 <label for="accessibility_features" class="form-label">{{ _('Accessibility Features') }}</label>
                                 <textarea class="form-control" id="accessibility_features" name="accessibility_features" rows="4">{{ mosque.accessibility_features or '' }}</textarea>
-                                <small class="text-muted">{{ _('Describe available accessibility accommodations') }}</small>
                             </div>
-                            <div class="mb-3">
-                                <label for="parking_info" class="form-label">{{ _('Parking Information') }}</label>
-                                <textarea class="form-control" id="parking_info" name="parking_info" rows="3">{{ mosque.parking_info or '' }}</textarea>
-                                <small class="text-muted">{{ _('Parking availability and instructions') }}</small>
-                            </div>
-                            <div class="mb-3">
-                                <label for="public_transport" class="form-label">{{ _('Public Transportation') }}</label>
-                                <textarea class="form-control" id="public_transport" name="public_transport" rows="3">{{ mosque.public_transport or '' }}</textarea>
-                                <small class="text-muted">{{ _('Nearby public transport options and directions') }}</small>
-                            </div>
-                        </div>
-
-                        <!-- Board Members -->
-                        <div class="mb-4">
-                            <h4>{{ _('Board Members') }}</h4>
-                            <div id="board-members-container">
-                                {% for member in mosque.board_members %}
-                                <div class="board-member-item mb-3 p-3 border rounded">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-2">
-                                                <label class="form-label">{{ _('Name') }}</label>
-                                                <input type="text" class="form-control" name="board_member_names[]" 
-                                                       value="{{ member.name }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-2">
-                                                <label class="form-label">{{ _('Role') }}</label>
-                                                <input type="text" class="form-control" name="board_member_roles[]" 
-                                                       value="{{ member.role }}" required>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-2">
-                                                <label class="form-label">{{ _('Email') }}</label>
-                                                <input type="email" class="form-control" name="board_member_emails[]" 
-                                                       value="{{ member.contact_email }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-2">
-                                                <label class="form-label">{{ _('Phone') }}</label>
-                                                <input type="tel" class="form-control" name="board_member_phones[]" 
-                                                       value="{{ member.contact_phone }}">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="mb-2">
-                                        <label class="form-label">{{ _('Bio') }}</label>
-                                        <textarea class="form-control" name="board_member_bios[]" rows="2">{{ member.bio or '' }}</textarea>
-                                    </div>
-                                    <div class="mb-2">
-                                        <label class="form-label">{{ _('Photo') }}</label>
-                                        <input type="file" class="form-control" name="board_member_photos[]" accept="image/*">
-                                        {% if member.photo_url %}
-                                        <div class="mt-2">
-                                            <img src="{{ member.photo_url }}" alt="{{ member.name }}" class="img-thumbnail" style="height: 100px;">
-                                        </div>
-                                        {% endif %}
-                                    </div>
-                                    <button type="button" class="btn btn-outline-danger btn-sm mt-2" onclick="removeBoardMember(this)">
-                                        <i class="fas fa-trash"></i> {{ _('Remove') }}
-                                    </button>
-                                </div>
-                                {% endfor %}
-                            </div>
-                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="addBoardMember()">
-                                <i class="fas fa-plus"></i> {{ _('Add Board Member') }}
-                            </button>
-                        </div>
-
-                        <!-- History Entries -->
-                        <div class="mb-4">
-                            <h4>{{ _('History') }}</h4>
-                            <div id="history-entries-container">
-                                {% for entry in mosque.history_entries %}
-                                <div class="history-entry-item mb-3 p-3 border rounded">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="mb-2">
-                                                <label class="form-label">{{ _('Year') }}</label>
-                                                <input type="number" class="form-control" name="history_years[]" 
-                                                       value="{{ entry.year }}" required min="1000" max="{{ current_year }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <div class="mb-2">
-                                                <label class="form-label">{{ _('Title') }}</label>
-                                                <input type="text" class="form-control" name="history_titles[]" 
-                                                       value="{{ entry.title }}" required>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="mb-2">
-                                        <label class="form-label">{{ _('Description') }}</label>
-                                        <textarea class="form-control" name="history_descriptions[]" rows="3" required>{{ entry.description }}</textarea>
-                                    </div>
-                                    <div class="mb-2">
-                                        <label class="form-label">{{ _('Photo') }}</label>
-                                        <input type="file" class="form-control" name="history_photos[]" accept="image/*">
-                                        {% if entry.photo_url %}
-                                        <div class="mt-2">
-                                            <img src="{{ entry.photo_url }}" alt="{{ entry.title }}" class="img-thumbnail" style="height: 100px;">
-                                        </div>
-                                        {% endif %}
-                                    </div>
-                                    <button type="button" class="btn btn-outline-danger btn-sm mt-2" onclick="removeHistoryEntry(this)">
-                                        <i class="fas fa-trash"></i> {{ _('Remove') }}
-                                    </button>
-                                </div>
-                                {% endfor %}
-                            </div>
-                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="addHistoryEntry()">
-                                <i class="fas fa-plus"></i> {{ _('Add Historical Event') }}
-                            </button>
-                        </div>
-
-                        <!-- Photo Gallery -->
-                        <div class="mb-4">
-                            <h4>{{ _('Photo Gallery') }}</h4>
-                            <div class="mb-3">
-                                <label for="new_photos" class="form-label">{{ _('Add New Photos') }}</label>
-                                <input type="file" class="form-control" id="new_photos" name="new_photos[]" multiple accept="image/*">
-                                <small class="text-muted">{{ _('You can select multiple images') }}</small>
-                            </div>
-
-                            {% if mosque.photos.count() > 0 %}
-                            <div class="row g-2 existing-photos">
-                                {% for photo in mosque.photos %}
-                                <div class="col-md-4 col-6">
-                                    <div class="photo-item p-2 border rounded">
-                                        <img src="{{ photo.url }}" alt="{{ photo.title }}" class="img-fluid rounded">
-                                        <div class="mt-2">
-                                            <input type="text" class="form-control form-control-sm mb-1" 
-                                                   name="photo_titles[]" value="{{ photo.title or '' }}" 
-                                                   placeholder="{{ _('Title') }}">
-                                            <textarea class="form-control form-control-sm mb-1" 
-                                                    name="photo_descriptions[]" 
-                                                    placeholder="{{ _('Description') }}">{{ photo.description or '' }}</textarea>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" 
-                                                       name="photo_featured[]" value="{{ photo.id }}"
-                                                       {% if photo.is_featured %}checked{% endif %}>
-                                                <label class="form-check-label small">{{ _('Featured Photo') }}</label>
-                                            </div>
-                                            <button type="button" class="btn btn-outline-danger btn-sm mt-1" 
-                                                    onclick="removePhoto(this, {{ photo.id }})">
-                                                <i class="fas fa-trash"></i> {{ _('Remove') }}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-                        </div>
-
-                        <!-- Prayer Times -->
-                        <div class="mb-4">
-                            <h4>{{ _('Prayer Times') }}</h4>
-                            <div class="mb-3">
-                                <label for="friday_prayer_time" class="form-label">{{ _('Friday Prayer Time') }}</label>
-                                <input type="time" class="form-control" id="friday_prayer_time" name="friday_prayer_time"
-                                       value="{{ mosque.friday_prayer_time.strftime('%H:%M') if mosque.friday_prayer_time else '' }}">
-                            </div>
-                        </div>
-
-                        <!-- Media -->
-                        <div class="mb-4">
-                            <h4>{{ _('Media') }}</h4>
-                            <!-- Image Upload -->
-                            <div class="mb-3">
-                                <label for="images" class="form-label">{{ _('Add Images') }}</label>
-                                <input type="file" class="form-control" id="images" name="images" multiple accept="image/*">
-                                <small class="text-muted">{{ _('You can select multiple images') }}</small>
-                            </div>
-                            <div class="mb-3">
-                                <label for="image_description" class="form-label">{{ _('Image Description') }}</label>
-                                <input type="text" class="form-control" id="image_description" name="image_description">
-                            </div>
-
-                            <!-- Video URLs -->
-                            <div id="video-container">
-                                <div class="mb-3">
-                                    <label class="form-label">{{ _('Add Videos (YouTube/Vimeo URLs)') }}</label>
-                                    <div class="input-group mb-2">
-                                        <input type="url" class="form-control" name="video_urls[]" placeholder="https://...">
-                                        <input type="text" class="form-control" name="video_titles[]" placeholder="{{ _('Video Title') }}">
-                                    </div>
-                                </div>
-                            </div>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addVideoField()">
-                                <i class="fas fa-plus"></i> {{ _('Add Another Video') }}
-                            </button>
                         </div>
 
                         <div class="mt-4">
@@ -402,35 +134,21 @@
             </div>
         </div>
 
-        <!-- Preview Section -->
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
-                    <h4>{{ _('Current Media') }}</h4>
+                    <h4>{{ _('Help & Guidelines') }}</h4>
                 </div>
                 <div class="card-body">
-                    {% if mosque.images.count() > 0 %}
-                    <h5>{{ _('Images') }}</h5>
-                    <div class="row g-2 mb-4">
-                        {% for image in mosque.images %}
-                        <div class="col-6">
-                            <img src="{{ image.url }}" alt="{{ image.description }}" class="img-fluid rounded">
-                        </div>
-                        {% endfor %}
+                    <div class="alert alert-info">
+                        <h5><i class="fas fa-info-circle"></i> {{ _('Tips for Editing') }}</h5>
+                        <ul class="mb-0">
+                            <li>{{ _('Keep information accurate and up-to-date') }}</li>
+                            <li>{{ _('Use clear and concise language') }}</li>
+                            <li>{{ _('Include all relevant contact details') }}</li>
+                            <li>{{ _('Describe facilities and accessibility clearly') }}</li>
+                        </ul>
                     </div>
-                    {% endif %}
-
-                    {% if mosque.videos.count() > 0 %}
-                    <h5>{{ _('Videos') }}</h5>
-                    <div class="list-group">
-                        {% for video in mosque.videos %}
-                        <div class="list-group-item">
-                            <h6>{{ video.title }}</h6>
-                            <a href="{{ video.url }}" target="_blank" class="small">{{ video.url }}</a>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
                 </div>
             </div>
         </div>
@@ -438,132 +156,48 @@
 </div>
 {% endblock %}
 
-{% block scripts %}
-<script>
-function addVideoField() {
-    const container = document.getElementById('video-container');
-    const newField = document.createElement('div');
-    newField.className = 'mb-3';
-    newField.innerHTML = `
-        <div class="input-group mb-2">
-            <input type="url" class="form-control" name="video_urls[]" placeholder="https://...">
-            <input type="text" class="form-control" name="video_titles[]" placeholder="{{ _('Video Title') }}">
-            <button type="button" class="btn btn-outline-danger" onclick="this.parentElement.parentElement.remove()">
-                <i class="fas fa-trash"></i>
-            </button>
-        </div>
-    `;
-    container.appendChild(newField);
+{% block styles %}
+<style>
+.card {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
 }
 
-function addBoardMember() {
-    const container = document.getElementById('board-members-container');
-    const template = `
-        <div class="board-member-item mb-3 p-3 border rounded">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-2">
-                        <label class="form-label">{{ _('Name') }}</label>
-                        <input type="text" class="form-control" name="board_member_names[]" required>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-2">
-                        <label class="form-label">{{ _('Role') }}</label>
-                        <input type="text" class="form-control" name="board_member_roles[]" required>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-2">
-                        <label class="form-label">{{ _('Email') }}</label>
-                        <input type="email" class="form-control" name="board_member_emails[]">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-2">
-                        <label class="form-label">{{ _('Phone') }}</label>
-                        <input type="tel" class="form-control" name="board_member_phones[]">
-                    </div>
-                </div>
-            </div>
-            <div class="mb-2">
-                <label class="form-label">{{ _('Bio') }}</label>
-                <textarea class="form-control" name="board_member_bios[]" rows="2"></textarea>
-            </div>
-            <div class="mb-2">
-                <label class="form-label">{{ _('Photo') }}</label>
-                <input type="file" class="form-control" name="board_member_photos[]" accept="image/*">
-            </div>
-            <button type="button" class="btn btn-outline-danger btn-sm mt-2" onclick="removeBoardMember(this)">
-                <i class="fas fa-trash"></i> {{ _('Remove') }}
-            </button>
-        </div>
-    `;
-    container.insertAdjacentHTML('beforeend', template);
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    padding: 1.25rem;
 }
 
-function removeBoardMember(button) {
-    button.closest('.board-member-item').remove();
+.card-header h3, .card-header h4 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #2C3E50;
 }
 
-function addHistoryEntry() {
-    const container = document.getElementById('history-entries-container');
-    const template = `
-        <div class="history-entry-item mb-3 p-3 border rounded">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="mb-2">
-                        <label class="form-label">{{ _('Year') }}</label>
-                        <input type="number" class="form-control" name="history_years[]" 
-                               required min="1000" max="{{ current_year }}">
-                    </div>
-                </div>
-                <div class="col-md-8">
-                    <div class="mb-2">
-                        <label class="form-label">{{ _('Title') }}</label>
-                        <input type="text" class="form-control" name="history_titles[]" required>
-                    </div>
-                </div>
-            </div>
-            <div class="mb-2">
-                <label class="form-label">{{ _('Description') }}</label>
-                <textarea class="form-control" name="history_descriptions[]" rows="3" required></textarea>
-            </div>
-            <div class="mb-2">
-                <label class="form-label">{{ _('Photo') }}</label>
-                <input type="file" class="form-control" name="history_photos[]" accept="image/*">
-            </div>
-            <button type="button" class="btn btn-outline-danger btn-sm mt-2" onclick="removeHistoryEntry(this)">
-                <i class="fas fa-trash"></i> {{ _('Remove') }}
-            </button>
-        </div>
-    `;
-    container.insertAdjacentHTML('beforeend', template);
+.card-body {
+    padding: 1.5rem;
 }
 
-function removeHistoryEntry(button) {
-    button.closest('.history-entry-item').remove();
+.form-label {
+    font-weight: 500;
+    color: #2C3E50;
 }
 
-function removePhoto(button, photoId) {
-    if (confirm('{{ _('Are you sure you want to remove this photo?') }}')) {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'remove_photos[]';
-        input.value = photoId;
-        button.closest('form').appendChild(input);
-        button.closest('.col-md-4').remove();
+.alert {
+    border-radius: 8px;
+}
+
+.alert ul {
+    padding-left: 1.2rem;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
     }
 }
-
-// Initialize tooltips
-document.addEventListener('DOMContentLoaded', function() {
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-});
-</script>
+</style>
 {% endblock %}
