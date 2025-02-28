@@ -110,6 +110,12 @@ def mosques():
     mosque_users = User.query.filter_by(user_type='mosque', is_verified=True).all()
     return render_template('mosques.html', mosques=mosque_users)
 
+@routes.route('/prayer_times')
+def prayer_times():
+    """Temporarily disabled prayer times page"""
+    flash(_('De gebedstijden functionaliteit is momenteel niet beschikbaar.'), 'info')
+    return redirect(url_for('main.index'))
+
 @routes.route('/memorandum')
 def memorandum():
     """Temporarily disabled memorandum page"""

@@ -345,14 +345,15 @@
                         </ul>
                     </li>
 
-                    <!-- Mosques Dropdown -->
+                    <!-- Mosques & Prayer Dropdown -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                            aria-expanded="false" aria-haspopup="true">
-                            {{ _('Moskeeën') }}
+                            {{ _('Moskeeën & Gebed') }}
                         </a>
-                        <ul class="dropdown-menu" aria-label="Mosques submenu">
+                        <ul class="dropdown-menu" aria-label="Mosques & Prayer submenu">
                             <li><a class="dropdown-item" href="{{ url_for('main.mosques') }}">{{ _('Moskeeën in Gent') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.prayer_times') }}">{{ _('Gebedstijden') }}</a></li>
                         </ul>
                     </li>
 
