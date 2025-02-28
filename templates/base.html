@@ -345,15 +345,14 @@
                         </ul>
                     </li>
 
-                    <!-- Mosques & Prayer Dropdown -->
+                    <!-- Mosques Dropdown -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                            aria-expanded="false" aria-haspopup="true">
-                            {{ _('Moskeeën & Gebed') }}
+                            {{ _('Moskeeën') }}
                         </a>
-                        <ul class="dropdown-menu" aria-label="Mosques & Prayer submenu">
+                        <ul class="dropdown-menu" aria-label="Mosques submenu">
                             <li><a class="dropdown-item" href="{{ url_for('main.mosques') }}">{{ _('Moskeeën in Gent') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.prayer_times') }}">{{ _('Gebedstijden') }}</a></li>
                         </ul>
                     </li>
 
@@ -365,9 +364,7 @@
                         </a>
                         <ul class="dropdown-menu" aria-label="Community submenu">
                             <li><a class="dropdown-item ramadan-item" href="{{ url_for('ramadan.index') }}">{{ _('Ramadan 1446/2025') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('blog.index') }}">{{ _('Nieuws & Reflecties') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('blog.community') }}">{{ _('Kijk') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('blog.learning_center') }}">{{ _('Leercentrum') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.index') }}">{{ _('Nieuws') }}</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('events.event_list') }}">{{ _('Evenementen') }}</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('obituaries.index') }}">{{ _('Overlijdensberichten') }}</a></li>
                         </ul>
