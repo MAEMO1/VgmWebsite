@@ -1,8 +1,7 @@
 from datetime import datetime, date, time
-from flask_login import UserMixin
-from main import db
+from app import db
 
-class User(UserMixin, db.Model):
+class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -20,13 +19,7 @@ class User(UserMixin, db.Model):
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
 
-    def get_full_address(self):
-        if self.user_type == 'mosque':
-            return f"{self.mosque_street} {self.mosque_number}, {self.mosque_postal} {self.mosque_city}"
-        return None
-
 class IfterEvent(db.Model):
-    """Simplified iftar event model"""
     id = db.Column(db.Integer, primary_key=True)
     mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     date = db.Column(db.Date, nullable=False)
@@ -38,6 +31,3 @@ class IfterEvent(db.Model):
 
     # Relationship
     mosque = db.relationship('User', backref='ifter_events')
-
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
