@@ -4,7 +4,7 @@
 
 {% block styles %}
 <style>
-::root {
+:root {
     --primary-color: #005A87;
     --secondary-color: #41B7AC;
     --accent-color: #FF4154;
@@ -214,6 +214,30 @@
                     <label class="form-check-label" for="registration_required">{{ _('Registratie Vereist') }}</label>
                 </div>
 
+                <!-- Recurrence Options -->
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="is_recurring" name="is_recurring">
+                        <label class="form-check-label" for="is_recurring">{{ _('Herhalend Evenement') }}</label>
+                    </div>
+
+                    <div id="recurrence_options" class="mt-3" style="display: none;">
+                        <div class="mb-3">
+                            <label for="recurrence_type" class="form-label">{{ _('Herhaling Type') }}</label>
+                            <select class="form-control" id="recurrence_type" name="recurrence_type">
+                                <option value="daily">{{ _('Dagelijks') }}</option>
+                                <option value="weekly">{{ _('Wekelijks') }}</option>
+                                <option value="monthly">{{ _('Maandelijks') }}</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="recurrence_end_date" class="form-label">{{ _('Einddatum Herhaling') }}</label>
+                            <input type="date" class="form-control" id="recurrence_end_date" name="recurrence_end_date">
+                        </div>
+                    </div>
+                </div>
+
                 <div class="d-flex gap-3">
                     <button type="submit" class="btn btn-primary">{{ _('Evenement Aanmaken') }}</button>
                     <a href="{{ url_for('events.event_list') }}" class="btn btn-secondary">{{ _('Annuleren') }}</a>
@@ -222,4 +246,11 @@
         </div>
     </div>
 </div>
+
+<script>
+document.getElementById('is_recurring').addEventListener('change', function() {
+    const recurrenceOptions = document.getElementById('recurrence_options');
+    recurrenceOptions.style.display = this.checked ? 'block' : 'none';
+});
+</script>
 {% endblock %}

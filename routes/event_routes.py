@@ -55,6 +55,7 @@ def create_event():
             flash('You do not have permission to create VGM events.', 'error')
             return redirect(url_for('events.event_list'))
 
+        # Create the main event
         event = Event(
             title=request.form['title'],
             description=request.form['description'],
@@ -64,15 +65,50 @@ def create_event():
             registration_required=bool(request.form.get('registration_required')),
             event_type=event_type,
             is_collaboration=(event_type == 'collaboration'),
-            organizer_id=current_user.id
+            organizer_id=current_user.id,
+            is_recurring=bool(request.form.get('is_recurring', False))
         )
 
-        # Handle flyer upload (from original code)
+        # Handle recurring events
+        if event.is_recurring:
+            event.recurrence_type = request.form.get('recurrence_type')
+            event.recurrence_end_date = datetime.strptime(request.form['recurrence_end_date'], '%Y-%m-%d')
+
+            # Create recurring instances
+            current_date = event.date
+            while current_date <= event.recurrence_end_date:
+                if current_date > event.date:  # Skip the first date as it's the main event
+                    recurring_event = Event(
+                        title=event.title,
+                        description=event.description,
+                        date=current_date,
+                        location=event.location,
+                        max_participants=event.max_participants,
+                        registration_required=event.registration_required,
+                        event_type=event.event_type,
+                        is_collaboration=event.is_collaboration,
+                        organizer_id=event.organizer_id,
+                        parent_event_id=event.id
+                    )
+                    db.session.add(recurring_event)
+
+                # Calculate next date based on recurrence type
+                if event.recurrence_type == 'daily':
+                    current_date += timedelta(days=1)
+                elif event.recurrence_type == 'weekly':
+                    current_date += timedelta(weeks=1)
+                elif event.recurrence_type == 'monthly':
+                    # Add one month
+                    if current_date.month == 12:
+                        current_date = current_date.replace(year=current_date.year + 1, month=1)
+                    else:
+                        current_date = current_date.replace(month=current_date.month + 1)
+
+        # Handle flyer upload
         if 'flyer' in request.files:
             flyer = request.files['flyer']
             if flyer and allowed_file(flyer.filename):
                 filename = secure_filename(flyer.filename)
-                # Save the file to a specific directory
                 upload_folder = os.path.join('static', 'uploads', 'flyers')
                 os.makedirs(upload_folder, exist_ok=True)
                 flyer_path = os.path.join(upload_folder, filename)

@@ -60,8 +60,15 @@ class Event(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    # Relationship for event registrations
+    # Recurrence fields
+    is_recurring = db.Column(db.Boolean, default=False)
+    recurrence_type = db.Column(db.String(20))  # 'daily', 'weekly', 'monthly'
+    recurrence_end_date = db.Column(db.DateTime)
+    parent_event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=True)
+
+    # Relationships
     registrations = db.relationship('EventRegistration', backref='event', lazy=True)
+    recurring_events = db.relationship('Event', backref=db.backref('parent_event', remote_side=[id]))
 
 class EventRegistration(db.Model):
     id = db.Column(db.Integer, primary_key=True)
