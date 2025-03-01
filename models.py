@@ -39,7 +39,7 @@ class User(UserMixin, db.Model):
 
     # Relationships
     events = db.relationship('Event', backref='organizer', lazy=True)
-    notifications = db.relationship('Notification', backref='user', lazy=True)
+    notifications_received = db.relationship('Notification', backref='recipient', lazy=True)
 
     def get_full_address(self):
         if self.user_type == 'mosque':
@@ -81,6 +81,5 @@ class Notification(db.Model):
     read = db.Column(db.Boolean, default=False)
     sent_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # Relationships
-    user = db.relationship('User', backref='notifications')
+    # Relationship with Event
     event = db.relationship('Event')
