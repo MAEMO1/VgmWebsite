@@ -81,15 +81,26 @@ def mosques():
 
 @ramadan.route('/prayer_times')
 def prayer_times():
-    """Prayer times page"""
+    """Prayer times page with proper error handling"""
     try:
+        logger.debug("Starting prayer_times route handler")
         today = datetime.today().date()
-        prayer_times = []  # You would typically fetch these from your database
-        return render_template('ramadan/prayer_times.html', prayer_times=prayer_times)
+
+        # Mock prayer times data structure (replace with actual API call later)
+        prayer_times = [
+            {'prayer_name': 'Fajr', 'time': datetime.strptime('05:30', '%H:%M')},
+            {'prayer_name': 'Dhuhr', 'time': datetime.strptime('13:15', '%H:%M')},
+            {'prayer_name': 'Asr', 'time': datetime.strptime('16:45', '%H:%M')},
+            {'prayer_name': 'Maghrib', 'time': datetime.strptime('19:30', '%H:%M')},
+            {'prayer_name': 'Isha', 'time': datetime.strptime('21:00', '%H:%M')}
+        ]
+
+        logger.info("Prayer times loaded successfully")
+        return render_template('prayer_times.html', prayer_times=prayer_times)
     except Exception as e:
-        logger.error(f"Error fetching prayer times: {e}")
+        logger.error(f"Error fetching prayer times: {e}", exc_info=True)
         flash(_('Er is een fout opgetreden bij het laden van de gebedstijden.'), 'error')
-        return render_template('ramadan/prayer_times.html', prayer_times=[])
+        return render_template('prayer_times.html', prayer_times=[])
 
 @ramadan.route('/profile')
 @login_required
