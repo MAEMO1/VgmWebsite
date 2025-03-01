@@ -28,14 +28,15 @@ try:
         logger.info("Session secret key configured successfully")
 
     # Configure PostgreSQL database
+    logger.debug("Database URL: %s", os.environ.get("DATABASE_URL", "Not set"))
     if not os.environ.get("DATABASE_URL"):
         logger.error("DATABASE_URL environment variable is not set")
         raise ValueError("DATABASE_URL must be set")
 
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
     app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-        "pool_pre_ping": True,
         "pool_recycle": 300,
+        "pool_pre_ping": True,
     }
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     logger.info("Database configuration completed")
@@ -69,7 +70,7 @@ try:
         raise
 
     # Configure login manager
-    login_manager.login_view = 'main.login'
+    login_manager.login_view = 'ramadan.index'  # Changed from main.login to ramadan.index
     login_manager.login_message = 'Log in om deze pagina te bekijken.'
     login_manager.login_message_category = 'info'
 
@@ -112,6 +113,7 @@ try:
         # Add default route
         @app.route('/')
         def home():
+            logger.debug("Home route accessed, redirecting to ramadan.iftar_map")
             return redirect(url_for('ramadan.iftar_map'))
 
 except Exception as e:
