@@ -1,7 +1,10 @@
 import os
 import logging
-from flask import Flask, request, session, redirect, url_for
-from extensions import db, login_manager, babel
+from flask import Flask, request, session
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
+from flask_babel import Babel
+from sqlalchemy.orm import DeclarativeBase
 
 # Configure logging
 logging.basicConfig(
@@ -10,115 +13,99 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Initialize Flask-SQLAlchemy with model class
+class Base(DeclarativeBase):
+    pass
+
+db = SQLAlchemy(model_class=Base)
+login_manager = LoginManager()
+babel = Babel()
+
 def get_locale():
     if 'language' in session:
         return session['language']
     return request.accept_languages.best_match(['en', 'nl', 'ar'])
 
-# Create Flask app
-app = Flask(__name__)
+def create_app():
+    # Create Flask app
+    app = Flask(__name__)
 
-try:
     # Configure secret key
-    if not os.environ.get("SESSION_SECRET"):
-        logger.warning("SESSION_SECRET not set, using a default value")
-        app.secret_key = "default-secret-key"
-    else:
-        app.secret_key = os.environ.get("SESSION_SECRET")
-        logger.info("Session secret key configured successfully")
+    app.secret_key = os.environ.get("SESSION_SECRET")
 
-    # Configure PostgreSQL database
-    logger.debug("Database URL: %s", os.environ.get("DATABASE_URL", "Not set"))
-    if not os.environ.get("DATABASE_URL"):
-        logger.error("DATABASE_URL environment variable is not set")
-        raise ValueError("DATABASE_URL must be set")
-
+    # Configure PostgreSQL database with robust connection handling
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
     app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-        "pool_recycle": 300,
-        "pool_pre_ping": True,
+        "pool_pre_ping": True,  # Enable connection health checks
+        "pool_recycle": 300,    # Recycle connections every 5 minutes
+        "pool_timeout": 30,     # Connection timeout after 30 seconds
+        "pool_size": 20,        # Maximum number of connections
+        "max_overflow": 5       # Allow 5 connections above pool_size when needed
     }
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    logger.info("Database configuration completed")
 
     # Configure Babel
     app.config['BABEL_DEFAULT_LOCALE'] = 'nl'
     app.config['BABEL_SUPPORTED_LOCALES'] = ['en', 'nl', 'ar']
     app.config['BABEL_DEFAULT_TIMEZONE'] = 'Europe/Amsterdam'
-    logger.info("Babel configuration completed")
 
     # Initialize extensions
-    try:
-        db.init_app(app)
-        logger.info("SQLAlchemy initialized successfully")
-    except Exception as e:
-        logger.error(f"Failed to initialize SQLAlchemy: {e}", exc_info=True)
-        raise
-
-    try:
-        login_manager.init_app(app)
-        logger.info("Login manager initialized successfully")
-    except Exception as e:
-        logger.error(f"Failed to initialize login manager: {e}", exc_info=True)
-        raise
-
-    try:
-        babel.init_app(app, locale_selector=get_locale)
-        logger.info("Babel initialized successfully")
-    except Exception as e:
-        logger.error(f"Failed to initialize Babel: {e}", exc_info=True)
-        raise
+    db.init_app(app)
+    login_manager.init_app(app)
+    babel.init_app(app, locale_selector=get_locale)
 
     # Configure login manager
-    login_manager.login_view = 'ramadan.index'
+    login_manager.login_view = 'main.login'
     login_manager.login_message = 'Log in om deze pagina te bekijken.'
     login_manager.login_message_category = 'info'
 
-    # User loader callback for Flask-Login
-    @login_manager.user_loader
-    def load_user(user_id):
-        try:
-            from models import User
-            return User.query.get(int(user_id))
-        except Exception as e:
-            logger.error(f"Error in user loader: {e}", exc_info=True)
-            return None
-
     with app.app_context():
         try:
-            # Import models here so they are registered with SQLAlchemy
-            import models
-            logger.info("Models imported successfully")
-        except Exception as e:
-            logger.error(f"Failed to import models: {e}", exc_info=True)
-            raise
-
-        try:
-            # Create all database tables
-            db.create_all()
-            logger.info("Database tables created successfully")
-        except Exception as e:
-            logger.error(f"Failed to create database tables: {e}", exc_info=True)
-            raise
-
-        try:
-            # Register blueprints
+            # Import routes after app context is created
+            from routes import routes as main_routes
+            from routes.event_routes import events
+            from routes.obituary_routes import obituaries
+            from routes.blog_routes import blog
+            from routes.translation_routes import translation_bp
+            from routes.message_routes import messages
+            from routes.donation_routes import donations
             from routes.ramadan_routes import ramadan
+
+            # Register blueprints
+            app.register_blueprint(main_routes)
+            app.register_blueprint(events, url_prefix='/events')
+            app.register_blueprint(obituaries, url_prefix='/obituaries')
+            app.register_blueprint(blog, url_prefix='/blog')
+            app.register_blueprint(translation_bp)
+            app.register_blueprint(messages, url_prefix='/messages')
+            app.register_blueprint(donations)
             app.register_blueprint(ramadan, url_prefix='/ramadan')
-            logger.info("Blueprints registered successfully")
+
+            try:
+                # Import models and create tables
+                from models import User, Event, EventRegistration, EventNotification, PrayerTime, Obituary, ObituaryNotification, BlogPost, Message, FundraisingCampaign
+                db.create_all()
+                logger.info("Database tables created successfully")
+            except Exception as e:
+                logger.error(f"Error during database initialization: {e}")
+                logger.error("Stack trace:", exc_info=True)
+                raise
+
         except Exception as e:
-            logger.error(f"Failed to register blueprints: {e}", exc_info=True)
+            logger.error(f"Error during app initialization: {e}")
+            logger.error("Stack trace:", exc_info=True)
             raise
 
-        # Add default route
-        @app.route('/')
-        def home():
-            logger.debug("Home route accessed, redirecting to ramadan.index")
-            return redirect(url_for('ramadan.index'))
+        return app
 
-except Exception as e:
-    logger.error(f"Failed to initialize application: {e}", exc_info=True)
-    raise
+# Create the application instance
+app = create_app()
+
+# User loader callback for Flask-Login
+@login_manager.user_loader
+def load_user(user_id):
+    from models import User
+    return User.query.get(int(user_id))
 
 if __name__ == "__main__":
     # Always serve on port 5000

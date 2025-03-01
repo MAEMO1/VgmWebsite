@@ -305,7 +305,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg sticky-top" role="navigation" aria-label="Main navigation">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('ramadan.index') }}" aria-label="VGM Home">
+            <a class="navbar-brand" href="{{ url_for('main.index') }}" aria-label="VGM Home">
                 <div class="logo-container">
                     <img src="{{ url_for('static', filename='images/image_1740398210906.png') }}" 
                          alt="VGM Logo" 
@@ -329,7 +329,7 @@
                 <ul class="navbar-nav ms-auto align-items-center">
                     {% block navbar_content %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('ramadan.index') }}">{{ _('Home') }}</a>
+                        <a class="nav-link" href="{{ url_for('main.index') }}">{{ _('Home') }}</a>
                     </li>
 
                     <!-- About & Info Dropdown -->
@@ -339,9 +339,9 @@
                             {{ _('Over Ons') }}
                         </a>
                         <ul class="dropdown-menu" aria-label="About & Info submenu">
-                            <li><a class="dropdown-item" href="{{ url_for('ramadan.about') }}">{{ _('Over VGM') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('ramadan.memorandum') }}">{{ _('Memorandum') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('ramadan.contact') }}">{{ _('Contact') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.about') }}">{{ _('Over VGM') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.memorandum') }}">{{ _('Memorandum') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.contact') }}">{{ _('Contact') }}</a></li>
                         </ul>
                     </li>
 
@@ -352,8 +352,8 @@
                             {{ _('Moskeeën & Gebed') }}
                         </a>
                         <ul class="dropdown-menu" aria-label="Mosques & Prayer submenu">
-                            <li><a class="dropdown-item" href="{{ url_for('ramadan.mosques') }}">{{ _('Moskeeën in Gent') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('ramadan.prayer_times') }}">{{ _('Gebedstijden') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.mosques') }}">{{ _('Moskeeën in Gent') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.prayer_times') }}">{{ _('Gebedstijden') }}</a></li>
                         </ul>
                     </li>
 
@@ -365,43 +365,57 @@
                         </a>
                         <ul class="dropdown-menu" aria-label="Community submenu">
                             <li><a class="dropdown-item ramadan-item" href="{{ url_for('ramadan.index') }}">{{ _('Ramadan 1446/2025') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('ramadan.about') }}">{{ _('Over VGM') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('ramadan.contact') }}">{{ _('Contact') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('blog.index') }}">{{ _('Nieuws & Reflecties') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('blog.community') }}">{{ _('Kijk') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('blog.learning_center') }}">{{ _('Leercentrum') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('events.event_list') }}">{{ _('Evenementen') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('obituaries.index') }}">{{ _('Overlijdensberichten') }}</a></li>
                         </ul>
                     </li>
                     {% if current_user.is_authenticated %}
-                            <!-- Account Dropdown when logged in -->
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                                   aria-expanded="false" aria-haspopup="true">
-                                    <i class="fas fa-user-circle me-1"></i>
-                                    {{ _('Account') }}
-                                </a>
-                                <ul class="dropdown-menu account-menu" aria-label="Account submenu">
-                                    <div class="account-header">
-                                        <div class="account-name">{{ current_user.username }}</div>
-                                        <div class="account-email">{{ current_user.email }}</div>
-                                    </div>
-                                    <li><a class="dropdown-item" href="{{ url_for('ramadan.profile') }}">
-                                        <i class="fas fa-user me-2"></i>{{ _('Profiel') }}
-                                    </a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="{{ url_for('ramadan.logout') }}">
-                                        <i class="fas fa-sign-out-alt me-2"></i>{{ _('Uitloggen') }}
-                                    </a></li>
-                                </ul>
-                            </li>
-                            {% else %}
-                            <!-- Login/Register buttons when not logged in -->
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('ramadan.login') }}">{{ _('Inloggen') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link btn btn-primary text-white px-3" href="{{ url_for('ramadan.register') }}">
-                                    <span>{{ _('Registreren') }}</span>
-                                </a>
-                            </li>
+                    <!-- Account Dropdown when logged in -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false" aria-haspopup="true">
+                            <i class="fas fa-user-circle me-1"></i>
+                            {{ _('Account') }}
+                        </a>
+                        <ul class="dropdown-menu account-menu" aria-label="Account submenu">
+                            <div class="account-header">
+                                <div class="account-name">{{ current_user.username }}</div>
+                                <div class="account-email">{{ current_user.email }}</div>
+                            </div>
+                            <li><a class="dropdown-item" href="{{ url_for('main.profile') }}">
+                                <i class="fas fa-user me-2"></i>{{ _('Profiel') }}
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('messages.inbox') }}">
+                                <i class="fas fa-envelope me-2"></i>{{ _('Berichten') }}
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('events.notification_settings') }}">
+                                <i class="fas fa-bell me-2"></i>{{ _('Notificaties') }}
+                            </a></li>
+                            {% if current_user.is_admin %}
+                            <li><a class="dropdown-item" href="{{ url_for('donations.list_campaigns') }}">
+                                <i class="fas fa-hand-holding-heart me-2"></i>{{ _('Campagnes Beheren') }}
+                            </a></li>
                             {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i>{{ _('Uitloggen') }}
+                            </a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <!-- Login/Register buttons when not logged in -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.login') }}">{{ _('Inloggen') }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-primary text-white px-3" href="{{ url_for('main.register') }}">
+                            <span>{{ _('Registreren') }}</span>
+                        </a>
+                    </li>
+                    {% endif %}
 
                     <!-- Language Selector -->
                     <li class="nav-item dropdown">
@@ -410,9 +424,9 @@
                             <i class="fas fa-globe"></i>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-label="Language selection">
-                            <li><a class="dropdown-item" href="{{ url_for('ramadan.set_language', language='en') }}" lang="en">English</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('ramadan.set_language', language='nl') }}" lang="nl">Nederlands</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('ramadan.set_language', language='ar') }}" lang="ar">العربية</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.set_language', language='en') }}" lang="en">English</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.set_language', language='nl') }}" lang="nl">Nederlands</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.set_language', language='ar') }}" lang="ar">العربية</a></li>
                         </ul>
                     </li>
                     {% endblock %}

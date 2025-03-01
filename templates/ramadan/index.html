@@ -63,6 +63,47 @@
     font-weight: 300;
 }
 
+/* Events Section */
+.events-section {
+    padding: 4rem 0;
+}
+
+.event-card {
+    background: white;
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    height: 100%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
+}
+
+.event-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.event-content {
+    padding: 1.5rem;
+}
+
+.event-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.event-description {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
 @media (max-width: 768px) {
     .ramadan-title {
         font-size: 2.5rem;
@@ -76,6 +117,82 @@
         font-size: 1.1rem;
         padding: 1rem;
     }
+
+    .resource-grid {
+        grid-template-columns: 1fr;
+        padding: 0 1rem;
+    }
+}
+
+/* Additional styles for improved VGM Iftarkaart section */
+.iftar-map-preview {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-top: 3rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.iftar-map-link {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 1rem 2rem;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 2rem;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+}
+
+.iftar-map-link:hover {
+    transform: translateY(-2px);
+    color: white;
+    text-decoration: none;
+}
+
+.map-preview-image {
+    width: 100%;
+    max-width: 600px;
+    height: 300px;
+    margin: 2rem 0;
+    border-radius: 0.5rem;
+    object-fit: cover;
+}
+
+.upcoming-iftars {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.iftar-preview-card {
+    transition: transform 0.2s ease;
+}
+
+.iftar-preview-card:hover {
+    transform: translateY(-2px);
+}
+.add-iftar-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+.add-iftar-btn:hover {
+    transform: scale(1.1);
+    color: white;
+    text-decoration: none;
 }
 </style>
 {% endblock %}
@@ -96,37 +213,146 @@
 </section>
 
 <div class="container">
-    <!-- Prayer Times -->
-    {% if prayer_times %}
-        <div class="card mt-4">
-            <div class="card-body">
-                <h5 class="card-title">{{ _('Gebedstijden Vandaag') }}</h5>
-                <div class="list-group">
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <span>Fajr</span>
-                        <span>{{ prayer_times.fajr }}</span>
+    <!-- VGM Iftar Map Section -->
+    <div class="iftar-map-preview">
+        <h2 class="section-title">{{ _('VGM Iftarkaart') }}</h2>
+        <p class="lead">{{ _('Ontdek waar u en uw gezin kunnen deelnemen aan iftar tijdens de Ramadan') }}</p>
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                {% if upcoming_iftars %}
+                    <div class="upcoming-iftars">
+                        {% for iftar in upcoming_iftars %}
+                            <div class="iftar-preview-card mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ iftar.mosque_name }}</h5>
+                                        <h6 class="card-subtitle mb-2 text-muted">
+                                            {{ iftar.date }} - {{ iftar.start_time }}
+                                        </h6>
+                                        <p class="card-text">{{ iftar.location }}</p>
+                                        {% if iftar.is_family_friendly %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-users"></i> {{ _('Gezinsvriendelijk') }}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
                     </div>
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <span>Dhuhr</span>
-                        <span>{{ prayer_times.dhuhr }}</span>
+                {% else %}
+                    <p class="text-center text-muted">{{ _('Geen iftars gevonden.') }}</p>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <h3>{{ _('Vind een Iftar bij u in de buurt') }}</h3>
+                <p>{{ _('Bekijk alle iftar locaties op de kaart, filter op gezinsvriendelijke opties, en registreer u eenvoudig voor deelname.') }}</p>
+                <a href="{{ url_for('ramadan.iftar_map') }}" class="btn btn-primary">
+                    <i class="fas fa-map-marked-alt me-2"></i> {{ _('Open Iftarkaart') }}
+                </a>
+
+                <!-- Prayer Times -->
+                {% if prayer_times %}
+                    <div class="card mt-4">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ _('Gebedstijden Vandaag') }}</h5>
+                            <div class="list-group">
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Fajr</span>
+                                    <span>{{ prayer_times.fajr }}</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Dhuhr</span>
+                                    <span>{{ prayer_times.dhuhr }}</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Asr</span>
+                                    <span>{{ prayer_times.asr }}</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Maghrib</span>
+                                    <span>{{ prayer_times.maghrib }}</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Isha</span>
+                                    <span>{{ prayer_times.isha }}</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <span>Asr</span>
-                        <span>{{ prayer_times.asr }}</span>
-                    </div>
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <span>Maghrib</span>
-                        <span>{{ prayer_times.maghrib }}</span>
-                    </div>
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <span>Isha</span>
-                        <span>{{ prayer_times.isha }}</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Ramadan Program -->
+    {% if programs %}
+    <section class="events-section">
+        <h2 class="section-title">{{ _('Ramadan Programma') }}</h2>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for program in programs %}
+            <div class="col">
+                <div class="event-card">
+                    {% if program.image_url %}
+                    <img src="{{ program.image_url }}" alt="{{ program.title }}" class="event-image">
+                    {% endif %}
+                    <div class="event-content">
+                        <h3 class="event-title">{{ program.title }}</h3>
+                        <p class="event-description">{{ program.description }}</p>
+                        <div class="event-details">
+                            <p><i class="fas fa-calendar me-2"></i>{{ program.start_date.strftime('%d-%m-%Y %H:%M') }}</p>
+                            <p><i class="fas fa-map-marker-alt me-2"></i>{{ program.location }}</p>
+                        </div>
+                        <a href="{{ url_for('ramadan.schedule') }}" class="btn btn-primary">
+                            {{ _('Bekijk Programma') }}
+                        </a>
                     </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
+    </section>
     {% endif %}
+
+    <!-- Ramadan Resources -->
+    <section class="ramadan-section">
+        <h2 class="section-title">{{ _('Ramadan Bronnen') }}</h2>
+        <div class="resource-grid">
+            <div class="resource-card">
+                <div class="resource-icon">
+                    <i class="fas fa-book-open fa-3x"></i>
+                </div>
+                <h3 class="resource-title">{{ _('Koran & Dua') }}</h3>
+                <p class="resource-description">{{ _('Dagelijkse Koran-recitaties en duʿāʾ voor tijdens de Ramadan') }}</p>
+                <a href="{{ url_for('ramadan.quran_resources') }}" class="btn btn-primary">{{ _('Bekijk Meer') }}</a>
+            </div>
+
+            <div class="resource-card">
+                <div class="resource-icon">
+                    <i class="fas fa-video fa-3x"></i>
+                </div>
+                <h3 class="resource-title">{{ _('Video\'s & Lezingen') }}</h3>
+                <p class="resource-description">{{ _('Inspirerende video\'s en lezingen over de Ramadan') }}</p>
+                <a href="{{ url_for('ramadan.videos') }}" class="btn btn-primary">{{ _('Bekijk Video\'s') }}</a>
+            </div>
+
+            <div class="resource-card">
+                <div class="resource-icon">
+                    <i class="fas fa-calendar-alt fa-3x"></i>
+                </div>
+                <h3 class="resource-title">{{ _('Programma') }}</h3>
+                <p class="resource-description">{{ _('Volledige programma van alle Ramadan-activiteiten') }}</p>
+                <a href="{{ url_for('ramadan.schedule') }}" class="btn btn-primary">{{ _('Bekijk Planning') }}</a>
+            </div>
+        </div>
+    </section>
 </div>
+
+{% if current_user.is_authenticated and (current_user.user_type == 'mosque' or current_user.is_admin) %}
+    <a href="{{ url_for('ramadan.add_iftar') }}" class="add-iftar-btn" title="{{ _('Voeg Iftar Toe') }}">
+        <i class="fas fa-plus"></i>
+    </a>
+{% endif %}
 {% endblock %}
 
 {% block scripts %}
