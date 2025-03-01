@@ -1,9 +1,10 @@
 from datetime import datetime, date
 import logging
-from flask import Blueprint, render_template, request, flash, redirect, url_for
-from flask_login import current_user
+from flask import Blueprint, render_template, request, flash, redirect, url_for, session
+from flask_login import current_user, login_user, logout_user, login_required
 from flask_babel import _
 from sqlalchemy.orm import joinedload
+from werkzeug.security import check_password_hash, generate_password_hash
 from extensions import db
 from models import User, IfterEvent
 import os
@@ -63,7 +64,6 @@ def iftar_map():
     except Exception as e:
         logger.error(f"Error in iftar_map route: {e}", exc_info=True)
         flash(_('Er is een fout opgetreden bij het laden van de iftar kaart.'), 'error')
-        # Return to index instead of redirecting to avoid redirect loops
         return render_template('ramadan/index.html')
 
 @ramadan.route('/')
@@ -94,5 +94,115 @@ def index():
     except Exception as e:
         logger.error(f"Error in index route: {e}", exc_info=True)
         flash(_('Er is een fout opgetreden bij het laden van de Ramadan pagina.'), 'error')
-        # Return empty context on error
         return render_template('ramadan/index.html', upcoming_iftars=[])
+
+@ramadan.route('/about')
+def about():
+    """About page"""
+    return render_template('ramadan/about.html')
+
+@ramadan.route('/memorandum')
+def memorandum():
+    """Memorandum page"""
+    return render_template('ramadan/memorandum.html')
+
+@ramadan.route('/contact', methods=['GET', 'POST'])
+def contact():
+    """Contact page with form handling"""
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        subject = request.form.get('subject')
+        message = request.form.get('message')
+
+        # Here you would typically send the email
+        flash(_('Bedankt voor uw bericht. We nemen zo spoedig mogelijk contact met u op.'), 'success')
+        return redirect(url_for('ramadan.contact'))
+
+    return render_template('ramadan/contact.html')
+
+@ramadan.route('/mosques')
+def mosques():
+    """Mosques overview page"""
+    mosque_users = User.query.filter_by(user_type='mosque', is_verified=True).all()
+    return render_template('ramadan/mosques.html', 
+                         mosques=mosque_users,
+                         google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'))
+
+@ramadan.route('/prayer_times')
+def prayer_times():
+    """Prayer times page"""
+    try:
+        today = datetime.today().date()
+        prayer_times = []  # You would typically fetch these from your database
+        return render_template('ramadan/prayer_times.html', prayer_times=prayer_times)
+    except Exception as e:
+        logger.error(f"Error fetching prayer times: {e}")
+        flash(_('Er is een fout opgetreden bij het laden van de gebedstijden.'), 'error')
+        return render_template('ramadan/prayer_times.html', prayer_times=[])
+
+@ramadan.route('/profile')
+@login_required
+def profile():
+    """User profile page"""
+    return render_template('ramadan/profile.html')
+
+@ramadan.route('/login', methods=['GET', 'POST'])
+def login():
+    """Login page"""
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        user = User.query.filter_by(email=email).first()
+        if user and check_password_hash(user.password_hash, password):
+            login_user(user)
+            flash(_('U bent succesvol ingelogd!'), 'success')
+            return redirect(url_for('ramadan.index'))
+
+        flash(_('Ongeldige email of wachtwoord.'), 'error')
+    return render_template('ramadan/login.html')
+
+@ramadan.route('/logout')
+@login_required
+def logout():
+    """Logout handler"""
+    logout_user()
+    flash(_('U bent uitgelogd.'), 'info')
+    return redirect(url_for('ramadan.index'))
+
+@ramadan.route('/register', methods=['GET', 'POST'])
+def register():
+    """Registration page"""
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        if User.query.filter_by(email=email).first():
+            flash(_('Dit emailadres is al geregistreerd.'), 'error')
+            return redirect(url_for('ramadan.register'))
+
+        user = User(
+            username=username,
+            email=email,
+            password_hash=generate_password_hash(password),
+            user_type='visitor'
+        )
+        db.session.add(user)
+        db.session.commit()
+
+        login_user(user)
+        flash(_('Registratie succesvol!'), 'success')
+        return redirect(url_for('ramadan.index'))
+
+    return render_template('ramadan/register.html')
+
+@ramadan.route('/set_language/<language>')
+def set_language(language):
+    """Language setting handler"""
+    if language not in ['en', 'nl', 'ar']:
+        return redirect(url_for('ramadan.index'))
+
+    session['language'] = language
+    return redirect(request.referrer or url_for('ramadan.index'))
