@@ -206,3 +206,47 @@ def set_language(language):
 
     session['language'] = language
     return redirect(request.referrer or url_for('ramadan.index'))
+
+@ramadan.route('/add-iftar', methods=['GET', 'POST'])
+@login_required
+def add_iftar():
+    """Add new iftar event route"""
+    # Only mosque users and admins can add iftars
+    if not current_user.is_authenticated or (current_user.user_type != 'mosque' and not current_user.is_admin):
+        flash(_('U heeft geen toestemming om iftars toe te voegen.'), 'error')
+        return redirect(url_for('ramadan.iftar_map'))
+
+    if request.method == 'POST':
+        try:
+            # Get form data
+            date = datetime.strptime(request.form['date'], '%Y-%m-%d').date()
+            start_time = datetime.strptime(request.form['start_time'], '%H:%M').time()
+            location = request.form['location']
+            is_family_friendly = 'is_family_friendly' in request.form
+            max_attendees = request.form.get('max_attendees', type=int)
+            notes = request.form.get('notes', '')
+
+            # Create new iftar event
+            iftar = IfterEvent(
+                mosque_id=current_user.id,
+                date=date,
+                start_time=start_time,
+                location=location,
+                is_family_friendly=is_family_friendly,
+                max_attendees=max_attendees,
+                notes=notes
+            )
+
+            db.session.add(iftar)
+            db.session.commit()
+
+            flash(_('Iftar is succesvol toegevoegd.'), 'success')
+            return redirect(url_for('ramadan.iftar_map'))
+
+        except Exception as e:
+            logger.error(f"Error adding iftar: {e}")
+            db.session.rollback()
+            flash(_('Er is een fout opgetreden bij het toevoegen van de iftar.'), 'error')
+
+    # For GET request, show the form
+    return render_template('ramadan/add_iftar.html')
