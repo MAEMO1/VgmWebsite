@@ -46,13 +46,17 @@ def create_app():
         return 'De applicatie werkt!'
 
     with app.app_context():
-        # Import blueprints
-        from routes import routes as main_routes
-        from routes.event_routes import events as event_routes
+        # Import routes
+        from routes.main_routes import main
+        from routes.event_routes import events
+        from routes.auth_routes import auth
+        from routes.blog_routes import blog
 
         # Register blueprints
-        app.register_blueprint(main_routes)
-        app.register_blueprint(event_routes)
+        app.register_blueprint(main)
+        app.register_blueprint(events)
+        app.register_blueprint(auth)
+        app.register_blueprint(blog)
 
         # Create database tables if they don't exist
         db.create_all()

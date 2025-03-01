@@ -313,6 +313,8 @@
                         </a>
                         <ul class="dropdown-menu" aria-label="About & Info submenu">
                             <li><a class="dropdown-item" href="{{ url_for('main.about') }}">{{ _('Over VGM') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.board') }}">{{ _('Bestuur') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.memorandum') }}">{{ _('Memorandum') }}</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('main.contact') }}">{{ _('Contact') }}</a></li>
                         </ul>
                     </li>
@@ -322,62 +324,16 @@
                         <a class="nav-link" href="{{ url_for('main.mosques') }}">{{ _('Moskeeën') }}</a>
                     </li>
 
+                    <!-- Community Link -->
+                    <li class="nav-item">
+                        <a class="nav-link community-link" href="{{ url_for('main.community') }}">
+                            <i class="fas fa-users me-1"></i>{{ _('Gemeenschap') }}
+                        </a>
+                    </li>
+
                     <!-- Events -->
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('events.event_list') }}">{{ _('Evenementen') }}</a>
-                    </li>
-
-                    {% if current_user.is_authenticated %}
-                    <!-- Account Dropdown when logged in -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                           aria-expanded="false" aria-haspopup="true">
-                            <i class="fas fa-user-circle me-1"></i>
-                            {{ _('Account') }}
-                        </a>
-                        <ul class="dropdown-menu account-menu" aria-label="Account submenu">
-                            <div class="account-header">
-                                <div class="account-name">{{ current_user.username }}</div>
-                                <div class="account-email">{{ current_user.email }}</div>
-                            </div>
-                            <li><a class="dropdown-item" href="{{ url_for('main.profile') }}">
-                                <i class="fas fa-user me-2"></i>{{ _('Profiel') }}
-                            </a></li>
-                            {% if current_user.is_admin %}
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.admin') }}">
-                                <i class="fas fa-tools me-2"></i>{{ _('Admin') }}
-                            </a></li>
-                            {% endif %}
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.logout') }}">
-                                <i class="fas fa-sign-out-alt me-2"></i>{{ _('Uitloggen') }}
-                            </a></li>
-                        </ul>
-                    </li>
-                    {% else %}
-                    <!-- Login/Register buttons when not logged in -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.login') }}">{{ _('Inloggen') }}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-primary text-white px-3" href="{{ url_for('main.register') }}">
-                            <span>{{ _('Registreren') }}</span>
-                        </a>
-                    </li>
-                    {% endif %}
-
-                    <!-- Language Selector -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link btn-language dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                           aria-expanded="false" aria-haspopup="true" aria-label="Select language">
-                            <i class="fas fa-globe"></i>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-label="Language selection">
-                            <li><a class="dropdown-item" href="{{ url_for('main.set_language', language='en') }}" lang="en">English</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.set_language', language='nl') }}" lang="nl">Nederlands</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.set_language', language='ar') }}" lang="ar">العربية</a></li>
-                        </ul>
                     </li>
                     {% endblock %}
                 </ul>

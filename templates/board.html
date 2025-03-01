@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Bestuur - VGM') }}{% endblock %}
+
+{% block styles %}
+<style>
+:root {
+    --primary-color: #005A87;
+    --secondary-color: #41B7AC;
+    --accent-color: #FF4154;
+    --background-light: #f8f9fa;
+    --text-primary: #2c3e50;
+    --text-secondary: #6c757d;
+    --border-color: #e9ecef;
+}
+
+.board-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 1rem;
+}
+
+.board-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.board-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.board-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.chairman-section {
+    background: white;
+    border-radius: 12px;
+    padding: 3rem;
+    margin-bottom: 4rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+.chairman-photo {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    margin-bottom: 2rem;
+    object-fit: cover;
+}
+
+.chairman-name {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.chairman-role {
+    color: var(--primary-color);
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+}
+
+.chairman-bio {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.board-members {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.member-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+}
+
+.member-card:hover {
+    transform: translateY(-4px);
+}
+
+.member-photo {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+}
+
+.member-info {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.member-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.member-role {
+    color: var(--primary-color);
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.member-description {
+    color: var(--text-secondary);
+    font-size: 0.925rem;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .board-container {
+        padding: 2rem 1rem;
+    }
+
+    .chairman-section {
+        padding: 2rem 1rem;
+    }
+
+    .board-title {
+        font-size: 2rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="board-container">
+    <div class="board-header">
+        <h1 class="board-title">{{ _('Bestuur VGM') }}</h1>
+        <p class="board-subtitle">
+            {{ _('Maak kennis met ons toegewijde bestuur dat zich inzet voor de moslimgemeenschap in Gent') }}
+        </p>
+    </div>
+
+    <div class="chairman-section">
+        <img src="{{ url_for('static', filename='images/chairman.jpg') }}" alt="Chairman" class="chairman-photo">
+        <h2 class="chairman-name">Mohammed El Bachiri</h2>
+        <div class="chairman-role">{{ _('Voorzitter VGM') }}</div>
+        <p class="chairman-bio">
+            {{ _('Als voorzitter van VGM zet ik mij in voor het versterken van de banden tussen de verschillende moskeeën in Gent en het bevorderen van dialoog en begrip binnen onze gemeenschap.') }}
+        </p>
+    </div>
+
+    <div class="board-members">
+        <div class="member-card">
+            <img src="{{ url_for('static', filename='images/board1.jpg') }}" alt="Board Member" class="member-photo">
+            <div class="member-info">
+                <h3 class="member-name">Ahmed Hassan</h3>
+                <div class="member-role">{{ _('Secretaris') }}</div>
+                <p class="member-description">
+                    {{ _('Verantwoordelijk voor administratie en communicatie binnen VGM') }}
+                </p>
+            </div>
+        </div>
+
+        <div class="member-card">
+            <img src="{{ url_for('static', filename='images/board2.jpg') }}" alt="Board Member" class="member-photo">
+            <div class="member-info">
+                <h3 class="member-name">Fatima El Amrani</h3>
+                <div class="member-role">{{ _('Penningmeester') }}</div>
+                <p class="member-description">
+                    {{ _('Beheert de financiën en zorgt voor transparante boekhouding') }}
+                </p>
+            </div>
+        </div>
+
+        <div class="member-card">
+            <img src="{{ url_for('static', filename='images/board3.jpg') }}" alt="Board Member" class="member-photo">
+            <div class="member-info">
+                <h3 class="member-name">Karim Benali</h3>
+                <div class="member-role">{{ _('Bestuurslid Jeugdzaken') }}</div>
+                <p class="member-description">
+                    {{ _('Coördineert activiteiten en programma\'s voor jongeren') }}
+                </p>
+            </div>
+        </div>
+
+        <div class="member-card">
+            <img src="{{ url_for('static', filename='images/board4.jpg') }}" alt="Board Member" class="member-photo">
+            <div class="member-info">
+                <h3 class="member-name">Nour Al-Saadi</h3>
+                <div class="member-role">{{ _('Bestuurslid Onderwijs') }}</div>
+                <p class="member-description">
+                    {{ _('Verantwoordelijk voor educatieve programma\'s en workshops') }}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

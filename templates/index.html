@@ -94,6 +94,12 @@
     color: var(--primary-color);
 }
 
+.hero-btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
 @keyframes patternMove {
     0% {
         background-position: 0 0;
@@ -136,6 +142,9 @@
         <div class="hero-buttons">
             <a href="{{ url_for('main.mosques') }}" class="hero-btn hero-btn-primary">
                 <i class="fas fa-mosque me-2"></i>{{ _('Find a Mosque') }}
+            </a>
+            <a href="{{ url_for('main.donate_vgm') }}" class="hero-btn hero-btn-secondary">
+                <i class="fas fa-heart me-2"></i>{{ _('Support VGM') }}
             </a>
         </div>
     </div>
