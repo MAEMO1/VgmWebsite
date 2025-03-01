@@ -1,12 +1,11 @@
 from datetime import datetime, date
 import logging
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
-from flask_login import current_user, login_user, logout_user, login_required
+from flask_login import current_user, login_required, login_user, logout_user
 from flask_babel import _
-from sqlalchemy.orm import joinedload
 from werkzeug.security import check_password_hash, generate_password_hash
 from extensions import db
-from models import User, IfterEvent
+from models import User
 import os
 
 # Configure logging
@@ -15,88 +14,14 @@ logger = logging.getLogger(__name__)
 
 ramadan = Blueprint('ramadan', __name__)
 
-@ramadan.route('/iftar-map')
-def iftar_map():
-    """Iftar map route with simplified error handling"""
-    try:
-        logger.debug("Starting iftar map route handler")
-
-        # Get filter parameters
-        family_only = request.args.get('filter') == 'family'
-        selected_mosque = request.args.get('mosque_id', type=int)
-        period = request.args.get('period', 'day')
-
-        today = date.today()
-        logger.debug(f"Fetching events for date: {today}")
-
-        # Base query
-        query = IfterEvent.query.options(joinedload(IfterEvent.mosque))
-
-        # Apply filters
-        if selected_mosque:
-            query = query.filter(IfterEvent.mosque_id == selected_mosque)
-        if family_only:
-            query = query.filter(IfterEvent.is_family_friendly == True)
-
-        # Get events
-        events = query.order_by(IfterEvent.date, IfterEvent.start_time).all()
-        logger.info(f"Found {len(events)} events matching criteria")
-
-        # Convert events to dictionaries for JSON serialization
-        events_data = [{
-            'id': event.id,
-            'mosque_id': event.mosque_id,
-            'mosque_name': event.mosque.mosque_name if event.mosque else None,
-            'date': event.date.strftime('%Y-%m-%d'),
-            'start_time': event.start_time.strftime('%H:%M'),
-            'end_time': event.end_time.strftime('%H:%M') if event.end_time else None,
-            'location': event.location,
-            'is_family_friendly': event.is_family_friendly,
-            'capacity': event.capacity
-        } for event in events]
-
-        # Get mosques for dropdown
-        mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
-        logger.info(f"Found {len(mosques)} verified mosques")
-
-        # Template context
-        context = {
-            'events': events_data,  # Using serializable event data
-            'family_only': family_only,
-            'selected_mosque': selected_mosque,
-            'period': period,
-            'today': today,
-            'mosques': mosques,
-            'google_maps_api_key': os.environ.get('GOOGLE_MAPS_API_KEY'),
-            'current_user': current_user
-        }
-
-        logger.debug("Rendering iftar map template")
-        return render_template('ramadan/iftar_map.html', **context)
-
-    except Exception as e:
-        logger.error(f"Error in iftar_map route: {e}", exc_info=True)
-        flash(_('Er is een fout opgetreden bij het laden van de iftar kaart.'), 'error')
-        return render_template('ramadan/index.html')
-
 @ramadan.route('/')
 def index():
-    """Main Ramadan page with proper error handling"""
+    """Main Ramadan page"""
     try:
         logger.debug("Starting Ramadan index route")
         today = date.today()
 
-        # Get upcoming iftar events
-        upcoming_iftars = IfterEvent.query\
-            .options(joinedload(IfterEvent.mosque))\
-            .filter(IfterEvent.date >= today)\
-            .order_by(IfterEvent.date)\
-            .limit(3)\
-            .all()
-        logger.info(f"Retrieved {len(upcoming_iftars)} upcoming iftars")
-
         context = {
-            'upcoming_iftars': upcoming_iftars,
             'current_user': current_user,
             'today': today
         }
@@ -107,7 +32,7 @@ def index():
     except Exception as e:
         logger.error(f"Error in index route: {e}", exc_info=True)
         flash(_('Er is een fout opgetreden bij het laden van de Ramadan pagina.'), 'error')
-        return render_template('ramadan/index.html', upcoming_iftars=[])
+        return render_template('ramadan/index.html')
 
 @ramadan.route('/about')
 def about():
@@ -128,7 +53,6 @@ def contact():
         subject = request.form.get('subject')
         message = request.form.get('message')
 
-        # Here you would typically send the email
         flash(_('Bedankt voor uw bericht. We nemen zo spoedig mogelijk contact met u op.'), 'success')
         return redirect(url_for('ramadan.contact'))
 
@@ -219,57 +143,3 @@ def set_language(language):
 
     session['language'] = language
     return redirect(request.referrer or url_for('ramadan.index'))
-
-@ramadan.route('/add-iftar', methods=['GET', 'POST'])
-@login_required
-def add_iftar():
-    """Add new iftar event route"""
-    # Only mosque users and admins can add iftars
-    if not current_user.is_authenticated or (current_user.user_type != 'mosque' and not current_user.is_admin):
-        flash(_('U heeft geen toestemming om iftars toe te voegen.'), 'error')
-        return redirect(url_for('ramadan.iftar_map'))
-
-    if request.method == 'POST':
-        try:
-            logger.debug("Processing iftar form submission")
-            # Get form data
-            date_str = request.form.get('date')
-            time_str = request.form.get('start_time')
-            location = request.form.get('location')
-
-            logger.debug(f"Form data received - Date: {date_str}, Time: {time_str}, Location: {location}")
-
-            # Parse date and time
-            date = datetime.strptime(date_str, '%Y-%m-%d').date()
-            start_time = datetime.strptime(time_str, '%H:%M').time()
-
-            # Create new iftar event
-            iftar = IfterEvent(
-                mosque_id=current_user.id,  # Use current user's ID as mosque_id
-                date=date,
-                start_time=start_time,
-                location=location,
-                is_family_friendly='is_family_friendly' in request.form,
-                capacity=request.form.get('max_attendees', type=int)  # Map max_attendees to capacity
-            )
-
-            logger.debug(f"Created IfterEvent object: mosque_id={iftar.mosque_id}, date={iftar.date}")
-
-            db.session.add(iftar)
-            db.session.commit()
-            logger.info(f"Successfully added new iftar event for mosque {iftar.mosque_id}")
-
-            flash(_('Iftar is succesvol toegevoegd.'), 'success')
-            return redirect(url_for('ramadan.iftar_map'))
-
-        except ValueError as ve:
-            logger.error(f"Validation error in add_iftar: {ve}")
-            db.session.rollback()
-            flash(_('Controleer of alle velden correct zijn ingevuld.'), 'error')
-        except Exception as e:
-            logger.error(f"Error adding iftar: {e}", exc_info=True)
-            db.session.rollback()
-            flash(_('Er is een fout opgetreden bij het toevoegen van de iftar.'), 'error')
-
-    # For GET request, show the form
-    return render_template('ramadan/add_iftar.html')

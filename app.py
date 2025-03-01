@@ -70,7 +70,7 @@ try:
         raise
 
     # Configure login manager
-    login_manager.login_view = 'ramadan.index'  # Changed from main.login to ramadan.index
+    login_manager.login_view = 'ramadan.index'
     login_manager.login_message = 'Log in om deze pagina te bekijken.'
     login_manager.login_message_category = 'info'
 
@@ -113,8 +113,8 @@ try:
         # Add default route
         @app.route('/')
         def home():
-            logger.debug("Home route accessed, redirecting to ramadan.iftar_map")
-            return redirect(url_for('ramadan.iftar_map'))
+            logger.debug("Home route accessed, redirecting to ramadan.index")
+            return redirect(url_for('ramadan.index'))
 
 except Exception as e:
     logger.error(f"Failed to initialize application: {e}", exc_info=True)
