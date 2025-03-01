@@ -385,9 +385,14 @@
 
     {% if current_user.is_authenticated %}
     <div class="floating-action-button">
-        <a href="{{ url_for('events.create_event') }}" class="btn btn-primary btn-lg">
-            <i class="fas fa-plus me-2"></i>{{ _('Evenement Aanmaken') }}
-        </a>
+        <div class="d-flex gap-3">
+            <a href="{{ url_for('events.create_event') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus me-2"></i>{{ _('Evenement Aanmaken') }}
+            </a>
+            <a href="{{ url_for('events.notifications') }}" class="btn btn-secondary btn-lg">
+                <i class="fas fa-bell me-2"></i>{{ _('Notificaties') }}
+            </a>
+        </div>
     </div>
     {% endif %}
 </div>

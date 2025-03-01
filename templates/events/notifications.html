@@ -29,10 +29,13 @@
         {% else %}
             <p class="text-center">No notifications to display.</p>
         {% endif %}
-        
-        <div class="mt-4">
+
+        <div class="mt-4 d-flex justify-content-between">
             <a href="{{ url_for('events.notification_settings') }}" class="btn btn-primary">
-                Manage Notification Settings
+                <i class="fas fa-cog me-2"></i>{{ _('Manage Notification Settings') }}
+            </a>
+            <a href="{{ url_for('events.event_list') }}" class="btn btn-secondary">
+                <i class="fas fa-calendar me-2"></i>{{ _('Back to Events') }}
             </a>
         </div>
     </div>
