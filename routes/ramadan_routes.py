@@ -42,13 +42,26 @@ def iftar_map():
         events = query.order_by(IfterEvent.date, IfterEvent.start_time).all()
         logger.info(f"Found {len(events)} events matching criteria")
 
+        # Convert events to dictionaries for JSON serialization
+        events_data = [{
+            'id': event.id,
+            'mosque_id': event.mosque_id,
+            'mosque_name': event.mosque.mosque_name if event.mosque else None,
+            'date': event.date.strftime('%Y-%m-%d'),
+            'start_time': event.start_time.strftime('%H:%M'),
+            'end_time': event.end_time.strftime('%H:%M') if event.end_time else None,
+            'location': event.location,
+            'is_family_friendly': event.is_family_friendly,
+            'capacity': event.capacity
+        } for event in events]
+
         # Get mosques for dropdown
         mosques = User.query.filter_by(user_type='mosque', is_verified=True).all()
         logger.info(f"Found {len(mosques)} verified mosques")
 
         # Template context
         context = {
-            'events': events,
+            'events': events_data,  # Using serializable event data
             'family_only': family_only,
             'selected_mosque': selected_mosque,
             'period': period,
