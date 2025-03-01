@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}Nieuw Evenement - Mosque Management{% endblock %}
+{% block title %}{{ _('Nieuw Evenement - VGM') }}{% endblock %}
 
 {% block styles %}
 <style>
-:root {
+::root {
     --primary-color: #005A87;
     --secondary-color: #41B7AC;
     --accent-color: #FF4154;
@@ -145,60 +145,48 @@
 <div class="container">
     <div class="card">
         <div class="card-header">
-            <h2>Nieuw Evenement Aanmaken</h2>
+            <h2>{{ _('Nieuw Evenement Aanmaken') }}</h2>
         </div>
         <div class="card-body">
             <form method="POST" enctype="multipart/form-data">
                 <div class="mb-3">
-                    <label for="title" class="form-label">Titel</label>
+                    <label for="title" class="form-label">{{ _('Titel') }}</label>
                     <input type="text" class="form-control" id="title" name="title" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="description" class="form-label">Beschrijving</label>
+                    <label for="description" class="form-label">{{ _('Beschrijving') }}</label>
                     <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
                 </div>
 
                 <div class="mb-3">
-                    <label for="date" class="form-label">Datum en Tijd</label>
+                    <label for="date" class="form-label">{{ _('Datum en Tijd') }}</label>
                     <input type="datetime-local" class="form-control" id="date" name="date" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="location" class="form-label">Locatie</label>
+                    <label for="location" class="form-label">{{ _('Locatie') }}</label>
                     <input type="text" class="form-control" id="location" name="location" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="flyer" class="form-label">Flyer (optioneel)</label>
-                    <input type="file" class="form-control" id="flyer" name="flyer" accept="image/*">
-                    <div class="form-text">Upload een afbeelding voor de evenement flyer (PNG, JPG of GIF)</div>
-                </div>
-
-                <div class="mb-3">
-                    <label for="max_participants" class="form-label">Maximum Aantal Deelnemers (optioneel)</label>
+                    <label for="max_participants" class="form-label">{{ _('Maximum Aantal Deelnemers') }} ({{ _('optioneel') }})</label>
                     <input type="number" class="form-control" id="max_participants" name="max_participants" min="1">
                 </div>
 
                 <div class="mb-3 form-check">
                     <input type="checkbox" class="form-check-input" id="registration_required" name="registration_required">
-                    <label class="form-check-label" for="registration_required">Registratie Vereist</label>
+                    <label class="form-check-label" for="registration_required">{{ _('Registratie Vereist') }}</label>
                 </div>
 
-                <div class="mb-3">
-                    <label for="reminder_before" class="form-label">Stuur Herinnering Voor (minuten)</label>
-                    <select class="form-control" id="reminder_before" name="reminder_before">
-                        <option value="">Geen herinnering</option>
-                        <option value="30">30 minuten</option>
-                        <option value="60">1 uur</option>
-                        <option value="1440">1 dag</option>
-                        <option value="10080">1 week</option>
-                    </select>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="is_collaboration" name="is_collaboration">
+                    <label class="form-check-label" for="is_collaboration">{{ _('Dit is een samenwerkingsevenement') }}</label>
                 </div>
 
                 <div class="d-flex gap-3">
-                    <button type="submit" class="btn btn-primary">Evenement Aanmaken</button>
-                    <a href="{{ url_for('events.event_list') }}" class="btn btn-secondary">Annuleren</a>
+                    <button type="submit" class="btn btn-primary">{{ _('Evenement Aanmaken') }}</button>
+                    <a href="{{ url_for('events.event_list') }}" class="btn btn-secondary">{{ _('Annuleren') }}</a>
                 </div>
             </form>
         </div>
