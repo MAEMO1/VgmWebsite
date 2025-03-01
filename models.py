@@ -26,7 +26,7 @@ class User(UserMixin, db.Model):
         return None
 
 class IfterEvent(db.Model):
-    """Simplified iftar event model"""
+    """Iftar event model with minimal required fields"""
     id = db.Column(db.Integer, primary_key=True)
     mosque_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     date = db.Column(db.Date, nullable=False)
@@ -34,10 +34,13 @@ class IfterEvent(db.Model):
     end_time = db.Column(db.Time)
     location = db.Column(db.String(200))
     is_family_friendly = db.Column(db.Boolean, default=True)
-    capacity = db.Column(db.Integer)
+    capacity = db.Column(db.Integer)  # This maps to max_attendees in the form
 
-    # Relationship
+    # Relationship to mosque
     mosque = db.relationship('User', backref='ifter_events')
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<IfterEvent {self.id} - {self.date} {self.start_time} at {self.location}>'

@@ -218,33 +218,43 @@ def add_iftar():
 
     if request.method == 'POST':
         try:
+            logger.debug("Processing iftar form submission")
             # Get form data
-            date = datetime.strptime(request.form['date'], '%Y-%m-%d').date()
-            start_time = datetime.strptime(request.form['start_time'], '%H:%M').time()
-            location = request.form['location']
-            is_family_friendly = 'is_family_friendly' in request.form
-            max_attendees = request.form.get('max_attendees', type=int)
-            notes = request.form.get('notes', '')
+            date_str = request.form.get('date')
+            time_str = request.form.get('start_time')
+            location = request.form.get('location')
+
+            logger.debug(f"Form data received - Date: {date_str}, Time: {time_str}, Location: {location}")
+
+            # Parse date and time
+            date = datetime.strptime(date_str, '%Y-%m-%d').date()
+            start_time = datetime.strptime(time_str, '%H:%M').time()
 
             # Create new iftar event
             iftar = IfterEvent(
-                mosque_id=current_user.id,
+                mosque_id=current_user.id,  # Use current user's ID as mosque_id
                 date=date,
                 start_time=start_time,
                 location=location,
-                is_family_friendly=is_family_friendly,
-                max_attendees=max_attendees,
-                notes=notes
+                is_family_friendly='is_family_friendly' in request.form,
+                capacity=request.form.get('max_attendees', type=int)  # Map max_attendees to capacity
             )
+
+            logger.debug(f"Created IfterEvent object: mosque_id={iftar.mosque_id}, date={iftar.date}")
 
             db.session.add(iftar)
             db.session.commit()
+            logger.info(f"Successfully added new iftar event for mosque {iftar.mosque_id}")
 
             flash(_('Iftar is succesvol toegevoegd.'), 'success')
             return redirect(url_for('ramadan.iftar_map'))
 
+        except ValueError as ve:
+            logger.error(f"Validation error in add_iftar: {ve}")
+            db.session.rollback()
+            flash(_('Controleer of alle velden correct zijn ingevuld.'), 'error')
         except Exception as e:
-            logger.error(f"Error adding iftar: {e}")
+            logger.error(f"Error adding iftar: {e}", exc_info=True)
             db.session.rollback()
             flash(_('Er is een fout opgetreden bij het toevoegen van de iftar.'), 'error')
 
