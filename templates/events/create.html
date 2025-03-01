@@ -89,6 +89,17 @@
     padding-left: 0.5rem;
 }
 
+.event-type-selector {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: var(--background-light);
+    border-radius: var(--radius-sm);
+}
+
+.event-type-selector .form-check {
+    margin-bottom: 0.5rem;
+}
+
 .btn {
     padding: 0.875rem 1.75rem;
     font-weight: 500;
@@ -149,6 +160,30 @@
         </div>
         <div class="card-body">
             <form method="POST" enctype="multipart/form-data">
+                <div class="event-type-selector mb-3">
+                    <label class="form-label">{{ _('Type Evenement') }}</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="event_type" id="type_individual" value="individual" checked>
+                        <label class="form-check-label" for="type_individual">
+                            {{ _('Individueel Moskee Evenement') }}
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="event_type" id="type_collaboration" value="collaboration">
+                        <label class="form-check-label" for="type_collaboration">
+                            {{ _('Samenwerkingsevenement') }}
+                        </label>
+                    </div>
+                    {% if current_user.is_admin %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="event_type" id="type_vgm" value="vgm">
+                        <label class="form-check-label" for="type_vgm">
+                            {{ _('VGM Evenement') }}
+                        </label>
+                    </div>
+                    {% endif %}
+                </div>
+
                 <div class="mb-3">
                     <label for="title" class="form-label">{{ _('Titel') }}</label>
                     <input type="text" class="form-control" id="title" name="title" required>
@@ -177,11 +212,6 @@
                 <div class="mb-3 form-check">
                     <input type="checkbox" class="form-check-input" id="registration_required" name="registration_required">
                     <label class="form-check-label" for="registration_required">{{ _('Registratie Vereist') }}</label>
-                </div>
-
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="is_collaboration" name="is_collaboration">
-                    <label class="form-check-label" for="is_collaboration">{{ _('Dit is een samenwerkingsevenement') }}</label>
                 </div>
 
                 <div class="d-flex gap-3">

@@ -46,9 +46,13 @@ def event_detail(event_id):
 @login_required
 def create_event():
     if request.method == 'POST':
-        # Determine event type based on is_collaboration
-        is_collaboration = bool(request.form.get('is_collaboration'))
-        event_type = 'collaboration' if is_collaboration else 'individual'
+        # Get event type from form
+        event_type = request.form.get('event_type', 'individual')
+
+        # Only allow admin users to create VGM events
+        if event_type == 'vgm' and not current_user.is_admin:
+            flash('You do not have permission to create VGM events.', 'error')
+            return redirect(url_for('events.event_list'))
 
         event = Event(
             title=request.form['title'],
@@ -57,8 +61,8 @@ def create_event():
             location=request.form['location'],
             max_participants=int(request.form['max_participants']) if request.form['max_participants'] else None,
             registration_required=bool(request.form.get('registration_required')),
-            is_collaboration=is_collaboration,
             event_type=event_type,
+            is_collaboration=(event_type == 'collaboration'),
             organizer_id=current_user.id
         )
 
