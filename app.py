@@ -1,6 +1,6 @@
 import os
 import logging
-from flask import Flask, redirect, url_for
+from flask import Flask
 from extensions import db, login_manager, babel, migrate
 
 # Configure logging
@@ -28,7 +28,7 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
     babel.init_app(app)
-    migrate.init_app(app, db)  # Initialize Flask-Migrate
+    migrate.init_app(app, db)
 
     # Configure login
     login_manager.login_view = 'main.login'
@@ -44,15 +44,11 @@ def create_app():
         # Import routes
         from routes.main_routes import main
         from routes.event_routes import events
-        from routes.auth_routes import auth
-        from routes.blog_routes import blog
         from routes.donation_routes import donations
 
         # Register blueprints
         app.register_blueprint(main)
         app.register_blueprint(events)
-        app.register_blueprint(auth)
-        app.register_blueprint(blog)
         app.register_blueprint(donations)
 
         # Create database tables if they don't exist

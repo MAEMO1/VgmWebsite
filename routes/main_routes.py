@@ -14,6 +14,10 @@ def board():
 def donate_vgm():
     return render_template('donate_vgm.html')
 
+@main.route('/community')
+def community():
+    return render_template('blog/community.html')
+
 @main.route('/memorandum')
 def memorandum():
     return render_template('memorandum.html')
