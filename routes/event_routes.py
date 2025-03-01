@@ -4,7 +4,8 @@ from datetime import datetime, timedelta
 from werkzeug.utils import secure_filename
 import os
 from app import db
-from models import Event, EventRegistration, User
+from models import Event, EventRegistration, User, Notification # Added Notification import
+
 
 # Create blueprint with url_prefix
 events = Blueprint('events', __name__, url_prefix='/events')
@@ -86,6 +87,28 @@ def create_event():
 
     return render_template('events/create.html')
 
+@events.route('/notifications')
+@login_required
+def notifications():
+    notifications = Notification.query.filter_by(
+        user_id=current_user.id
+    ).order_by(Notification.sent_at.desc()).all()
+
+    return render_template('events/notifications.html', notifications=notifications)
+
+@events.route('/notifications/settings', methods=['GET', 'POST'])
+@login_required
+def notification_settings():
+    if request.method == 'POST':
+        # Update notification preferences
+        current_user.event_notifications = bool(request.form.get('event_notifications'))
+        current_user.email_notifications = bool(request.form.get('email_notifications'))
+        db.session.commit()
+        flash('Notification settings updated successfully.', 'success')
+        return redirect(url_for('events.notifications'))
+
+    return render_template('events/notification_settings.html')
+
 @events.route('/<int:event_id>/register', methods=['POST'])
 @login_required
 def register_event(event_id):
@@ -103,7 +126,24 @@ def register_event(event_id):
                 user_id=current_user.id,
                 event_id=event_id
             )
+
+            # Create notification for successful registration
+            notification = Notification(
+                user_id=current_user.id,
+                event_id=event_id,
+                message=f'You have successfully registered for {event.title}.'
+            )
+
+            # Create notification for event organizer
+            organizer_notification = Notification(
+                user_id=event.organizer_id,
+                event_id=event_id,
+                message=f'New registration for {event.title}: {current_user.username}'
+            )
+
             db.session.add(registration)
+            db.session.add(notification)
+            db.session.add(organizer_notification)
             db.session.commit()
             flash('Successfully registered for the event!', 'success')
 

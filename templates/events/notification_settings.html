@@ -50,44 +50,17 @@
     padding: 2rem;
 }
 
-.notification-section {
-    margin-bottom: 2.5rem;
-}
-
-.section-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 1.5rem;
-}
-
-.form-select {
-    width: 100%;
-    padding: 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
-    background-color: white;
-    font-size: 1rem;
-    color: var(--text-primary);
-    margin-bottom: 1rem;
-    transition: var(--transition);
-}
-
-.form-select:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.2rem rgba(0, 90, 135, 0.1);
-}
-
 .form-check {
-    margin-bottom: 1rem;
-    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding: 1.25rem;
     background: var(--background-light);
     border-radius: var(--radius-sm);
-    transition: var(--transition);
+    border: 1px solid var(--border-color);
 }
 
 .form-check:hover {
-    background: #f0f2f4;
+    border-color: var(--primary-color);
+    background: white;
 }
 
 .form-check-input {
@@ -100,36 +73,15 @@
 }
 
 .form-text {
-    color: var(--text-secondary);
-    font-size: 0.875rem;
     margin-top: 0.5rem;
+    color: var(--text-secondary);
 }
 
-.mosque-selection {
-    margin-top: 1rem;
-    display: none;
-}
-
-.mosque-selection.active {
-    display: block;
-}
-
-.mosque-list {
-    background: white;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
-    padding: 1rem;
-    max-height: 300px;
-    overflow-y: auto;
-}
-
-.mosque-item {
-    padding: 0.75rem;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.mosque-item:last-child {
-    border-bottom: none;
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
 }
 
 .btn-primary {
@@ -142,14 +94,8 @@
 }
 
 .btn-primary:hover {
-    background: #004a70;
+    opacity: 0.9;
     transform: translateY(-1px);
-}
-
-.alert {
-    border-radius: var(--radius-sm);
-    padding: 1rem;
-    margin-bottom: 1.5rem;
 }
 </style>
 {% endblock %}
@@ -169,87 +115,26 @@
                 {% endif %}
             {% endwith %}
 
-            <form method="POST" action="{{ url_for('events.update_notification_settings') }}">
-                <!-- Notificatie Voorkeuren -->
-                <div class="notification-section">
-                    <h3 class="section-title">{{ _('Berichtgeving voorkeuren') }}</h3>
-                    <div class="form-text mb-3">{{ _('Kies van welke organisaties u berichten wilt ontvangen') }}</div>
-
-                    <select class="form-select" name="mosque_notification_type" id="mosque_notification_type" onchange="handleNotificationTypeChange()">
-                        <option value="all" {% if current_user.notify_all_mosques or (not current_user.notify_vgm_only and not user_mosque_preferences) %}selected{% endif %}>
-                            {{ _('Alle berichten (VGM en alle moskeeën)') }}
-                        </option>
-                        <option value="vgm_only" {% if current_user.notify_vgm_only %}selected{% endif %}>
-                            {{ _('Alleen VGM berichten') }}
-                        </option>
-                        <option value="specific" {% if user_mosque_preferences and not current_user.notify_all_mosques and not current_user.notify_vgm_only %}selected{% endif %}>
-                            {{ _('Specifieke moskeeën selecteren') }}
-                        </option>
-                    </select>
-
-                    <div id="mosque-selection" class="mosque-selection {% if user_mosque_preferences and not current_user.notify_all_mosques and not current_user.notify_vgm_only %}active{% endif %}">
-                        <div class="mosque-list">
-                            {% for mosque in mosques %}
-                            <div class="mosque-item">
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" 
-                                           id="mosque_{{ mosque.id }}" 
-                                           name="selected_mosques" 
-                                           value="{{ mosque.id }}"
-                                           {% if mosque.id in user_mosque_preferences %}checked{% endif %}>
-                                    <label class="form-check-label" for="mosque_{{ mosque.id }}">
-                                        {{ mosque.mosque_name or mosque.username.replace('_', ' ').title() }}
-                                    </label>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Evenementen Notificaties -->
-                <div class="notification-section">
-                    <h3 class="section-title">{{ _('Evenementen') }}</h3>
+            <form method="POST">
+                <div class="mb-4">
+                    <h3 class="section-title">{{ _('Evenement Notificaties') }}</h3>
 
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="notify_event_changes" 
-                               name="notify_event_changes" {% if current_user.notify_event_changes %}checked{% endif %}>
+                               name="event_notifications" {% if current_user.event_notifications %}checked{% endif %}>
                         <label class="form-check-label" for="notify_event_changes">
-                            {{ _('Ontvang meldingen over wijzigingen in evenementen waarvoor je bent aangemeld') }}
+                            {{ _('Ontvang meldingen over wijzigingen in evenementen') }}
                         </label>
-                        <div class="form-text">{{ _('Word gewaarschuwd bij wijzigingen in datum, tijd of locatie') }}</div>
+                        <div class="form-text">{{ _('Word op de hoogte gehouden van updates en wijzigingen in evenementen waarvoor je bent aangemeld') }}</div>
                     </div>
 
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="notify_event_reminders" 
-                               name="notify_event_reminders" {% if current_user.notify_event_reminders %}checked{% endif %}>
-                        <label class="form-check-label" for="notify_event_reminders">
-                            {{ _('Ontvang herinneringen voor evenementen') }}
+                        <input type="checkbox" class="form-check-input" id="notify_email" 
+                               name="email_notifications" {% if current_user.email_notifications %}checked{% endif %}>
+                        <label class="form-check-label" for="notify_email">
+                            {{ _('Ontvang notificaties via e-mail') }}
                         </label>
-                        <div class="form-text">{{ _('Krijg een herinnering voordat het evenement begint') }}</div>
-                    </div>
-                </div>
-
-                <!-- Overlijdensberichten Notificaties -->
-                <div class="notification-section">
-                    <h3 class="section-title">{{ _('Overlijdensberichten') }}</h3>
-
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="notify_obituaries" 
-                               name="notify_obituaries" {% if current_user.notify_obituaries %}checked{% endif %}>
-                        <label class="form-check-label" for="notify_obituaries">
-                            {{ _('Ontvang meldingen over nieuwe overlijdensberichten') }}
-                        </label>
-                        <div class="form-text">{{ _('Word op de hoogte gebracht wanneer er een overlijdensbericht wordt geplaatst') }}</div>
-                    </div>
-
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="notify_funeral_updates" 
-                               name="notify_funeral_updates" {% if current_user.notify_funeral_updates %}checked{% endif %}>
-                        <label class="form-check-label" for="notify_funeral_updates">
-                            {{ _('Ontvang meldingen over wijzigingen in begrafenisdetails') }}
-                        </label>
-                        <div class="form-text">{{ _('Word gewaarschuwd bij wijzigingen in tijden of locaties van gebeden en begrafenissen') }}</div>
+                        <div class="form-text">{{ _('Ontvang belangrijke meldingen ook via e-mail') }}</div>
                     </div>
                 </div>
 
@@ -260,8 +145,8 @@
         </div>
     </div>
 </div>
-
 <script>
+//This part is kept as it might be needed for other features.
 function handleNotificationTypeChange() {
     const type = document.getElementById('mosque_notification_type').value;
     const mosqueSelection = document.getElementById('mosque-selection');

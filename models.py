@@ -13,6 +13,10 @@ class User(UserMixin, db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_login = db.Column(db.DateTime)
 
+    # Notification preferences
+    event_notifications = db.Column(db.Boolean, default=True)
+    email_notifications = db.Column(db.Boolean, default=True)
+
     # Mosque-specific fields
     mosque_name = db.Column(db.String(200))
     mosque_street = db.Column(db.String(100))
@@ -35,6 +39,7 @@ class User(UserMixin, db.Model):
 
     # Relationships
     events = db.relationship('Event', backref='organizer', lazy=True)
+    notifications = db.relationship('Notification', backref='user', lazy=True)
 
     def get_full_address(self):
         if self.user_type == 'mosque':
@@ -67,3 +72,15 @@ class EventRegistration(db.Model):
 
     # Add unique constraint to prevent duplicate registrations
     __table_args__ = (db.UniqueConstraint('event_id', 'user_id', name='_event_user_uc'),)
+
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=True)
+    message = db.Column(db.Text, nullable=False)
+    read = db.Column(db.Boolean, default=False)
+    sent_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relationships
+    user = db.relationship('User', backref='notifications')
+    event = db.relationship('Event')
