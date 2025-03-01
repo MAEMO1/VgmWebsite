@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('Nieuw Evenement - VGM') }}{% endblock %}
+{% block title %}Nieuw Evenement - Mosque Management{% endblock %}
 
 {% block styles %}
 <style>
@@ -89,17 +89,6 @@
     padding-left: 0.5rem;
 }
 
-.event-type-selector {
-    margin-bottom: 1.5rem;
-    padding: 1rem;
-    background: var(--background-light);
-    border-radius: var(--radius-sm);
-}
-
-.event-type-selector .form-check {
-    margin-bottom: 0.5rem;
-}
-
 .btn {
     padding: 0.875rem 1.75rem;
     font-weight: 500;
@@ -156,101 +145,63 @@
 <div class="container">
     <div class="card">
         <div class="card-header">
-            <h2>{{ _('Nieuw Evenement Aanmaken') }}</h2>
+            <h2>Nieuw Evenement Aanmaken</h2>
         </div>
         <div class="card-body">
             <form method="POST" enctype="multipart/form-data">
-                <div class="event-type-selector mb-3">
-                    <label class="form-label">{{ _('Type Evenement') }}</label>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="event_type" id="type_individual" value="individual" checked>
-                        <label class="form-check-label" for="type_individual">
-                            {{ _('Individueel Moskee Evenement') }}
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="event_type" id="type_collaboration" value="collaboration">
-                        <label class="form-check-label" for="type_collaboration">
-                            {{ _('Samenwerkingsevenement') }}
-                        </label>
-                    </div>
-                    {% if current_user.is_admin %}
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="event_type" id="type_vgm" value="vgm">
-                        <label class="form-check-label" for="type_vgm">
-                            {{ _('VGM Evenement') }}
-                        </label>
-                    </div>
-                    {% endif %}
-                </div>
-
                 <div class="mb-3">
-                    <label for="title" class="form-label">{{ _('Titel') }}</label>
+                    <label for="title" class="form-label">Titel</label>
                     <input type="text" class="form-control" id="title" name="title" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="description" class="form-label">{{ _('Beschrijving') }}</label>
+                    <label for="description" class="form-label">Beschrijving</label>
                     <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
                 </div>
 
                 <div class="mb-3">
-                    <label for="date" class="form-label">{{ _('Datum en Tijd') }}</label>
+                    <label for="date" class="form-label">Datum en Tijd</label>
                     <input type="datetime-local" class="form-control" id="date" name="date" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="location" class="form-label">{{ _('Locatie') }}</label>
+                    <label for="location" class="form-label">Locatie</label>
                     <input type="text" class="form-control" id="location" name="location" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="max_participants" class="form-label">{{ _('Maximum Aantal Deelnemers') }} ({{ _('optioneel') }})</label>
+                    <label for="flyer" class="form-label">Flyer (optioneel)</label>
+                    <input type="file" class="form-control" id="flyer" name="flyer" accept="image/*">
+                    <div class="form-text">Upload een afbeelding voor de evenement flyer (PNG, JPG of GIF)</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="max_participants" class="form-label">Maximum Aantal Deelnemers (optioneel)</label>
                     <input type="number" class="form-control" id="max_participants" name="max_participants" min="1">
                 </div>
 
                 <div class="mb-3 form-check">
                     <input type="checkbox" class="form-check-input" id="registration_required" name="registration_required">
-                    <label class="form-check-label" for="registration_required">{{ _('Registratie Vereist') }}</label>
+                    <label class="form-check-label" for="registration_required">Registratie Vereist</label>
                 </div>
 
-                <!-- Recurrence Options -->
                 <div class="mb-3">
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="is_recurring" name="is_recurring">
-                        <label class="form-check-label" for="is_recurring">{{ _('Herhalend Evenement') }}</label>
-                    </div>
-
-                    <div id="recurrence_options" class="mt-3" style="display: none;">
-                        <div class="mb-3">
-                            <label for="recurrence_type" class="form-label">{{ _('Herhaling Type') }}</label>
-                            <select class="form-control" id="recurrence_type" name="recurrence_type">
-                                <option value="daily">{{ _('Dagelijks') }}</option>
-                                <option value="weekly">{{ _('Wekelijks') }}</option>
-                                <option value="monthly">{{ _('Maandelijks') }}</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="recurrence_end_date" class="form-label">{{ _('Einddatum Herhaling') }}</label>
-                            <input type="date" class="form-control" id="recurrence_end_date" name="recurrence_end_date">
-                        </div>
-                    </div>
+                    <label for="reminder_before" class="form-label">Stuur Herinnering Voor (minuten)</label>
+                    <select class="form-control" id="reminder_before" name="reminder_before">
+                        <option value="">Geen herinnering</option>
+                        <option value="30">30 minuten</option>
+                        <option value="60">1 uur</option>
+                        <option value="1440">1 dag</option>
+                        <option value="10080">1 week</option>
+                    </select>
                 </div>
 
                 <div class="d-flex gap-3">
-                    <button type="submit" class="btn btn-primary">{{ _('Evenement Aanmaken') }}</button>
-                    <a href="{{ url_for('events.event_list') }}" class="btn btn-secondary">{{ _('Annuleren') }}</a>
+                    <button type="submit" class="btn btn-primary">Evenement Aanmaken</button>
+                    <a href="{{ url_for('events.event_list') }}" class="btn btn-secondary">Annuleren</a>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
-<script>
-document.getElementById('is_recurring').addEventListener('change', function() {
-    const recurrenceOptions = document.getElementById('recurrence_options');
-    recurrenceOptions.style.display = this.checked ? 'block' : 'none';
-});
-</script>
 {% endblock %}

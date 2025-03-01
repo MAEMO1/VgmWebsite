@@ -3,5 +3,5 @@ from flask import Blueprint
 # Create main routes blueprint
 routes = Blueprint('main', __name__)
 
-# Import routes
-from .routes import routes  # noqa: F401
+# Import route handlers after creating the blueprint
+from .routes import *  # noqa: F403, F401

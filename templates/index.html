@@ -95,9 +95,8 @@
 }
 
 .hero-btn-secondary {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--accent-color);
     color: white;
-    border: 2px solid rgba(255, 255, 255, 0.5);
 }
 
 @keyframes patternMove {
@@ -131,6 +130,286 @@
         width: 100%;
     }
 }
+
+.card {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    background: white;
+    overflow: hidden;
+}
+
+.card-header {
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+    padding: 1.25rem 1.5rem;
+}
+
+.card-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.countdown-timer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.timer-block {
+    background: var(--background-light);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    text-align: center;
+    min-width: 90px;
+}
+
+.timer-block .number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.timer-block .label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.news-card {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    height: 100%;
+}
+
+.news-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.news-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.news-content {
+    padding: 1.25rem;
+}
+
+.news-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+}
+
+.news-meta {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.news-excerpt {
+    color: var(--text-primary);
+    margin-bottom: 1.25rem;
+    line-height: 1.6;
+}
+
+.prayer-times {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.prayer-time {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--background-light);
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.prayer-time:hover {
+    background: #EDF0F3;
+}
+
+.prayer-name {
+    font-weight: 500;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.prayer-time-badge {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+@media (max-width: 992px) {
+    .hero-section {
+        padding: 2rem 1.5rem;
+    }
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 1.5rem;
+    }
+    .hero-section h1 {
+        font-size: 1.75rem;
+    }
+    .countdown-timer {
+        flex-wrap: wrap;
+    }
+    .timer-block {
+        min-width: 80px;
+    }
+}
+
+/* Add animation for progress updates */
+@keyframes progressPulse {
+    0% { opacity: 0.7; }
+    50% { opacity: 1; }
+    100% { opacity: 0.7; }
+}
+
+.progress-updated {
+    animation: progressPulse 1s ease-in-out;
+}
+
+/* Campaign Section Styles - Updated */
+.campaigns-section {
+    padding: 4rem 0;
+    background-color: var(--background-light);
+    margin-bottom: 4rem;  /* Increased spacing */
+}
+
+.projects-widget {
+    background: white;
+    border-radius: 1.25rem;
+    padding: 2rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.widget-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.projects-list {
+    margin-bottom: 2rem;
+}
+
+.project-item {
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.project-item:last-child {
+    border-bottom: none;
+}
+
+.project-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.project-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.project-progress {
+    width: 100%;
+}
+
+.progress {
+    height: 8px;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    border-radius: 1rem;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.progress-amount {
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+.widget-footer {
+    text-align: center;
+    padding-top: 1rem;
+    margin-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.widget-footer .btn {
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.widget-footer .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 90, 135, 0.2);
+}
+
+@media (max-width: 768px) {
+    .projects-widget {
+        padding: 1.5rem;
+    }
+
+    .widget-title {
+        font-size: 1.5rem;
+    }
+
+    .project-item {
+        padding: 1rem;
+    }
+}
 </style>
 {% endblock %}
 
@@ -143,33 +422,166 @@
             <a href="{{ url_for('main.mosques') }}" class="hero-btn hero-btn-primary">
                 <i class="fas fa-mosque me-2"></i>{{ _('Find a Mosque') }}
             </a>
-            <a href="{{ url_for('main.donate_vgm') }}" class="hero-btn hero-btn-secondary">
-                <i class="fas fa-heart me-2"></i>{{ _('Support VGM') }}
+            <a href="{{ url_for('donations.donate_vgm') }}" class="hero-btn hero-btn-secondary">
+                <i class="fas fa-hand-holding-heart me-2"></i>{{ _('Support VGM') }}
             </a>
         </div>
     </div>
 </section>
+
+<!-- Active Campaigns Section -->
+{% if campaigns %}
+<section class="campaigns-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="projects-widget">
+                    <h2 class="widget-title">{{ _('Lopende Projecten') }}</h2>
+                    <div class="projects-list">
+                        {% for campaign in campaigns %}
+                        <div class="project-item">
+                            <div class="project-info">
+                                <h3 class="project-title">{{ campaign.title }}</h3>
+                                <div class="project-progress">
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar"
+                                             style="width: {{ campaign.calculate_progress() }}%"
+                                             aria-valuenow="{{ campaign.calculate_progress() }}"
+                                             aria-valuemin="0"
+                                             aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                    <div class="progress-details">
+                                        <span class="progress-amount">€{{ "%.2f"|format(campaign.current_amount) }}</span>
+                                        <span class="progress-percentage">{{ "%.1f"|format(campaign.calculate_progress()) }}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="widget-footer">
+                        <a href="{{ url_for('donations.donate_vgm') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-heart me-2"></i>{{ _('Steun een Project') }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
 
 <div class="container">
     <div class="row">
         <div class="col-lg-8">
             <div class="card mb-4">
                 <div class="card-header">
-                    <h3>{{ _('Latest News') }}</h3>
+                    <h3>{{ _('Countdown to Ramadan 1446/2025') }}</h3>
                 </div>
                 <div class="card-body">
-                    <p class="text-center text-muted my-4">{{ _('Coming soon') }}</p>
+                    <div id="ramadanCountdown">
+                        <div class="countdown-timer">
+                            <div class="timer-block">
+                                <span class="number" id="days">00</span>
+                                <span class="label">{{ _('Days') }}</span>
+                            </div>
+                            <div class="timer-block">
+                                <span class="number" id="hours">00</span>
+                                <span class="label">{{ _('Hours') }}</span>
+                            </div>
+                            <div class="timer-block">
+                                <span class="number" id="minutes">00</span>
+                                <span class="label">{{ _('Minutes') }}</span>
+                            </div>
+                            <div class="timer-block">
+                                <span class="number" id="seconds">00</span>
+                                <span class="label">{{ _('Seconds') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3>{{ _('Latest News') }}</h3>
+                    <a href="{{ url_for('blog.index') }}" class="btn btn-sm btn-outline-primary">
+                        {{ _('All News') }} <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row row-cols-1 row-cols-md-2 g-4">
+                        {% for post in latest_posts %}
+                        <div class="col">
+                            <div class="news-card h-100">
+                                {% if post.image_url %}
+                                <img src="{{ post.image_url }}" class="news-image" alt="{{ post.title }}">
+                                {% endif %}
+                                <div class="news-content">
+                                    <h4 class="news-title">{{ post.title }}</h4>
+                                    <p class="news-meta">
+                                        <i class="far fa-calendar-alt me-1"></i>{{ post.created_at.strftime('%d %b %Y') }}
+                                    </p>
+                                    <p class="news-excerpt">{{ post.excerpt or post.content[:100] }}...</p>
+                                    <a href="{{ url_for('blog.view', slug=post.slug) }}" class="btn btn-link p-0">
+                                        {{ _('Read More') }} <i class="fas fa-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>{{ _('Next VGM Event') }}</h3>
+                </div>
+                <div class="card-body">
+                    {% if next_event %}
+                    <div class="event-highlight">
+                        <h4 class="mb-3">{{ next_event.title }}</h4>
+                        <div class="event-meta mb-3">
+                            <p class="mb-2">
+                                <i class="far fa-calendar me-2"></i>{{ next_event.date.strftime('%d %B %Y') }}
+                            </p>
+                            <p class="mb-0">
+                                <i class="far fa-clock me-2"></i>{{ next_event.date.strftime('%H:%M') }}
+                            </p>
+                        </div>
+                        <p class="event-description">{{ next_event.description }}</p>
+                        <a href="{{ url_for('events.event_detail', event_id=next_event.id) }}" class="btn btn-primary w-100">
+                            {{ _('More Info') }} <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                    {% else %}
+                    <p class="text-center text-muted my-4">{{ _('No upcoming events scheduled') }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
             <div class="card">
                 <div class="card-header">
                     <h3>{{ _('Prayer Times') }}</h3>
                 </div>
                 <div class="card-body">
-                    <p class="text-center text-muted my-4">{{ _('Coming soon') }}</p>
+                    <div class="prayer-times">
+                        {% for prayer in prayer_times %}
+                        <div class="prayer-time">
+                            <span class="prayer-name">
+                                <i class="fas fa-sun"></i>
+                                {{ prayer.prayer_name }}
+                            </span>
+                            <span class="prayer-time-badge">
+                                {{ prayer.time.strftime('%H:%M') }}
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>

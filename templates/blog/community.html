@@ -4,7 +4,7 @@
 
 {% block styles %}
 <style>
-:root {
+::root {
     --primary-color: #005A87;
     --secondary-color: #41B7AC;
     --accent-color: #FF4154;
@@ -12,21 +12,85 @@
     --text-primary: #2C3E50;
     --text-secondary: #6C757D;
     --border-color: #E9ECEF;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --transition: all 0.3s ease;
 }
 
 .community-container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 4rem 1rem;
+    padding: 2rem 1rem;
+}
+
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.video-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+
+.video-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+.video-thumbnail {
+    position: relative;
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+    background: var(--background-light);
+}
+
+.video-thumbnail iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.video-content {
+    padding: 1.5rem;
+}
+
+.video-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.video-excerpt {
+    color: var(--text-secondary);
+    font-size: 0.925rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.video-meta {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 .section-header {
-    margin-bottom: 3rem;
-    text-align: center;
+    margin-bottom: 2rem;
 }
 
 .section-title {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 700;
     color: var(--text-primary);
     margin-bottom: 1rem;
@@ -36,61 +100,68 @@
     color: var(--text-secondary);
     font-size: 1.1rem;
     max-width: 800px;
-    margin: 0 auto;
-    line-height: 1.6;
-}
-
-.content-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
-}
-
-.content-card {
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
-}
-
-.content-card:hover {
-    transform: translateY(-4px);
-}
-
-.card-image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-
-.card-content {
-    padding: 1.5rem;
-}
-
-.card-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 0.75rem;
-}
-
-.card-description {
-    color: var(--text-secondary);
-    font-size: 0.925rem;
-    line-height: 1.6;
-    margin-bottom: 1rem;
 }
 
 @media (max-width: 768px) {
-    .community-container {
-        padding: 2rem 1rem;
+    .video-grid {
+        grid-template-columns: 1fr;
     }
+}
 
-    .section-title {
-        font-size: 2rem;
-    }
+/* Add styles for video upload section */
+.upload-section {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.upload-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.upload-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-label {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.form-control {
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.upload-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.875rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.upload-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
 }
 </style>
 {% endblock %}
@@ -100,44 +171,67 @@
     <header class="section-header">
         <h1 class="section-title">{{ _('VGM Gemeenschap') }}</h1>
         <p class="section-description">
-            {{ _('Ontdek inspirerende verhalen en bouw mee aan een sterkere moslimgemeenschap in Gent') }}
+            {{ _('Ontdek inspirerende verhalen en leermomenten uit onze gemeenschap door middel van video\'s en documentaires.') }}
         </p>
     </header>
 
-    <div class="content-grid">
-        <!-- Featured Stories -->
-        <div class="content-card">
-            <img src="{{ url_for('static', filename='images/community/events.jpg') }}" alt="Gemeenschapsactiviteiten" class="card-image">
-            <div class="card-content">
-                <h2 class="card-title">{{ _('Gemeenschapsactiviteiten') }}</h2>
-                <p class="card-description">
-                    {{ _('Bekijk foto\'s en verslagen van onze recente activiteiten en evenementen die de gemeenschap samenbrengen.') }}
-                </p>
-                <a href="#" class="btn btn-primary">{{ _('Bekijk Activiteiten') }}</a>
+    {% if current_user.is_authenticated and current_user.is_admin %}
+    <div class="admin-controls mb-4">
+        <a href="{{ url_for('blog.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>{{ _('Nieuwe Video Toevoegen') }}
+        </a>
+    </div>
+    <div class="upload-section">
+        <h2 class="upload-title">{{ _('Video Toevoegen') }}</h2>
+        <form method="POST" class="upload-form">
+            {{ form.csrf_token }}
+            <div class="form-group">
+                <label for="title" class="form-label">{{ _('Titel') }}</label>
+                <input type="text" id="title" name="title" class="form-control" required>
             </div>
-        </div>
+            <div class="form-group">
+                <label for="video_url" class="form-label">{{ _('Video URL (YouTube/Vimeo)') }}</label>
+                <input type="url" id="video_url" name="video_url" class="form-control" required 
+                       placeholder="https://youtube.com/watch?v=... of https://vimeo.com/...">
+            </div>
+            <div class="form-group">
+                <label for="description" class="form-label">{{ _('Beschrijving') }}</label>
+                <textarea id="description" name="description" class="form-control" rows="4"></textarea>
+            </div>
+            <button type="submit" class="upload-btn">
+                <i class="fas fa-upload me-2"></i>{{ _('Video Toevoegen') }}
+            </button>
+        </form>
+    </div>
+    {% endif %}
 
-        <div class="content-card">
-            <img src="{{ url_for('static', filename='images/community/education.jpg') }}" alt="Educatieve Programma's" class="card-image">
-            <div class="card-content">
-                <h2 class="card-title">{{ _('Educatieve Programma\'s') }}</h2>
-                <p class="card-description">
-                    {{ _('Ontdek onze educatieve programma\'s en workshops voor jong en oud.') }}
-                </p>
-                <a href="#" class="btn btn-primary">{{ _('Meer Informatie') }}</a>
+    <div class="video-grid">
+        {% for post in posts %}
+        <article class="video-card">
+            <div class="video-thumbnail">
+                {% if post.video_platform == 'youtube' %}
+                <iframe src="https://www.youtube.com/embed/{{ post.video_url.split('v=')[-1] }}" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen></iframe>
+                {% elif post.video_platform == 'vimeo' %}
+                <iframe src="https://player.vimeo.com/video/{{ post.video_url.split('/')[-1] }}" 
+                        allow="autoplay; fullscreen; picture-in-picture" 
+                        allowfullscreen></iframe>
+                {% endif %}
             </div>
-        </div>
-
-        <div class="content-card">
-            <img src="{{ url_for('static', filename='images/community/volunteer.jpg') }}" alt="Vrijwilligerswerk" class="card-image">
-            <div class="card-content">
-                <h2 class="card-title">{{ _('Vrijwilligerswerk') }}</h2>
-                <p class="card-description">
-                    {{ _('Help mee aan het versterken van onze gemeenschap door vrijwilliger te worden.') }}
-                </p>
-                <a href="#" class="btn btn-primary">{{ _('Word Vrijwilliger') }}</a>
+            <div class="video-content">
+                <h2 class="video-title">{{ post.title }}</h2>
+                <p class="video-excerpt">{{ post.excerpt or post.content[:150] + '...' }}</p>
+                <div class="video-meta">
+                    <span><i class="fas fa-user me-1"></i>{{ post.author.username }}</span>
+                    <span><i class="far fa-calendar me-1"></i>{{ post.created_at.strftime('%d-%m-%Y') }}</span>
+                </div>
+                <a href="{{ url_for('blog.view', slug=post.slug) }}" class="btn btn-outline-primary mt-3">
+                    {{ _('Lees Meer') }}
+                </a>
             </div>
-        </div>
+        </article>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}
