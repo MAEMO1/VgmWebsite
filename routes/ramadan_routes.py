@@ -60,11 +60,24 @@ def contact():
 
 @ramadan.route('/mosques')
 def mosques():
-    """Mosques overview page"""
-    mosque_users = User.query.filter_by(user_type='mosque', is_verified=True).all()
-    return render_template('ramadan/mosques.html', 
-                         mosques=mosque_users,
-                         google_maps_api_key=os.environ.get('GOOGLE_MAPS_API_KEY'))
+    """Mosques overview page with proper error handling"""
+    try:
+        logger.debug("Starting mosques route handler")
+        mosque_users = User.query.filter_by(user_type='mosque').all()
+        logger.info(f"Found {len(mosque_users)} mosques")
+
+        context = {
+            'mosques': mosque_users,
+            'google_maps_api_key': os.environ.get('GOOGLE_MAPS_API_KEY')
+        }
+
+        logger.debug("Rendering mosques template")
+        return render_template('ramadan/mosques.html', **context)
+
+    except Exception as e:
+        logger.error(f"Error in mosques route: {e}", exc_info=True)
+        flash(_('Er is een fout opgetreden bij het laden van de moskeeën.'), 'error')
+        return render_template('ramadan/mosques.html', mosques=[])
 
 @ramadan.route('/prayer_times')
 def prayer_times():
