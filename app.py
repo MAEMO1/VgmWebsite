@@ -48,9 +48,11 @@ def create_app():
     with app.app_context():
         # Import blueprints
         from routes import routes as main_routes
+        from routes.event_routes import events as event_routes
 
         # Register blueprints
         app.register_blueprint(main_routes)
+        app.register_blueprint(event_routes)
 
         # Create database tables if they don't exist
         db.create_all()

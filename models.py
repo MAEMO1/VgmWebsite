@@ -33,7 +33,36 @@ class User(UserMixin, db.Model):
     languages = db.Column(db.String(200))
     accessibility_features = db.Column(db.Text)
 
+    # Relationships
+    events = db.relationship('Event', backref='organizer', lazy=True)
+
     def get_full_address(self):
         if self.user_type == 'mosque':
             return f"{self.mosque_street} {self.mosque_number}, {self.mosque_postal} {self.mosque_city}"
         return None
+
+class Event(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    date = db.Column(db.DateTime, nullable=False)
+    location = db.Column(db.String(200))
+    organizer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    max_participants = db.Column(db.Integer)
+    registration_required = db.Column(db.Boolean, default=False)
+    is_collaboration = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationship for event registrations
+    registrations = db.relationship('EventRegistration', backref='event', lazy=True)
+
+class EventRegistration(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    registered_at = db.Column(db.DateTime, default=datetime.utcnow)
+    status = db.Column(db.String(20), default='registered')  # registered, cancelled, attended
+
+    # Add unique constraint to prevent duplicate registrations
+    __table_args__ = (db.UniqueConstraint('event_id', 'user_id', name='_event_user_uc'),)
