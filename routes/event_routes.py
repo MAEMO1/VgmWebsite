@@ -46,6 +46,10 @@ def event_detail(event_id):
 @login_required
 def create_event():
     if request.method == 'POST':
+        # Determine event type based on is_collaboration
+        is_collaboration = bool(request.form.get('is_collaboration'))
+        event_type = 'collaboration' if is_collaboration else 'individual'
+
         event = Event(
             title=request.form['title'],
             description=request.form['description'],
@@ -53,6 +57,8 @@ def create_event():
             location=request.form['location'],
             max_participants=int(request.form['max_participants']) if request.form['max_participants'] else None,
             registration_required=bool(request.form.get('registration_required')),
+            is_collaboration=is_collaboration,
+            event_type=event_type,
             organizer_id=current_user.id
         )
 
@@ -67,7 +73,6 @@ def create_event():
                 flyer_path = os.path.join(upload_folder, filename)
                 flyer.save(flyer_path)
                 event.flyer_url = os.path.join('uploads', 'flyers', filename)
-
 
         db.session.add(event)
         db.session.commit()

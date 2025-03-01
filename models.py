@@ -50,6 +50,7 @@ class Event(db.Model):
     organizer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     max_participants = db.Column(db.Integer)
     registration_required = db.Column(db.Boolean, default=False)
+    event_type = db.Column(db.String(20), nullable=False, default='individual')  # 'individual', 'vgm', or 'collaboration'
     is_collaboration = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
