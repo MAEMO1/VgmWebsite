@@ -40,23 +40,20 @@ def create_app():
         from models import User
         return User.query.get(int(user_id))
 
-    # Test route
-    @app.route('/test')
-    def test():
-        return 'De applicatie werkt!'
-
     with app.app_context():
         # Import routes
         from routes.main_routes import main
         from routes.event_routes import events
         from routes.auth_routes import auth
         from routes.blog_routes import blog
+        from routes.donation_routes import donations
 
         # Register blueprints
         app.register_blueprint(main)
         app.register_blueprint(events)
         app.register_blueprint(auth)
         app.register_blueprint(blog)
+        app.register_blueprint(donations)
 
         # Create database tables if they don't exist
         db.create_all()
