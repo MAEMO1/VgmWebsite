@@ -322,6 +322,11 @@
                         <a class="nav-link" href="{{ url_for('main.mosques') }}">{{ _('Moskeeën') }}</a>
                     </li>
 
+                    <!-- Events -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('events.event_list') }}">{{ _('Evenementen') }}</a>
+                    </li>
+
                     {% if current_user.is_authenticated %}
                     <!-- Account Dropdown when logged in -->
                     <li class="nav-item dropdown">
