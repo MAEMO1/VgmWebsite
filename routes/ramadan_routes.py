@@ -76,7 +76,7 @@ def iftar_map():
     except Exception as e:
         logger.error(f"Error in iftar_map route: {e}", exc_info=True)
         flash(_('Er is een fout opgetreden bij het laden van de iftar kaart.'), 'error')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('ramadan.index'))
 
 @ramadan.route('/')
 def index():
@@ -98,4 +98,4 @@ def index():
     except Exception as e:
         logger.error(f"Error in index route: {e}", exc_info=True)
         flash(_('Er is een fout opgetreden bij het laden van de Ramadan pagina.'), 'error')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('ramadan.index'))
