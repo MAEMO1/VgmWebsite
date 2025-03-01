@@ -1,11 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('Events - VGM') }}{% endblock %}
+{% block title %}{{ _('Evenementen - VGM') }}{% endblock %}
 
 {% block styles %}
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
 <style>
-/* Custom Properties */
 :root {
     --primary-color: #005A87;
     --secondary-color: #41B7AC;
@@ -21,13 +20,11 @@
     --transition: all 0.3s ease;
 }
 
-/* Page Layout */
 .container {
     max-width: 1280px;
     padding: 2rem 1rem;
 }
 
-/* Filter Styles */
 .calendar-filters {
     display: flex;
     gap: 1.5rem;
@@ -66,7 +63,6 @@
     color: var(--text-secondary);
 }
 
-/* Calendar Styles */
 #calendar {
     background: white;
     padding: 2.5rem;
@@ -126,7 +122,6 @@
     background-color: var(--primary-color) !important;
 }
 
-/* Calendar Legend */
 .calendar-legend {
     display: flex;
     gap: 3rem;
@@ -174,7 +169,6 @@
 .legend-collab { background-color: var(--secondary-color); }
 .legend-individual { background-color: var(--primary-color); }
 
-/* Event Cards */
 .section {
     margin-bottom: 5rem;
 }
@@ -228,6 +222,15 @@
     color: var(--text-secondary);
     margin-bottom: 1.75rem;
     line-height: 1.6;
+}
+
+.event-details {
+    font-size: 0.925rem;
+    color: var(--text-secondary);
+}
+
+.event-details > div {
+    margin-bottom: 0.5rem;
 }
 
 .btn {
@@ -343,11 +346,10 @@
     </div>
 
     <!-- Event sections -->
-    {% if vgm_events %}
     <div class="section">
-        <h2 class="section-title">VGM</h2>
+        <h2 class="section-title">{{ _('Aankomende Evenementen') }}</h2>
         <div class="row">
-            {% for event in vgm_events %}
+            {% for event in events %}
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="event-card">
                     <div class="event-content">
@@ -357,6 +359,12 @@
                             <span><i class="far fa-clock me-2"></i>{{ event.date.strftime('%H:%M') }}</span>
                         </div>
                         <p class="event-description">{{ event.description[:150] }}...</p>
+                        <div class="event-details mb-3">
+                            <div><i class="fas fa-map-marker-alt me-2"></i>{{ event.location }}</div>
+                            {% if event.max_participants %}
+                            <div><i class="fas fa-users me-2"></i>{{ _('Max deelnemers: ') }}{{ event.max_participants }}</div>
+                            {% endif %}
+                        </div>
                         <a href="{{ url_for('events.event_detail', event_id=event.id) }}" class="btn btn-primary">
                             {{ _('Bekijk Details') }}
                         </a>
@@ -364,64 +372,21 @@
                 </div>
             </div>
             {% endfor %}
-        </div>
-    </div>
-    {% endif %}
 
-    {% if collab_events %}
-    <div class="section">
-        <h2 class="section-title">Co-Moskee</h2>
-        <div class="row">
-            {% for event in collab_events %}
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="event-card">
-                    <div class="event-content">
-                        <h3 class="event-title">{{ event.title }}</h3>
-                        <div class="event-meta">
-                            <span><i class="far fa-calendar me-2"></i>{{ event.date.strftime('%d %B %Y') }}</span>
-                            <span><i class="far fa-clock me-2"></i>{{ event.date.strftime('%H:%M') }}</span>
-                        </div>
-                        <p class="event-description">{{ event.description[:150] }}...</p>
-                        <a href="{{ url_for('events.event_detail', event_id=event.id) }}" class="btn btn-primary">
-                            {{ _('Bekijk Details') }}
-                        </a>
-                    </div>
+            {% if not events %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    {{ _('Er zijn momenteel geen aankomende evenementen.') }}
                 </div>
             </div>
-            {% endfor %}
+            {% endif %}
         </div>
     </div>
-    {% endif %}
-
-    {% if individual_events %}
-    <div class="section">
-        <h2 class="section-title">Moskee</h2>
-        <div class="row">
-            {% for event in individual_events %}
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="event-card">
-                    <div class="event-content">
-                        <h3 class="event-title">{{ event.title }}</h3>
-                        <div class="event-meta">
-                            <span><i class="far fa-calendar me-2"></i>{{ event.date.strftime('%d %B %Y') }}</span>
-                            <span><i class="far fa-clock me-2"></i>{{ event.date.strftime('%H:%M') }}</span>
-                        </div>
-                        <p class="event-description">{{ event.description[:150] }}...</p>
-                        <a href="{{ url_for('events.event_detail', event_id=event.id) }}" class="btn btn-primary">
-                            {{ _('Bekijk Details') }}
-                        </a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
 
     {% if current_user.is_authenticated %}
     <div class="floating-action-button">
         <a href="{{ url_for('events.create_event') }}" class="btn btn-primary btn-lg">
-            <i class="fas fa-plus"></i>{{ _('Evenement Aanmaken') }}
+            <i class="fas fa-plus me-2"></i>{{ _('Evenement Aanmaken') }}
         </a>
     </div>
     {% endif %}
