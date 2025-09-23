@@ -31,11 +31,11 @@ jobs:
       - name: Build project
         run: cd frontend && npm run build
       
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+      
       - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.ORG_ID }}
-          vercel-project-id: ${{ secrets.PROJECT_ID }}
-          working-directory: ./frontend
-          vercel-args: '--prod'
+        run: cd frontend && vercel --prod --token ${{ secrets.VERCEL_TOKEN }} --yes
+        env:
+          VERCEL_ORG_ID: ${{ secrets.ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.PROJECT_ID }}
