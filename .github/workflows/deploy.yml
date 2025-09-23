@@ -1,11 +1,13 @@
-name: Deploy to Vercel
+name: Build and Test
 
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     
     steps:
@@ -29,10 +31,9 @@ jobs:
       - name: Build project
         run: cd frontend && npm run build
       
-      - name: Install Vercel CLI
-        run: npm install -g vercel@latest
-      
-      - name: Deploy to Vercel
-        run: cd frontend && vercel --prod --yes
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-files
+          path: frontend/.next/
+          retention-days: 1
