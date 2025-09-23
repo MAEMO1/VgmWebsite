@@ -6,7 +6,12 @@ const locales = ['nl', 'en', 'fr', 'tr', 'ar', 'ps'];
 
 export default getRequestConfig(async ({ requestLocale }) => {
   // Validate that the incoming `locale` parameter is valid
-  if (!requestLocale || !locales.includes(requestLocale as any)) notFound();
+  if (!requestLocale || !locales.includes(requestLocale as any)) {
+    return {
+      messages: (await import(`../messages/nl.json`)).default,
+      timeZone: 'Europe/Brussels',
+    };
+  }
 
   return {
     messages: (await import(`../messages/${requestLocale}.json`)).default,
