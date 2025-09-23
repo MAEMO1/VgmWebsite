@@ -152,7 +152,7 @@
 <script>
 let map;
 let markers = [];
-let events = {{ events|tojson|safe }};
+let events = {{ events_json|tojson|safe }};
 
 function initMap() {
     // Center on Belgium
@@ -227,8 +227,14 @@ document.getElementById('filterForm').addEventListener('submit', function(e) {
     window.location.href = `${window.location.pathname}?${params.toString()}`;
 });
 
-// Debug Mode
+// Debug Mode function
 function debugIftarKaart() {
+    // Check if debug panel already exists
+    if (document.getElementById('debug-panel')) {
+        document.getElementById('debug-panel').remove();
+        return;
+    }
+
     const debugEl = document.createElement('div');
     debugEl.id = 'debug-panel';
     debugEl.style.cssText = 'position:fixed;bottom:10px;right:10px;padding:10px;' +
@@ -237,11 +243,16 @@ function debugIftarKaart() {
 
     const updateDebug = async () => {
         try {
-            const response = await fetch('/api/debug-iftar');
+            debugEl.innerHTML = '<p>Loading debug data...</p>';
+            const response = await fetch('/ramadan/api/debug-iftar');
             const data = await response.json();
             debugEl.innerHTML = `
                 <h4>Debug Info</h4>
                 <pre>${JSON.stringify(data, null, 2)}</pre>
+                <button onclick="document.getElementById('debug-panel').remove()" 
+                        style="background:#ff4154;color:white;border:none;padding:5px 10px;border-radius:4px;margin-top:10px;">
+                    Close
+                </button>
             `;
         } catch (e) {
             debugEl.innerHTML = `<p>Error: ${e.message}</p>`;
@@ -250,16 +261,22 @@ function debugIftarKaart() {
 
     document.body.appendChild(debugEl);
     updateDebug();
-    setInterval(updateDebug, 5000);
-}
-
-// Add debug button in development
-if (window.location.hostname === 'localhost' || window.location.hostname.includes('repl.co')) {
-    const debugBtn = document.createElement('button');
-    debugBtn.textContent = 'Debug Mode';
-    debugBtn.style.cssText = 'position:fixed;top:10px;right:10px;z-index:9999;';
-    debugBtn.onclick = debugIftarKaart;
-    document.body.appendChild(debugBtn);
 }
 </script>
+
+{% if current_user.is_authenticated and current_user.is_admin %}
+<script>
+// Add Debug button for admins
+document.addEventListener('DOMContentLoaded', () => {
+    const debugBtn = document.createElement('button');
+    debugBtn.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'position-fixed');
+    debugBtn.style.bottom = '20px';
+    debugBtn.style.left = '20px';
+    debugBtn.style.zIndex = '1000';
+    debugBtn.innerHTML = '<i class="fas fa-bug me-1"></i> Debug';
+    debugBtn.addEventListener('click', debugIftarKaart);
+    document.body.appendChild(debugBtn);
+});
+</script>
+{% endif %}
 {% endblock %}

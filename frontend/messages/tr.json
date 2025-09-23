@@ -1,0 +1,138 @@
+{
+  "HomePage": {
+    "title": "VGM'ye Hoş Geldiniz",
+    "description": "Gent Camileri Derneği"
+  },
+  "Navigation": {
+    "home": "Ana Sayfa",
+    "mosques": "Camiler",
+    "events": "Etkinlikler",
+    "ramadan": "Ramazan",
+    "donations": "Bağışlar"
+  },
+  "Footer": {
+    "about": {
+      "title": "VGM Hakkında",
+      "description": "Gent Camileri Derneği, Gent'teki Müslüman topluluğu birbirine bağlar ve destekler."
+    },
+    "links": {
+      "privacy": "Gizlilik",
+      "terms": "Şartlar",
+      "contact": "İletişim"
+    },
+    "quickLinks": {
+      "title": "Hızlı Bağlantılar",
+      "mosques": "Camiler",
+      "events": "Etkinlikler",
+      "ramadan": "Ramazan"
+    },
+    "contact": {
+      "title": "İletişim",
+      "address": "Gent, Belçika",
+      "phone": "+32 9 123 45 67",
+      "email": "info@vgm.be"
+    },
+    "rights": "Tüm hakları saklıdır."
+  },
+  "Hero": {
+    "title": "VGM'ye Hoş Geldiniz",
+    "subtitle": "Gent Camileri Derneği, Gent'teki Müslüman topluluğu birbirine bağlar ve destekler.",
+    "cta": {
+      "mosques": "Camileri Görüntüle",
+      "events": "Etkinlikleri Görüntüle"
+    }
+  },
+  "Features": {
+    "title": "Özelliklerimiz",
+    "subtitle": "VGM'nin sizin için neler yapabileceğini keşfedin",
+    "mosqueDirectory": {
+      "title": "Cami Rehberi",
+      "description": "Gent'teki tüm camileri detaylı bilgiler ve konumlarla bulun."
+    },
+    "events": {
+      "title": "Etkinlikler",
+      "description": "Tüm İslami etkinlikler ve aktiviteler hakkında güncel kalın."
+    },
+    "donations": {
+      "title": "Bağışlar",
+      "description": "Yerel camilerinizi güvenli ve şeffaf bağışlarla destekleyin."
+    },
+    "notifications": {
+      "title": "Bildirimler",
+      "description": "E-posta ve uygulama aracılığıyla önemli güncellemeler ve hatırlatmalar alın."
+    },
+    "community": {
+      "title": "Topluluk",
+      "description": "Gent'teki Müslüman topluluğunun diğer üyeleriyle bağlantı kurun."
+    },
+    "multilingual": {
+      "title": "Çok Dilli",
+      "description": "Arapça ve Peştuca dahil 6 dilde mevcut, RTL desteği ile."
+    }
+  },
+  "Mosques": {
+    "title": "Camilerimiz",
+    "subtitle": "Gent'teki camileri keşfedin",
+    "mosque1": {
+      "name": "Gent Merkez Camii",
+      "description": "Kapsamlı tesislere sahip Gent'in en büyük camisi.",
+      "address": "Gent Merkez"
+    },
+    "mosque2": {
+      "name": "Al-Noor Camii",
+      "description": "Şehrin kalbinde sıcak ve misafirperver bir cami.",
+      "address": "Gent Doğu"
+    },
+    "mosque3": {
+      "name": "Masjid Al-Rahman",
+      "description": "Eğitim ve topluluk odaklı modern cami.",
+      "address": "Gent Güney"
+    },
+    "learnMore": "Daha Fazla Bilgi",
+    "viewAll": "Tüm Camileri Görüntüle"
+  },
+  "Events": {
+    "title": "Yaklaşan Etkinlikler",
+    "subtitle": "Tüm aktiviteler hakkında güncel kalın",
+    "event1": {
+      "title": "Cuma Namazı",
+      "description": "Hollandaca hutbe ile haftalık Cuma namazı.",
+      "date": "Cuma",
+      "time": "13:00",
+      "location": "Gent Merkez Camii"
+    },
+    "event2": {
+      "title": "Kuran Çalışması",
+      "description": "Tüm yaşlar için haftalık Kuran çalışması.",
+      "date": "Pazar",
+      "time": "10:00",
+      "location": "Al-Noor Camii"
+    },
+    "event3": {
+      "title": "Topluluk Toplantısı",
+      "description": "Topluluk aktiviteleri için aylık toplantı.",
+      "date": "İlk Cumartesi",
+      "time": "15:00",
+      "location": "Masjid Al-Rahman"
+    },
+    "learnMore": "Daha Fazla Bilgi",
+    "viewAll": "Tüm Etkinlikleri Görüntüle"
+  },
+  "RamadanPage": {
+    "title": "Ramazan 2025",
+    "description": "Gent'teki tüm Ramazan aktivitelerini ve iftar yerlerini keşfedin."
+  },
+  "IftarMap": {
+    "map": {
+      "title": "İftar Haritası"
+    },
+    "events": {
+      "title": "Planlanan İftarlar",
+      "familyFriendly": "Aile Dostu",
+      "noEvents": "Bu dönem için iftar bulunamadı."
+    },
+    "prayerTimes": {
+      "title": "Bugünün Namaz Vakitleri"
+    }
+  }
+}

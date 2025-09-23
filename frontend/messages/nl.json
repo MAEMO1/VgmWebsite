@@ -1,0 +1,138 @@
+{
+  "HomePage": {
+    "title": "Welkom bij VGM",
+    "description": "Vereniging van Gentse Moskeeën"
+  },
+  "Navigation": {
+    "home": "Home",
+    "mosques": "Moskeeën",
+    "events": "Evenementen",
+    "ramadan": "Ramadan",
+    "donations": "Donaties"
+  },
+  "Footer": {
+    "about": {
+      "title": "Over VGM",
+      "description": "De Vereniging van Gentse Moskeeën verbindt en ondersteunt de moslimgemeenschap in Gent."
+    },
+    "links": {
+      "privacy": "Privacy",
+      "terms": "Voorwaarden",
+      "contact": "Contact"
+    },
+    "quickLinks": {
+      "title": "Snelle Links",
+      "mosques": "Moskeeën",
+      "events": "Evenementen",
+      "ramadan": "Ramadan"
+    },
+    "contact": {
+      "title": "Contact",
+      "address": "Gent, België",
+      "phone": "+32 9 123 45 67",
+      "email": "info@vgm.be"
+    },
+    "rights": "Alle rechten voorbehouden."
+  },
+  "Hero": {
+    "title": "Welkom bij VGM",
+    "subtitle": "De Vereniging van Gentse Moskeeën verbindt en ondersteunt de moslimgemeenschap in Gent.",
+    "cta": {
+      "mosques": "Bekijk Moskeeën",
+      "events": "Bekijk Evenementen"
+    }
+  },
+  "Features": {
+    "title": "Onze Features",
+    "subtitle": "Ontdek wat VGM voor u kan betekenen",
+    "mosqueDirectory": {
+      "title": "Moskee Directory",
+      "description": "Vind alle moskeeën in Gent met gedetailleerde informatie en locaties."
+    },
+    "events": {
+      "title": "Evenementen",
+      "description": "Blijf op de hoogte van alle islamitische evenementen en activiteiten."
+    },
+    "donations": {
+      "title": "Donaties",
+      "description": "Ondersteun uw lokale moskeeën met veilige en transparante donaties."
+    },
+    "notifications": {
+      "title": "Notificaties",
+      "description": "Ontvang belangrijke updates en herinneringen via e-mail en app."
+    },
+    "community": {
+      "title": "Gemeenschap",
+      "description": "Verbind met andere leden van de moslimgemeenschap in Gent."
+    },
+    "multilingual": {
+      "title": "Meertalig",
+      "description": "Beschikbaar in 6 talen inclusief Arabisch en Pashto met RTL ondersteuning."
+    }
+  },
+  "Mosques": {
+    "title": "Onze Moskeeën",
+    "subtitle": "Ontdek de moskeeën in Gent",
+    "mosque1": {
+      "name": "Centrale Moskee Gent",
+      "description": "De grootste moskee in Gent met uitgebreide faciliteiten.",
+      "address": "Gent Centrum"
+    },
+    "mosque2": {
+      "name": "Al-Noor Moskee",
+      "description": "Een warme en gastvrije moskee in het hart van de stad.",
+      "address": "Gent Oost"
+    },
+    "mosque3": {
+      "name": "Masjid Al-Rahman",
+      "description": "Moderne moskee met focus op onderwijs en gemeenschap.",
+      "address": "Gent Zuid"
+    },
+    "learnMore": "Meer informatie",
+    "viewAll": "Bekijk Alle Moskeeën"
+  },
+  "Events": {
+    "title": "Aankomende Evenementen",
+    "subtitle": "Blijf op de hoogte van alle activiteiten",
+    "event1": {
+      "title": "Vrijdaggebed",
+      "description": "Wekelijks vrijdaggebed met khutbah in het Nederlands.",
+      "date": "Vrijdag",
+      "time": "13:00",
+      "location": "Centrale Moskee Gent"
+    },
+    "event2": {
+      "title": "Koranstudie",
+      "description": "Wekelijkse Koranstudie voor alle leeftijden.",
+      "date": "Zondag",
+      "time": "10:00",
+      "location": "Al-Noor Moskee"
+    },
+    "event3": {
+      "title": "Gemeenschapsbijeenkomst",
+      "description": "Maandelijkse bijeenkomst voor gemeenschapsactiviteiten.",
+      "date": "Eerste Zaterdag",
+      "time": "15:00",
+      "location": "Masjid Al-Rahman"
+    },
+    "learnMore": "Meer informatie",
+    "viewAll": "Bekijk Alle Evenementen"
+  },
+  "RamadanPage": {
+    "title": "Ramadan 2025",
+    "description": "Ontdek alle Ramadan activiteiten en iftar locaties in Gent."
+  },
+  "IftarMap": {
+    "map": {
+      "title": "Iftar Kaart"
+    },
+    "events": {
+      "title": "Geplande Iftars",
+      "familyFriendly": "Gezinsvriendelijk",
+      "noEvents": "Geen iftars gevonden voor deze periode."
+    },
+    "prayerTimes": {
+      "title": "Gebedstijden Vandaag"
+    }
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "HomePage": {
+    "title": "Bienvenue à VGM",
+    "description": "Association des Mosquées de Gand"
+  },
+  "Navigation": {
+    "home": "Accueil",
+    "mosques": "Mosquées",
+    "events": "Événements",
+    "ramadan": "Ramadan",
+    "donations": "Dons"
+  },
+  "Footer": {
+    "about": {
+      "title": "À propos de VGM",
+      "description": "L'Association des Mosquées de Gand connecte et soutient la communauté musulmane à Gand."
+    },
+    "links": {
+      "privacy": "Confidentialité",
+      "terms": "Conditions",
+      "contact": "Contact"
+    },
+    "quickLinks": {
+      "title": "Liens Rapides",
+      "mosques": "Mosquées",
+      "events": "Événements",
+      "ramadan": "Ramadan"
+    },
+    "contact": {
+      "title": "Contact",
+      "address": "Gand, Belgique",
+      "phone": "+32 9 123 45 67",
+      "email": "info@vgm.be"
+    },
+    "rights": "Tous droits réservés."
+  },
+  "Hero": {
+    "title": "Bienvenue à VGM",
+    "subtitle": "L'Association des Mosquées de Gand connecte et soutient la communauté musulmane à Gand.",
+    "cta": {
+      "mosques": "Voir les Mosquées",
+      "events": "Voir les Événements"
+    }
+  },
+  "Features": {
+    "title": "Nos Fonctionnalités",
+    "subtitle": "Découvrez ce que VGM peut faire pour vous",
+    "mosqueDirectory": {
+      "title": "Annuaire des Mosquées",
+      "description": "Trouvez toutes les mosquées à Gand avec des informations détaillées et des emplacements."
+    },
+    "events": {
+      "title": "Événements",
+      "description": "Restez informé de tous les événements et activités islamiques."
+    },
+    "donations": {
+      "title": "Dons",
+      "description": "Soutenez vos mosquées locales avec des dons sécurisés et transparents."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Recevez des mises à jour importantes et des rappels par e-mail et application."
+    },
+    "community": {
+      "title": "Communauté",
+      "description": "Connectez-vous avec d'autres membres de la communauté musulmane à Gand."
+    },
+    "multilingual": {
+      "title": "Multilingue",
+      "description": "Disponible en 6 langues dont l'arabe et le pachto avec support RTL."
+    }
+  },
+  "Mosques": {
+    "title": "Nos Mosquées",
+    "subtitle": "Découvrez les mosquées à Gand",
+    "mosque1": {
+      "name": "Mosquée Centrale de Gand",
+      "description": "La plus grande mosquée de Gand avec des installations étendues.",
+      "address": "Centre de Gand"
+    },
+    "mosque2": {
+      "name": "Mosquée Al-Noor",
+      "description": "Une mosquée chaleureuse et accueillante au cœur de la ville.",
+      "address": "Gand Est"
+    },
+    "mosque3": {
+      "name": "Masjid Al-Rahman",
+      "description": "Mosquée moderne axée sur l'éducation et la communauté.",
+      "address": "Gand Sud"
+    },
+    "learnMore": "En Savoir Plus",
+    "viewAll": "Voir Toutes les Mosquées"
+  },
+  "Events": {
+    "title": "Événements à Venir",
+    "subtitle": "Restez informé de toutes les activités",
+    "event1": {
+      "title": "Prière du Vendredi",
+      "description": "Prière du vendredi hebdomadaire avec khutbah en néerlandais.",
+      "date": "Vendredi",
+      "time": "13:00",
+      "location": "Mosquée Centrale de Gand"
+    },
+    "event2": {
+      "title": "Étude du Coran",
+      "description": "Étude hebdomadaire du Coran pour tous les âges.",
+      "date": "Dimanche",
+      "time": "10:00",
+      "location": "Mosquée Al-Noor"
+    },
+    "event3": {
+      "title": "Réunion Communautaire",
+      "description": "Réunion mensuelle pour les activités communautaires.",
+      "date": "Premier Samedi",
+      "time": "15:00",
+      "location": "Masjid Al-Rahman"
+    },
+    "learnMore": "En Savoir Plus",
+    "viewAll": "Voir Tous les Événements"
+  },
+  "RamadanPage": {
+    "title": "Ramadan 2025",
+    "description": "Découvrez toutes les activités du Ramadan et les lieux d'iftar à Gand."
+  },
+  "IftarMap": {
+    "map": {
+      "title": "Carte Iftar"
+    },
+    "events": {
+      "title": "Iftars Programmés",
+      "familyFriendly": "Convivial pour la Famille",
+      "noEvents": "Aucun iftar trouvé pour cette période."
+    },
+    "prayerTimes": {
+      "title": "Heures de Prière d'Aujourd'hui"
+    }
+  }
+}

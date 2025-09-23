@@ -1,0 +1,138 @@
+{
+  "HomePage": {
+    "title": "Welcome to VGM",
+    "description": "Association of Ghent Mosques"
+  },
+  "Navigation": {
+    "home": "Home",
+    "mosques": "Mosques",
+    "events": "Events",
+    "ramadan": "Ramadan",
+    "donations": "Donations"
+  },
+  "Footer": {
+    "about": {
+      "title": "About VGM",
+      "description": "The Association of Ghent Mosques connects and supports the Muslim community in Ghent."
+    },
+    "links": {
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "contact": "Contact"
+    },
+    "quickLinks": {
+      "title": "Quick Links",
+      "mosques": "Mosques",
+      "events": "Events",
+      "ramadan": "Ramadan"
+    },
+    "contact": {
+      "title": "Contact",
+      "address": "Ghent, Belgium",
+      "phone": "+32 9 123 45 67",
+      "email": "info@vgm.be"
+    },
+    "rights": "All rights reserved."
+  },
+  "Hero": {
+    "title": "Welcome to VGM",
+    "subtitle": "The Association of Ghent Mosques connects and supports the Muslim community in Ghent.",
+    "cta": {
+      "mosques": "View Mosques",
+      "events": "View Events"
+    }
+  },
+  "Features": {
+    "title": "Our Features",
+    "subtitle": "Discover what VGM can do for you",
+    "mosqueDirectory": {
+      "title": "Mosque Directory",
+      "description": "Find all mosques in Ghent with detailed information and locations."
+    },
+    "events": {
+      "title": "Events",
+      "description": "Stay updated on all Islamic events and activities."
+    },
+    "donations": {
+      "title": "Donations",
+      "description": "Support your local mosques with secure and transparent donations."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Receive important updates and reminders via email and app."
+    },
+    "community": {
+      "title": "Community",
+      "description": "Connect with other members of the Muslim community in Ghent."
+    },
+    "multilingual": {
+      "title": "Multilingual",
+      "description": "Available in 6 languages including Arabic and Pashto with RTL support."
+    }
+  },
+  "Mosques": {
+    "title": "Our Mosques",
+    "subtitle": "Discover the mosques in Ghent",
+    "mosque1": {
+      "name": "Central Mosque Ghent",
+      "description": "The largest mosque in Ghent with extensive facilities.",
+      "address": "Ghent Center"
+    },
+    "mosque2": {
+      "name": "Al-Noor Mosque",
+      "description": "A warm and welcoming mosque in the heart of the city.",
+      "address": "Ghent East"
+    },
+    "mosque3": {
+      "name": "Masjid Al-Rahman",
+      "description": "Modern mosque with focus on education and community.",
+      "address": "Ghent South"
+    },
+    "learnMore": "Learn More",
+    "viewAll": "View All Mosques"
+  },
+  "Events": {
+    "title": "Upcoming Events",
+    "subtitle": "Stay updated on all activities",
+    "event1": {
+      "title": "Friday Prayer",
+      "description": "Weekly Friday prayer with khutbah in Dutch.",
+      "date": "Friday",
+      "time": "13:00",
+      "location": "Central Mosque Ghent"
+    },
+    "event2": {
+      "title": "Quran Study",
+      "description": "Weekly Quran study for all ages.",
+      "date": "Sunday",
+      "time": "10:00",
+      "location": "Al-Noor Mosque"
+    },
+    "event3": {
+      "title": "Community Meeting",
+      "description": "Monthly meeting for community activities.",
+      "date": "First Saturday",
+      "time": "15:00",
+      "location": "Masjid Al-Rahman"
+    },
+    "learnMore": "Learn More",
+    "viewAll": "View All Events"
+  },
+  "RamadanPage": {
+    "title": "Ramadan 2025",
+    "description": "Discover all Ramadan activities and iftar locations in Ghent."
+  },
+  "IftarMap": {
+    "map": {
+      "title": "Iftar Map"
+    },
+    "events": {
+      "title": "Scheduled Iftars",
+      "familyFriendly": "Family Friendly",
+      "noEvents": "No iftars found for this period."
+    },
+    "prayerTimes": {
+      "title": "Today's Prayer Times"
+    }
+  }
+}

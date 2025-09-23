@@ -85,3 +85,10 @@ class PrayerService:
             current_date += timedelta(days=1)
 
         return prayer_times
+
+# Create a singleton instance of the prayer service
+_prayer_service = PrayerService()
+
+def get_prayer_times_for_date_range(start_date: date, end_date: date, city: str = "Gent") -> Dict[date, Dict[str, str]]:
+    """Get prayer times for a date range using the singleton service instance"""
+    return _prayer_service.get_prayer_times_range(start_date, end_date, city)
