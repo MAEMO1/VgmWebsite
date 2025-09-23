@@ -171,3 +171,4 @@ PR‑template en CODEOWNERS zijn aanwezig; CI moet groen zijn.
 ## Licentie
 
 © VGM. Alle rechten voorbehouden (interne bedrijfssoftware).
+# GitHub Actions Test
