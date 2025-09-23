@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database (Staging)
+  postgres-staging:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: vgm_staging
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_staging_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache (Staging)
+  redis-staging:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_staging_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Flask Backend (Staging)
+  backend-staging:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres-staging:5432/vgm_staging
+      - REDIS_URL=redis://redis-staging:6379/0
+      - FLASK_ENV=staging
+      - SESSION_SECRET=staging-secret-key
+    ports:
+      - "5001:5000"
+    depends_on:
+      postgres-staging:
+        condition: service_healthy
+      redis-staging:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  postgres_staging_data:
+  redis_staging_data:

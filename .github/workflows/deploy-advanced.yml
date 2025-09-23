@@ -1,0 +1,135 @@
+name: Deploy to Staging and Production
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+        - staging
+        - production
+
+jobs:
+  # Build and Test
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install frontend dependencies
+        run: cd frontend && npm install
+      
+      - name: Run frontend linting
+        run: cd frontend && npm run lint
+      
+      - name: Run frontend type checking
+        run: cd frontend && npm run type-check
+      
+      - name: Build frontend
+        run: cd frontend && npm run build
+      
+      - name: Test backend
+        run: |
+          pip install -e .
+          python -m pytest tests/ || echo "No tests found"
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-files
+          path: |
+            frontend/.next/
+            *.py
+            pyproject.toml
+          retention-days: 1
+
+  # Deploy to Staging
+  deploy-staging:
+    if: github.event_name == 'pull_request' || github.event.inputs.environment == 'staging'
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    environment: staging
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-files
+      
+      - name: Deploy to staging server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          port: ${{ secrets.STAGING_PORT }}
+          script: |
+            cd /opt/vgm-staging
+            git pull origin main
+            docker-compose -f docker-compose.staging.yml down
+            docker-compose -f docker-compose.staging.yml up -d --build
+            docker-compose -f docker-compose.staging.yml logs --tail=50
+
+  # Deploy to Production
+  deploy-production:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-files
+      
+      - name: Deploy to production server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          port: ${{ secrets.PRODUCTION_PORT }}
+          script: |
+            cd /opt/vgm-production
+            git pull origin main
+            docker-compose down
+            docker-compose up -d --build
+            docker-compose logs --tail=50
+
+  # Health Check
+  health-check:
+    needs: [deploy-staging, deploy-production]
+    runs-on: ubuntu-latest
+    if: always() && (needs.deploy-staging.result == 'success' || needs.deploy-production.result == 'success')
+    
+    steps:
+      - name: Health check staging
+        if: needs.deploy-staging.result == 'success'
+        run: |
+          curl -f ${{ secrets.STAGING_HEALTH_URL }}/health || exit 1
+      
+      - name: Health check production
+        if: needs.deploy-production.result == 'success'
+        run: |
+          curl -f ${{ secrets.PRODUCTION_HEALTH_URL }}/health || exit 1

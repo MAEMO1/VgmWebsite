@@ -107,6 +107,16 @@ def load_user(user_id):
     from models import User
     return User.query.get(int(user_id))
 
+# Health check endpoint for Railway
+@app.route('/health')
+def health_check():
+    try:
+        # Check database connection
+        db.session.execute('SELECT 1')
+        return {'status': 'healthy', 'database': 'connected'}, 200
+    except Exception as e:
+        return {'status': 'unhealthy', 'error': str(e)}, 500
+
 if __name__ == "__main__":
     # Always serve on port 5000
     port = int(os.environ.get("PORT", 5000))
