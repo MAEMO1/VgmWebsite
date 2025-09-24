@@ -1,9 +1,10 @@
-import { useTranslations } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { Hero } from '@/components/home/Hero';
-import { Features } from '@/components/home/Features';
-import { Mosques } from '@/components/home/Mosques';
-import { Events } from '@/components/home/Events';
+import { NewsSection } from '@/components/home/NewsSection';
+import { EventsSection } from '@/components/home/EventsSection';
+import { MosquesSection } from '@/components/home/MosquesSection';
+import { DonationsSection } from '@/components/home/DonationsSection';
+import { QuickLinksSection } from '@/components/home/QuickLinksSection';
 
 export default function HomePage({
   params: { locale }
@@ -12,15 +13,15 @@ export default function HomePage({
 }) {
   // Enable static rendering
   setRequestLocale(locale);
-  
-  const t = useTranslations('HomePage');
 
   return (
-    <div className="space-y-16">
+    <div>
       <Hero />
-      <Features />
-      <Mosques />
-      <Events />
+      <NewsSection />
+      <EventsSection />
+      <MosquesSection />
+      <DonationsSection />
+      <QuickLinksSection />
     </div>
   );
 }

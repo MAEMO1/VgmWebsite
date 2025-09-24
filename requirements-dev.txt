@@ -1,0 +1,43 @@
+# Flask and core dependencies
+Flask==2.3.3
+Flask-SQLAlchemy==3.0.5
+Flask-Login==0.6.3
+Flask-CORS==4.0.0
+Flask-Babel==4.0.0
+Werkzeug==2.3.7
+
+# Database dependencies (SQLite for development)
+SQLAlchemy==2.0.21
+
+# Authentication and security
+bcrypt==4.0.1
+PyJWT==2.8.0
+
+# HTTP and API
+requests==2.31.0
+gunicorn==21.2.0
+
+# Development and testing
+pytest==7.4.2
+pytest-flask==1.2.0
+
+# Environment and configuration
+python-dotenv==1.0.0
+
+# Date and time utilities
+python-dateutil==2.8.2
+
+# Email utilities
+Flask-Mail==0.9.1
+
+# File handling
+Pillow==10.0.1
+
+# JSON handling
+jsonschema==4.19.1
+
+# Logging
+structlog==23.1.0
+
+# Production server
+gunicorn==21.2.0
