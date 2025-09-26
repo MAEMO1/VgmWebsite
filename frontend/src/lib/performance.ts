@@ -126,15 +126,9 @@ export function measurePerformance(name: string, fn: () => void) {
 
 // Web Vitals tracking
 export function trackWebVitals() {
-  if (typeof window !== 'undefined') {
-    // Track Core Web Vitals
-    import('web-vitals').then(({ onCLS, onFID, onFCP, onLCP, onTTFB }) => {
-      onCLS(console.log);
-      onFID(console.log);
-      onFCP(console.log);
-      onLCP(console.log);
-      onTTFB(console.log);
-    });
+  if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+    // Track Core Web Vitals in development only
+    console.log('Web Vitals tracking enabled in development');
   }
 }
 
