@@ -121,9 +121,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     try {
       if (token) {
-        await apiClient.post('/api/auth/logout', {}, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const headers = { Authorization: `Bearer ${token}` };
+        await apiClient.post('/api/auth/logout', {}, headers);
       }
     } catch (error) {
       console.error('Logout error:', error);
