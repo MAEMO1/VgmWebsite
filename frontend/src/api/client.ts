@@ -53,7 +53,7 @@ class APIClient {
 
       if (response.ok) {
         const data = await response.json();
-        this.csrfToken = data.csrf_token;
+        this.csrfToken = data.csrf_token || '';
         return this.csrfToken;
       }
     } catch (error) {
