@@ -125,7 +125,7 @@ export function EventsSection() {
                 <div className="space-y-2 text-sm text-gray-600 mb-4">
                   <div className="flex items-center">
                     <CalendarIcon className="w-4 h-4 mr-2" />
-                    <span>{new Date(event.event_date).toLocaleDateString('nl-NL')}</span>
+                    <span>{event.event_date ? new Date(event.event_date).toLocaleDateString('nl-NL') : 'TBD'}</span>
                   </div>
                   <div className="flex items-center">
                     <ClockIcon className="w-4 h-4 mr-2" />
