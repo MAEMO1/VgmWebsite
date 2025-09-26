@@ -1,240 +1,274 @@
 'use client';
 
-import { useState } from 'react';
-import { useTranslations } from 'next-intl';
-import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
-import { CalendarIcon, CurrencyEuroIcon, UsersIcon } from '@heroicons/react/24/outline';
+import React, { useState, useEffect } from 'react';
+import { apiClient } from '@/api/client';
+import DonationForm from '@/components/payments/DonationForm';
+
+interface Campaign {
+  id: number;
+  title: string;
+  description: string;
+  target_amount: number;
+  current_amount: number;
+  progress_percentage: number;
+  mosque_name: string;
+  status: string;
+  start_date: string;
+  end_date: string;
+  featured_image?: string;
+}
 
 export default function CampaignsPage() {
-  const t = useTranslations('Donations');
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
+  const [showDonationForm, setShowDonationForm] = useState(false);
+  const [donationSuccess, setDonationSuccess] = useState(false);
 
-  const campaigns = [
-    {
-      id: 1,
-      title: 'Moskee Renovatie Project',
-      description: 'Ondersteun de renovatie van historische moskeeën in Gent. Dit project omvat het herstellen van minaretten, koepels en gebedsruimtes.',
-      target: 50000,
-      current: 32500,
-      deadline: '2024-12-31',
-      category: 'Infrastructuur',
-      status: 'active',
-      image: '/api/placeholder/400/200',
-      updates: [
-        {
-          date: '2024-01-15',
-          title: 'Project gestart',
-          description: 'Renovatie van de eerste moskee is begonnen.'
-        },
-        {
-          date: '2024-01-10',
-          title: 'Fondsenwerving gestart',
-          description: 'Campagne is officieel gelanceerd.'
-        }
-      ]
-    },
-    {
-      id: 2,
-      title: 'Educatie Programma',
-      description: 'Financiering van islamitische educatie en Arabische lessen voor kinderen en volwassenen in de Gentse moskeeën.',
-      target: 25000,
-      current: 18750,
-      deadline: '2024-11-30',
-      category: 'Educatie',
-      status: 'active',
-      image: '/api/placeholder/400/200',
-      updates: [
-        {
-          date: '2024-01-12',
-          title: 'Nieuwe docenten aangesteld',
-          description: 'Twee nieuwe Arabische docenten zijn toegevoegd aan het programma.'
-        }
-      ]
-    },
-    {
-      id: 3,
-      title: 'Gemeenschapscentrum',
-      description: 'Bouw van een nieuw gemeenschapscentrum voor sociale activiteiten en evenementen.',
-      target: 75000,
-      current: 45000,
-      deadline: '2024-10-15',
-      category: 'Infrastructuur',
-      status: 'active',
-      image: '/api/placeholder/400/200',
-      updates: []
-    },
-    {
-      id: 4,
-      title: 'Winterhulp 2024',
-      description: 'Ondersteuning van kwetsbare gemeenschapsleden tijdens de wintermaanden.',
-      target: 15000,
-      current: 15000,
-      deadline: '2024-03-31',
-      category: 'Noodhulp',
-      status: 'completed',
-      image: '/api/placeholder/400/200',
-      updates: [
-        {
-          date: '2024-03-31',
-          title: 'Campagne voltooid',
-          description: 'Doel bereikt! Alle fondsen zijn gebruikt voor winterhulp.'
-        }
-      ]
+  useEffect(() => {
+    loadCampaigns();
+  }, []);
+
+  const loadCampaigns = async () => {
+    try {
+      setLoading(true);
+      const response = await apiClient.get<Campaign[]>('/api/campaigns');
+      setCampaigns(response);
+    } catch (error) {
+      console.error('Error loading campaigns:', error);
+      setError('Failed to load campaigns');
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
-  const categories = ['Alle', 'Infrastructuur', 'Educatie', 'Noodhulp'];
-  const [selectedCategory, setSelectedCategory] = useState('Alle');
+  const handleDonate = (campaign: Campaign) => {
+    setSelectedCampaign(campaign);
+    setShowDonationForm(true);
+  };
 
-  const filteredCampaigns = selectedCategory === 'Alle' 
-    ? campaigns 
-    : campaigns.filter(campaign => campaign.category === selectedCategory);
+  const handleDonationSuccess = (donationId: number) => {
+    setDonationSuccess(true);
+    setShowDonationForm(false);
+    // Reload campaigns to update progress
+    loadCampaigns();
+  };
+
+  const handleDonationError = (error: string) => {
+    setError(error);
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('nl-BE', {
+      style: 'currency',
+      currency: 'EUR'
+    }).format(amount);
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('nl-BE');
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (error && !donationSuccess) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={() => {
+              setError('');
+              loadCampaigns();
+            }}
+            className="btn btn-primary"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (donationSuccess) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="text-green-600 text-6xl mb-4">✓</div>
+          <h1 className="text-2xl font-bold text-green-600 mb-4">Donation Successful!</h1>
+          <p className="text-gray-600 mb-4">
+            Thank you for your generous donation to {selectedCampaign?.title}.
+          </p>
+          <button
+            onClick={() => {
+              setDonationSuccess(false);
+              setSelectedCampaign(null);
+            }}
+            className="btn btn-primary"
+          >
+            Back to Campaigns
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (showDonationForm && selectedCampaign) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="mb-8">
+            <button
+              onClick={() => setShowDonationForm(false)}
+              className="text-primary hover:text-primary-dark mb-4"
+            >
+              ← Back to Campaigns
+            </button>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Donate to {selectedCampaign.title}
+            </h1>
+            <p className="text-gray-600 mt-2">{selectedCampaign.description}</p>
+          </div>
+          
+          <DonationForm
+            campaignId={selectedCampaign.id}
+            mosqueId={selectedCampaign.mosque_name ? 1 : undefined}
+            onSuccess={handleDonationSuccess}
+            onError={handleDonationError}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-white">
-      <Breadcrumbs items={[
-        { name: 'Donaties', href: '/donations' },
-        { name: 'Campagnes' }
-      ]} />
-
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        {/* Header */}
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Fondsenwervingscampagnes
+            Donation Campaigns
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Ondersteun specifieke projecten en initiatieven die de moskeegemeenschap in Gent ten goede komen
+            Support our community through various donation campaigns. 
+            Every contribution helps us maintain and improve our mosques and services.
           </p>
         </div>
 
-        {/* Category Filter */}
-        <div className="mb-8">
-          <div className="flex flex-wrap justify-center gap-4">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-                  selectedCategory === category
-                    ? 'bg-teal-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {category}
-              </button>
-            ))}
+        {campaigns.length === 0 ? (
+          <div className="text-center py-12">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              No Active Campaigns
+            </h2>
+            <p className="text-gray-600">
+              There are currently no active donation campaigns.
+            </p>
           </div>
-        </div>
-
-        {/* Campaigns Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredCampaigns.map((campaign) => {
-            const progress = (campaign.current / campaign.target) * 100;
-            const isCompleted = campaign.status === 'completed';
-            const daysLeft = Math.ceil((new Date(campaign.deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-            
-            return (
-              <div key={campaign.id} className="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-lg transition-shadow">
-                {/* Campaign Image */}
-                <div className="h-48 bg-gray-200 flex items-center justify-center relative">
-                  <span className="text-gray-500">Campagne Afbeelding</span>
-                  {isCompleted && (
-                    <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                      Voltooid
-                    </div>
-                  )}
-                  {campaign.status === 'active' && daysLeft > 0 && (
-                    <div className="absolute top-4 right-4 bg-teal-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                      {daysLeft} dagen
-                    </div>
-                  )}
-                </div>
-
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {campaigns.map((campaign) => (
+              <div key={campaign.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+                {campaign.featured_image && (
+                  <div className="h-48 bg-gray-200">
+                    <img
+                      src={campaign.featured_image}
+                      alt={campaign.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                
                 <div className="p-6">
-                  {/* Category */}
-                  <div className="mb-3">
-                    <span className="inline-block bg-teal-100 text-teal-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                      {campaign.category}
-                    </span>
+                  <div className="mb-4">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                      {campaign.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm mb-2">
+                      {campaign.mosque_name}
+                    </p>
+                    <p className="text-gray-700 text-sm line-clamp-3">
+                      {campaign.description}
+                    </p>
                   </div>
 
-                  {/* Title and Description */}
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{campaign.title}</h3>
-                  <p className="text-gray-600 mb-4 line-clamp-3">{campaign.description}</p>
-                  
-                  {/* Progress */}
                   <div className="mb-4">
-                    <div className="flex justify-between text-sm text-gray-600 mb-2">
-                      <span>€{campaign.current.toLocaleString()}</span>
-                      <span>€{campaign.target.toLocaleString()}</span>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm font-medium text-gray-700">
+                        Progress
+                      </span>
+                      <span className="text-sm font-medium text-gray-700">
+                        {campaign.progress_percentage.toFixed(1)}%
+                      </span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div 
-                        className={`h-2 rounded-full transition-all duration-300 ${
-                          isCompleted ? 'bg-green-500' : 'bg-teal-600'
-                        }`}
-                        style={{ width: `${Math.min(progress, 100)}%` }}
+                    
+                    <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                      <div
+                        className="bg-primary h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${Math.min(campaign.progress_percentage, 100)}%` }}
                       ></div>
                     </div>
-                    <div className="text-right text-sm text-gray-500 mt-1">
-                      {progress.toFixed(1)}% voltooid
+                    
+                    <div className="flex justify-between items-center text-sm text-gray-600">
+                      <span>{formatCurrency(campaign.current_amount)}</span>
+                      <span>{formatCurrency(campaign.target_amount)}</span>
                     </div>
                   </div>
 
-                  {/* Stats */}
-                  <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                    <div className="flex items-center">
-                      <CalendarIcon className="w-4 h-4 mr-1" />
-                      <span>Deadline: {new Date(campaign.deadline).toLocaleDateString('nl-NL')}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <CurrencyEuroIcon className="w-4 h-4 mr-1" />
-                      <span>€{campaign.target.toLocaleString()}</span>
-                    </div>
+                  <div className="mb-4 text-sm text-gray-600">
+                    <p>Campaign Period:</p>
+                    <p>
+                      {formatDate(campaign.start_date)} - {formatDate(campaign.end_date)}
+                    </p>
                   </div>
 
-                  {/* Action Button */}
-                  <button 
-                    className={`w-full py-3 rounded-lg font-medium transition-colors ${
-                      isCompleted 
-                        ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
-                        : 'bg-teal-600 text-white hover:bg-teal-700'
-                    }`}
-                    disabled={isCompleted}
+                  <button
+                    onClick={() => handleDonate(campaign)}
+                    className="w-full bg-primary hover:bg-primary-dark text-white font-medium py-3 px-4 rounded-md transition-colors"
                   >
-                    {isCompleted ? 'Campagne Voltooid' : 'Steun Campagne'}
+                    Donate Now
                   </button>
                 </div>
               </div>
-            );
-          })}
-        </div>
-
-        {/* Empty State */}
-        {filteredCampaigns.length === 0 && (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CurrencyEuroIcon className="w-8 h-8 text-gray-400" />
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Geen campagnes gevonden</h3>
-            <p className="text-gray-500">
-              Er zijn momenteel geen campagnes in de geselecteerde categorie.
-            </p>
+            ))}
           </div>
         )}
 
-        {/* Call to Action */}
-        <div className="mt-16 text-center">
-          <div className="bg-teal-50 rounded-2xl p-8 max-w-4xl mx-auto">
+        {/* General Donation Section */}
+        <div className="mt-16 bg-white rounded-lg shadow-md p-8">
+          <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Heeft u een idee voor een nieuwe campagne?
+              General Donation
             </h2>
-            <p className="text-gray-600 mb-6">
-              VGM ondersteunt initiatieven die de moskeegemeenschap ten goede komen. 
-              Neem contact met ons op om uw idee te bespreken.
+            <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+              Make a general donation to support VGM's ongoing activities, 
+              mosque maintenance, and community programs.
             </p>
-            <button className="bg-teal-600 text-white px-8 py-3 rounded-lg hover:bg-teal-700 transition-colors">
-              Nieuwe Campagne Voorstellen
+            <button
+              onClick={() => {
+                setSelectedCampaign({
+                  id: 0,
+                  title: 'General Donation',
+                  description: 'Support VGM\'s ongoing activities and community programs',
+                  target_amount: 0,
+                  current_amount: 0,
+                  progress_percentage: 0,
+                  mosque_name: '',
+                  status: 'active',
+                  start_date: new Date().toISOString(),
+                  end_date: new Date().toISOString()
+                });
+                setShowDonationForm(true);
+              }}
+              className="bg-secondary hover:bg-secondary-dark text-white font-medium py-3 px-6 rounded-md transition-colors"
+            >
+              Make General Donation
             </button>
           </div>
         </div>
