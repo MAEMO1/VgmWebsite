@@ -108,7 +108,7 @@ function EventsSectionContent({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {events.slice(0, 3).map((event) => (
+          {events.slice(0, 3).map((event: any) => (
             <div key={event.id} className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
               {/* Event Image Placeholder */}
               <div className="h-48 bg-gradient-to-br from-teal-100 to-teal-200 flex items-center justify-center">

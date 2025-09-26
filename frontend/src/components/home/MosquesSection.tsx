@@ -74,7 +74,7 @@ function MosquesSectionContent({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {mosques?.slice(0, 6).map((mosque) => (
+              {mosques?.slice(0, 6).map((mosque: any) => (
             <div key={mosque.id} className="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-lg transition-shadow">
               {/* Mosque Image Placeholder */}
               <div className="h-48 bg-gray-200 flex items-center justify-center">

@@ -108,7 +108,7 @@ function NewsSectionContent({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {newsPosts.slice(0, 3).map((news) => (
+          {newsPosts.slice(0, 3).map((news: any) => (
             <div key={news.id} className="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-lg transition-shadow">
               {/* News Image Placeholder */}
               <div className="h-48 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
