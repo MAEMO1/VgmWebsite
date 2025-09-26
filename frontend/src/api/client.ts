@@ -6,7 +6,7 @@
 import { paths, operations } from './types';
 
 // Base API configuration
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5005';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5001';
 
 // Request configuration
 interface RequestConfig {
