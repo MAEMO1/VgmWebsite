@@ -68,6 +68,41 @@ class APIClient {
     this.csrfToken = '';
   }
 
+  // Generic HTTP methods
+  async get<T>(url: string, headers?: Record<string, string>): Promise<T> {
+    return this.request<T>({
+      method: 'GET',
+      url,
+      headers,
+    });
+  }
+
+  async post<T>(url: string, body?: any, headers?: Record<string, string>): Promise<T> {
+    return this.request<T>({
+      method: 'POST',
+      url,
+      body,
+      headers,
+    });
+  }
+
+  async put<T>(url: string, body?: any, headers?: Record<string, string>): Promise<T> {
+    return this.request<T>({
+      method: 'PUT',
+      url,
+      body,
+      headers,
+    });
+  }
+
+  async delete<T>(url: string, headers?: Record<string, string>): Promise<T> {
+    return this.request<T>({
+      method: 'DELETE',
+      url,
+      headers,
+    });
+  }
+
   // Generic request method
   private async request<T>(config: RequestConfig): Promise<T> {
     const url = `${this.baseURL}${config.url}`;
