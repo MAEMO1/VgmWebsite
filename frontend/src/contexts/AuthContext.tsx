@@ -64,13 +64,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       setLoading(true);
       
-      const response = await apiClient.post('/api/auth/login', {
+      const response = await apiClient.post<{
+        token: string;
+        user: User;
+      }>('/api/auth/login', {
         email,
         password,
       });
 
-      if (response.data.token) {
-        const { token: newToken, user: userData } = response.data;
+      if (response.token) {
+        const { token: newToken, user: userData } = response;
         
         setToken(newToken);
         setUser(userData);
@@ -96,9 +99,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       setLoading(true);
       
-      const response = await apiClient.post('/api/auth/register', userData);
+      const response = await apiClient.post<{
+        message: string;
+        user_id: number;
+      }>('/api/auth/register', userData);
       
-      if (response.data.message === 'User created successfully') {
+      if (response.message === 'User created successfully') {
         return true;
       }
       
