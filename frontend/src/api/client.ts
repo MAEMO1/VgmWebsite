@@ -20,7 +20,7 @@ interface RequestConfig {
 class APIClient {
   private baseURL: string;
   private defaultHeaders: Record<string, string>;
-  private csrfToken: string | null = null;
+  private csrfToken: string = '';
 
   constructor(baseURL: string = API_BASE_URL) {
     this.baseURL = baseURL;
@@ -65,7 +65,7 @@ class APIClient {
 
   // Clear CSRF token (call when logging out)
   clearCSRFToken() {
-    this.csrfToken = null;
+    this.csrfToken = '';
   }
 
   // Generic request method
