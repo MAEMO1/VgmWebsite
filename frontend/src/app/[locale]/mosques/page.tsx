@@ -1,221 +1,275 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
-import { getAllMosques } from '@/data/mosques';
-import { MagnifyingGlassIcon, MapPinIcon, PhoneIcon, CalendarIcon, UsersIcon, Squares2X2Icon, ListBulletIcon } from '@heroicons/react/24/outline';
+import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
+import { apiClient } from '@/api/client';
+import GoogleMaps from '@/components/maps/GoogleMaps';
 
-// Mosque interface is now imported from the data file
+interface Mosque {
+  id: number;
+  name: string;
+  address: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  capacity?: number;
+  established_year?: number;
+  imam_name?: string;
+  description?: string;
+  latitude: number;
+  longitude: number;
+  is_active: boolean;
+  created_at: string;
+}
 
 export default function MosquesPage() {
+  const t = useTranslations('Mosques');
+  const [mosques, setMosques] = useState<Mosque[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [selectedMosque, setSelectedMosque] = useState<Mosque | null>(null);
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCity, setSelectedCity] = useState('all');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [filterCapacity, setFilterCapacity] = useState<number | null>(null);
 
-  // Get real mosque data
-  const mosques = getAllMosques();
+  useEffect(() => {
+    loadMosques();
+  }, []);
 
-  const cities = ['all', 'Gent', 'Andere'];
+  const loadMosques = async () => {
+    try {
+      setLoading(true);
+      const response = await apiClient.get<Mosque[]>('/api/mosques');
+      setMosques(response);
+    } catch (error) {
+      console.error('Error loading mosques:', error);
+      setError('Failed to load mosques');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMosqueSelect = (mosque: Mosque) => {
+    setSelectedMosque(mosque);
+    setViewMode('list');
+  };
 
   const filteredMosques = mosques.filter(mosque => {
     const matchesSearch = mosque.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         mosque.address.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCity = selectedCity === 'all' || mosque.address.includes(selectedCity);
-    return matchesSearch && matchesCity;
+                         mosque.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         mosque.imam_name?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesCapacity = filterCapacity === null || 
+                           (mosque.capacity && mosque.capacity >= filterCapacity);
+    
+    return matchesSearch && matchesCapacity;
   });
 
-  return (
-    <div className="min-h-screen bg-white">
-      <Breadcrumbs items={[
-        { name: 'Moskeeën' }
-      ]} />
-      
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            Onze Moskeeën
-          </h1>
-          <p className="text-gray-600 text-lg">
-            Ontdek alle aangesloten moskeeën in Gent en hun diensten.
-          </p>
-        </div>
+  const formatCapacity = (capacity?: number) => {
+    if (!capacity) return 'N/A';
+    return `${capacity} people`;
+  };
 
-        {/* Search and Filters */}
-        <div className="bg-gray-50 rounded-lg p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Zoeken
-              </label>
-              <div className="relative">
-                <MagnifyingGlassIcon className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
-                <input
-                  type="text"
-                  placeholder="Naam of adres..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
-                />
-              </div>
+  const formatYear = (year?: number) => {
+    if (!year) return 'N/A';
+    return year.toString();
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={() => {
+              setError('');
+              loadMosques();
+            }}
+            className="btn btn-primary"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              {t('title')}
+            </h1>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              {t('description')}
+            </p>
+          </div>
+
+          {/* Controls */}
+          <div className="flex flex-col lg:flex-row gap-4 mb-6">
+            {/* Search */}
+            <div className="flex-1">
+              <input
+                type="text"
+                placeholder={t('searchPlaceholder')}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Stad
-              </label>
+
+            {/* Capacity Filter */}
+            <div className="lg:w-48">
               <select
-                value={selectedCity}
-                onChange={(e) => setSelectedCity(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+                value={filterCapacity || ''}
+                onChange={(e) => setFilterCapacity(e.target.value ? parseInt(e.target.value) : null)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
               >
-                {cities.map((city) => (
-                  <option key={city} value={city}>
-                    {city === 'all' ? 'Alle steden' : city}
-                  </option>
-                ))}
+                <option value="">All Capacities</option>
+                <option value="100">100+ people</option>
+                <option value="200">200+ people</option>
+                <option value="300">300+ people</option>
+                <option value="400">400+ people</option>
+                <option value="500">500+ people</option>
               </select>
             </div>
-            <div className="flex items-end">
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-md ${
-                    viewMode === 'grid'
-                      ? 'bg-teal-600 text-white'
-                      : 'bg-white text-gray-700 border border-gray-300'
-                  }`}
-                >
-                  <Squares2X2Icon className="h-5 w-5" />
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`p-2 rounded-md ${
-                    viewMode === 'list'
-                      ? 'bg-teal-600 text-white'
-                      : 'bg-white text-gray-700 border border-gray-300'
-                  }`}
-                >
-                  <ListBulletIcon className="h-5 w-5" />
-                </button>
-              </div>
+
+            {/* View Toggle */}
+            <div className="flex gap-2">
+              <button
+                onClick={() => setViewMode('list')}
+                className={`px-4 py-2 rounded-md font-medium ${
+                  viewMode === 'list'
+                    ? 'bg-primary text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                📋 List
+              </button>
+              <button
+                onClick={() => setViewMode('map')}
+                className={`px-4 py-2 rounded-md font-medium ${
+                  viewMode === 'map'
+                    ? 'bg-primary text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                🗺️ Map
+              </button>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Results Count */}
-        <div className="mb-6">
-          <p className="text-gray-600">
-            {filteredMosques.length} moskee{filteredMosques.length !== 1 ? 'ën' : ''} gevonden
-          </p>
-        </div>
-
-        {/* Mosques Grid/List */}
-        {viewMode === 'grid' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredMosques.map((mosque) => (
-              <div key={mosque.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
-                {/* Mosque Image */}
-                <div className="h-48 bg-gray-200 flex items-center justify-center">
-                  <div className="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center">
-                    <svg className="w-10 h-10 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                    </svg>
-                  </div>
-                </div>
-                
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    {mosque.name}
-                  </h3>
-                  
-                  <div className="flex items-center mb-3">
-                    <MapPinIcon className="h-4 w-4 text-gray-400 mr-2" />
-                    <span className="text-sm text-gray-600">{mosque.address}</span>
-                  </div>
-                  
-                  <div className="flex items-center mb-3">
-                    <PhoneIcon className="h-4 w-4 text-gray-400 mr-2" />
-                    <span className="text-sm text-gray-600">{mosque.phone}</span>
-                  </div>
-                  
-                  <div className="flex items-center mb-4">
-                    <CalendarIcon className="h-4 w-4 text-gray-400 mr-2" />
-                    <span className="text-sm text-gray-600">{mosque.events.length} evenementen</span>
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-1 mb-4">
-                    {mosque.features.slice(0, 3).map((feature, index) => (
-                      <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-teal-100 text-teal-800">
-                        {feature}
-                      </span>
-                    ))}
-                    {mosque.features.length > 3 && (
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                        +{mosque.features.length - 3}
-                      </span>
-                    )}
-                  </div>
-                  
-                  <Link
-                    href={`/mosques/${mosque.id}`}
-                    className="w-full bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700 transition-colors"
-                  >
-                    Meer informatie
-                  </Link>
-                </div>
-              </div>
-            ))}
+      {/* Content */}
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {viewMode === 'map' ? (
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              Mosque Locations
+            </h2>
+            <GoogleMaps
+              mosques={filteredMosques}
+              onMosqueSelect={handleMosqueSelect}
+              selectedMosqueId={selectedMosque?.id}
+              height="600px"
+              showSearch={true}
+            />
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredMosques.map((mosque) => (
-              <div key={mosque.id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
-                <div className="flex flex-col md:flex-row md:items-start md:justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <div
+                key={mosque.id}
+                className={`bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-200 ${
+                  selectedMosque?.id === mosque.id
+                    ? 'ring-2 ring-primary shadow-lg'
+                    : 'hover:shadow-lg'
+                }`}
+                onClick={() => setSelectedMosque(mosque)}
+              >
+                <div className="p-6">
+                  <div className="mb-4">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">
                       {mosque.name}
                     </h3>
-                    
-                    <p className="text-gray-600 mb-4">
-                      {mosque.description}
+                    <p className="text-gray-600 text-sm mb-2">
+                      📍 {mosque.address}
                     </p>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                      <div className="flex items-center text-gray-600">
-                        <MapPinIcon className="h-4 w-4 mr-2" />
-                        <span>{mosque.address}</span>
-                      </div>
-                      <div className="flex items-center text-gray-600">
-                        <PhoneIcon className="h-4 w-4 mr-2" />
-                        <span>{mosque.phone}</span>
-                      </div>
-                      <div className="flex items-center text-gray-600">
-                        <UsersIcon className="h-4 w-4 mr-2" />
-                        <span>Capaciteit: {mosque.capacity}</span>
-                      </div>
-                      <div className="flex items-center text-gray-600">
-                        <CalendarIcon className="h-4 w-4 mr-2" />
-                        <span>{mosque.events.length} evenementen</span>
-                      </div>
+                    {mosque.imam_name && (
+                      <p className="text-gray-600 text-sm mb-2">
+                        🕌 Imam: {mosque.imam_name}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2 mb-4">
+                    {mosque.phone && (
+                      <p className="text-sm text-gray-600">
+                        📞 {mosque.phone}
+                      </p>
+                    )}
+                    {mosque.email && (
+                      <p className="text-sm text-gray-600">
+                        ✉️ {mosque.email}
+                      </p>
+                    )}
+                    {mosque.website && (
+                      <p className="text-sm text-gray-600">
+                        🌐 {mosque.website}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+                    <div>
+                      <span className="text-gray-500">Capacity:</span>
+                      <p className="font-medium">{formatCapacity(mosque.capacity)}</p>
                     </div>
-                    
-                    <div className="flex flex-wrap gap-2">
-                      {mosque.features.map((feature, index) => (
-                        <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-teal-100 text-teal-800">
-                          {feature}
-                        </span>
-                      ))}
+                    <div>
+                      <span className="text-gray-500">Established:</span>
+                      <p className="font-medium">{formatYear(mosque.established_year)}</p>
                     </div>
                   </div>
-                  
-                  <div className="mt-4 md:mt-0 md:ml-6">
-                    <Link
-                      href={`/mosques/${mosque.id}`}
-                      className="bg-teal-600 text-white px-6 py-2 rounded-md hover:bg-teal-700 transition-colors"
+
+                  {mosque.description && (
+                    <p className="text-gray-700 text-sm mb-4 line-clamp-3">
+                      {mosque.description}
+                    </p>
+                  )}
+
+                  <div className="flex gap-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedMosque(mosque);
+                        setViewMode('map');
+                      }}
+                      className="flex-1 bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-md transition-colors"
                     >
-                      Meer Details
-                    </Link>
+                      View on Map
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // TODO: Implement mosque details page
+                      }}
+                      className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md transition-colors"
+                    >
+                      Details
+                    </button>
                   </div>
                 </div>
               </div>
@@ -223,21 +277,116 @@ export default function MosquesPage() {
           </div>
         )}
 
-        {/* Empty State */}
         {filteredMosques.length === 0 && (
           <div className="text-center py-12">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <MagnifyingGlassIcon className="h-8 w-8 text-gray-400" />
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Geen moskeeën gevonden
-            </h3>
-            <p className="text-gray-500">
-              Probeer een andere zoekterm of filter.
+            <div className="text-gray-400 text-6xl mb-4">🕌</div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              No Mosques Found
+            </h2>
+            <p className="text-gray-600">
+              Try adjusting your search criteria or filters.
             </p>
           </div>
         )}
       </div>
+
+      {/* Selected Mosque Modal */}
+      {selectedMosque && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-start mb-4">
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {selectedMosque.name}
+                </h2>
+                <button
+                  onClick={() => setSelectedMosque(null)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Contact Information
+                  </h3>
+                  <div className="space-y-2">
+                    <p className="text-gray-600">
+                      📍 {selectedMosque.address}
+                    </p>
+                    {selectedMosque.phone && (
+                      <p className="text-gray-600">
+                        📞 {selectedMosque.phone}
+                      </p>
+                    )}
+                    {selectedMosque.email && (
+                      <p className="text-gray-600">
+                        ✉️ {selectedMosque.email}
+                      </p>
+                    )}
+                    {selectedMosque.website && (
+                      <p className="text-gray-600">
+                        🌐 {selectedMosque.website}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Mosque Details
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <span className="text-gray-500">Capacity:</span>
+                      <p className="font-medium">{formatCapacity(selectedMosque.capacity)}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Established:</span>
+                      <p className="font-medium">{formatYear(selectedMosque.established_year)}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Imam:</span>
+                      <p className="font-medium">{selectedMosque.imam_name || 'N/A'}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {selectedMosque.description && (
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      Description
+                    </h3>
+                    <p className="text-gray-700">
+                      {selectedMosque.description}
+                    </p>
+                  </div>
+                )}
+
+                <div className="flex gap-4 pt-4">
+                  <button
+                    onClick={() => {
+                      setSelectedMosque(null);
+                      setViewMode('map');
+                    }}
+                    className="flex-1 bg-primary hover:bg-primary-dark text-white font-medium py-3 px-4 rounded-md transition-colors"
+                  >
+                    View on Map
+                  </button>
+                  <button
+                    onClick={() => setSelectedMosque(null)}
+                    className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-3 px-4 rounded-md transition-colors"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
