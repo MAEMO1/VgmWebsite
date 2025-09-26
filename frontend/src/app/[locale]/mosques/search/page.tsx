@@ -103,7 +103,7 @@ export default function MosqueSearchPage() {
       }, 1000);
     };
     loadMosques();
-  }, []);
+  }, [mockMosques]);
 
   const filteredMosques = mosques.filter(mosque => {
     const matchesSearch = mosque.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
