@@ -71,7 +71,7 @@ export default function DonationsPage() {
             Steun de VGM Gemeenschap
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Uw donaties helpen bij het onderhouden van moskeeën, educatieve programma's en gemeenschapsdiensten in Gent
+            Uw donaties helpen bij het onderhouden van moskeeën, educatieve programma&apos;s en gemeenschapsdiensten in Gent
           </p>
         </div>
 
@@ -236,7 +236,7 @@ export default function DonationsPage() {
               <div className="bg-white border border-gray-200 rounded-2xl p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Reguliere Sadaqah</h3>
                 <p className="text-gray-600 mb-4">
-                  Ondersteun lopende gemeenschapsprojecten en educatieve programma's.
+                  Ondersteun lopende gemeenschapsprojecten en educatieve programma&apos;s.
                 </p>
                 <button className="w-full bg-teal-600 text-white py-3 rounded-lg hover:bg-teal-700 transition-colors">
                   Doneer Sadaqah
