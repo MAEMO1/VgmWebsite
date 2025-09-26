@@ -136,5 +136,17 @@
     "prayerTimes": {
       "title": "Bugünün Namaz Vakitleri"
     }
+  },
+  "About": {
+    "title": "VGM Hakkında",
+    "description": "Gent Camileri Derneği, Gent'teki Müslüman topluluğu birbirine bağlar ve destekler."
+  },
+  "Janazah": {
+    "title": "Cenaze Namazı",
+    "description": "Cenaze namazı ve hizmetler hakkında bilgi."
+  },
+  "News": {
+    "title": "Haberler",
+    "description": "VGM'den son haberler ve duyurular."
   }
 }

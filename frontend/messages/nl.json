@@ -147,5 +147,17 @@
     "prayerTimes": {
       "title": "Gebedstijden Vandaag"
     }
+  },
+  "About": {
+    "title": "Over VGM",
+    "description": "De Vereniging van Gentse Moskeeën verbindt en ondersteunt de moslimgemeenschap in Gent."
+  },
+  "Janazah": {
+    "title": "Begrafenisgebeden",
+    "description": "Informatie over begrafenisgebeden en diensten."
+  },
+  "News": {
+    "title": "Nieuws",
+    "description": "Laatste nieuws en aankondigingen van VGM."
   }
 }

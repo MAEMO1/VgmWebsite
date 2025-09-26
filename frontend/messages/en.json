@@ -136,5 +136,17 @@
     "prayerTimes": {
       "title": "Today's Prayer Times"
     }
+  },
+  "About": {
+    "title": "About VGM",
+    "description": "The Association of Ghent Mosques connects and supports the Muslim community in Ghent."
+  },
+  "Janazah": {
+    "title": "Funeral Prayers",
+    "description": "Information about funeral prayers and services."
+  },
+  "News": {
+    "title": "News",
+    "description": "Latest news and announcements from VGM."
   }
 }

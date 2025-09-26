@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
@@ -12,7 +12,6 @@ export const metadata: Metadata = {
   description: 'Enterprise-grade beheersysteem voor Gentse moskeeën',
   keywords: ['moskee', 'gent', 'islam', 'gemeenschap', 'evenementen', 'donaties'],
   authors: [{ name: 'VGM Team' }],
-  viewport: 'width=device-width, initial-scale=1',
   robots: 'index, follow',
   openGraph: {
     title: 'VGM - Vereniging van Gentse Moskeeën',
@@ -20,6 +19,11 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'nl_BE',
   },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
 };
 
 export default async function RootLayout({

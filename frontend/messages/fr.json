@@ -136,5 +136,17 @@
     "prayerTimes": {
       "title": "Heures de Prière d'Aujourd'hui"
     }
+  },
+  "About": {
+    "title": "À propos de VGM",
+    "description": "L'Association des Mosquées de Gand connecte et soutient la communauté musulmane à Gand."
+  },
+  "Janazah": {
+    "title": "Prière Funéraire",
+    "description": "Informations sur les prières funéraires et services."
+  },
+  "News": {
+    "title": "Actualités",
+    "description": "Dernières actualités et annonces de VGM."
   }
 }
