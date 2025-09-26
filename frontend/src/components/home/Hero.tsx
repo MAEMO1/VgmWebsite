@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useLocale } from 'next-intl';
 import Image from 'next/image';
+import { PrayerTimesWidget } from '@/components/prayer-times/PrayerTimesWidget';
 
 export function Hero() {
   const t = useTranslations('Hero');
@@ -13,7 +14,9 @@ export function Hero() {
     <div className="bg-gradient-to-br from-teal-50 to-cyan-50">
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-20">
-        <div className="text-center">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+          {/* Left Content */}
+          <div className="lg:col-span-2 text-center lg:text-left">
           {/* Logo */}
           <div className="mb-12">
             <div className="inline-block p-6 bg-white rounded-2xl shadow-lg">
@@ -50,6 +53,12 @@ export function Hero() {
             >
               Bekijk Evenementen
             </Link>
+          </div>
+          </div>
+          
+          {/* Right Content - Prayer Times */}
+          <div className="lg:col-span-1">
+            <PrayerTimesWidget />
           </div>
         </div>
       </div>

@@ -43,6 +43,7 @@ export function Navigation() {
         { name: 'Contact', href: `/${locale}/contact` },
       ]
     },
+    { name: 'Gebedstijden', href: `/${locale}/prayer-times` },
   ];
 
   return (
