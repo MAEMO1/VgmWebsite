@@ -8,9 +8,11 @@ import os
 import logging
 import secrets
 import hashlib
+import uuid
 from datetime import datetime, timedelta
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify, session, send_from_directory
 from flask_cors import CORS
+from werkzeug.utils import secure_filename
 import sqlite3
 import jwt
 import stripe
@@ -32,6 +34,17 @@ def create_app():
     # Stripe configuration
     stripe.api_key = os.environ.get('STRIPE_SECRET_KEY', 'sk_test_...')
     STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', 'pk_test_...')
+    
+    # File upload configuration
+    UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
+    ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'}
+    
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
+    
+    # Create upload directory if it doesn't exist
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
     
     # Configure CORS properly
     CORS(app, 
@@ -74,6 +87,18 @@ def create_app():
             return None
         except jwt.InvalidTokenError:
             return None
+    
+    def allowed_file(filename):
+        """Check if file extension is allowed"""
+        return '.' in filename and \
+               filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    
+    def get_file_size(file):
+        """Get file size in bytes"""
+        file.seek(0, 2)  # Seek to end
+        size = file.tell()
+        file.seek(0)  # Reset to beginning
+        return size
     
     def init_database():
         """Initialize database with payment tables"""
@@ -209,6 +234,29 @@ def create_app():
                 is_default BOOLEAN DEFAULT 0,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users (id)
+            )
+        ''')
+        
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS media_files (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                filename TEXT NOT NULL,
+                original_filename TEXT NOT NULL,
+                file_path TEXT NOT NULL,
+                file_size INTEGER NOT NULL,
+                file_type TEXT NOT NULL,
+                mime_type TEXT NOT NULL,
+                uploaded_by INTEGER,
+                mosque_id INTEGER,
+                event_id INTEGER,
+                campaign_id INTEGER,
+                description TEXT,
+                is_public BOOLEAN DEFAULT 1,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (uploaded_by) REFERENCES users (id),
+                FOREIGN KEY (mosque_id) REFERENCES mosques (id),
+                FOREIGN KEY (event_id) REFERENCES events (id),
+                FOREIGN KEY (campaign_id) REFERENCES campaigns (id)
             )
         ''')
         
@@ -500,6 +548,162 @@ def create_app():
         except Exception as e:
             logger.error(f"Error fetching donations: {e}")
             return jsonify({'error': str(e)}), 500
+    
+    # File upload endpoints
+    @app.route('/api/upload', methods=['POST'])
+    @require_auth
+    def upload_file():
+        """Upload a file"""
+        try:
+            if 'file' not in request.files:
+                return jsonify({'error': 'No file provided'}), 400
+            
+            file = request.files['file']
+            if file.filename == '':
+                return jsonify({'error': 'No file selected'}), 400
+            
+            if not allowed_file(file.filename):
+                return jsonify({'error': 'File type not allowed'}), 400
+            
+            # Get file info
+            file_size = get_file_size(file)
+            if file_size > MAX_CONTENT_LENGTH:
+                return jsonify({'error': 'File too large'}), 400
+            
+            # Generate unique filename
+            file_extension = file.filename.rsplit('.', 1)[1].lower()
+            unique_filename = f"{uuid.uuid4().hex}.{file_extension}"
+            secure_original_name = secure_filename(file.filename)
+            
+            # Save file
+            file_path = os.path.join(UPLOAD_FOLDER, unique_filename)
+            file.save(file_path)
+            
+            # Get additional data
+            description = request.form.get('description', '')
+            mosque_id = request.form.get('mosque_id')
+            event_id = request.form.get('event_id')
+            campaign_id = request.form.get('campaign_id')
+            is_public = request.form.get('is_public', 'true').lower() == 'true'
+            
+            # Save file info to database
+            conn = get_db_connection()
+            cursor = conn.execute('''
+                INSERT INTO media_files (
+                    filename, original_filename, file_path, file_size, file_type,
+                    mime_type, uploaded_by, mosque_id, event_id, campaign_id,
+                    description, is_public
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (
+                unique_filename,
+                secure_original_name,
+                file_path,
+                file_size,
+                file_extension,
+                file.content_type,
+                request.user_id,
+                int(mosque_id) if mosque_id else None,
+                int(event_id) if event_id else None,
+                int(campaign_id) if campaign_id else None,
+                description,
+                is_public
+            ))
+            
+            file_id = cursor.lastrowid
+            conn.commit()
+            conn.close()
+            
+            return jsonify({
+                'file_id': file_id,
+                'filename': unique_filename,
+                'original_filename': secure_original_name,
+                'file_size': file_size,
+                'file_type': file_extension,
+                'mime_type': file.content_type,
+                'url': f'/api/files/{file_id}'
+            })
+            
+        except Exception as e:
+            logger.error(f"Error uploading file: {e}")
+            return jsonify({'error': 'Failed to upload file'}), 500
+    
+    @app.route('/api/files/<int:file_id>', methods=['GET'])
+    def get_file(file_id):
+        """Get file by ID"""
+        try:
+            conn = get_db_connection()
+            file_info = conn.execute('''
+                SELECT * FROM media_files WHERE id = ? AND is_public = 1
+            ''', (file_id,)).fetchone()
+            conn.close()
+            
+            if not file_info:
+                return jsonify({'error': 'File not found'}), 404
+            
+            return send_from_directory(
+                UPLOAD_FOLDER,
+                file_info['filename'],
+                as_attachment=False,
+                download_name=file_info['original_filename']
+            )
+            
+        except Exception as e:
+            logger.error(f"Error retrieving file {file_id}: {e}")
+            return jsonify({'error': 'Failed to retrieve file'}), 500
+    
+    @app.route('/api/files', methods=['GET'])
+    def get_files():
+        """Get all public files"""
+        try:
+            conn = get_db_connection()
+            files = conn.execute('''
+                SELECT mf.*, u.first_name, u.last_name, mo.name as mosque_name
+                FROM media_files mf
+                LEFT JOIN users u ON mf.uploaded_by = u.id
+                LEFT JOIN mosques mo ON mf.mosque_id = mo.id
+                WHERE mf.is_public = 1
+                ORDER BY mf.created_at DESC
+            ''').fetchall()
+            conn.close()
+            
+            return jsonify([dict(file) for file in files])
+        except Exception as e:
+            logger.error(f"Error fetching files: {e}")
+            return jsonify({'error': str(e)}), 500
+    
+    @app.route('/api/files/<int:file_id>', methods=['DELETE'])
+    @require_auth
+    def delete_file(file_id):
+        """Delete file (admin or owner only)"""
+        try:
+            conn = get_db_connection()
+            file_info = conn.execute('''
+                SELECT * FROM media_files WHERE id = ?
+            ''', (file_id,)).fetchone()
+            
+            if not file_info:
+                return jsonify({'error': 'File not found'}), 404
+            
+            # Check permissions
+            if request.user_role != 'admin' and file_info['uploaded_by'] != request.user_id:
+                return jsonify({'error': 'Insufficient permissions'}), 403
+            
+            # Delete file from filesystem
+            try:
+                os.remove(file_info['file_path'])
+            except OSError:
+                pass  # File might already be deleted
+            
+            # Delete from database
+            conn.execute('DELETE FROM media_files WHERE id = ?', (file_id,))
+            conn.commit()
+            conn.close()
+            
+            return jsonify({'message': 'File deleted successfully'})
+            
+        except Exception as e:
+            logger.error(f"Error deleting file {file_id}: {e}")
+            return jsonify({'error': 'Failed to delete file'}), 500
     
     # Existing authentication endpoints (unchanged)
     @app.route('/api/auth/login', methods=['POST'])
