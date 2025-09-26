@@ -100,7 +100,7 @@ export default function MosqueSearchPage() {
       setMosques(mockMosques);
       setLoading(false);
     }, 1000);
-  }, [mockMosques]);
+  }, []);
 
   const filteredMosques = mosques.filter(mosque => {
     const matchesSearch = mosque.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

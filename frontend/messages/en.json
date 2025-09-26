@@ -148,5 +148,25 @@
   "News": {
     "title": "News",
     "description": "Latest news and announcements from VGM."
+  },
+  "Donations": {
+    "title": "Donations",
+    "description": "Support the VGM community"
+  },
+  "Memorandum": {
+    "title": "Memorandum",
+    "description": "Our mission, vision and values"
+  },
+  "Board": {
+    "title": "Board",
+    "description": "Meet the VGM board"
+  },
+  "MosqueSearch": {
+    "title": "Mosque Search",
+    "description": "Find mosques in Ghent"
+  },
+  "MosqueRegistration": {
+    "title": "Mosque Registration",
+    "description": "Register your mosque with VGM"
   }
 }

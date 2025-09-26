@@ -148,5 +148,25 @@
   "News": {
     "title": "الأخبار",
     "description": "آخر الأخبار والإعلانات من VGM."
+  },
+  "Donations": {
+    "title": "التبرعات",
+    "description": "ادعم مجتمع VGM"
+  },
+  "Memorandum": {
+    "title": "المذكرة",
+    "description": "مهمتنا ورؤيتنا وقيمنا"
+  },
+  "Board": {
+    "title": "المجلس",
+    "description": "تعرف على مجلس VGM"
+  },
+  "MosqueSearch": {
+    "title": "البحث عن المساجد",
+    "description": "ابحث عن المساجد في غنت"
+  },
+  "MosqueRegistration": {
+    "title": "تسجيل المسجد",
+    "description": "سجل مسجدك مع VGM"
   }
 }

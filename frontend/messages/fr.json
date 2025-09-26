@@ -148,5 +148,25 @@
   "News": {
     "title": "Actualités",
     "description": "Dernières actualités et annonces de VGM."
+  },
+  "Donations": {
+    "title": "Dons",
+    "description": "Soutenez la communauté VGM"
+  },
+  "Memorandum": {
+    "title": "Mémorandum",
+    "description": "Notre mission, vision et valeurs"
+  },
+  "Board": {
+    "title": "Conseil",
+    "description": "Rencontrez le conseil VGM"
+  },
+  "MosqueSearch": {
+    "title": "Recherche de Mosquées",
+    "description": "Trouvez des mosquées à Gand"
+  },
+  "MosqueRegistration": {
+    "title": "Enregistrement de Mosquée",
+    "description": "Enregistrez votre mosquée avec VGM"
   }
 }

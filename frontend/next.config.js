@@ -15,6 +15,9 @@ const nextConfig = {
       },
     ],
   },
+  env: {
+    _next_intl_trailing_slash: 'false',
+  },
   async headers() {
     return [
       {

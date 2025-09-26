@@ -159,5 +159,25 @@
   "News": {
     "title": "Nieuws",
     "description": "Laatste nieuws en aankondigingen van VGM."
+  },
+  "Donations": {
+    "title": "Donaties",
+    "description": "Steun de VGM gemeenschap"
+  },
+  "Memorandum": {
+    "title": "Memorandum",
+    "description": "Onze missie, visie en waarden"
+  },
+  "Board": {
+    "title": "Bestuur",
+    "description": "Ontmoet het VGM bestuur"
+  },
+  "MosqueSearch": {
+    "title": "Moskee Zoeken",
+    "description": "Vind moskeeën in Gent"
+  },
+  "MosqueRegistration": {
+    "title": "Moskee Registratie",
+    "description": "Registreer uw moskee bij VGM"
   }
 }

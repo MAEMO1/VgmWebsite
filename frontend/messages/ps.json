@@ -148,5 +148,25 @@
   "News": {
     "title": "خبرونه",
     "description": "د VGM څخه تازه خبرونه او اعلانات."
+  },
+  "Donations": {
+    "title": "خیرات",
+    "description": "د VGM ټولنې ملاتړ وکړئ"
+  },
+  "Memorandum": {
+    "title": "یادداشت",
+    "description": "زموږ ماموریت، لید او ارزښتونه"
+  },
+  "Board": {
+    "title": "بورډ",
+    "description": "د VGM بورډ سره وپیژنئ"
+  },
+  "MosqueSearch": {
+    "title": "د جوماتو لټون",
+    "description": "په ګینټ کې جوماتونه ومومئ"
+  },
+  "MosqueRegistration": {
+    "title": "د جومات ثبت",
+    "description": "خپل جومات د VGM سره ثبت کړئ"
   }
 }

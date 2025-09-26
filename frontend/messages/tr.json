@@ -148,5 +148,25 @@
   "News": {
     "title": "Haberler",
     "description": "VGM'den son haberler ve duyurular."
+  },
+  "Donations": {
+    "title": "Bağışlar",
+    "description": "VGM topluluğunu destekleyin"
+  },
+  "Memorandum": {
+    "title": "Memorandum",
+    "description": "Misyonumuz, vizyonumuz ve değerlerimiz"
+  },
+  "Board": {
+    "title": "Yönetim Kurulu",
+    "description": "VGM yönetim kurulu ile tanışın"
+  },
+  "MosqueSearch": {
+    "title": "Cami Arama",
+    "description": "Gent'te camileri bulun"
+  },
+  "MosqueRegistration": {
+    "title": "Cami Kaydı",
+    "description": "Caminizi VGM ile kaydedin"
   }
 }
