@@ -1,10 +1,11 @@
 from datetime import datetime, date, time
 from flask_login import UserMixin
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String, Float, Boolean, Date, Time, DateTime, ForeignKey, Text, Numeric
 from sqlalchemy.orm import relationship
 
-# SQLAlchemy will be imported from the app
-db = None
+# Initialize SQLAlchemy
+db = SQLAlchemy()
 
 class User(UserMixin, db.Model):
     """User model for authentication and user management"""

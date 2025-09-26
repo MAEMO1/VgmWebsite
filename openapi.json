@@ -1,0 +1,875 @@
+{
+  "swagger": "2.0",
+  "basePath": "/api",
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "responses": {
+          "401": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "400": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Success"
+            }
+          }
+        },
+        "summary": "Login user",
+        "operationId": "post_login",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Login"
+            }
+          },
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "type": "string",
+            "format": "mask",
+            "description": "An optional fields mask"
+          }
+        ],
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "responses": {
+          "401": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        },
+        "summary": "Get current user information",
+        "operationId": "get_me",
+        "parameters": [
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "type": "string",
+            "format": "mask",
+            "description": "An optional fields mask"
+          }
+        ],
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "responses": {
+          "400": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Success"
+            }
+          }
+        },
+        "summary": "Register new user",
+        "operationId": "post_register",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Register"
+            }
+          },
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "type": "string",
+            "format": "mask",
+            "description": "An optional fields mask"
+          }
+        ],
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/donations/": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Donation"
+              }
+            }
+          }
+        },
+        "summary": "Get list of donations",
+        "operationId": "get_donation_list",
+        "parameters": [
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "type": "string",
+            "format": "mask",
+            "description": "An optional fields mask"
+          }
+        ],
+        "tags": [
+          "donations"
+        ]
+      }
+    },
+    "/events/": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Event"
+              }
+            }
+          }
+        },
+        "summary": "Get list of events",
+        "operationId": "get_event_list",
+        "parameters": [
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "type": "string",
+            "format": "mask",
+            "description": "An optional fields mask"
+          }
+        ],
+        "tags": [
+          "events"
+        ]
+      }
+    },
+    "/events/{event_id}": {
+      "parameters": [
+        {
+          "name": "event_id",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "get": {
+        "responses": {
+          "404": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Event"
+            }
+          }
+        },
+        "summary": "Get event details",
+        "operationId": "get_event_detail",
+        "parameters": [
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "type": "string",
+            "format": "mask",
+            "description": "An optional fields mask"
+          }
+        ],
+        "tags": [
+          "events"
+        ]
+      }
+    },
+    "/mosques/": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Mosque"
+              }
+            }
+          }
+        },
+        "summary": "Get list of mosques",
+        "operationId": "get_mosque_list",
+        "parameters": [
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "type": "string",
+            "format": "mask",
+            "description": "An optional fields mask"
+          }
+        ],
+        "tags": [
+          "mosques"
+        ]
+      }
+    },
+    "/mosques/{mosque_id}": {
+      "parameters": [
+        {
+          "name": "mosque_id",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "get": {
+        "responses": {
+          "404": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Mosque"
+            }
+          }
+        },
+        "summary": "Get mosque details",
+        "operationId": "get_mosque_detail",
+        "parameters": [
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "type": "string",
+            "format": "mask",
+            "description": "An optional fields mask"
+          }
+        ],
+        "tags": [
+          "mosques"
+        ]
+      }
+    },
+    "/news/": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/News"
+              }
+            }
+          }
+        },
+        "summary": "Get list of news articles",
+        "operationId": "get_news_list",
+        "parameters": [
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "type": "string",
+            "format": "mask",
+            "description": "An optional fields mask"
+          }
+        ],
+        "tags": [
+          "news"
+        ]
+      }
+    },
+    "/news/{news_id}": {
+      "parameters": [
+        {
+          "name": "news_id",
+          "in": "path",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "get": {
+        "responses": {
+          "404": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/News"
+            }
+          }
+        },
+        "summary": "Get news article details",
+        "operationId": "get_news_detail",
+        "parameters": [
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "type": "string",
+            "format": "mask",
+            "description": "An optional fields mask"
+          }
+        ],
+        "tags": [
+          "news"
+        ]
+      }
+    },
+    "/ramadan/iftar-events": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/IftarEvent"
+              }
+            }
+          }
+        },
+        "summary": "Get list of iftar events",
+        "operationId": "get_iftar_event_list",
+        "parameters": [
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "type": "string",
+            "format": "mask",
+            "description": "An optional fields mask"
+          }
+        ],
+        "tags": [
+          "ramadan"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "VGM Website API",
+    "version": "1.0.0",
+    "description": "API for Vereniging van Gentse Moskeeën Website",
+    "contact": {
+      "name": "VGM Support",
+      "email": "support@vgm.be"
+    }
+  },
+  "produces": [
+    "application/json"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Authentication operations"
+    },
+    {
+      "name": "mosques",
+      "description": "Mosque operations"
+    },
+    {
+      "name": "events",
+      "description": "Event operations"
+    },
+    {
+      "name": "ramadan",
+      "description": "Ramadan operations"
+    },
+    {
+      "name": "donations",
+      "description": "Donation operations"
+    },
+    {
+      "name": "news",
+      "description": "News operations"
+    }
+  ],
+  "definitions": {
+    "Login": {
+      "required": [
+        "email",
+        "password"
+      ],
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "User email"
+        },
+        "password": {
+          "type": "string",
+          "description": "User password"
+        },
+        "remember": {
+          "type": "boolean",
+          "description": "Remember user"
+        }
+      },
+      "type": "object"
+    },
+    "Error": {
+      "required": [
+        "error"
+      ],
+      "properties": {
+        "error": {
+          "type": "string",
+          "description": "Error message"
+        },
+        "code": {
+          "type": "integer",
+          "description": "Error code"
+        }
+      },
+      "type": "object"
+    },
+    "Success": {
+      "required": [
+        "message"
+      ],
+      "properties": {
+        "message": {
+          "type": "string",
+          "description": "Success message"
+        },
+        "data": {
+          "type": "object",
+          "description": "Response data"
+        }
+      },
+      "type": "object"
+    },
+    "Register": {
+      "required": [
+        "email",
+        "first_name",
+        "last_name",
+        "password"
+      ],
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "User email"
+        },
+        "password": {
+          "type": "string",
+          "description": "User password"
+        },
+        "first_name": {
+          "type": "string",
+          "description": "First name"
+        },
+        "last_name": {
+          "type": "string",
+          "description": "Last name"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Phone number"
+        },
+        "role": {
+          "type": "string",
+          "description": "User role"
+        },
+        "mosque_id": {
+          "type": "integer",
+          "description": "Mosque ID"
+        }
+      },
+      "type": "object"
+    },
+    "User": {
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "User ID"
+        },
+        "email": {
+          "type": "string",
+          "description": "User email"
+        },
+        "first_name": {
+          "type": "string",
+          "description": "First name"
+        },
+        "last_name": {
+          "type": "string",
+          "description": "Last name"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Phone number"
+        },
+        "role": {
+          "type": "string",
+          "description": "User role"
+        },
+        "mosque_id": {
+          "type": "integer",
+          "description": "Mosque ID"
+        },
+        "is_active": {
+          "type": "boolean",
+          "description": "Is active"
+        },
+        "email_verified": {
+          "type": "boolean",
+          "description": "Email verified"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Created at"
+        }
+      },
+      "type": "object"
+    },
+    "Mosque": {
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "Mosque ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "Mosque name"
+        },
+        "address": {
+          "type": "string",
+          "description": "Mosque address"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Phone number"
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address"
+        },
+        "website": {
+          "type": "string",
+          "description": "Website URL"
+        },
+        "capacity": {
+          "type": "integer",
+          "description": "Capacity"
+        },
+        "established_year": {
+          "type": "integer",
+          "description": "Established year"
+        },
+        "imam_name": {
+          "type": "string",
+          "description": "Imam name"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description"
+        },
+        "latitude": {
+          "type": "number",
+          "description": "Latitude"
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Longitude"
+        },
+        "is_active": {
+          "type": "boolean",
+          "description": "Is active"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Created at"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Updated at"
+        }
+      },
+      "type": "object"
+    },
+    "Event": {
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "Event ID"
+        },
+        "mosque_id": {
+          "type": "integer",
+          "description": "Mosque ID"
+        },
+        "title": {
+          "type": "string",
+          "description": "Event title"
+        },
+        "description": {
+          "type": "string",
+          "description": "Event description"
+        },
+        "event_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Event date"
+        },
+        "event_time": {
+          "type": "string",
+          "description": "Event time"
+        },
+        "event_type": {
+          "type": "string",
+          "description": "Event type"
+        },
+        "is_recurring": {
+          "type": "boolean",
+          "description": "Is recurring"
+        },
+        "recurring_pattern": {
+          "type": "string",
+          "description": "Recurring pattern"
+        },
+        "max_attendees": {
+          "type": "integer",
+          "description": "Max attendees"
+        },
+        "current_attendees": {
+          "type": "integer",
+          "description": "Current attendees"
+        },
+        "is_active": {
+          "type": "boolean",
+          "description": "Is active"
+        },
+        "created_by": {
+          "type": "integer",
+          "description": "Created by user ID"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Created at"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Updated at"
+        }
+      },
+      "type": "object"
+    },
+    "IftarEvent": {
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "Iftar event ID"
+        },
+        "mosque_id": {
+          "type": "integer",
+          "description": "Mosque ID"
+        },
+        "date": {
+          "type": "string",
+          "format": "date",
+          "description": "Event date"
+        },
+        "start_time": {
+          "type": "string",
+          "description": "Start time"
+        },
+        "end_time": {
+          "type": "string",
+          "description": "End time"
+        },
+        "location": {
+          "type": "string",
+          "description": "Location"
+        },
+        "is_family_friendly": {
+          "type": "boolean",
+          "description": "Is family friendly"
+        },
+        "capacity": {
+          "type": "integer",
+          "description": "Capacity"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Created at"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Updated at"
+        }
+      },
+      "type": "object"
+    },
+    "Donation": {
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "Donation ID"
+        },
+        "mosque_id": {
+          "type": "integer",
+          "description": "Mosque ID"
+        },
+        "campaign_id": {
+          "type": "integer",
+          "description": "Campaign ID"
+        },
+        "donor_name": {
+          "type": "string",
+          "description": "Donor name"
+        },
+        "donor_email": {
+          "type": "string",
+          "description": "Donor email"
+        },
+        "amount": {
+          "type": "number",
+          "description": "Donation amount"
+        },
+        "payment_method": {
+          "type": "string",
+          "description": "Payment method"
+        },
+        "payment_status": {
+          "type": "string",
+          "description": "Payment status"
+        },
+        "transaction_id": {
+          "type": "string",
+          "description": "Transaction ID"
+        },
+        "is_anonymous": {
+          "type": "boolean",
+          "description": "Is anonymous"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Created at"
+        }
+      },
+      "type": "object"
+    },
+    "News": {
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "News ID"
+        },
+        "title": {
+          "type": "string",
+          "description": "News title"
+        },
+        "content": {
+          "type": "string",
+          "description": "News content"
+        },
+        "excerpt": {
+          "type": "string",
+          "description": "News excerpt"
+        },
+        "author_id": {
+          "type": "integer",
+          "description": "Author ID"
+        },
+        "category": {
+          "type": "string",
+          "description": "News category"
+        },
+        "featured_image": {
+          "type": "string",
+          "description": "Featured image URL"
+        },
+        "is_published": {
+          "type": "boolean",
+          "description": "Is published"
+        },
+        "published_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Published at"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Created at"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Updated at"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "responses": {
+    "ParseError": {
+      "description": "When a mask can't be parsed"
+    },
+    "MaskError": {
+      "description": "When any error occurs on mask"
+    }
+  },
+  "host": "localhost:5000",
+  "openapi": "3.0.3",
+  "servers": [
+    {
+      "url": "https://vgmwebsite-production.up.railway.app",
+      "description": "Production server"
+    },
+    {
+      "url": "http://localhost:5000",
+      "description": "Development server"
+    }
+  ]
+}

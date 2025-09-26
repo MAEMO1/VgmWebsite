@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: vgm-backend
+    env: python
+    buildCommand: pip install -e .
+    startCommand: gunicorn --bind 0.0.0.0:$PORT app:app
+    healthCheckPath: /health
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: GOOGLE_MAPS_API_KEY
+        value: your-google-maps-api-key-here
+    database:
+      name: vgm-database
+      plan: free
+
