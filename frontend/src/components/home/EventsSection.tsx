@@ -131,10 +131,10 @@ export function EventsSection() {
                     <ClockIcon className="w-4 h-4 mr-2" />
                     <span>{event.event_time}</span>
                   </div>
-                  {event.mosque && (
+                  {event.mosque_id && (
                     <div className="flex items-center">
                       <MapPinIcon className="w-4 h-4 mr-2" />
-                      <span>{event.mosque.name}</span>
+                      <span>Moskee ID: {event.mosque_id}</span>
                     </div>
                   )}
                 </div>

@@ -129,10 +129,10 @@ export function NewsSection() {
                       <span>{new Date(news.published_at).toLocaleDateString('nl-NL')}</span>
                     </div>
                   )}
-                  {news.author && (
+                  {news.author_id && (
                     <div className="flex items-center">
                       <UserIcon className="w-4 h-4 mr-2" />
-                      <span>{news.author.first_name} {news.author.last_name}</span>
+                      <span>Author ID: {news.author_id}</span>
                     </div>
                   )}
                 </div>
