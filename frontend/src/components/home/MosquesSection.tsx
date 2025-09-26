@@ -7,6 +7,7 @@ import { useMosques } from '@/hooks/useApi';
 import { MapPinIcon, UsersIcon, CalendarIcon } from '@heroicons/react/24/outline';
 import { SectionErrorBoundary } from '@/components/ErrorBoundary';
 import { MosquesSkeleton } from '@/components/ui/Skeleton';
+import { CardImage } from '@/components/ui/LazyImage';
 
 export function MosquesSection() {
   const locale = useLocale();
@@ -76,14 +77,14 @@ function MosquesSectionContent({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
               {mosques?.slice(0, 6).map((mosque: any) => (
             <div key={mosque.id} className="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-lg transition-shadow">
-              {/* Mosque Image Placeholder */}
-              <div className="h-48 bg-gray-200 flex items-center justify-center">
-                <div className="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center">
-                  <svg className="w-10 h-10 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                  </svg>
-                </div>
-              </div>
+              {/* Mosque Image */}
+              <CardImage
+                src="/images/mosque-placeholder.jpg"
+                alt={mosque.name || 'Moskee'}
+                width={300}
+                height={200}
+                className="w-full h-48 object-cover"
+              />
               
               <div className="p-6">
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">

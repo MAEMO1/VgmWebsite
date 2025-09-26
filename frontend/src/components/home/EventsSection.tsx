@@ -7,6 +7,7 @@ import { useEvents } from '@/hooks/useApi';
 import { CalendarIcon, ClockIcon, MapPinIcon } from '@heroicons/react/24/outline';
 import { SectionErrorBoundary } from '@/components/ErrorBoundary';
 import { EventsSkeleton } from '@/components/ui/Skeleton';
+import { CardImage } from '@/components/ui/LazyImage';
 
 export function EventsSection() {
   const locale = useLocale();
@@ -110,12 +111,14 @@ function EventsSectionContent({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {events.slice(0, 3).map((event: any) => (
             <div key={event.id} className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
-              {/* Event Image Placeholder */}
-              <div className="h-48 bg-gradient-to-br from-teal-100 to-teal-200 flex items-center justify-center">
-                <div className="w-20 h-20 bg-teal-600 rounded-full flex items-center justify-center">
-                  <CalendarIcon className="w-10 h-10 text-white" />
-                </div>
-              </div>
+              {/* Event Image */}
+              <CardImage
+                src="/images/event-placeholder.jpg"
+                alt={event.title || 'Evenement'}
+                width={300}
+                height={200}
+                className="w-full h-48 object-cover"
+              />
               
               <div className="p-6">
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">

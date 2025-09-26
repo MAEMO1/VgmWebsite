@@ -7,6 +7,7 @@ import { useNewsPosts } from '@/hooks/useApi';
 import { NewspaperIcon, CalendarIcon, UserIcon } from '@heroicons/react/24/outline';
 import { SectionErrorBoundary } from '@/components/ErrorBoundary';
 import { NewsSkeleton } from '@/components/ui/Skeleton';
+import { CardImage } from '@/components/ui/LazyImage';
 
 export function NewsSection() {
   const locale = useLocale();
@@ -110,12 +111,14 @@ function NewsSectionContent({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {newsPosts.slice(0, 3).map((news: any) => (
             <div key={news.id} className="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-lg transition-shadow">
-              {/* News Image Placeholder */}
-              <div className="h-48 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
-                <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center">
-                  <NewspaperIcon className="w-10 h-10 text-white" />
-                </div>
-              </div>
+              {/* News Image */}
+              <CardImage
+                src="/images/news-placeholder.jpg"
+                alt={news.title || 'Nieuws'}
+                width={300}
+                height={200}
+                className="w-full h-48 object-cover"
+              />
               
               <div className="p-6">
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">

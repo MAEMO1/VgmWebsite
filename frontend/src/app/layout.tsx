@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { Providers } from './providers';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { PerformanceOptimizations } from '@/components/PerformanceOptimizations';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -39,6 +40,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={locale === 'ar' || locale === 'ps' ? 'rtl' : 'ltr'}>
       <body className={inter.className}>
+        <PerformanceOptimizations />
         <ErrorBoundary>
           <NextIntlClientProvider messages={messages}>
             <Providers>{children}</Providers>
