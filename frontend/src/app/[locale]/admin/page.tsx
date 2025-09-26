@@ -51,16 +51,16 @@ function AdminDashboard() {
       setLoading(true);
       
       // Load users
-      const usersResponse = await apiClient.get('/api/admin/users');
-      setUsers(usersResponse.data);
+      const usersResponse = await apiClient.get<User[]>('/api/admin/users');
+      setUsers(usersResponse);
       
       // Load events
-      const eventsResponse = await apiClient.get('/api/events');
-      setEvents(eventsResponse.data);
+      const eventsResponse = await apiClient.get<Event[]>('/api/events');
+      setEvents(eventsResponse);
       
       // Load news
-      const newsResponse = await apiClient.get('/api/news');
-      setNews(newsResponse.data);
+      const newsResponse = await apiClient.get<News[]>('/api/news');
+      setNews(newsResponse);
       
     } catch (error) {
       console.error('Error loading data:', error);
