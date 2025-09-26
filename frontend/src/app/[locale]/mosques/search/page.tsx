@@ -96,10 +96,13 @@ export default function MosqueSearchPage() {
 
   useEffect(() => {
     // Simulate API call
-    setTimeout(() => {
-      setMosques(mockMosques);
-      setLoading(false);
-    }, 1000);
+    const loadMosques = async () => {
+      setTimeout(() => {
+        setMosques(mockMosques);
+        setLoading(false);
+      }, 1000);
+    };
+    loadMosques();
   }, []);
 
   const filteredMosques = mosques.filter(mosque => {
