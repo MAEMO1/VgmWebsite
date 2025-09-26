@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useNewsPosts } from '@/hooks/useApi';
 import { NewspaperIcon, CalendarIcon, UserIcon } from '@heroicons/react/24/outline';
 import { SectionErrorBoundary } from '@/components/ErrorBoundary';
+import { NewsSkeleton } from '@/components/ui/Skeleton';
 
 export function NewsSection() {
   const locale = useLocale();
@@ -40,32 +41,7 @@ function NewsSectionContent({
 }) {
 
   if (isLoading) {
-    return (
-      <div className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              {t('title')}
-            </h2>
-            <p className="text-lg text-gray-600">
-              Blijf op de hoogte van het laatste nieuws en aankondigingen
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="bg-white border border-gray-200 rounded-2xl overflow-hidden animate-pulse">
-                <div className="h-48 bg-gray-200"></div>
-                <div className="p-6">
-                  <div className="h-6 bg-gray-200 rounded mb-2"></div>
-                  <div className="h-4 bg-gray-200 rounded mb-3"></div>
-                  <div className="h-8 bg-gray-200 rounded"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    return <NewsSkeleton />;
   }
 
   if (error) {
