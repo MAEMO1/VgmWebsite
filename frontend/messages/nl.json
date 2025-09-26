@@ -6,6 +6,8 @@
   "Navigation": {
     "home": "Home",
     "mosques": "Moskeeën",
+    "community": "Gemeenschap",
+    "about": "Over ons",
     "events": "Evenementen",
     "ramadan": "Ramadan",
     "donations": "Donaties"
@@ -90,6 +92,17 @@
     },
     "learnMore": "Meer informatie",
     "viewAll": "Bekijk Alle Moskeeën"
+  },
+  "Home": {
+    "mosques": {
+      "title": "Moskeeën in Gent",
+      "description": "Ontdek alle aangesloten moskeeën en hun diensten",
+      "viewAll": "Alle moskeeën bekijken",
+      "viewDetails": "Meer informatie",
+      "capacity": "capaciteit",
+      "established": "opgericht",
+      "error": "Er is een fout opgetreden bij het laden van de moskeeën"
+    }
   },
   "Events": {
     "title": "Aankomende Evenementen",

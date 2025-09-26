@@ -6,6 +6,8 @@
   "Navigation": {
     "home": "Home",
     "mosques": "Mosques",
+    "community": "Community",
+    "about": "About",
     "events": "Events",
     "ramadan": "Ramadan",
     "donations": "Donations"
