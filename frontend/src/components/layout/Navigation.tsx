@@ -108,15 +108,19 @@ export function Navigation() {
             </div>
           </div>
           
-          <div className="hidden sm:ml-6 sm:flex sm:items-center">
-            <div className="ml-3 relative">
-              <button className="bg-gray-100 rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 hover:bg-gray-200 transition-colors duration-200">
-                <span className="sr-only">Open user menu</span>
-                <div className="h-8 w-8 rounded-full bg-gray-600 flex items-center justify-center">
-                  <span className="text-sm font-medium text-white">U</span>
-                </div>
-              </button>
-            </div>
+          <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
+            <Link
+              href={`/${locale}/login`}
+              className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200"
+            >
+              Inloggen
+            </Link>
+            <Link
+              href={`/${locale}/register`}
+              className="bg-teal-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-teal-700 transition-colors duration-200"
+            >
+              Registreren
+            </Link>
           </div>
 
           <div className="-mr-2 flex items-center sm:hidden">
