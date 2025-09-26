@@ -5,11 +5,39 @@ import { useLocale } from 'next-intl';
 import { useTranslations } from 'next-intl';
 import { useEvents } from '@/hooks/useApi';
 import { CalendarIcon, ClockIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import { SectionErrorBoundary } from '@/components/ErrorBoundary';
 
 export function EventsSection() {
   const locale = useLocale();
   const t = useTranslations('Events');
   const { data: events, isLoading, error } = useEvents();
+
+  return (
+    <SectionErrorBoundary sectionName="Evenementen">
+      <EventsSectionContent 
+        locale={locale} 
+        t={t} 
+        events={events} 
+        isLoading={isLoading} 
+        error={error} 
+      />
+    </SectionErrorBoundary>
+  );
+}
+
+function EventsSectionContent({ 
+  locale, 
+  t, 
+  events, 
+  isLoading, 
+  error 
+}: {
+  locale: string;
+  t: any;
+  events: any;
+  isLoading: boolean;
+  error: any;
+}) {
 
   if (isLoading) {
     return (

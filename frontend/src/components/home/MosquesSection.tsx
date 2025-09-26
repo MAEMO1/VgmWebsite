@@ -2,46 +2,104 @@
 
 import Link from 'next/link';
 import { useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
+import { useMosques } from '@/hooks/useApi';
+import { MapPinIcon, UsersIcon, CalendarIcon } from '@heroicons/react/24/outline';
+import { SectionErrorBoundary } from '@/components/ErrorBoundary';
 
 export function MosquesSection() {
   const locale = useLocale();
+  const t = useTranslations('Home');
+  const { data: mosques, isLoading, error } = useMosques();
 
-  const mosques = [
-    {
-      name: 'Moskee Salahaddien',
-      address: 'Sint-Pietersnieuwstraat 120, Gent',
-      events: 12,
-      image: '/api/placeholder/400/200'
-    },
-    {
-      name: 'Moskee Al-Fath',
-      address: 'Korte Meer 11, Gent',
-      events: 8,
-      image: '/api/placeholder/400/200'
-    },
-    {
-      name: 'Moskee Selimiye',
-      address: 'Kasteellaan 15, Gent',
-      events: 6,
-      image: '/api/placeholder/400/200'
-    }
-  ];
+  return (
+    <SectionErrorBoundary sectionName="Moskeeën">
+      <MosquesSectionContent 
+        locale={locale} 
+        t={t} 
+        mosques={mosques} 
+        isLoading={isLoading} 
+        error={error} 
+      />
+    </SectionErrorBoundary>
+  );
+}
+
+function MosquesSectionContent({ 
+  locale, 
+  t, 
+  mosques, 
+  isLoading, 
+  error 
+}: {
+  locale: string;
+  t: any;
+  mosques: any;
+  isLoading: boolean;
+  error: any;
+}) {
+
+  if (isLoading) {
+    return (
+      <div className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              {t('mosques.title')}
+            </h2>
+            <p className="text-lg text-gray-600">
+              {t('mosques.description')}
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="bg-white border border-gray-200 rounded-2xl overflow-hidden animate-pulse">
+                <div className="h-48 bg-gray-200"></div>
+                <div className="p-6">
+                  <div className="h-6 bg-gray-200 rounded mb-2"></div>
+                  <div className="h-4 bg-gray-200 rounded mb-3"></div>
+                  <div className="h-8 bg-gray-200 rounded"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              {t('mosques.title')}
+            </h2>
+            <p className="text-lg text-red-600">
+              {t('mosques.error')}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Moskeeën in Gent
+            {t('mosques.title')}
           </h2>
           <p className="text-lg text-gray-600">
-            Ontdek alle aangesloten moskeeën en hun diensten
+            {t('mosques.description')}
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {mosques.map((mosque, index) => (
-            <div key={index} className="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-lg transition-shadow">
+          {mosques?.slice(0, 6).map((mosque) => (
+            <div key={mosque.id} className="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-lg transition-shadow">
               {/* Mosque Image Placeholder */}
               <div className="h-48 bg-gray-200 flex items-center justify-center">
                 <div className="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center">
@@ -57,24 +115,30 @@ export function MosquesSection() {
                 </h3>
                 
                 <div className="flex items-center mb-3">
-                  <svg className="w-4 h-4 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
+                  <MapPinIcon className="w-4 h-4 text-gray-400 mr-2" />
                   <span className="text-sm text-gray-600">{mosque.address}</span>
                 </div>
                 
-                <div className="flex items-center mb-4">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800">
-                    {mosque.events} evenementen
-                  </span>
+                <div className="space-y-2 text-sm text-gray-600 mb-4">
+                  {mosque.capacity && (
+                    <div className="flex items-center">
+                      <UsersIcon className="w-4 h-4 mr-2" />
+                      <span>{mosque.capacity} {t('mosques.capacity')}</span>
+                    </div>
+                  )}
+                  {mosque.established_year && (
+                    <div className="flex items-center">
+                      <CalendarIcon className="w-4 h-4 mr-2" />
+                      <span>{mosque.established_year} {t('mosques.established')}</span>
+                    </div>
+                  )}
                 </div>
                 
                 <Link
-                  href={`/${locale}/mosques/${mosque.name.toLowerCase().replace(/\s+/g, '-')}`}
+                  href={`/${locale}/mosques/${mosque.id}`}
                   className="inline-flex items-center px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
                 >
-                  Meer informatie
+                  {t('mosques.viewDetails')}
                 </Link>
               </div>
             </div>
@@ -86,7 +150,7 @@ export function MosquesSection() {
             href={`/${locale}/mosques`}
             className="inline-flex items-center px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
           >
-            Alle moskeeën bekijken
+            {t('mosques.viewAll')}
           </Link>
         </div>
       </div>

@@ -5,11 +5,39 @@ import { useLocale } from 'next-intl';
 import { useTranslations } from 'next-intl';
 import { useNewsPosts } from '@/hooks/useApi';
 import { NewspaperIcon, CalendarIcon, UserIcon } from '@heroicons/react/24/outline';
+import { SectionErrorBoundary } from '@/components/ErrorBoundary';
 
 export function NewsSection() {
   const locale = useLocale();
   const t = useTranslations('News');
   const { data: newsPosts, isLoading, error } = useNewsPosts();
+
+  return (
+    <SectionErrorBoundary sectionName="Nieuws">
+      <NewsSectionContent 
+        locale={locale} 
+        t={t} 
+        newsPosts={newsPosts} 
+        isLoading={isLoading} 
+        error={error} 
+      />
+    </SectionErrorBoundary>
+  );
+}
+
+function NewsSectionContent({ 
+  locale, 
+  t, 
+  newsPosts, 
+  isLoading, 
+  error 
+}: {
+  locale: string;
+  t: any;
+  newsPosts: any;
+  isLoading: boolean;
+  error: any;
+}) {
 
   if (isLoading) {
     return (
