@@ -1,67 +1,48 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { ChevronLeftIcon, ChevronRightIcon, CalendarIcon, ClockIcon, MapPinIcon } from '@heroicons/react/24/outline';
-
-interface Event {
-  id: number;
-  title: string;
-  date: string;
-  time: string;
-  location: string;
-  mosque: string;
-  type: 'prayer' | 'event' | 'lecture' | 'community';
-  description: string;
-}
+import { apiClient } from '@/api/client';
+import type { EventItem } from '@/types/api';
 
 export default function EventsCalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
 
-  // Mock events data
-  const events: Event[] = [
-    {
-      id: 1,
-      title: 'Vrijdaggebed',
-      date: '2024-01-26',
-      time: '13:00',
-      location: 'Moskee Salahaddien',
-      mosque: 'Sint-Pietersnieuwstraat 120, Gent',
-      type: 'prayer',
-      description: 'Wekelijks vrijdaggebed'
-    },
-    {
-      id: 2,
-      title: 'Iftar Gemeenschapsmaaltijd',
-      date: '2024-01-28',
-      time: '18:30',
-      location: 'Moskee Al-Fath',
-      mosque: 'Korte Meer 11, Gent',
-      type: 'community',
-      description: 'Gemeenschappelijke iftar-maaltijd tijdens Ramadan'
-    },
-    {
-      id: 3,
-      title: 'Islamitische Geschiedenis Lezing',
-      date: '2024-01-30',
-      time: '19:00',
-      location: 'Moskee Selimiye',
-      mosque: 'Kasteellaan 15, Gent',
-      type: 'lecture',
-      description: 'Lezing over de geschiedenis van de islam'
-    },
-    {
-      id: 4,
-      title: 'Vrijdaggebed',
-      date: '2024-02-02',
-      time: '13:00',
-      location: 'Moskee Salahaddien',
-      mosque: 'Sint-Pietersnieuwstraat 120, Gent',
-      type: 'prayer',
-      description: 'Wekelijks vrijdaggebed'
-    }
-  ];
+  const { data: events = [], isLoading, isError } = useQuery<EventItem[]>({
+    queryKey: ['events'],
+    queryFn: () => apiClient.get<EventItem[]>('/api/events'),
+    refetchOnWindowFocus: false,
+  });
+
+  const sortedEvents = useMemo(() => {
+    return [...events].sort((a, b) => {
+      const aDate = a.event_date ? new Date(a.event_date).getTime() : Number.MAX_SAFE_INTEGER;
+      const bDate = b.event_date ? new Date(b.event_date).getTime() : Number.MAX_SAFE_INTEGER;
+      if (aDate === bDate) {
+        const aTime = a.event_time ?? '';
+        const bTime = b.event_time ?? '';
+        return aTime.localeCompare(bTime);
+      }
+      return aDate - bDate;
+    });
+  }, [events]);
+
+  const eventsByDate = useMemo(() => {
+    return sortedEvents.reduce<Record<string, EventItem[]>>((acc, event) => {
+      if (!event.event_date) {
+        return acc;
+      }
+      const key = event.event_date;
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(event);
+      return acc;
+    }, {});
+  }, [sortedEvents]);
 
   const getDaysInMonth = (date: Date) => {
     const year = date.getFullYear();
@@ -88,10 +69,10 @@ export default function EventsCalendarPage() {
 
   const getEventsForDate = (date: Date) => {
     const dateString = date.toISOString().split('T')[0];
-    return events.filter(event => event.date === dateString);
+    return eventsByDate[dateString] ?? [];
   };
 
-  const getEventTypeColor = (type: string) => {
+  const getEventTypeColor = (type?: string | null) => {
     switch (type) {
       case 'prayer': return 'bg-blue-100 text-blue-800';
       case 'event': return 'bg-green-100 text-green-800';
@@ -116,7 +97,7 @@ export default function EventsCalendarPage() {
   };
 
   const days = getDaysInMonth(currentDate);
-  const monthNames = ['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'];
+  const monthNames = ['Zo', 'Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za'];
 
   return (
     <div className="min-h-screen bg-white">
@@ -242,33 +223,33 @@ export default function EventsCalendarPage() {
         {/* List View */}
         {viewMode === 'list' && (
           <div className="space-y-4">
-            {events.map((event) => (
+            {sortedEvents.map((event) => (
               <div key={event.id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between">
                   <div className="flex-1">
                     <div className="flex items-center mb-2">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getEventTypeColor(event.type)}`}>
-                        {event.type}
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getEventTypeColor(event.event_type)}`}>
+                        {event.event_type ?? 'event'}
                       </span>
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">
                       {event.title}
                     </h3>
                     <p className="text-gray-600 mb-4">
-                      {event.description}
+                      {event.description || 'Meer informatie volgt binnenkort.'}
                     </p>
                     <div className="flex flex-wrap gap-4 text-sm text-gray-500">
                       <div className="flex items-center">
                         <CalendarIcon className="h-4 w-4 mr-1" />
-                        {new Date(event.date).toLocaleDateString('nl-NL')}
+                        {event.event_date ? new Date(event.event_date).toLocaleDateString('nl-BE') : 'Datum volgt'}
                       </div>
                       <div className="flex items-center">
                         <ClockIcon className="h-4 w-4 mr-1" />
-                        {event.time}
+                        {event.event_time || 'Tijd volgt'}
                       </div>
                       <div className="flex items-center">
                         <MapPinIcon className="h-4 w-4 mr-1" />
-                        {event.location}
+                        {event.mosque_name || 'Locatie volgt'}
                       </div>
                     </div>
                   </div>

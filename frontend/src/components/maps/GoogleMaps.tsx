@@ -157,7 +157,7 @@ export default function GoogleMaps({
     };
 
     initMap();
-  }, [mosques, onMosqueSelect]);
+  }, [mosques, onMosqueSelect, showSearch]);
 
   // Update selected mosque marker
   useEffect(() => {

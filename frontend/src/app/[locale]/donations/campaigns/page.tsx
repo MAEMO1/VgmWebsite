@@ -250,7 +250,7 @@ export default function CampaignsPage() {
               General Donation
             </h2>
             <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-              Make a general donation to support VGM's ongoing activities, 
+              Make a general donation to support VGM&apos;s ongoing activities, 
               mosque maintenance, and community programs.
             </p>
             <button

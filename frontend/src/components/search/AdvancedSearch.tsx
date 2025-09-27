@@ -66,8 +66,8 @@ export default function AdvancedSearch({ onResults, onLoading, onError }: Advanc
     }
   };
 
-  const handleFilterChange = (key: keyof SearchFilters, value: any) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+  const handleFilterChange = <K extends keyof SearchFilters>(key: K, value: SearchFilters[K]) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleContentTypeToggle = (type: string) => {

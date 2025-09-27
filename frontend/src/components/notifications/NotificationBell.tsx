@@ -244,7 +244,7 @@ export function NotificationsPage() {
 
   useEffect(() => {
     loadNotifications();
-  }, [filter]);
+  }, [filter, loadNotifications]);
 
   const loadNotifications = useCallback(async () => {
     try {
