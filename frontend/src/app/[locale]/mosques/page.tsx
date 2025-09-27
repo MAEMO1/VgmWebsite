@@ -5,6 +5,14 @@ import { useTranslations } from 'next-intl';
 import { apiClient } from '@/api/client';
 import GoogleMaps from '@/components/maps/GoogleMaps';
 import type { Mosque } from '@/types/api';
+import { 
+  MapIcon, 
+  BuildingOfficeIcon, 
+  MapPinIcon, 
+  EnvelopeIcon,
+  PhoneIcon,
+  UserIcon
+} from '@heroicons/react/24/outline';
 
 export default function MosquesPage() {
   const t = useTranslations('Mosques');
@@ -150,7 +158,10 @@ export default function MosquesPage() {
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >
-                🗺️ Map
+                <div className="flex items-center space-x-2">
+                  <MapIcon className="w-5 h-5 text-teal-600" />
+                  <span>Map</span>
+                </div>
               </button>
             </div>
           </div>
@@ -190,11 +201,17 @@ export default function MosquesPage() {
                       {mosque.name}
                     </h3>
                     <p className="text-gray-600 text-sm mb-2">
-                      📍 {mosque.address}
+                      <div className="flex items-center space-x-2 text-gray-600">
+                        <MapPinIcon className="w-4 h-4" />
+                        <span>{mosque.address}</span>
+                      </div>
                     </p>
                     {mosque.imam_name && (
                       <p className="text-gray-600 text-sm mb-2">
-                        🕌 Imam: {mosque.imam_name}
+                      <div className="flex items-center space-x-2 text-gray-600">
+                        <UserIcon className="w-4 h-4" />
+                        <span>Imam: {mosque.imam_name}</span>
+                      </div>
                       </p>
                     )}
                   </div>
@@ -202,12 +219,18 @@ export default function MosquesPage() {
                   <div className="space-y-2 mb-4">
                     {mosque.phone && (
                       <p className="text-sm text-gray-600">
-                        📞 {mosque.phone}
+                      <div className="flex items-center space-x-2 text-gray-600">
+                        <PhoneIcon className="w-4 h-4" />
+                        <span>{mosque.phone}</span>
+                      </div>
                       </p>
                     )}
                     {mosque.email && (
                       <p className="text-sm text-gray-600">
-                        ✉️ {mosque.email}
+                      <div className="flex items-center space-x-2 text-gray-600">
+                        <EnvelopeIcon className="w-4 h-4" />
+                        <span>{mosque.email}</span>
+                      </div>
                       </p>
                     )}
                     {mosque.website && (
@@ -263,7 +286,9 @@ export default function MosquesPage() {
 
         {filteredMosques.length === 0 && (
           <div className="text-center py-12">
-            <div className="text-gray-400 text-6xl mb-4">🕌</div>
+            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <BuildingOfficeIcon className="w-10 h-10 text-gray-400" />
+            </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
               No Mosques Found
             </h2>
@@ -298,7 +323,10 @@ export default function MosquesPage() {
                   </h3>
                   <div className="space-y-2">
                     <p className="text-gray-600">
-                      📍 {selectedMosque.address}
+                      <div className="flex items-center space-x-2 text-gray-600">
+                        <MapPinIcon className="w-4 h-4" />
+                        <span>{selectedMosque.address}</span>
+                      </div>
                     </p>
                     {selectedMosque.phone && (
                       <p className="text-gray-600">
@@ -307,7 +335,10 @@ export default function MosquesPage() {
                     )}
                     {selectedMosque.email && (
                       <p className="text-gray-600">
-                        ✉️ {selectedMosque.email}
+                      <div className="flex items-center space-x-2 text-gray-600">
+                        <EnvelopeIcon className="w-4 h-4" />
+                        <span>{selectedMosque.email}</span>
+                      </div>
                       </p>
                     )}
                     {selectedMosque.website && (

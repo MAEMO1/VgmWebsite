@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import type { Mosque } from '@/types/api';
+import { MapIcon } from '@heroicons/react/24/outline';
 
 interface GoogleMapsProps {
   mosques: Mosque[];
@@ -84,11 +85,11 @@ export default function GoogleMaps({
               <div class="p-4 max-w-sm">
                 <h3 class="text-lg font-bold text-gray-900 mb-2">${mosque.name}</h3>
                 <p class="text-sm text-gray-600 mb-2">${mosque.address}</p>
-                ${mosque.phone ? `<p class="text-sm text-gray-600 mb-1">📞 ${mosque.phone}</p>` : ''}
-                ${mosque.email ? `<p class="text-sm text-gray-600 mb-1">✉️ ${mosque.email}</p>` : ''}
-                ${mosque.website ? `<p class="text-sm text-gray-600 mb-1">🌐 ${mosque.website}</p>` : ''}
-                ${mosque.capacity ? `<p class="text-sm text-gray-600 mb-1">👥 Capacity: ${mosque.capacity}</p>` : ''}
-                ${mosque.imam_name ? `<p class="text-sm text-gray-600 mb-2">🕌 Imam: ${mosque.imam_name}</p>` : ''}
+                ${mosque.phone ? `<p class="text-sm text-gray-600 mb-1">Phone: ${mosque.phone}</p>` : ''}
+                ${mosque.email ? `<p class="text-sm text-gray-600 mb-1">Email: ${mosque.email}</p>` : ''}
+                ${mosque.website ? `<p class="text-sm text-gray-600 mb-1">Website: ${mosque.website}</p>` : ''}
+                ${mosque.capacity ? `<p class="text-sm text-gray-600 mb-1">Capacity: ${mosque.capacity}</p>` : ''}
+                ${mosque.imam_name ? `<p class="text-sm text-gray-600 mb-2">Imam: ${mosque.imam_name}</p>` : ''}
                 ${mosque.description ? `<p class="text-sm text-gray-700 mb-3">${mosque.description}</p>` : ''}
                 <button 
                   onclick="window.selectMosque(${mosque.id})"
@@ -185,7 +186,9 @@ export default function GoogleMaps({
     return (
       <div className="flex items-center justify-center" style={{ height }}>
         <div className="text-center">
-          <div className="text-red-600 text-4xl mb-4">🗺️</div>
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <MapIcon className="w-8 h-8 text-red-600" />
+          </div>
           <p className="text-red-600 mb-2">{error}</p>
           <p className="text-gray-600 text-sm">
             Please check your Google Maps API key configuration
@@ -215,8 +218,8 @@ export default function GoogleMaps({
       />
       
       <div className="mt-4 text-sm text-gray-600">
-        <p>📍 Click on mosque markers to view details</p>
-        <p>🔍 Use the search box to find specific locations</p>
+        <p>Click on mosque markers to view details</p>
+        <p>Use the search box to find specific locations</p>
       </div>
     </div>
   );
