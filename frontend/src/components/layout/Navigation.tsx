@@ -24,7 +24,6 @@ export function Navigation() {
       dropdown: [
         { name: 'Alle Moskeeën', href: `/${locale}/mosques` },
         { name: 'Moskee Zoeken', href: `/${locale}/mosques/search` },
-        { name: 'Gebedstijden', href: `/${locale}/prayer-times` },
       ]
     },
     { 
@@ -83,14 +82,14 @@ export function Navigation() {
                 </div>
               </Link>
             </div>
-            <div className="hidden sm:ml-8 sm:flex sm:space-x-8">
+            <div className="hidden sm:ml-8 sm:flex sm:space-x-8 sm:items-center">
               {navigation.map((item) => (
                 <div key={item.name} className="relative">
                   {item.dropdown ? (
                     <div className="relative">
                       <button
                         onClick={() => setOpenDropdown(openDropdown === item.name ? null : item.name)}
-                        className="text-gray-600 hover:text-teal-600 whitespace-nowrap py-2 px-1 border-b-2 border-transparent hover:border-teal-300 font-medium text-sm transition-colors duration-200 flex items-center"
+                        className="text-gray-600 hover:text-teal-600 whitespace-nowrap py-2 px-1 border-b-2 border-transparent hover:border-teal-300 font-medium text-sm transition-colors duration-200 flex items-center h-10"
                       >
                         {item.name}
                         <ChevronDownIcon className="ml-1 h-4 w-4" />
@@ -113,7 +112,7 @@ export function Navigation() {
                   ) : (
                     <Link
                       href={item.href}
-                      className="text-gray-600 hover:text-teal-600 whitespace-nowrap py-2 px-1 border-b-2 border-transparent hover:border-teal-300 font-medium text-sm transition-colors duration-200"
+                      className="text-gray-600 hover:text-teal-600 whitespace-nowrap py-2 px-1 border-b-2 border-transparent hover:border-teal-300 font-medium text-sm transition-colors duration-200 flex items-center h-10"
                     >
                       {item.name}
                     </Link>
