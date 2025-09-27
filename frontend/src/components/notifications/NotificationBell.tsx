@@ -3,6 +3,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '@/api/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { 
+  BellIcon, 
+  CalendarIcon, 
+  CurrencyDollarIcon, 
+  BuildingOfficeIcon, 
+  NewspaperIcon, 
+  CogIcon, 
+  ExclamationTriangleIcon,
+  MapPinIcon 
+} from '@heroicons/react/24/outline';
 
 interface Notification {
   id: number;
@@ -104,13 +114,13 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'event': return '📅';
-      case 'donation': return '💰';
-      case 'mosque': return '🕌';
-      case 'news': return '📰';
-      case 'system': return '⚙️';
-      case 'urgent': return '🚨';
-      default: return '🔔';
+      case 'event': return <CalendarIcon className="w-5 h-5 text-blue-600" />;
+      case 'donation': return <CurrencyDollarIcon className="w-5 h-5 text-green-600" />;
+      case 'mosque': return <BuildingOfficeIcon className="w-5 h-5 text-purple-600" />;
+      case 'news': return <NewspaperIcon className="w-5 h-5 text-orange-600" />;
+      case 'system': return <CogIcon className="w-5 h-5 text-gray-600" />;
+      case 'urgent': return <ExclamationTriangleIcon className="w-5 h-5 text-red-600" />;
+      default: return <BellIcon className="w-5 h-5 text-teal-600" />;
     }
   };
 
@@ -169,7 +179,9 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
               </div>
             ) : notifications.length === 0 ? (
               <div className="p-4 text-center text-gray-500">
-                <div className="text-4xl mb-2">🔔</div>
+                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <BellIcon className="w-6 h-6 text-gray-400" />
+                </div>
                 <p>No notifications yet</p>
               </div>
             ) : (
@@ -190,7 +202,7 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
                     }}
                   >
                     <div className="flex items-start space-x-3">
-                      <div className="text-2xl">
+                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
                         {getNotificationIcon(notification.notification_type)}
                       </div>
                       
@@ -318,13 +330,13 @@ export function NotificationsPage() {
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'event': return '📅';
-      case 'donation': return '💰';
-      case 'mosque': return '🕌';
-      case 'news': return '📰';
-      case 'system': return '⚙️';
-      case 'urgent': return '🚨';
-      default: return '🔔';
+      case 'event': return <CalendarIcon className="w-5 h-5 text-blue-600" />;
+      case 'donation': return <CurrencyDollarIcon className="w-5 h-5 text-green-600" />;
+      case 'mosque': return <BuildingOfficeIcon className="w-5 h-5 text-purple-600" />;
+      case 'news': return <NewspaperIcon className="w-5 h-5 text-orange-600" />;
+      case 'system': return <CogIcon className="w-5 h-5 text-gray-600" />;
+      case 'urgent': return <ExclamationTriangleIcon className="w-5 h-5 text-red-600" />;
+      default: return <BellIcon className="w-5 h-5 text-teal-600" />;
     }
   };
 
@@ -393,7 +405,9 @@ export function NotificationsPage() {
           <div className="divide-y divide-gray-200">
             {notifications.length === 0 ? (
               <div className="p-12 text-center">
-                <div className="text-gray-400 text-6xl mb-4">🔔</div>
+                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <BellIcon className="w-10 h-10 text-gray-400" />
+                </div>
                 <h2 className="text-xl font-semibold text-gray-900 mb-2">
                   No notifications
                 </h2>
@@ -420,10 +434,10 @@ export function NotificationsPage() {
                     }
                   }}
                 >
-                  <div className="flex items-start space-x-4">
-                    <div className="text-3xl">
-                      {getNotificationIcon(notification.notification_type)}
-                    </div>
+                    <div className="flex items-start space-x-4">
+                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                        {getNotificationIcon(notification.notification_type)}
+                      </div>
                     
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
@@ -449,9 +463,12 @@ export function NotificationsPage() {
                       </p>
                       
                       {notification.mosque_name && (
-                        <p className="text-sm text-gray-500 mt-2">
-                          📍 {notification.mosque_name}
-                        </p>
+                        <div className="flex items-center space-x-2 mt-2">
+                          <MapPinIcon className="w-4 h-4 text-gray-400" />
+                          <p className="text-sm text-gray-500">
+                            {notification.mosque_name}
+                          </p>
+                        </div>
                       )}
                       
                       {notification.action_url && (

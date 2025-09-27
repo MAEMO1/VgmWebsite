@@ -3,6 +3,15 @@
 import React, { useState } from 'react';
 import { apiClient } from '@/api/client';
 import type { Campaign, EventItem, Mosque, NewsArticle, SearchResult } from '@/types/api';
+import { 
+  MagnifyingGlassIcon, 
+  CalendarIcon, 
+  MapPinIcon, 
+  ClockIcon,
+  BuildingOfficeIcon,
+  NewspaperIcon,
+  CurrencyDollarIcon
+} from '@heroicons/react/24/outline';
 
 interface SearchFilters {
   query: string;
@@ -149,21 +158,22 @@ export default function AdvancedSearch({ onResults, onLoading, onError }: Advanc
               </label>
               <div className="flex flex-wrap gap-2">
                 {[
-                  { key: 'mosques', label: '🕌 Mosques' },
-                  { key: 'events', label: '📅 Events' },
-                  { key: 'news', label: '📰 News' },
-                  { key: 'campaigns', label: '💰 Campaigns' }
-                ].map(({ key, label }) => (
+                  { key: 'mosques', label: 'Mosques', icon: <BuildingOfficeIcon className="w-4 h-4" /> },
+                  { key: 'events', label: 'Events', icon: <CalendarIcon className="w-4 h-4" /> },
+                  { key: 'news', label: 'News', icon: <NewspaperIcon className="w-4 h-4" /> },
+                  { key: 'campaigns', label: 'Campaigns', icon: <CurrencyDollarIcon className="w-4 h-4" /> }
+                ].map(({ key, label, icon }) => (
                   <button
                     key={key}
                     onClick={() => handleContentTypeToggle(key)}
-                    className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                    className={`px-3 py-2 rounded-full text-sm font-medium transition-colors flex items-center space-x-2 ${
                       filters.contentTypes.includes(key)
-                        ? 'bg-primary text-white'
+                        ? 'bg-teal-600 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
-                    {label}
+                    {icon}
+                    <span>{label}</span>
                   </button>
                 ))}
               </div>
@@ -295,7 +305,9 @@ export function SearchResults({ results, onMosqueSelect, onEventSelect, onNewsSe
   if (results.total_results === 0) {
     return (
       <div className="text-center py-12">
-        <div className="text-gray-400 text-6xl mb-4">🔍</div>
+        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <MagnifyingGlassIcon className="w-8 h-8 text-gray-400" />
+        </div>
         <h2 className="text-2xl font-bold text-gray-900 mb-4">
           No Results Found
         </h2>
@@ -321,9 +333,12 @@ export function SearchResults({ results, onMosqueSelect, onEventSelect, onNewsSe
       {/* Mosques Results */}
       {results.mosques.length > 0 && (
         <div>
-          <h3 className="text-xl font-bold text-gray-900 mb-4">
-            🕌 Mosques ({results.mosques.length})
-          </h3>
+          <div className="flex items-center space-x-2 mb-4">
+            <BuildingOfficeIcon className="w-5 h-5 text-teal-600" />
+            <h3 className="text-xl font-bold text-gray-900">
+              Mosques ({results.mosques.length})
+            </h3>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {results.mosques.map((mosque) => (
               <div
@@ -345,9 +360,12 @@ export function SearchResults({ results, onMosqueSelect, onEventSelect, onNewsSe
       {/* Events Results */}
       {results.events.length > 0 && (
         <div>
-          <h3 className="text-xl font-bold text-gray-900 mb-4">
-            📅 Events ({results.events.length})
-          </h3>
+          <div className="flex items-center space-x-2 mb-4">
+            <CalendarIcon className="w-5 h-5 text-teal-600" />
+            <h3 className="text-xl font-bold text-gray-900">
+              Events ({results.events.length})
+            </h3>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {results.events.map((event) => (
               <div
@@ -369,9 +387,12 @@ export function SearchResults({ results, onMosqueSelect, onEventSelect, onNewsSe
       {/* News Results */}
       {results.news.length > 0 && (
         <div>
-          <h3 className="text-xl font-bold text-gray-900 mb-4">
-            📰 News ({results.news.length})
-          </h3>
+          <div className="flex items-center space-x-2 mb-4">
+            <NewspaperIcon className="w-5 h-5 text-teal-600" />
+            <h3 className="text-xl font-bold text-gray-900">
+              News ({results.news.length})
+            </h3>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {results.news.map((news) => (
               <div
@@ -393,9 +414,12 @@ export function SearchResults({ results, onMosqueSelect, onEventSelect, onNewsSe
       {/* Campaigns Results */}
       {results.campaigns.length > 0 && (
         <div>
-          <h3 className="text-xl font-bold text-gray-900 mb-4">
-            💰 Campaigns ({results.campaigns.length})
-          </h3>
+          <div className="flex items-center space-x-2 mb-4">
+            <CurrencyDollarIcon className="w-5 h-5 text-teal-600" />
+            <h3 className="text-xl font-bold text-gray-900">
+              Campaigns ({results.campaigns.length})
+            </h3>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {results.campaigns.map((campaign) => (
               <div
