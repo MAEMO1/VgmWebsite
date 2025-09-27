@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import AdvancedSearch, { SearchResults } from '@/components/search/AdvancedSearch';
 import type { Campaign, EventItem, Mosque, NewsArticle, SearchResult } from '@/types/api';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 export default function SearchPage() {
   const t = useTranslations('Search');

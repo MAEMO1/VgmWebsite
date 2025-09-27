@@ -3,7 +3,12 @@
 import { useState } from 'react';
 import { useTodayPrayerTimes, useTomorrowPrayerTimes } from '@/hooks/usePrayerTimes';
 import { PrayerTimesWidget } from './PrayerTimesWidget';
-import { CalendarIcon, ClockIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import { 
+  CalendarIcon, 
+  ClockIcon, 
+  MapPinIcon,
+  SunIcon 
+} from '@heroicons/react/24/outline';
 import { Skeleton } from '@/components/ui/Skeleton';
 
 export function PrayerTimesPage() {
