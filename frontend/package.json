@@ -48,6 +48,7 @@
     "@tailwindcss/typography": "^0.5.10",
     "@testing-library/jest-dom": "^6.1.6",
     "@testing-library/react": "^14.1.2",
+    "@types/google.maps": "^3.58.1",
     "@types/node": "^20.10.5",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
