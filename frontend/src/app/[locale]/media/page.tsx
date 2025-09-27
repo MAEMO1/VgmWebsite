@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { apiClient } from '@/api/client';
 import FileUpload, { FileList } from '@/components/upload/FileUpload';
@@ -210,9 +211,11 @@ export default function MediaGalleryPage() {
                 {/* File Preview */}
                 <div className="h-48 bg-gray-100 flex items-center justify-center">
                   {file.mime_type.startsWith('image/') ? (
-                    <img
+                    <Image
                       src={`/api/files/${file.id}`}
                       alt={file.original_filename}
+                      width={400}
+                      height={192}
                       className="w-full h-full object-cover"
                     />
                   ) : (

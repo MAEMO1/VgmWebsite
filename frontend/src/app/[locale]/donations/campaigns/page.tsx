@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { apiClient } from '@/api/client';
 import DonationForm from '@/components/payments/DonationForm';
 
@@ -177,9 +178,11 @@ export default function CampaignsPage() {
               <div key={campaign.id} className="bg-white rounded-lg shadow-md overflow-hidden">
                 {campaign.featured_image && (
                   <div className="h-48 bg-gray-200">
-                    <img
+                    <Image
                       src={campaign.featured_image}
                       alt={campaign.title}
+                      width={400}
+                      height={192}
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -255,7 +258,7 @@ export default function CampaignsPage() {
                 setSelectedCampaign({
                   id: 0,
                   title: 'General Donation',
-                  description: 'Support VGM\'s ongoing activities and community programs',
+                  description: 'Support VGM&apos;s ongoing activities and community programs',
                   target_amount: 0,
                   current_amount: 0,
                   progress_percentage: 0,

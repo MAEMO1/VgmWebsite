@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '@/api/client';
 
 interface Notification {
@@ -31,9 +31,9 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
 
   useEffect(() => {
     loadNotifications();
-  }, []);
+  }, [loadNotifications]);
 
-  const loadNotifications = async () => {
+  const loadNotifications = useCallback(async () => {
     try {
       setLoading(true);
       const response = await apiClient.get<{
@@ -246,7 +246,7 @@ export function NotificationsPage() {
     loadNotifications();
   }, [filter]);
 
-  const loadNotifications = async () => {
+  const loadNotifications = useCallback(async () => {
     try {
       setLoading(true);
       const unreadOnly = filter === 'unread';

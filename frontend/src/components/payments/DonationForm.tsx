@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import {
   Elements,
@@ -42,9 +42,9 @@ function PaymentForm({
   useEffect(() => {
     // Create payment intent when component mounts
     createPaymentIntent();
-  }, [amount, donationType, mosqueId, campaignId]);
+  }, [amount, donationType, mosqueId, campaignId, createPaymentIntent]);
 
-  const createPaymentIntent = async () => {
+  const createPaymentIntent = useCallback(async () => {
     try {
       const response = await apiClient.post<{
         client_secret: string;
