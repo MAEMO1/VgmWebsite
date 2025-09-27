@@ -141,23 +141,45 @@ export default function LoginPage() {
               )}
             </button>
 
-            <div className="text-center">
-              <p className="text-sm text-gray-600">
-                {t.rich('cta', {
-                  create: (chunks) => (
-                    <Link
-                      href={`/${locale}/register`}
-                      className="font-medium text-teal-600 hover:text-teal-700 transition-colors"
-                    >
-                      {chunks}
-                    </Link>
-                  ),
-                })}
-              </p>
-            </div>
-          </form>
+          <div className="text-center">
+            <p className="text-sm text-gray-600">
+              {t.rich('cta', {
+                create: (chunks) => (
+                  <Link
+                    href={`/${locale}/register`}
+                    className="font-medium text-teal-600 hover:text-teal-700 transition-colors"
+                  >
+                    {chunks}
+                  </Link>
+                ),
+              })}
+            </p>
+          </div>
+        </form>
+
+        <div className="mt-8 rounded-lg border border-gray-200 bg-gray-50 p-6">
+          <h2 className="text-sm font-semibold text-gray-900">{t('support.title')}</h2>
+          <p className="mt-2 text-sm text-gray-600">{t('support.description')}</p>
+          <ul className="mt-3 space-y-2 text-sm text-gray-600">
+            <li>• {t('support.tips.0')}</li>
+            <li>• {t('support.tips.1')}</li>
+            <li>• {t('support.tips.2')}</li>
+          </ul>
+          <p className="mt-4 text-sm text-gray-600">
+            {t.rich('support.cta', {
+              link: (chunks) => (
+                <Link
+                  href={`/${locale}/mosques/access-request`}
+                  className="font-medium text-teal-600 hover:text-teal-700"
+                >
+                  {t('support.ctaLinkLabel')}
+                </Link>
+              ),
+            })}
+          </p>
         </div>
       </div>
     </div>
+  </div>
   );
 }

@@ -199,7 +199,7 @@
       },
       "genericError": "Er ging iets mis. Probeer het opnieuw.",
       "supportTitle": "Hulp nodig?",
-      "phoneLabel": "Phone number"
+      "phoneLabel": "Telefoonnummer"
     },
     "Login": {
       "title": "Log in op uw account",
@@ -230,12 +230,15 @@
           "Controleer of Caps Lock uitstaat",
           "Gebruik het e-mailadres waarmee u bent geregistreerd",
           "Neem contact op met support als u hulp nodig heeft"
-        ]
+        ],
+        "cta": "Beheersrechten nodig? {link}",
+        "ctaLinkLabel": "Vraag toegang aan"
       },
       "security": {
         "title": "Uw gegevens zijn beveiligd",
         "description": "Aanmeldingen verlopen via een versleutelde verbinding en worden gecontroleerd op ongebruikelijke activiteit."
-      }
+      },
+      "subtitle": "Krijg toegang tot uw persoonlijk dashboard en community-updates."
     },
     "Register": {
       "title": "Maak uw account aan",
@@ -254,7 +257,9 @@
         "mosqueAdmin": {
           "title": "Moskee beheerder",
           "description": "Beheer moskee-informatie, evenementen en aankondigingen."
-        }
+        },
+        "cta": "Wilt u beheerder worden van een moskee? {link}",
+        "ctaLinkLabel": "Dien een aanvraag in"
       },
       "placeholders": {
         "email": "Voer uw e-mailadres in",
@@ -297,7 +302,10 @@
         "label": "Waarom heeft u beheerdersrechten nodig?",
         "placeholder": "Beschrijf uw verantwoordelijkheden en hoe u het portaal zult gebruiken",
         "helper": "Het VGM-team beoordeelt aanvragen handmatig. Geef details over uw rol en verificatie-informatie."
-      }
+      },
+      "successUser": "Registratie gelukt. Log in om verder te gaan.",
+      "successMosqueAdmin": "Registratie ontvangen. Het VGM-team beoordeelt uw aanvraag voor moskee-beheer. U kunt de status volgen na het inloggen.",
+      "subtitle": "Maak een persoonlijk account aan om toegang te krijgen tot VGM-diensten."
     },
     "ForgotPassword": {
       "title": "Wachtwoord herstellen",

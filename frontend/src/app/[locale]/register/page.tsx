@@ -128,7 +128,7 @@ export default function RegisterPage() {
             {/* Account Type Selection */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
-                {t('accountType')}
+                {t('accountType.label')}
               </label>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <button
@@ -140,8 +140,8 @@ export default function RegisterPage() {
                       : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
                   }`}
                 >
-                  <div className="font-medium">{t('userAccount')}</div>
-                  <div className="text-sm text-gray-500">{t('userDescription')}</div>
+                  <div className="font-medium">{t('accountType.user.title')}</div>
+                  <div className="text-sm text-gray-500">{t('accountType.user.description')}</div>
                 </button>
                 <button
                   type="button"
@@ -152,10 +152,22 @@ export default function RegisterPage() {
                       : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
                   }`}
                 >
-                  <div className="font-medium">{t('mosqueAdminAccount')}</div>
-                  <div className="text-sm text-gray-500">{t('mosqueAdminDescription')}</div>
+                  <div className="font-medium">{t('accountType.mosqueAdmin.title')}</div>
+                  <div className="text-sm text-gray-500">{t('accountType.mosqueAdmin.description')}</div>
                 </button>
               </div>
+              <p className="mt-3 text-xs text-gray-500">
+                {t.rich('accountType.cta', {
+                  link: (chunks) => (
+                    <Link
+                      href={`/${locale}/mosques/access-request`}
+                      className="font-medium text-primary hover:text-primary-dark"
+                    >
+                      {t('accountType.ctaLinkLabel')}
+                    </Link>
+                  ),
+                })}
+              </p>
             </div>
 
             {/* Basic Information */}
@@ -211,7 +223,7 @@ export default function RegisterPage() {
 
             <div>
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                {shared('phone')}
+                {t('phone.label')}
               </label>
               <input
                 id="phone"
@@ -220,7 +232,7 @@ export default function RegisterPage() {
                 value={formData.phone}
                 onChange={handleChange}
                 className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
-                placeholder={t('placeholders.phone')}
+                placeholder={t('phone.placeholder')}
               />
             </div>
 

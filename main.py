@@ -39,6 +39,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['BABEL_DEFAULT_LOCALE'] = 'nl'
 app.config['BABEL_SUPPORTED_LOCALES'] = ['en', 'nl', 'ar']
 app.config['BABEL_DEFAULT_TIMEZONE'] = 'Europe/Amsterdam'
+app.config['FRONTEND_BASE_URL'] = os.environ.get('FRONTEND_BASE_URL', 'http://localhost:3000')
 
 # Initialize extensions with app
 db.init_app(app)
@@ -65,7 +66,20 @@ def load_user(user_id):
 with app.app_context():
     try:
         # Import models to register with SQLAlchemy
-        from models import User, Event, EventRegistration, EventNotification, PrayerTime, Obituary, ObituaryNotification, BlogPost, Message, FundraisingCampaign
+        from models import (
+            User,
+            Event,
+            EventRegistration,
+            EventNotification,
+            PrayerTime,
+            Obituary,
+            ObituaryNotification,
+            BlogPost,
+            Message,
+            FundraisingCampaign,
+            PasswordResetToken,
+            MosqueAccessRequest,
+        )
         # Create all database tables
         db.create_all()
         logger.info("Database tables created successfully")
@@ -83,6 +97,7 @@ with app.app_context():
         from routes.message_routes import messages
         from routes.donation_routes import donations
         from routes.ramadan_routes import ramadan
+        from routes.auth import auth_bp
 
         # Register blueprints
         app.register_blueprint(main_routes)
@@ -93,6 +108,7 @@ with app.app_context():
         app.register_blueprint(messages, url_prefix='/messages')
         app.register_blueprint(donations)
         app.register_blueprint(ramadan, url_prefix='/ramadan')
+        app.register_blueprint(auth_bp)
     except Exception as e:
         logger.error(f"Error registering blueprints: {e}", exc_info=True)
         logger.error("Stack trace:", exc_info=True)

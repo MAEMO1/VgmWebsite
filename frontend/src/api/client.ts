@@ -178,11 +178,11 @@ class APIClient {
   }
 
   // Password reset endpoints
-  async requestPasswordReset(email: string) {
+  async requestPasswordReset(email: string, locale?: string) {
     return this.request<{ message: string; reset_token?: string }>({
       method: 'POST',
       url: '/api/auth/request-password-reset',
-      body: { email },
+      body: { email, locale },
     });
   }
 

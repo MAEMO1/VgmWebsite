@@ -217,12 +217,15 @@
           "Verify that Caps Lock is off",
           "Use the email address you registered with",
           "Contact support if you need help"
-        ]
+        ],
+        "cta": "Need mosque admin access? {link}",
+        "ctaLinkLabel": "Submit a request here"
       },
       "security": {
         "title": "Your data is secure",
         "description": "Logins are protected with encrypted connections and monitored for unusual activity."
-      }
+      },
+      "subtitle": "Access your personalised dashboard and community updates."
     },
     "Register": {
       "title": "Create your account",
@@ -241,7 +244,9 @@
         "mosqueAdmin": {
           "title": "Mosque administrator",
           "description": "Manage mosque information, events and announcements."
-        }
+        },
+        "cta": "Need access to manage a mosque? {link}",
+        "ctaLinkLabel": "Submit a request"
       },
       "placeholders": {
         "email": "Enter your email",
@@ -284,7 +289,10 @@
         "label": "Why do you need administrator access?",
         "placeholder": "Describe your responsibilities and how you will use the portal",
         "helper": "The VGM team reviews requests manually. Include details about your role and verification information."
-      }
+      },
+      "successUser": "Registration successful. Please log in to continue.",
+      "successMosqueAdmin": "Registration received. The VGM team will review your mosque admin request. You can track its status after signing in.",
+      "subtitle": "Create a personal account to access VGM services."
     },
     "ForgotPassword": {
       "title": "Reset your password",

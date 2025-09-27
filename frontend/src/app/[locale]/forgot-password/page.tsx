@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { EnvelopeIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
+import { useSearchParams } from 'next/navigation';
 
 import { apiClient } from '@/api/client';
 
@@ -12,6 +13,7 @@ export default function ForgotPasswordPage() {
   const t = useTranslations('Auth.ForgotPassword');
   const shared = useTranslations('Auth.Shared');
   const locale = useLocale();
+  const searchParams = useSearchParams();
 
   const [email, setEmail] = useState('');
   const [token, setToken] = useState('');
@@ -29,7 +31,7 @@ export default function ForgotPasswordPage() {
 
     try {
       setRequestLoading(true);
-      const response = await apiClient.requestPasswordReset(email);
+      const response = await apiClient.requestPasswordReset(email, locale);
       if (response.reset_token) {
         setDebugToken(response.reset_token);
       }
@@ -41,6 +43,13 @@ export default function ForgotPasswordPage() {
       setRequestLoading(false);
     }
   };
+
+  useEffect(() => {
+    const tokenParam = searchParams.get('token');
+    if (tokenParam) {
+      setToken(tokenParam);
+    }
+  }, [searchParams]);
 
   const handleResetPassword = async (event: React.FormEvent) => {
     event.preventDefault();

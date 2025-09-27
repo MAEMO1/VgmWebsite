@@ -31,6 +31,20 @@ class User(UserMixin, db.Model):
     created_blog_posts = db.relationship('BlogPost', backref='author')
     created_janazah_events = db.relationship('JanazahEvent', backref='creator')
     responded_contacts = db.relationship('ContactSubmission', backref='responder')
+    password_reset_tokens = db.relationship(
+        'PasswordResetToken', backref='user', cascade='all, delete-orphan'
+    )
+    access_requests = db.relationship(
+        'MosqueAccessRequest',
+        foreign_keys='MosqueAccessRequest.user_id',
+        backref='requester',
+        cascade='all, delete-orphan'
+    )
+    processed_access_requests = db.relationship(
+        'MosqueAccessRequest',
+        foreign_keys='MosqueAccessRequest.processed_by',
+        backref='processed_by_user'
+    )
 
 class Mosque(db.Model):
     """Mosque model"""
@@ -63,6 +77,77 @@ class Mosque(db.Model):
     donations = db.relationship('Donation', backref='mosque', cascade='all, delete-orphan')
     fundraising_campaigns = db.relationship('FundraisingCampaign', backref='mosque', cascade='all, delete-orphan')
     contact_submissions = db.relationship('ContactSubmission', backref='mosque', cascade='all, delete-orphan')
+    access_requests = db.relationship('MosqueAccessRequest', backref='mosque')
+
+
+class PasswordResetToken(db.Model):
+    """Password reset token for secure password recovery"""
+    __tablename__ = 'password_reset_tokens'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    token = db.Column(db.String(255), nullable=False, unique=True)
+    expires_at = db.Column(db.DateTime, nullable=False)
+    used_at = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    @property
+    def is_expired(self) -> bool:
+        return datetime.utcnow() >= self.expires_at
+
+    @property
+    def is_used(self) -> bool:
+        return self.used_at is not None
+
+
+class MosqueAccessRequest(db.Model):
+    """Access requests for mosque administrator privileges"""
+    __tablename__ = 'mosque_access_requests'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    mosque_id = db.Column(db.Integer, db.ForeignKey('mosques.id'))
+    mosque_name = db.Column(db.String(255))
+    motivation = db.Column(db.Text)
+    contact_email = db.Column(db.String(255))
+    contact_phone = db.Column(db.String(50))
+    status = db.Column(db.String(20), default='pending')  # pending, approved, rejected
+    admin_notes = db.Column(db.Text)
+    processed_at = db.Column(db.DateTime)
+    processed_by = db.Column(db.Integer, db.ForeignKey('users.id'))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'mosque_id': self.mosque_id,
+            'mosque_name': self.mosque_name,
+            'motivation': self.motivation,
+            'contact_email': self.contact_email,
+            'contact_phone': self.contact_phone,
+            'status': self.status,
+            'admin_notes': self.admin_notes,
+            'processed_at': self.processed_at.isoformat() if self.processed_at else None,
+            'processed_by': self.processed_by,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'requester': {
+                'id': self.requester.id,
+                'first_name': self.requester.first_name,
+                'last_name': self.requester.last_name,
+                'email': self.requester.email,
+            } if self.requester else None,
+            'processed_by_user': {
+                'id': self.processed_by_user.id,
+                'first_name': self.processed_by_user.first_name,
+                'last_name': self.processed_by_user.last_name,
+                'email': self.processed_by_user.email,
+            } if self.processed_by_user else None,
+            'mosque': {
+                'id': self.mosque.id,
+                'name': self.mosque.name
+            } if self.mosque else None,
+        }
 
 class MosqueFeature(db.Model):
     """Mosque features model"""

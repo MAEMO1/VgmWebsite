@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import toast from 'react-hot-toast';
 import { useAuth, withAuth } from '@/contexts/AuthContext';
 import { apiClient, MosqueAccessRequest } from '@/api/client';
+import MosqueAccessModal from '@/components/admin/MosqueAccessModal';
 
 interface User {
   id: number;
@@ -34,12 +35,39 @@ interface News {
   author_id: number;
 }
 
+interface Mosque {
+  id: number;
+  name: string;
+  address: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  capacity?: number;
+  established_year?: number;
+  description?: string;
+  latitude?: number;
+  longitude?: number;
+  created_at: string;
+  updated_at: string;
+}
+
 function AdminDashboard() {
   const { user, logout } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [news, setNews] = useState<News[]>([]);
   const [accessRequests, setAccessRequests] = useState<MosqueAccessRequest[]>([]);
+  const [mosques, setMosques] = useState<Mosque[]>([]);
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    type: 'approve' | 'reject';
+    requestId: number;
+    currentMosqueId?: number;
+  }>({
+    isOpen: false,
+    type: 'approve',
+    requestId: 0
+  });
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -60,10 +88,15 @@ function AdminDashboard() {
       setNews(newsResponse);
 
       if (user?.role === 'admin') {
-        const requestsResponse = await apiClient.getMosqueAccessRequests();
+        const [requestsResponse, mosquesResponse] = await Promise.all([
+          apiClient.getMosqueAccessRequests(),
+          apiClient.get<Mosque[]>('/api/mosques')
+        ]);
         setAccessRequests(requestsResponse);
+        setMosques(mosquesResponse);
       } else {
         setAccessRequests([]);
+        setMosques([]);
       }
       
     } catch (error) {
@@ -81,36 +114,13 @@ function AdminDashboard() {
   const handleAccessRequestUpdate = async (
     requestId: number,
     status: 'approved' | 'rejected',
-    defaultMosqueId?: number | null | undefined
+    mosqueId?: number,
+    adminNotes?: string
   ) => {
     try {
-      let mosqueIdValue = defaultMosqueId ?? undefined;
-      let adminNotes: string | undefined;
-
-      if (status === 'approved') {
-        const promptValue = window.prompt(
-          'Enter the mosque ID to link (leave empty to keep unchanged):',
-          mosqueIdValue ? mosqueIdValue.toString() : ''
-        );
-        if (promptValue) {
-          const parsed = Number(promptValue);
-          if (!Number.isNaN(parsed)) {
-            mosqueIdValue = parsed;
-          } else {
-            toast.error('Invalid mosque ID');
-            return;
-          }
-        }
-      }
-
-      if (status === 'rejected') {
-        const notesPrompt = window.prompt('Provide a reason for rejection (optional):');
-        adminNotes = notesPrompt || undefined;
-      }
-
       const response = await apiClient.updateMosqueAccessRequest(requestId, {
         status,
-        mosque_id: mosqueIdValue,
+        mosque_id: mosqueId,
         admin_notes: adminNotes,
       });
 
@@ -130,6 +140,23 @@ function AdminDashboard() {
       console.error('Failed to update access request', error);
       toast.error('Unable to update access request.');
     }
+  };
+
+  const openModal = (type: 'approve' | 'reject', requestId: number, currentMosqueId?: number) => {
+    setModalState({
+      isOpen: true,
+      type,
+      requestId,
+      currentMosqueId
+    });
+  };
+
+  const closeModal = () => {
+    setModalState({
+      isOpen: false,
+      type: 'approve',
+      requestId: 0
+    });
   };
 
   const handleLogout = () => {
@@ -413,13 +440,13 @@ function AdminDashboard() {
                         {request.status === 'pending' && (
                           <div className="flex items-center gap-2">
                             <button
-                              onClick={() => handleAccessRequestUpdate(request.id, 'approved', request.mosque_id)}
+                              onClick={() => openModal('approve', request.id, request.mosque_id)}
                               className="rounded-md bg-green-600 px-3 py-1 text-xs font-medium text-white hover:bg-green-700"
                             >
                               Approve
                             </button>
                             <button
-                              onClick={() => handleAccessRequestUpdate(request.id, 'rejected', request.mosque_id)}
+                              onClick={() => openModal('reject', request.id)}
                               className="rounded-md bg-red-600 px-3 py-1 text-xs font-medium text-white hover:bg-red-700"
                             >
                               Reject
@@ -435,6 +462,15 @@ function AdminDashboard() {
           </div>
         )}
       </main>
+
+      <MosqueAccessModal
+        isOpen={modalState.isOpen}
+        onClose={closeModal}
+        onSubmit={(data) => handleAccessRequestUpdate(modalState.requestId, modalState.type, data.mosqueId, data.adminNotes)}
+        type={modalState.type}
+        currentMosqueId={modalState.currentMosqueId}
+        mosques={mosques}
+      />
     </div>
   );
 }

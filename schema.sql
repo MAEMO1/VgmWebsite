@@ -205,6 +205,32 @@ CREATE TABLE user_sessions (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Password reset tokens for secure password recovery
+CREATE TABLE password_reset_tokens (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    token VARCHAR(255) UNIQUE NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    used_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Mosque administrator access requests
+CREATE TABLE mosque_access_requests (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    mosque_id INTEGER REFERENCES mosques(id),
+    mosque_name VARCHAR(255),
+    motivation TEXT,
+    contact_email VARCHAR(255),
+    contact_phone VARCHAR(50),
+    status VARCHAR(20) DEFAULT 'pending',
+    admin_notes TEXT,
+    processed_at TIMESTAMP,
+    processed_by INTEGER REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Indexes for better performance
 CREATE INDEX idx_mosques_active ON mosques(is_active);
 CREATE INDEX idx_events_mosque_date ON events(mosque_id, event_date);
@@ -213,6 +239,8 @@ CREATE INDEX idx_blog_posts_published ON blog_posts(is_published, published_at);
 CREATE INDEX idx_janazah_events_date ON janazah_events(prayer_date);
 CREATE INDEX idx_donations_mosque ON donations(mosque_id);
 CREATE INDEX idx_contact_submissions_status ON contact_submissions(status);
+CREATE INDEX idx_password_reset_tokens_user ON password_reset_tokens(user_id);
+CREATE INDEX idx_mosque_access_requests_status ON mosque_access_requests(status);
 
 -- Insert initial admin user (password: admin123)
 INSERT INTO users (email, password_hash, first_name, last_name, role) 
