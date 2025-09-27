@@ -40,7 +40,6 @@ export default function GoogleMaps({
 
         const { Map } = await loader.importLibrary('maps');
         const { Marker } = await loader.importLibrary('marker');
-        const { InfoWindow } = await loader.importLibrary('info');
 
         if (!mapRef.current) return;
 
@@ -61,7 +60,7 @@ export default function GoogleMaps({
         setMap(mapInstance);
 
         // Initialize info window
-        const infoWindowInstance = new InfoWindow();
+        const infoWindowInstance = new google.maps.InfoWindow();
         setInfoWindow(infoWindowInstance);
 
         // Create markers for each mosque
