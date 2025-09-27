@@ -100,6 +100,76 @@ def create_app():
         file.seek(0)  # Reset to beginning
         return size
     
+    def create_notification(user_id, title, message, notification_type, mosque_id=None, priority='normal', action_url=None, metadata=None, expires_at=None):
+        """Create a notification for a user"""
+        conn = get_db_connection()
+        cursor = conn.execute('''
+            INSERT INTO notifications (
+                user_id, mosque_id, title, message, notification_type, 
+                priority, action_url, metadata, expires_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (user_id, mosque_id, title, message, notification_type, priority, action_url, metadata, expires_at))
+        
+        notification_id = cursor.lastrowid
+        conn.commit()
+        conn.close()
+        return notification_id
+    
+    def get_user_notifications(user_id, limit=50, offset=0, unread_only=False):
+        """Get notifications for a user"""
+        conn = get_db_connection()
+        
+        query = '''
+            SELECT n.*, m.name as mosque_name
+            FROM notifications n
+            LEFT JOIN mosques m ON n.mosque_id = m.id
+            WHERE n.user_id = ?
+        '''
+        params = [user_id]
+        
+        if unread_only:
+            query += ' AND n.is_read = 0'
+        
+        query += ' ORDER BY n.created_at DESC LIMIT ? OFFSET ?'
+        params.extend([limit, offset])
+        
+        notifications = conn.execute(query, params).fetchall()
+        conn.close()
+        
+        return [dict(notification) for notification in notifications]
+    
+    def mark_notification_read(notification_id, user_id):
+        """Mark a notification as read"""
+        conn = get_db_connection()
+        conn.execute('''
+            UPDATE notifications 
+            SET is_read = 1 
+            WHERE id = ? AND user_id = ?
+        ''', (notification_id, user_id))
+        conn.commit()
+        conn.close()
+    
+    def mark_all_notifications_read(user_id):
+        """Mark all notifications as read for a user"""
+        conn = get_db_connection()
+        conn.execute('''
+            UPDATE notifications 
+            SET is_read = 1 
+            WHERE user_id = ? AND is_read = 0
+        ''', (user_id,))
+        conn.commit()
+        conn.close()
+    
+    def get_notification_count(user_id):
+        """Get unread notification count for a user"""
+        conn = get_db_connection()
+        count = conn.execute('''
+            SELECT COUNT(*) FROM notifications 
+            WHERE user_id = ? AND is_read = 0
+        ''', (user_id,)).fetchone()[0]
+        conn.close()
+        return count
+    
     def init_database():
         """Initialize database with payment tables"""
         conn = get_db_connection()
@@ -257,6 +327,53 @@ def create_app():
                 FOREIGN KEY (mosque_id) REFERENCES mosques (id),
                 FOREIGN KEY (event_id) REFERENCES events (id),
                 FOREIGN KEY (campaign_id) REFERENCES campaigns (id)
+            )
+        ''')
+        
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS notifications (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                mosque_id INTEGER,
+                title TEXT NOT NULL,
+                message TEXT NOT NULL,
+                notification_type TEXT NOT NULL,
+                priority TEXT DEFAULT 'normal',
+                is_read BOOLEAN DEFAULT 0,
+                action_url TEXT,
+                metadata TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                expires_at DATETIME,
+                FOREIGN KEY (user_id) REFERENCES users (id),
+                FOREIGN KEY (mosque_id) REFERENCES mosques (id)
+            )
+        ''')
+        
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS notification_preferences (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                notification_type TEXT NOT NULL,
+                email_enabled BOOLEAN DEFAULT 1,
+                push_enabled BOOLEAN DEFAULT 1,
+                sms_enabled BOOLEAN DEFAULT 0,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users (id),
+                UNIQUE(user_id, notification_type)
+            )
+        ''')
+        
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS notification_templates (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                template_name TEXT UNIQUE NOT NULL,
+                notification_type TEXT NOT NULL,
+                title_template TEXT NOT NULL,
+                message_template TEXT NOT NULL,
+                is_active BOOLEAN DEFAULT 1,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
             )
         ''')
         
@@ -705,6 +822,145 @@ def create_app():
             logger.error(f"Error deleting file {file_id}: {e}")
             return jsonify({'error': 'Failed to delete file'}), 500
     
+    # Notification endpoints
+    @app.route('/api/notifications', methods=['GET'])
+    @require_auth
+    def get_notifications():
+        """Get notifications for the current user"""
+        try:
+            limit = int(request.args.get('limit', 50))
+            offset = int(request.args.get('offset', 0))
+            unread_only = request.args.get('unread_only', 'false').lower() == 'true'
+            
+            notifications = get_user_notifications(request.user_id, limit, offset, unread_only)
+            unread_count = get_notification_count(request.user_id)
+            
+            return jsonify({
+                'notifications': notifications,
+                'unread_count': unread_count,
+                'total_count': len(notifications)
+            })
+            
+        except Exception as e:
+            logger.error(f"Error fetching notifications: {e}")
+            return jsonify({'error': str(e)}), 500
+    
+    @app.route('/api/notifications/<int:notification_id>/read', methods=['POST'])
+    @require_auth
+    def mark_notification_read_endpoint(notification_id):
+        """Mark a specific notification as read"""
+        try:
+            mark_notification_read(notification_id, request.user_id)
+            return jsonify({'message': 'Notification marked as read'})
+            
+        except Exception as e:
+            logger.error(f"Error marking notification as read: {e}")
+            return jsonify({'error': str(e)}), 500
+    
+    @app.route('/api/notifications/read-all', methods=['POST'])
+    @require_auth
+    def mark_all_notifications_read_endpoint():
+        """Mark all notifications as read for the current user"""
+        try:
+            mark_all_notifications_read(request.user_id)
+            return jsonify({'message': 'All notifications marked as read'})
+            
+        except Exception as e:
+            logger.error(f"Error marking all notifications as read: {e}")
+            return jsonify({'error': str(e)}), 500
+    
+    @app.route('/api/notifications/count', methods=['GET'])
+    @require_auth
+    def get_notification_count_endpoint():
+        """Get unread notification count for the current user"""
+        try:
+            count = get_notification_count(request.user_id)
+            return jsonify({'unread_count': count})
+            
+        except Exception as e:
+            logger.error(f"Error getting notification count: {e}")
+            return jsonify({'error': str(e)}), 500
+    
+    @app.route('/api/notifications/preferences', methods=['GET'])
+    @require_auth
+    def get_notification_preferences():
+        """Get notification preferences for the current user"""
+        try:
+            conn = get_db_connection()
+            preferences = conn.execute('''
+                SELECT notification_type, email_enabled, push_enabled, sms_enabled
+                FROM notification_preferences
+                WHERE user_id = ?
+            ''', (request.user_id,)).fetchall()
+            conn.close()
+            
+            return jsonify([dict(pref) for pref in preferences])
+            
+        except Exception as e:
+            logger.error(f"Error fetching notification preferences: {e}")
+            return jsonify({'error': str(e)}), 500
+    
+    @app.route('/api/notifications/preferences', methods=['POST'])
+    @require_auth
+    def update_notification_preferences():
+        """Update notification preferences for the current user"""
+        try:
+            data = request.get_json()
+            notification_type = data.get('notification_type')
+            email_enabled = data.get('email_enabled', True)
+            push_enabled = data.get('push_enabled', True)
+            sms_enabled = data.get('sms_enabled', False)
+            
+            conn = get_db_connection()
+            conn.execute('''
+                INSERT OR REPLACE INTO notification_preferences 
+                (user_id, notification_type, email_enabled, push_enabled, sms_enabled, updated_at)
+                VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+            ''', (request.user_id, notification_type, email_enabled, push_enabled, sms_enabled))
+            conn.commit()
+            conn.close()
+            
+            return jsonify({'message': 'Notification preferences updated'})
+            
+        except Exception as e:
+            logger.error(f"Error updating notification preferences: {e}")
+            return jsonify({'error': str(e)}), 500
+    
+    # Admin notification endpoints
+    @app.route('/api/admin/notifications', methods=['POST'])
+    @require_auth
+    @require_role('admin')
+    def create_notification():
+        """Create a notification (admin only)"""
+        try:
+            data = request.get_json()
+            user_id = data.get('user_id')
+            mosque_id = data.get('mosque_id')
+            title = data.get('title')
+            message = data.get('message')
+            notification_type = data.get('notification_type', 'general')
+            priority = data.get('priority', 'normal')
+            action_url = data.get('action_url')
+            metadata = data.get('metadata')
+            expires_at = data.get('expires_at')
+            
+            if not user_id or not title or not message:
+                return jsonify({'error': 'user_id, title, and message are required'}), 400
+            
+            notification_id = create_notification(
+                user_id, title, message, notification_type, mosque_id,
+                priority, action_url, metadata, expires_at
+            )
+            
+            return jsonify({
+                'notification_id': notification_id,
+                'message': 'Notification created successfully'
+            })
+            
+        except Exception as e:
+            logger.error(f"Error creating notification: {e}")
+            return jsonify({'error': str(e)}), 500
+    
     # Existing authentication endpoints (unchanged)
     @app.route('/api/auth/login', methods=['POST'])
     def login():
@@ -811,6 +1067,229 @@ def create_app():
         except Exception as e:
             logger.error(f"Error fetching news: {e}")
             return jsonify({'error': str(e)}), 500
+    
+    # Advanced search endpoints
+    @app.route('/api/search', methods=['GET'])
+    def advanced_search():
+        """Advanced search across all content types"""
+        conn = None
+        try:
+            query = request.args.get('q', '').strip()
+            selected_types = request.args.getlist('type')
+            date_from = request.args.get('date_from')
+            date_to = request.args.get('date_to')
+            location = request.args.get('location', '').strip()
+            capacity_min = request.args.get('capacity_min', type=int)
+            capacity_max = request.args.get('capacity_max', type=int)
+            sort = request.args.get('sort', 'relevance')
+            page = request.args.get('page', default=1, type=int)
+            per_page = request.args.get('per_page', default=20, type=int)
+
+            valid_types = {'mosques', 'events', 'news', 'campaigns'}
+            if selected_types:
+                selected_types = [ctype for ctype in selected_types if ctype in valid_types]
+            if not selected_types:
+                selected_types = list(valid_types)
+
+            results = {
+                'mosques': [],
+                'events': [],
+                'news': [],
+                'campaigns': [],
+                'total_results': 0,
+                'page': page,
+                'per_page': per_page,
+                'total_pages': 0
+            }
+
+            conn = get_db_connection()
+
+            def build_like_conditions(columns, value):
+                like_value = f"%{value.lower()}%"
+                placeholders = [f"LOWER(COALESCE({col}, '')) LIKE ?" for col in columns]
+                return "(" + " OR ".join(placeholders) + ")", [like_value] * len(columns)
+
+            # Search mosques
+            if 'mosques' in selected_types:
+                mosque_query_parts = ["SELECT * FROM mosques WHERE is_active = 1"]
+                mosque_params = []
+
+                if query:
+                    condition, params = build_like_conditions(
+                        ['name', 'description', 'address', 'imam_name', 'email', 'phone'],
+                        query
+                    )
+                    mosque_query_parts.append("AND " + condition)
+                    mosque_params.extend(params)
+
+                if location:
+                    condition, params = build_like_conditions(['address'], location)
+                    mosque_query_parts.append("AND " + condition)
+                    mosque_params.extend(params)
+
+                if capacity_min is not None:
+                    mosque_query_parts.append("AND capacity >= ?")
+                    mosque_params.append(capacity_min)
+
+                if capacity_max is not None:
+                    mosque_query_parts.append("AND capacity <= ?")
+                    mosque_params.append(capacity_max)
+
+                if sort in ('recent', 'newest'):
+                    order_clause = " ORDER BY created_at DESC"
+                elif sort == 'oldest':
+                    order_clause = " ORDER BY created_at ASC"
+                elif sort == 'name_desc':
+                    order_clause = " ORDER BY name COLLATE NOCASE DESC"
+                else:
+                    order_clause = " ORDER BY name COLLATE NOCASE ASC"
+
+                mosque_query = " ".join(mosque_query_parts) + order_clause
+                mosques = conn.execute(mosque_query, mosque_params).fetchall()
+                results['mosques'] = [dict(mosque) for mosque in mosques]
+
+            # Search events
+            if 'events' in selected_types:
+                event_query_parts = [
+                    "SELECT e.*, m.name AS mosque_name, m.address AS mosque_address"
+                    " FROM events e"
+                    " LEFT JOIN mosques m ON e.mosque_id = m.id"
+                    " WHERE e.is_active = 1"
+                ]
+                event_params = []
+
+                if query:
+                    condition, params = build_like_conditions(
+                        ['e.title', 'e.description', 'm.name', 'm.address'],
+                        query
+                    )
+                    event_query_parts.append("AND " + condition)
+                    event_params.extend(params)
+
+                if location:
+                    condition, params = build_like_conditions(['m.address'], location)
+                    event_query_parts.append("AND " + condition)
+                    event_params.extend(params)
+
+                if date_from:
+                    event_query_parts.append("AND DATE(e.event_date) >= DATE(?)")
+                    event_params.append(date_from)
+
+                if date_to:
+                    event_query_parts.append("AND DATE(e.event_date) <= DATE(?)")
+                    event_params.append(date_to)
+
+                if sort in ('recent', 'newest'):
+                    order_clause = " ORDER BY e.event_date DESC, e.event_time DESC"
+                elif sort == 'oldest':
+                    order_clause = " ORDER BY e.event_date ASC, e.event_time ASC"
+                else:
+                    order_clause = " ORDER BY e.event_date ASC, e.event_time ASC"
+
+                event_query = " ".join(event_query_parts) + order_clause
+                events = conn.execute(event_query, event_params).fetchall()
+                results['events'] = [dict(event) for event in events]
+
+            # Search news
+            if 'news' in selected_types:
+                news_query_parts = [
+                    "SELECT n.*, u.first_name, u.last_name"
+                    " FROM news n"
+                    " LEFT JOIN users u ON n.author_id = u.id"
+                    " WHERE n.status = 'published'"
+                ]
+                news_params = []
+
+                if query:
+                    condition, params = build_like_conditions(
+                        ['n.title', 'n.excerpt', 'n.content', 'u.first_name', 'u.last_name'],
+                        query
+                    )
+                    news_query_parts.append("AND " + condition)
+                    news_params.extend(params)
+
+                if date_from:
+                    news_query_parts.append("AND DATE(n.published_at) >= DATE(?)")
+                    news_params.append(date_from)
+
+                if date_to:
+                    news_query_parts.append("AND DATE(n.published_at) <= DATE(?)")
+                    news_params.append(date_to)
+
+                if sort in ('recent', 'newest'):
+                    order_clause = " ORDER BY n.published_at DESC"
+                elif sort == 'oldest':
+                    order_clause = " ORDER BY n.published_at ASC"
+                elif sort == 'name_desc':
+                    order_clause = " ORDER BY n.title COLLATE NOCASE DESC"
+                elif sort == 'name':
+                    order_clause = " ORDER BY n.title COLLATE NOCASE ASC"
+                else:
+                    order_clause = " ORDER BY n.published_at DESC"
+
+                news_query = " ".join(news_query_parts) + order_clause
+                news = conn.execute(news_query, news_params).fetchall()
+                results['news'] = [dict(article) for article in news]
+
+            # Search campaigns
+            if 'campaigns' in selected_types:
+                campaign_query_parts = [
+                    "SELECT c.*, m.name AS mosque_name, m.address AS mosque_address"
+                    " FROM campaigns c"
+                    " LEFT JOIN mosques m ON c.mosque_id = m.id"
+                    " WHERE c.status = 'active'"
+                ]
+                campaign_params = []
+
+                if query:
+                    condition, params = build_like_conditions(
+                        ['c.title', 'c.description', 'm.name', 'm.address'],
+                        query
+                    )
+                    campaign_query_parts.append("AND " + condition)
+                    campaign_params.extend(params)
+
+                if location:
+                    condition, params = build_like_conditions(['m.address'], location)
+                    campaign_query_parts.append("AND " + condition)
+                    campaign_params.extend(params)
+
+                if date_from:
+                    campaign_query_parts.append("AND DATE(c.start_date) >= DATE(?)")
+                    campaign_params.append(date_from)
+
+                if date_to:
+                    campaign_query_parts.append("AND DATE(c.end_date) <= DATE(?)")
+                    campaign_params.append(date_to)
+
+                if sort in ('recent', 'newest'):
+                    order_clause = " ORDER BY c.start_date DESC"
+                elif sort == 'oldest':
+                    order_clause = " ORDER BY c.start_date ASC"
+                else:
+                    order_clause = " ORDER BY c.start_date ASC"
+
+                campaign_query = " ".join(campaign_query_parts) + order_clause
+                campaigns = conn.execute(campaign_query, campaign_params).fetchall()
+                results['campaigns'] = [dict(campaign) for campaign in campaigns]
+
+            total_results = (
+                len(results['mosques']) +
+                len(results['events']) +
+                len(results['news']) +
+                len(results['campaigns'])
+            )
+            results['total_results'] = total_results
+            results['total_pages'] = (total_results + per_page - 1) // per_page if per_page else 0
+
+            return jsonify(results)
+
+        except Exception as e:
+            logger.error(f"Error in advanced search: {e}")
+            return jsonify({'error': str(e)}), 500
+        finally:
+            if conn is not None:
+                conn.close()
     
     return app
 
