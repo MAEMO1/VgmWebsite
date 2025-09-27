@@ -49,12 +49,12 @@ export default function MosquesPage() {
     return matchesSearch && matchesCapacity;
   });
 
-  const formatCapacity = (capacity?: number) => {
+  const formatCapacity = (capacity?: number | null) => {
     if (!capacity) return 'N/A';
     return `${capacity} people`;
   };
 
-  const formatYear = (year?: number) => {
+  const formatYear = (year?: number | null) => {
     if (!year) return 'N/A';
     return year.toString();
   };
