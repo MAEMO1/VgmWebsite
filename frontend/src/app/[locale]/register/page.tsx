@@ -50,24 +50,14 @@ export default function RegisterPage() {
         setMosques(response);
         setMosqueError('');
       } catch (err) {
-        console.error('Failed to load mosques', err);
-        setMosqueError(t('errors.mosqueLoad'));
+        setMosqueError('Kon moskeeën niet laden');
       } finally {
         setMosqueLoading(false);
       }
     };
 
-    fetchMosques();
-  }, [t]);
-
-  useEffect(() => {
-    if (accountType !== 'mosque_admin') {
-      setFormData((prev) => ({
-        ...prev,
-        mosque_id: '',
-        mosque_name: '',
-        admin_motivation: '',
-      }));
+    if (accountType === 'mosque_admin') {
+      fetchMosques();
     }
   }, [accountType]);
 
@@ -75,14 +65,8 @@ export default function RegisterPage() {
     e.preventDefault();
     setError('');
 
-    // Validation
     if (formData.password !== formData.confirmPassword) {
-      setError(shared('errors.passwordMismatch'));
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      setError(shared('errors.passwordLength'));
+      setError(shared('passwordMismatch'));
       return;
     }
 
@@ -141,201 +125,108 @@ export default function RegisterPage() {
               </div>
             )}
 
-            {mosqueError && (
-              <div className="rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-yellow-700">
-                {mosqueError}
-              </div>
-            )}
-
-            <div className="space-y-5">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {t('accountType.label')}
-                </label>
-                <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                  <label className={`flex cursor-pointer flex-col rounded-lg border px-4 py-3 text-sm shadow-sm transition ${
+            {/* Account Type Selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                {t('accountType')}
+              </label>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => setAccountType('user')}
+                  className={`rounded-lg border p-4 text-left transition-colors ${
                     accountType === 'user'
-                      ? 'border-primary bg-primary/5 text-primary'
-                      : 'border-gray-200 hover:border-primary/60'
-                  }`}>
-                    <span className="font-medium">{t('accountType.user.title')}</span>
-                    <span className="mt-1 text-xs text-gray-600">
-                      {t('accountType.user.description')}
-                    </span>
-                    <input
-                      type="radio"
-                      name="accountType"
-                      value="user"
-                      checked={accountType === 'user'}
-                      onChange={() => setAccountType('user')}
-                      className="sr-only"
-                    />
-                  </label>
-                  <label className={`flex cursor-pointer flex-col rounded-lg border px-4 py-3 text-sm shadow-sm transition ${
-                    accountType === 'mosque_admin'
-                      ? 'border-primary bg-primary/5 text-primary'
-                      : 'border-gray-200 hover:border-primary/60'
-                  }`}>
-                    <span className="font-medium">{t('accountType.mosqueAdmin.title')}</span>
-                    <span className="mt-1 text-xs text-gray-600">
-                      {t('accountType.mosqueAdmin.description')}
-                    </span>
-                    <input
-                      type="radio"
-                      name="accountType"
-                      value="mosque_admin"
-                      checked={accountType === 'mosque_admin'}
-                      onChange={() => setAccountType('mosque_admin')}
-                      className="sr-only"
-                    />
-                  </label>
-                </div>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label htmlFor="first_name" className="block text-sm font-medium text-gray-700">
-                    {shared('firstName')}
-                  </label>
-                  <input
-                    id="first_name"
-                    name="first_name"
-                    type="text"
-                    required
-                    value={formData.first_name}
-                    onChange={handleChange}
-                    className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
-                    placeholder={shared('placeholders.firstName')}
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="last_name" className="block text-sm font-medium text-gray-700">
-                    {shared('lastName')}
-                  </label>
-                  <input
-                    id="last_name"
-                    name="last_name"
-                    type="text"
-                    required
-                    value={formData.last_name}
-                    onChange={handleChange}
-                    className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
-                    placeholder={shared('placeholders.lastName')}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                  {shared('email')}
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
-                  placeholder={t('placeholders.email')}
-                />
-              </div>
-
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                  {t('phone.label')}
-                </label>
-                <input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
-                  placeholder={t('phone.placeholder')}
-                />
-              </div>
-
-              <div>
-                <label htmlFor="mosque_id" className="block text-sm font-medium text-gray-700">
-                  {t('mosque.label')}
-                </label>
-                <select
-                  id="mosque_id"
-                  name="mosque_id"
-                  value={formData.mosque_id}
-                  onChange={handleChange}
-                  disabled={accountType !== 'mosque_admin'}
-                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-gray-100 disabled:text-gray-500"
+                      ? 'border-teal-500 bg-teal-50 text-teal-700'
+                      : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                  }`}
                 >
-                  <option value="">
-                    {accountType === 'mosque_admin'
-                      ? mosqueLoading
-                        ? t('mosque.loading')
-                        : t('mosque.placeholder')
-                      : t('mosque.notRequired')}
-                  </option>
-                  {mosques.map((mosque) => (
-                    <option key={mosque.id} value={mosque.id.toString()}>
-                      {mosque.name}
-                    </option>
-                  ))}
-              </select>
-              {accountType === 'mosque_admin' && (
-                <p className="mt-2 text-xs text-gray-500">
-                  {t.rich('mosque.help', {
-                    contact: (chunks) => (
-                      <Link
-                        href={`/${locale}/contact`}
-                        className="font-medium text-teal-600 hover:text-teal-700 transition-colors"
-                      >
-                        {chunks}
-                      </Link>
-                    ),
-                  })}
-                </p>
-              )}
+                  <div className="font-medium">{t('userAccount')}</div>
+                  <div className="text-sm text-gray-500">{t('userDescription')}</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAccountType('mosque_admin')}
+                  className={`rounded-lg border p-4 text-left transition-colors ${
+                    accountType === 'mosque_admin'
+                      ? 'border-teal-500 bg-teal-50 text-teal-700'
+                      : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                  }`}
+                >
+                  <div className="font-medium">{t('mosqueAdminAccount')}</div>
+                  <div className="text-sm text-gray-500">{t('mosqueAdminDescription')}</div>
+                </button>
+              </div>
             </div>
 
-            {accountType === 'mosque_admin' && (
-              <>
-                <div>
-                  <label htmlFor="mosque_name" className="block text-sm font-medium text-gray-700">
-                    {t('mosque.customLabel')}
-                  </label>
-                  <input
-                    id="mosque_name"
-                    name="mosque_name"
-                    type="text"
-                    value={formData.mosque_name}
-                    onChange={handleChange}
-                    className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
-                    placeholder={t('mosque.customPlaceholder')}
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="admin_motivation" className="block text-sm font-medium text-gray-700">
-                    {t('motivation.label')}
-                  </label>
-                  <textarea
-                    id="admin_motivation"
-                    name="admin_motivation"
-                    value={formData.admin_motivation}
-                    onChange={handleChange}
-                    rows={4}
-                    className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
-                    placeholder={t('motivation.placeholder')}
-                  />
-                  <p className="mt-2 text-xs text-gray-500">{t('motivation.helper')}</p>
-                </div>
-              </>
-            )}
-
+            {/* Basic Information */}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="first_name" className="block text-sm font-medium text-gray-700 mb-2">
+                  {shared('firstName')}
+                </label>
+                <input
+                  id="first_name"
+                  name="first_name"
+                  type="text"
+                  required
+                  value={formData.first_name}
+                  onChange={handleChange}
+                  className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
+                  placeholder={t('placeholders.firstName')}
+                />
+              </div>
+              <div>
+                <label htmlFor="last_name" className="block text-sm font-medium text-gray-700 mb-2">
+                  {shared('lastName')}
+                </label>
+                <input
+                  id="last_name"
+                  name="last_name"
+                  type="text"
+                  required
+                  value={formData.last_name}
+                  onChange={handleChange}
+                  className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
+                  placeholder={t('placeholders.lastName')}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                {shared('email')}
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
+                placeholder={t('placeholders.email')}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                {shared('phone')}
+              </label>
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                value={formData.phone}
+                onChange={handleChange}
+                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
+                placeholder={t('placeholders.phone')}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                   {shared('password')}
                 </label>
                 <input
@@ -346,14 +237,13 @@ export default function RegisterPage() {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
                   placeholder={t('placeholders.password')}
                 />
               </div>
-
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                  {t('confirmPassword.label')}
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                  {shared('confirmPassword')}
                 </label>
                 <input
                   id="confirmPassword"
@@ -363,16 +253,73 @@ export default function RegisterPage() {
                   required
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
-                  placeholder={t('confirmPassword.placeholder')}
+                  className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
+                  placeholder={t('placeholders.confirmPassword')}
                 />
               </div>
             </div>
 
+            {/* Mosque Admin Specific Fields */}
+            {accountType === 'mosque_admin' && (
+              <>
+                <div>
+                  <label htmlFor="mosque_id" className="block text-sm font-medium text-gray-700 mb-2">
+                    {t('mosque')}
+                  </label>
+                  {mosqueLoading ? (
+                    <div className="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-3 text-gray-500">
+                      {t('loadingMosques')}
+                    </div>
+                  ) : mosqueError ? (
+                    <div className="w-full rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-red-600">
+                      {mosqueError}
+                    </div>
+                  ) : (
+                    <select
+                      id="mosque_id"
+                      name="mosque_id"
+                      required
+                      value={formData.mosque_id}
+                      onChange={handleChange}
+                      className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
+                    >
+                      <option value="">{t('selectMosque')}</option>
+                      {mosques.map((mosque) => (
+                        <option key={mosque.id} value={mosque.id}>
+                          {mosque.name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+
+                <div>
+                  <label htmlFor="admin_motivation" className="block text-sm font-medium text-gray-700 mb-2">
+                    {t('motivation')}
+                  </label>
+                  <textarea
+                    id="admin_motivation"
+                    name="admin_motivation"
+                    rows={3}
+                    value={formData.admin_motivation}
+                    onChange={handleChange}
+                    className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
+                    placeholder={t('placeholders.motivation')}
+                  />
+                </div>
+
+                <div className="rounded-lg bg-blue-50 border border-blue-200 p-4">
+                  <p className="text-sm text-blue-800">
+                    {t('mosqueAdminNote')}
+                  </p>
+                </div>
+              </>
+            )}
+
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-teal-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full flex items-center justify-center gap-2 rounded-lg bg-teal-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? (
                 <>
@@ -380,26 +327,26 @@ export default function RegisterPage() {
                   {t('actions.creating')}
                 </>
               ) : (
-                t('actions.create')
+                t('actions.createAccount')
               )}
             </button>
-          </form>
-        </section>
 
-        <aside className="mx-auto max-w-lg space-y-6 text-sm text-gray-700">
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-900">{t('support.title')}</h2>
-            <ul className="mt-3 space-y-2 text-gray-600">
-              <li>• {t('support.points.0')}</li>
-              <li>• {t('support.points.1')}</li>
-              <li>• {t('support.points.2')}</li>
-            </ul>
-          </div>
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-900">{t('nextSteps.title')}</h2>
-            <p className="mt-2 text-gray-600">{t('nextSteps.description')}</p>
-          </div>
-        </aside>
+            <div className="text-center">
+              <p className="text-sm text-gray-600">
+                {t.rich('cta', {
+                  login: (chunks) => (
+                    <Link
+                      href={`/${locale}/login`}
+                      className="font-medium text-teal-600 hover:text-teal-700 transition-colors"
+                    >
+                      {chunks}
+                    </Link>
+                  ),
+                })}
+              </p>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
