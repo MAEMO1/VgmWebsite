@@ -6,6 +6,7 @@ import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { ChevronLeftIcon, ChevronRightIcon, CalendarIcon, ClockIcon, MapPinIcon } from '@heroicons/react/24/outline';
 import { apiClient } from '@/api/client';
 import type { EventItem } from '@/types/api';
+import { ErrorState } from '@/components/ui/ErrorState';
 
 export default function EventsCalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -171,15 +172,18 @@ export default function EventsCalendarPage() {
         )}
 
         {isError && (
-          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700">
-            Het laden van evenementen is mislukt. Probeer het later opnieuw.
-          </div>
+          <ErrorState
+            title="Evenementen"
+            message="Het laden van evenementen is mislukt. Probeer het later opnieuw."
+            tone="critical"
+          />
         )}
 
         {!isLoading && !isError && sortedEvents.length === 0 && (
-          <div className="rounded-lg border border-gray-200 bg-white p-8 text-center text-gray-600">
-            Er zijn momenteel geen evenementen gepland.
-          </div>
+          <ErrorState
+            title="Geen evenementen gepland"
+            message="Er zijn momenteel geen evenementen gepland. Nieuwe activiteiten verschijnen hier zodra ze beschikbaar zijn."
+          />
         )}
 
         {!isLoading && !isError && sortedEvents.length > 0 && (

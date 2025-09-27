@@ -47,11 +47,22 @@ def create_app():
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
     
     # Configure CORS properly
-    CORS(app, 
-         origins=['http://localhost:3000', 'http://localhost:3001', 'https://vgm-website.vercel.app'],
-         supports_credentials=True,
-         allow_headers=['Content-Type', 'Authorization', 'X-CSRF-Token'],
-         methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
+    default_origins = [
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'https://vgm-website.vercel.app',
+        'https://frontend-maemo.vercel.app'
+    ]
+    cors_origins = os.environ.get('ALLOWED_ORIGINS', ','.join(default_origins)).split(',')
+    cors_origins = [origin.strip() for origin in cors_origins if origin.strip()]
+
+    CORS(
+        app,
+        origins=cors_origins,
+        supports_credentials=True,
+        allow_headers=['Content-Type', 'Authorization', 'X-CSRF-Token'],
+        methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+    )
     
     # Database helper functions
     def get_db_connection():

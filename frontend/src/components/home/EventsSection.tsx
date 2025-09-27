@@ -8,6 +8,7 @@ import { CalendarIcon, ClockIcon, MapPinIcon } from '@heroicons/react/24/outline
 import { SectionErrorBoundary } from '@/components/ErrorBoundary';
 import { EventsSkeleton } from '@/components/ui/Skeleton';
 import { CardImage } from '@/components/ui/LazyImage';
+import { ErrorState } from '@/components/ui/ErrorState';
 
 export function EventsSection() {
   const locale = useLocale();
@@ -47,18 +48,11 @@ function EventsSectionContent({
 
   if (error) {
     return (
-      <div className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              {t('title')}
-            </h2>
-            <p className="text-lg text-red-600">
-              Er is een fout opgetreden bij het laden van de evenementen
-            </p>
-          </div>
-        </div>
-      </div>
+      <ErrorState
+        title={t('title')}
+        message="We konden de evenementen niet ophalen. Controleer je internetverbinding of probeer het later opnieuw."
+        tone="critical"
+      />
     );
   }
 

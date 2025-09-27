@@ -76,6 +76,7 @@ SESSION_SECRET=change-me
 STRIPE_SECRET_KEY=sk_test_xxx
 STRIPE_PUBLISHABLE_KEY=pk_test_xxx
 PORT=5001
+ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001,https://vgm-website.vercel.app,https://frontend-maemo.vercel.app
 ```
 
 `frontend/.env.local`:

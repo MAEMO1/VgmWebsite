@@ -8,6 +8,7 @@ import { NewspaperIcon, CalendarIcon, UserIcon } from '@heroicons/react/24/outli
 import { SectionErrorBoundary } from '@/components/ErrorBoundary';
 import { NewsSkeleton } from '@/components/ui/Skeleton';
 import { CardImage } from '@/components/ui/LazyImage';
+import { ErrorState } from '@/components/ui/ErrorState';
 
 export function NewsSection() {
   const locale = useLocale();
@@ -47,18 +48,11 @@ function NewsSectionContent({
 
   if (error) {
     return (
-      <div className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              {t('title')}
-            </h2>
-            <p className="text-lg text-red-600">
-              Er is een fout opgetreden bij het laden van het nieuws
-            </p>
-          </div>
-        </div>
-      </div>
+      <ErrorState
+        title={t('title')}
+        message="We konden het nieuws niet laden. Probeer het later opnieuw."
+        tone="critical"
+      />
     );
   }
 
