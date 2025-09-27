@@ -91,7 +91,11 @@ export default function RegisterPage() {
       });
       
       if (success) {
-        router.push(`/${locale}/login?message=${encodeURIComponent(t('success'))}`);
+        if (accountType === 'mosque_admin') {
+          router.push(`/${locale}/login?message=${encodeURIComponent(t('successMosqueAdmin'))}&showAccessRequest=true`);
+        } else {
+          router.push(`/${locale}/login?message=${encodeURIComponent(t('successUser'))}`);
+        }
       } else {
         setError(shared('genericError'));
       }

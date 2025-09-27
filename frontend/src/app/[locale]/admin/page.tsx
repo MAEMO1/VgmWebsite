@@ -226,60 +226,86 @@ function AdminDashboard() {
       {/* Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {activeTab === 'overview' && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
-                      <span className="text-white text-sm font-medium">U</span>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-white overflow-hidden shadow rounded-lg">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <div className="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
+                        <span className="text-white text-sm font-medium">U</span>
+                      </div>
+                    </div>
+                    <div className="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-gray-500 truncate">Total Users</dt>
+                        <dd className="text-lg font-medium text-gray-900">{users.length}</dd>
+                      </dl>
                     </div>
                   </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">Total Users</dt>
-                      <dd className="text-lg font-medium text-gray-900">{users.length}</dd>
-                    </dl>
+                </div>
+              </div>
+
+              <div className="bg-white overflow-hidden shadow rounded-lg">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <div className="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
+                        <span className="text-white text-sm font-medium">E</span>
+                      </div>
+                    </div>
+                    <div className="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-gray-500 truncate">Total Events</dt>
+                        <dd className="text-lg font-medium text-gray-900">{events.length}</dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white overflow-hidden shadow rounded-lg">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <div className="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
+                        <span className="text-white text-sm font-medium">N</span>
+                      </div>
+                    </div>
+                    <div className="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-gray-500 truncate">News Articles</dt>
+                        <dd className="text-lg font-medium text-gray-900">{news.length}</dd>
+                      </dl>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
-                      <span className="text-white text-sm font-medium">E</span>
-                    </div>
+            {user?.role === 'admin' && (
+              <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900">Moskee Toegangsaanvragen</h3>
+                    <p className="text-sm text-gray-500 mt-1">
+                      Beheer aanvragen voor moskee-beheerder toegang
+                    </p>
                   </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">Total Events</dt>
-                      <dd className="text-lg font-medium text-gray-900">{events.length}</dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
-                      <span className="text-white text-sm font-medium">N</span>
-                    </div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">News Articles</dt>
-                      <dd className="text-lg font-medium text-gray-900">{news.length}</dd>
-                    </dl>
+                  <div className="flex items-center space-x-3">
+                    <span className="text-sm text-gray-500">
+                      {accessRequests.filter(r => r.status === 'pending').length} wachtend
+                    </span>
+                    <Link
+                      href={`/${locale}/mosques/access-request`}
+                      className="inline-flex items-center px-4 py-2 text-sm font-medium text-teal-600 bg-teal-50 border border-teal-200 rounded-lg hover:bg-teal-100 hover:border-teal-300 transition-colors"
+                    >
+                      <span>Nieuwe aanvraag</span>
+                    </Link>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 

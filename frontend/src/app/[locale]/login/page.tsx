@@ -20,6 +20,7 @@ export default function LoginPage() {
   const shared = useTranslations('Auth.Shared');
   const searchParams = useSearchParams();
   const successMessage = searchParams.get('message');
+  const showAccessRequest = searchParams.get('showAccessRequest') === 'true';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,6 +62,16 @@ export default function LoginPage() {
             {successMessage && (
               <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
                 {successMessage}
+                {showAccessRequest && (
+                  <div className="mt-3">
+                    <Link
+                      href={`/${locale}/mosques/access-request`}
+                      className="inline-flex items-center px-3 py-2 text-sm font-medium text-teal-600 bg-teal-50 border border-teal-200 rounded-lg hover:bg-teal-100 hover:border-teal-300 transition-colors"
+                    >
+                      <span>Moskee toegangsaanvraag indienen</span>
+                    </Link>
+                  </div>
+                )}
               </div>
             )}
             {error && (
