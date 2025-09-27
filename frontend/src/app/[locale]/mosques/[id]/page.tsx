@@ -128,10 +128,16 @@ export default function MosqueDetailPage({ params }: { params: { id: string } })
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Dagelijkse Gebedstijden</h3>
               <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                {Object.entries(mosque.prayerTimes).map(([prayer, time]) => (
-                  <div key={prayer} className="bg-gray-50 rounded-lg p-4 text-center">
-                    <div className="text-sm text-gray-600 mb-1 capitalize">{prayer}</div>
-                    <div className="text-2xl font-bold text-gray-900">{time}</div>
+                {[
+                  { name: 'Fajr', time: '05:30' },
+                  { name: 'Dhuhr', time: '12:30' },
+                  { name: 'Asr', time: '15:45' },
+                  { name: 'Maghrib', time: '18:15' },
+                  { name: 'Isha', time: '19:45' }
+                ].map((prayer) => (
+                  <div key={prayer.name} className="bg-gray-50 rounded-lg p-4 text-center">
+                    <div className="text-sm text-gray-600 mb-1">{prayer.name}</div>
+                    <div className="text-2xl font-bold text-gray-900">{prayer.time}</div>
                   </div>
                 ))}
               </div>
@@ -144,6 +150,7 @@ export default function MosqueDetailPage({ params }: { params: { id: string } })
                 <li>• Vrijdaggebed begint om 13:00</li>
                 <li>• Ramadan tijden worden apart aangegeven</li>
                 <li>• Voor vragen over gebedstijden, neem contact op</li>
+                <li>• * Bovenstaande tijden zijn voorbeeldtijden</li>
               </ul>
             </div>
           </div>
