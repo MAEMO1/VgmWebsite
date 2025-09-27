@@ -1,105 +1,271 @@
 {
-  "HomePage": {
-    "title": "VGM'ye Hoş Geldiniz",
-    "description": "Gent Camileri Derneği"
+  "Home": {
+    "title": "Gent Camileri Derneği",
+    "subtitle": "Gent camilerinin dijital topluluğuna hoş geldiniz",
+    "description": "Gent'teki tüm bağlı camileri, etkinlikleri ve hizmetleri keşfedin",
+    "mosques": {
+      "title": "Gent'teki Camiler",
+      "description": "Tüm bağlı camileri ve hizmetlerini keşfedin",
+      "viewAll": "Tüm camileri görüntüle",
+      "viewDetails": "Daha fazla bilgi",
+      "capacity": "kapasite",
+      "established": "kuruldu",
+      "error": "Camiler yüklenirken bir hata oluştu"
+    },
+    "events": {
+      "title": "Yaklaşan Etkinlikler",
+      "description": "Tüm aktivitelerden haberdar olun",
+      "viewAll": "Tüm etkinlikleri görüntüle",
+      "viewDetails": "Daha fazla bilgi",
+      "error": "Etkinlikler yüklenirken bir hata oluştu"
+    },
+    "news": {
+      "title": "Son Haberler",
+      "description": "Son haberlerden haberdar olun",
+      "viewAll": "Tüm haberleri görüntüle",
+      "viewDetails": "Devamını oku",
+      "error": "Haberler yüklenirken bir hata oluştu"
+    }
   },
   "Navigation": {
     "home": "Ana Sayfa",
     "mosques": "Camiler",
-    "community": "Topluluk",
-    "about": "Hakkında",
     "events": "Etkinlikler",
-    "ramadan": "Ramazan",
+    "news": "Haberler",
     "donations": "Bağışlar",
-    "requestAdminAccess": "Request mosque admin access"
-  },
-  "Footer": {
-    "about": {
-      "title": "VGM Hakkında",
-      "description": "Gent Camileri Derneği, Gent'teki Müslüman topluluğu birbirine bağlar ve destekler."
-    },
-    "links": {
-      "privacy": "Gizlilik",
-      "terms": "Şartlar",
-      "contact": "İletişim"
-    },
-    "quickLinks": {
-      "title": "Hızlı Bağlantılar",
-      "mosques": "Camiler",
-      "events": "Etkinlikler",
-      "ramadan": "Ramazan"
-    },
-    "contact": {
-      "title": "İletişim",
-      "address": "Gent, Belçika",
-      "phone": "+32 9 123 45 67",
-      "email": "info@vgm.be"
-    },
-    "rights": "Tüm hakları saklıdır."
-  },
-  "Hero": {
-    "title": "VGM'ye Hoş Geldiniz",
-    "subtitle": "Gent Camileri Derneği, Gent'teki Müslüman topluluğu birbirine bağlar ve destekler.",
-    "cta": {
-      "mosques": "Camileri Görüntüle",
-      "events": "Etkinlikleri Görüntüle"
-    }
-  },
-  "Features": {
-    "title": "Özelliklerimiz",
-    "subtitle": "VGM'nin sizin için neler yapabileceğini keşfedin",
-    "mosqueDirectory": {
-      "title": "Cami Rehberi",
-      "description": "Gent'teki tüm camileri detaylı bilgiler ve konumlarla bulun."
-    },
-    "events": {
-      "title": "Etkinlikler",
-      "description": "Tüm İslami etkinlikler ve aktiviteler hakkında güncel kalın."
-    },
-    "donations": {
-      "title": "Bağışlar",
-      "description": "Yerel camilerinizi güvenli ve şeffaf bağışlarla destekleyin."
-    },
-    "notifications": {
-      "title": "Bildirimler",
-      "description": "E-posta ve uygulama aracılığıyla önemli güncellemeler ve hatırlatmalar alın."
-    },
-    "community": {
-      "title": "Topluluk",
-      "description": "Gent'teki Müslüman topluluğunun diğer üyeleriyle bağlantı kurun."
-    },
-    "multilingual": {
-      "title": "Çok Dilli",
-      "description": "Arapça ve Peştuca dahil 6 dilde mevcut, RTL desteği ile."
-    }
+    "contact": "İletişim",
+    "login": "Giriş Yap",
+    "register": "Kayıt Ol",
+    "profile": "Profil",
+    "logout": "Çıkış Yap",
+    "admin": "Yönetici",
+    "analytics": "Analitik"
   },
   "Mosques": {
-    "title": "Camilerimiz",
-    "subtitle": "Gent'teki camileri keşfedin",
-    "mosque1": {
-      "name": "Gent Merkez Camii",
-      "description": "Kapsamlı tesislere sahip Gent'in en büyük camisi.",
-      "address": "Gent Merkez"
+    "title": "Gent'teki Camiler",
+    "subtitle": "Tüm bağlı camileri ve hizmetlerini keşfedin",
+    "searchPlaceholder": "İsim, adres veya açıklamaya göre ara...",
+    "filterBy": "Filtrele",
+    "allMosques": "Tüm Camiler",
+    "capacity": "Kapasite",
+    "established": "Kuruldu",
+    "imam": "İmam",
+    "phone": "Telefon",
+    "email": "E-posta",
+    "website": "Web sitesi",
+    "address": "Adres",
+    "services": "Hizmetler",
+    "prayerTimes": "Namaz Vakitleri",
+    "events": "Etkinlikler",
+    "boardMembers": "Yönetim Kurulu Üyeleri",
+    "history": "Tarihçe",
+    "photos": "Fotoğraflar",
+    "videos": "Videolar",
+    "documents": "Belgeler",
+    "viewDetails": "Detayları Görüntüle",
+    "viewOnMap": "Haritada Görüntüle",
+    "noMosquesFound": "Cami bulunamadı",
+    "tryDifferentSearch": "Farklı bir arama terimi deneyin",
+    "error": "Camiler yüklenirken bir hata oluştu",
+    "loading": "Camiler yükleniyor...",
+    "map": {
+      "title": "Haritadaki Camiler",
+      "description": "Gent'teki tüm camileri haritada görüntüleyin",
+      "searchPlaceholder": "Bir konum ara...",
+      "noResults": "Sonuç bulunamadı",
+      "error": "Harita yüklenirken bir hata oluştu"
     },
-    "mosque2": {
-      "name": "Al-Noor Camii",
-      "description": "Şehrin kalbinde sıcak ve misafirperver bir cami.",
-      "address": "Gent Doğu"
+    "search": {
+      "title": "Cami Ara",
+      "description": "Gent'teki camileri bulun"
     },
-    "mosque3": {
-      "name": "Masjid Al-Rahman",
-      "description": "Eğitim ve topluluk odaklı modern cami.",
-      "address": "Gent Güney"
+    "description": "Hizmetler ve tesislere göre Gent'teki camileri bulun",
+    "searchPlaceholder": "İsim, adres, açıklama"
+  },
+  "MosqueRegistration": {
+    "title": "Cami Kaydı",
+    "description": "Caminizi VGM ile kaydedin"
+  },
+  "Auth": {
+    "Shared": {
+      "email": "E-posta adresi",
+      "password": "Şifre",
+      "firstName": "Ad",
+      "lastName": "Soyad",
+      "placeholders": {
+        "firstName": "Adınızı girin",
+        "lastName": "Soyadınızı girin"
+      },
+      "errors": {
+        "passwordMismatch": "Şifreler eşleşmiyor",
+        "passwordLength": "Şifre en az 6 karakter içermelidir"
+      },
+      "genericError": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+      "supportTitle": "Yardıma mı ihtiyacınız var?",
+      "phoneLabel": "Telefon numarası"
     },
-    "learnMore": "Daha Fazla Bilgi",
-    "viewAll": "Tüm Camileri Görüntüle"
+    "Login": {
+      "title": "Hesabınıza giriş yapın",
+      "subtitle": "Tekrar hoş geldiniz! Devam etmek için giriş yapın.",
+      "cta": "Veya {create} yeni bir hesap",
+      "errors": {
+        "invalidCredentials": "Geçersiz e-posta adresi veya şifre"
+      },
+      "placeholders": {
+        "email": "E-posta adresinizi girin",
+        "password": "Şifrenizi girin"
+      },
+      "rememberMe": "Beni hatırla",
+      "forgotPassword": "Şifrenizi mi unuttunuz?",
+      "actions": {
+        "signingIn": "Giriş yapılıyor...",
+        "signIn": "Giriş Yap"
+      },
+      "demo": {
+        "title": "Demo hesaplar",
+        "admin": "Yönetici: admin@vgm.be / admin123",
+        "mosqueAdmin": "Cami Yöneticisi: imam@salahaddien.be / imam123",
+        "user": "Kullanıcı: user@example.com / user123"
+      },
+      "support": {
+        "title": "Giriş yapmakta sorun mu yaşıyorsunuz?",
+        "description": "E-posta adresinizi kontrol edin ve şifrenizin doğru olduğundan emin olun.",
+        "tips": [
+          "Caps Lock'un kapalı olduğunu kontrol edin",
+          "Kayıt olduğunuz e-posta adresini kullanın",
+          "Yardıma ihtiyacınız varsa destek ile iletişime geçin"
+        ],
+        "cta": "Hala sorun mu yaşıyorsunuz? {link}",
+        "ctaLinkLabel": "Destek ile iletişime geçin"
+      }
+    },
+    "Register": {
+      "title": "Hesap oluşturun",
+      "subtitle": "VGM hizmetlerine erişmek için kişisel bir hesap oluşturun.",
+      "cta": "Zaten kayıtlı mısınız? {login}",
+      "errors": {
+        "mosqueLoad": "Cami listesini yükleyemedik. Lütfen daha sonra tekrar deneyin.",
+        "mosqueRequired": "Temsil ettiğiniz camiyi seçin."
+      },
+      "success": "Kayıt başarılı. Devam etmek için lütfen giriş yapın.",
+      "accountType": {
+        "label": "Rolünüze uygun hesap türünü seçin",
+        "user": {
+          "title": "Topluluk Üyesi",
+          "description": "Aktiviteler, haberler ve hizmetlerden haberdar olun."
+        },
+        "mosqueAdmin": {
+          "title": "Cami Yöneticisi",
+          "description": "Cami bilgilerini, etkinlikleri ve duyuruları yönetin."
+        },
+        "cta": "Cami yöneticisi olmak ister misiniz? {link}",
+        "ctaLinkLabel": "Talep gönderin"
+      },
+      "placeholders": {
+        "email": "E-posta adresinizi girin",
+        "password": "Güvenli bir şifre oluşturun"
+      },
+      "phone": {
+        "label": "Telefon numarası (isteğe bağlı)",
+        "placeholder": "+32 9 123 45 67"
+      },
+      "mosque": {
+        "label": "Bağlı Cami",
+        "loading": "Camiler yükleniyor...",
+        "placeholder": "Bir cami seçin",
+        "notRequired": "Üye hesapları için gerekli değil",
+        "help": "Cami görünmüyor mu? Erişim için {contact} ile iletişime geçin.",
+        "customLabel": "Listede yoksa cami adı",
+        "customPlaceholder": "Caminin resmi adını belirtin"
+      },
+      "confirmPassword": {
+        "label": "Şifreyi onayla",
+        "placeholder": "Şifrenizi tekrar girin"
+      },
+      "actions": {
+        "creating": "Hesap oluşturuluyor...",
+        "create": "Hesap Oluştur"
+      },
+      "support": {
+        "title": "Sorunsuz kayıt için ipuçları",
+        "points": [
+          "Düzenli olarak kontrol ettiğiniz bir e-posta adresi kullanın",
+          "En az 6 karakterden oluşan güçlü bir şifre seçin",
+          "Yönetici haklarına ihtiyacınız varsa doğru camiyi seçin"
+        ]
+      },
+      "nextSteps": {
+        "title": "Sonra ne olur?",
+        "description": "Giriş yaptıktan sonra profilinizi tamamlayabilir ve gerekirse ek haklar talep edebilirsiniz."
+      },
+      "motivation": {
+        "label": "Neden yönetici haklarına ihtiyacınız var?",
+        "placeholder": "Sorumluluklarınızı ve portali nasıl kullanacağınızı açıklayın",
+        "helper": "VGM ekibi talepleri manuel olarak inceler. Rolünüz ve doğrulama bilgileriniz hakkında detaylar verin."
+      },
+      "successUser": "Kayıt başarılı. Devam etmek için lütfen giriş yapın.",
+      "successMosqueAdmin": "Kayıt alındı. VGM ekibi cami yönetimi talebinizi inceleyecek. Giriş yaptıktan sonra durumu takip edebilirsiniz."
+    },
+    "ForgotPassword": {
+      "title": "Şifre kurtarma",
+      "subtitle": "Erişimi yeniden kazanmanıza nasıl yardımcı olabileceğimizi bize bildirin.",
+      "steps": {
+        "title": "Bu adımları izleyin",
+        "items": [
+          "Hesabınızla bağlantılı e-posta adresini sağlayın",
+          "Karşılaştığınız sorunu kısaca açıklayın",
+          "Destek ekibimiz sizinle bir sonraki adımlarla iletişime geçecek"
+        ]
+      },
+      "contact": {
+        "title": "VGM desteği ile iletişime geçin",
+        "description": "Adınız, cami (varsa) ve sorunun kısa açıklaması ile birlikte {email} adresine e-posta gönderin.",
+        "note": "Bir iş günü içinde yanıt veriyoruz."
+      },
+      "backToLogin": "{link} geri dön",
+      "security": {
+        "title": "Güvenlik tavsiyeleri",
+        "tips": [
+          "Şifrenizi asla başkalarıyla paylaşmayın",
+          "Bu platform için benzersiz bir şifre kullanın",
+          "Yetkisiz erişimden şüpheleniyorsanız bizimle iletişime geçin"
+        ]
+      },
+      "support": {
+        "description": "Biriyle konuşmak ister misiniz? İletişim sayfasındaki bilgiler aracılığıyla bizi arayın."
+      },
+      "errors": {
+        "emailRequired": "Lütfen hesabınızla bağlantılı e-posta adresini sağlayın.",
+        "requestFailed": "Kurtarma başlatılamadı. Lütfen tekrar deneyin.",
+        "tokenAndPasswordRequired": "Lütfen hem token hem de yeni şifre sağlayın.",
+        "resetFailed": "Şifre sıfırlama başarısız. Token'ı kontrol edin ve tekrar deneyin."
+      },
+      "request": {
+        "title": "Kurtarma bağlantısı talep edin",
+        "description": "E-posta adresinizi girin ve şifrenizi sıfırlama talimatlarını size gönderelim.",
+        "placeholder": "name@example.com",
+        "submit": "Talimatları gönder",
+        "submitBusy": "Gönderiliyor...",
+        "success": "Kurtarma talimatları e-posta adresinize gönderildi."
+      },
+      "reset": {
+        "title": "Yeni şifre belirleyin",
+        "description": "E-postanızdaki token'ı ve yeni şifrenizi girin.",
+        "tokenPlaceholder": "E-postadan token",
+        "passwordPlaceholder": "Yeni şifre",
+        "confirmPasswordPlaceholder": "Yeni şifreyi onayla",
+        "submit": "Şifreyi güncelle",
+        "submitBusy": "Güncelleniyor...",
+        "success": "Şifreniz başarıyla güncellendi. Artık giriş yapabilirsiniz."
+      }
+    }
   },
   "Events": {
     "title": "Yaklaşan Etkinlikler",
-    "subtitle": "Tüm aktiviteler hakkında güncel kalın",
+    "subtitle": "Tüm aktivitelerden haberdar olun",
     "event1": {
       "title": "Cuma Namazı",
-      "description": "Hollandaca hutbe ile haftalık Cuma namazı.",
+      "description": "Türkçe hutbe ile haftalık Cuma namazı.",
       "date": "Cuma",
       "time": "13:00",
       "location": "Gent Merkez Camii"
@@ -118,281 +284,211 @@
       "time": "15:00",
       "location": "Masjid Al-Rahman"
     },
-    "learnMore": "Daha Fazla Bilgi",
-    "viewAll": "Tüm Etkinlikleri Görüntüle"
+    "learnMore": "Daha fazla bilgi",
+    "viewAll": "Tüm etkinlikleri görüntüle"
   },
   "RamadanPage": {
     "title": "Ramazan 2025",
     "description": "Gent'teki tüm Ramazan aktivitelerini ve iftar yerlerini keşfedin."
   },
-  "IftarMap": {
-    "map": {
-      "title": "İftar Haritası"
-    },
-    "events": {
-      "title": "Planlanan İftarlar",
-      "familyFriendly": "Aile Dostu",
-      "noEvents": "Bu dönem için iftar bulunamadı."
-    },
-    "prayerTimes": {
-      "title": "Bugünün Namaz Vakitleri"
-    }
-  },
-  "About": {
-    "title": "VGM Hakkında",
-    "description": "Gent Camileri Derneği, Gent'teki Müslüman topluluğu birbirine bağlar ve destekler."
-  },
-  "Janazah": {
-    "title": "Cenaze Namazı",
-    "description": "Cenaze namazı ve hizmetler hakkında bilgi."
-  },
-  "News": {
-    "title": "Haberler",
-    "description": "VGM'den son haberler ve duyurular."
+  "PrayerTimes": {
+    "title": "Namaz Vakitleri",
+    "subtitle": "Gent için günlük namaz vakitlerini görüntüleyin",
+    "today": "Bugün",
+    "tomorrow": "Yarın",
+    "fajr": "Fecir",
+    "sunrise": "Güneş doğuşu",
+    "dhuhr": "Öğle",
+    "asr": "İkindi",
+    "maghrib": "Akşam",
+    "isha": "Yatsı",
+    "nextPrayer": "Sonraki namaz",
+    "timeUntil": "kadar",
+    "source": "Kaynak",
+    "calculationMethod": "Hesaplama yöntemi",
+    "location": "Konum",
+    "coordinates": "Koordinatlar",
+    "timezone": "Saat dilimi",
+    "adjustments": "Ayarlamalar",
+    "error": "Namaz vakitleri yüklenirken bir hata oluştu",
+    "loading": "Namaz vakitleri yükleniyor...",
+    "noData": "Namaz vakti mevcut değil",
+    "tryAgain": "Tekrar deneyin"
   },
   "Donations": {
     "title": "Bağışlar",
-    "description": "VGM topluluğunu destekleyin"
-  },
-  "Memorandum": {
-    "title": "Memorandum",
-    "description": "Misyonumuz, vizyonumuz ve değerlerimiz"
-  },
-  "Board": {
-    "title": "Yönetim Kurulu",
-    "description": "VGM yönetim kurulu ile tanışın"
-  },
-  "MosqueSearch": {
-    "title": "Cami Arama",
-    "description": "Gent'te camileri bulun"
-  },
-  "MosqueRegistration": {
-    "title": "Cami Kaydı",
-    "description": "Caminizi VGM ile kaydedin"
-  },
-  "Auth": {
-    "Shared": {
-      "email": "Email address",
-      "password": "Password",
-      "firstName": "First name",
-      "lastName": "Last name",
-      "placeholders": {
-        "firstName": "Enter your first name",
-        "lastName": "Enter your last name"
-      },
-      "errors": {
-        "passwordMismatch": "Passwords do not match",
-        "passwordLength": "Password must be at least 6 characters long"
-      },
-      "genericError": "Something went wrong. Please try again.",
-      "supportTitle": "Need help?",
-      "phoneLabel": "Phone number"
-    },
-    "Login": {
-      "title": "Sign in to your account",
-      "cta": "Or {create} a new account",
-      "errors": {
-        "invalidCredentials": "Invalid email or password"
-      },
-      "placeholders": {
-        "email": "Enter your email",
-        "password": "Enter your password"
-      },
-      "rememberMe": "Remember me",
-      "forgotPassword": "Forgot your password?",
-      "actions": {
-        "signingIn": "Signing in...",
-        "signIn": "Sign in"
-      },
-      "demo": {
-        "title": "Demo accounts",
-        "admin": "Admin: admin@vgm.be / admin123",
-        "mosqueAdmin": "Mosque Admin: imam@salahaddien.be / imam123",
-        "user": "User: user@example.com / user123"
-      },
-      "support": {
-        "title": "Having trouble logging in?",
-        "description": "Check your email address and make sure your password is correct.",
-        "tips": [
-          "Verify that Caps Lock is off",
-          "Use the email address you registered with",
-          "Contact support if you need help"
-        ],
-        "cta": "Need mosque admin access? {link}",
-        "ctaLinkLabel": "Submit a request here"
-      },
-      "security": {
-        "title": "Your data is secure",
-        "description": "Logins are protected with encrypted connections and monitored for unusual activity."
-      },
-      "subtitle": "Access your personalised dashboard and community updates."
-    },
-    "Register": {
-      "title": "Create your account",
-      "cta": "Already registered? {login}",
-      "errors": {
-        "mosqueLoad": "We could not load the list of mosques. Please try again later.",
-        "mosqueRequired": "Select the mosque you represent."
-      },
-      "success": "Registration successful. Please log in to continue.",
-      "accountType": {
-        "label": "Choose the account type that fits your role",
-        "user": {
-          "title": "Community member",
-          "description": "Stay informed about events, news and services."
-        },
-        "mosqueAdmin": {
-          "title": "Mosque administrator",
-          "description": "Manage mosque information, events and announcements."
-        },
-        "cta": "Need access to manage a mosque? {link}",
-        "ctaLinkLabel": "Submit a request"
-      },
-      "placeholders": {
-        "email": "Enter your email",
-        "password": "Create a secure password"
-      },
-      "phone": {
-        "label": "Phone number (optional)",
-        "placeholder": "+32 9 123 45 67"
-      },
-      "mosque": {
-        "label": "Associated mosque",
-        "loading": "Loading mosques...",
-        "placeholder": "Select a mosque",
-        "notRequired": "Not required for community member accounts",
-        "help": "Mosque missing? Contact {contact} to request access.",
-        "customLabel": "Mosque name if not listed",
-        "customPlaceholder": "Provide the official mosque name"
-      },
-      "confirmPassword": {
-        "label": "Confirm password",
-        "placeholder": "Re-enter your password"
-      },
-      "actions": {
-        "creating": "Creating account...",
-        "create": "Create account"
-      },
-      "support": {
-        "title": "Tips for a smooth registration",
-        "points": [
-          "Use an email address you check regularly",
-          "Choose a strong password with at least 6 characters",
-          "Select the correct mosque if you need admin access"
-        ]
-      },
-      "nextSteps": {
-        "title": "What happens next?",
-        "description": "After logging in you can complete your profile and request additional permissions if needed."
-      },
-      "motivation": {
-        "label": "Why do you need administrator access?",
-        "placeholder": "Describe your responsibilities and how you will use the portal",
-        "helper": "The VGM team reviews requests manually. Include details about your role and verification information."
-      },
-      "successUser": "Registration successful. Please log in to continue.",
-      "successMosqueAdmin": "Registration received. The VGM team will review your mosque admin request. You can track its status after signing in.",
-      "subtitle": "Create a personal account to access VGM services."
-    },
-    "ForgotPassword": {
-      "title": "Reset your password",
-      "subtitle": "Let us know how we can help you recover access to your account.",
-      "steps": {
-        "title": "Follow these steps",
-        "items": [
-          "Provide the email address linked to your account",
-          "Describe the issue you are experiencing",
-          "Our support team will contact you with the next steps"
-        ]
-      },
-      "contact": {
-        "title": "Contact the VGM support team",
-        "description": "Send an email to {email} with your name, mosque (if applicable) and a short description of the problem.",
-        "note": "We respond within one business day."
-      },
-      "backToLogin": "Back to {link}",
-      "security": {
-        "title": "Security reminders",
-        "tips": [
-          "Never share your password with others",
-          "Use a unique password for this platform",
-          "Contact us if you suspect unauthorised access"
-        ]
-      },
-      "support": {
-        "description": "Prefer to talk to someone? Call us via the contact details on the contact page."
-      },
-      "errors": {
-        "emailRequired": "Please enter the email associated with your account.",
-        "requestFailed": "We could not start the reset process. Please try again.",
-        "tokenAndPasswordRequired": "Provide both the reset token and a new password.",
-        "resetFailed": "Unable to reset the password. Double-check the token and try again."
-      },
-      "request": {
-        "title": "Request a reset link",
-        "description": "Enter your email address and we will send instructions to reset your password.",
-        "placeholder": "name@example.com",
-        "submit": "Send reset instructions",
-        "submitBusy": "Sending...",
-        "success": "If an account exists, a reset message has been sent.",
-        "tokenNotice": "Development token (only visible locally):"
-      },
-      "reset": {
-        "title": "Reset your password",
-        "description": "Paste the token you received and choose a new password.",
-        "tokenLabel": "Reset token",
-        "passwordLabel": "New password",
-        "submit": "Reset password",
-        "submitBusy": "Resetting...",
-        "success": "Password reset successfully. You can now sign in with your new password."
-      }
-    }
-  },
-  "MosqueAccessRequest": {
-    "title": "Request mosque administrator access",
-    "subtitle": "Submit a request so the VGM team can verify your role before granting management permissions.",
-    "success": "Your request has been submitted. The VGM team will review it shortly.",
-    "errors": {
-      "load": "Unable to load access request data.",
-      "pending": "You already have a pending request.",
-      "submit": "Unable to submit your request. Please try again."
-    },
-    "authRequired": {
-      "title": "Sign in to continue",
-      "description": "Please {link} to request mosque administrator access."
+    "subtitle": "Camileri ve topluluk projelerini destekleyin",
+    "campaigns": {
+      "title": "Aktif Kampanyalar",
+      "description": "Devam eden tüm bağış kampanyalarını görüntüleyin",
+      "viewAll": "Tüm kampanyaları görüntüle",
+      "donate": "Bağış yap",
+      "target": "Hedef",
+      "raised": "Toplanan",
+      "progress": "İlerleme",
+      "daysLeft": "gün kaldı",
+      "completed": "Tamamlandı",
+      "noCampaigns": "Aktif kampanya yok",
+      "error": "Kampanyalar yüklenirken bir hata oluştu"
     },
     "form": {
-      "existingMosqueLabel": "Select an existing mosque",
-      "existingMosquePlaceholder": "Choose a mosque from the list",
-      "newMosqueLabel": "Or provide the mosque name",
-      "newMosquePlaceholder": "Enter the mosque name if it is not listed",
-      "newMosqueHelper": "The VGM team will contact you if additional verification is required.",
-      "contactEmailPlaceholder": "Contact email for follow-up",
-      "contactPhoneLabel": "Contact phone (optional)",
-      "contactPhonePlaceholder": "+32 9 123 45 67",
-      "motivationLabel": "Explain your request",
-      "motivationPlaceholder": "Provide context about your role and responsibilities",
-      "motivationHelper": "Include links or references that help us verify your position.",
-      "submit": "Submit request",
-      "submitBusy": "Submitting..."
+      "title": "Bağış yapın",
+      "amount": "Miktar",
+      "currency": "EUR",
+      "description": "Açıklama",
+      "donate": "Bağış yap",
+      "processing": "İşleniyor...",
+      "success": "Bağış başarıyla işlendi",
+      "error": "Bağış işlenirken bir hata oluştu"
+    }
+  },
+  "Contact": {
+    "title": "İletişim",
+    "subtitle": "VGM ile iletişime geçin",
+    "form": {
+      "name": "İsim",
+      "email": "E-posta",
+      "subject": "Konu",
+      "message": "Mesaj",
+      "submit": "Gönder",
+      "success": "Mesaj başarıyla gönderildi",
+      "error": "Mesaj gönderilirken bir hata oluştu"
     },
-    "tips": {
-      "title": "Tips for approval",
-      "items": [
-        "Use your official mosque email address if possible",
-        "Mention existing roles or responsibilities within the mosque",
-        "Ensure your contact details are accurate so we can reach you"
-      ]
+    "info": {
+      "title": "İletişim bilgileri",
+      "address": "Adres",
+      "phone": "Telefon",
+      "email": "E-posta",
+      "hours": "Çalışma saatleri"
+    }
+  },
+  "Search": {
+    "title": "Arama",
+    "subtitle": "Camiler, etkinlikler ve haberler için arama yapın",
+    "placeholder": "Arama teriminizi girin...",
+    "filters": {
+      "title": "Filtreler",
+      "contentType": "İçerik türü",
+      "dateRange": "Tarih aralığı",
+      "location": "Konum",
+      "capacity": "Kapasite",
+      "clear": "Filtreleri temizle"
     },
-    "history": {
-      "title": "Request history",
-      "empty": "You have not submitted any requests yet.",
-      "unknownMosque": "Mosque not specified"
+    "results": {
+      "title": "Arama sonuçları",
+      "noResults": "Sonuç bulunamadı",
+      "tryDifferentSearch": "Farklı bir arama terimi deneyin",
+      "mosques": "Camiler",
+      "events": "Etkinlikler",
+      "news": "Haberler",
+      "campaigns": "Kampanyalar"
+    },
+    "error": "Arama yapılırken bir hata oluştu",
+    "loading": "Aranıyor..."
+  },
+  "Notifications": {
+    "title": "Bildirimler",
+    "subtitle": "Tüm bildirimlerinizi görüntüleyin",
+    "markAllRead": "Tümünü okundu olarak işaretle",
+    "noNotifications": "Bildirim yok",
+    "loading": "Bildirimler yükleniyor...",
+    "error": "Bildirimler yüklenirken bir hata oluştu",
+    "types": {
+      "event": "Etkinlik",
+      "donation": "Bağış",
+      "mosque": "Cami",
+      "news": "Haber",
+      "system": "Sistem",
+      "general": "Genel"
+    }
+  },
+  "Analytics": {
+    "title": "Analitik",
+    "subtitle": "İstatistikleri ve raporları görüntüleyin",
+    "overview": "Genel bakış",
+    "users": "Kullanıcılar",
+    "mosques": "Camiler",
+    "events": "Etkinlikler",
+    "donations": "Bağışlar",
+    "pageViews": "Sayfa görüntülemeleri",
+    "uniqueVisitors": "Benzersiz ziyaretçiler",
+    "totalUsers": "Toplam kullanıcı",
+    "activeUsers": "Aktif kullanıcılar",
+    "totalMosques": "Toplam cami",
+    "totalEvents": "Toplam etkinlik",
+    "totalDonations": "Toplam bağış",
+    "loading": "Analitik yükleniyor...",
+    "error": "Analitik yüklenirken bir hata oluştu"
+  },
+  "Admin": {
+    "title": "Yönetici Paneli",
+    "subtitle": "VGM platformunu yönetin",
+    "overview": "Genel bakış",
+    "users": "Kullanıcılar",
+    "events": "Etkinlikler",
+    "news": "Haberler",
+    "accessRequests": "Erişim talepleri",
+    "totalUsers": "Toplam kullanıcı",
+    "totalEvents": "Toplam etkinlik",
+    "totalNews": "Toplam haber",
+    "pendingRequests": "Bekleyen talepler",
+    "approve": "Onayla",
+    "reject": "Reddet",
+    "loading": "Yönetici verileri yükleniyor...",
+    "error": "Yönetici verileri yüklenirken bir hata oluştu"
+  },
+  "Profile": {
+    "title": "Profil",
+    "subtitle": "Hesap bilgilerinizi yönetin",
+    "personalInfo": "Kişisel bilgiler",
+    "mosqueInfo": "Cami bilgileri",
+    "preferences": "Tercihler",
+    "save": "Kaydet",
+    "saving": "Kaydediliyor...",
+    "success": "Profil başarıyla güncellendi",
+    "error": "Profil güncellenirken bir hata oluştu"
+  },
+  "MosqueAccessRequest": {
+    "title": "Cami Erişim Talebi",
+    "subtitle": "Cami yönetimi için erişim talep edin",
+    "form": {
+      "mosque": "Cami",
+      "motivation": "Motivasyon",
+      "submit": "Talep gönder",
+      "submitting": "Gönderiliyor...",
+      "success": "Talep başarıyla gönderildi",
+      "error": "Talep gönderilirken bir hata oluştu"
     },
     "status": {
-      "pending": "Pending",
-      "approved": "Approved",
-      "rejected": "Rejected"
+      "pending": "Beklemede",
+      "approved": "Onaylandı",
+      "rejected": "Reddedildi"
     }
+  },
+  "Footer": {
+    "title": "Gent Camileri Derneği",
+    "description": "Gent camilerinin dijital topluluğu",
+    "links": {
+      "about": "Hakkımızda",
+      "mosques": "Camiler",
+      "events": "Etkinlikler",
+      "donations": "Bağışlar",
+      "contact": "İletişim",
+      "privacy": "Gizlilik",
+      "terms": "Şartlar"
+    },
+    "community": {
+      "title": "Topluluk",
+      "news": "Haberler",
+      "events": "Etkinlikler",
+      "prayerTimes": "Namaz Vakitleri",
+      "donations": "Bağışlar"
+    },
+    "contact": {
+      "title": "İletişim",
+      "address": "Gent, Belçika",
+      "email": "info@vgm-gent.be"
+    },
+    "copyright": "© 2025 Gent Camileri Derneği. Tüm hakları saklıdır."
   }
 }

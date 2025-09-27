@@ -1,112 +1,278 @@
 {
-  "HomePage": {
-    "title": "مرحباً بكم في VGM",
-    "description": "رابطة مساجد غنت"
+  "Home": {
+    "title": "جمعية مساجد غنت",
+    "subtitle": "مرحباً بكم في المجتمع الرقمي لمساجد غنت",
+    "description": "اكتشف جميع المساجد المنتسبة والفعاليات والخدمات في غنت",
+    "mosques": {
+      "title": "المساجد في غنت",
+      "description": "اكتشف جميع المساجد المنتسبة وخدماتها",
+      "viewAll": "عرض جميع المساجد",
+      "viewDetails": "مزيد من المعلومات",
+      "capacity": "السعة",
+      "established": "تأسست",
+      "error": "حدث خطأ أثناء تحميل المساجد"
+    },
+    "events": {
+      "title": "الفعاليات القادمة",
+      "description": "ابق على اطلاع بجميع الأنشطة",
+      "viewAll": "عرض جميع الفعاليات",
+      "viewDetails": "مزيد من المعلومات",
+      "error": "حدث خطأ أثناء تحميل الفعاليات"
+    },
+    "news": {
+      "title": "آخر الأخبار",
+      "description": "ابق على اطلاع بآخر الأخبار",
+      "viewAll": "عرض جميع الأخبار",
+      "viewDetails": "اقرأ المزيد",
+      "error": "حدث خطأ أثناء تحميل الأخبار"
+    }
   },
   "Navigation": {
     "home": "الرئيسية",
     "mosques": "المساجد",
-    "community": "المجتمع",
-    "about": "حول",
     "events": "الفعاليات",
-    "ramadan": "رمضان",
+    "news": "الأخبار",
     "donations": "التبرعات",
-    "requestAdminAccess": "Request mosque admin access"
-  },
-  "Footer": {
-    "about": {
-      "title": "حول VGM",
-      "description": "رابطة مساجد غنت تربط وتدعم المجتمع المسلم في غنت."
-    },
-    "links": {
-      "privacy": "الخصوصية",
-      "terms": "الشروط",
-      "contact": "الاتصال"
-    },
-    "quickLinks": {
-      "title": "روابط سريعة",
-      "mosques": "المساجد",
-      "events": "الفعاليات",
-      "ramadan": "رمضان"
-    },
-    "contact": {
-      "title": "الاتصال",
-      "address": "غنت، بلجيكا",
-      "phone": "+32 9 123 45 67",
-      "email": "info@vgm.be"
-    },
-    "rights": "جميع الحقوق محفوظة."
-  },
-  "Hero": {
-    "title": "مرحباً بكم في VGM",
-    "subtitle": "رابطة مساجد غنت تربط وتدعم المجتمع المسلم في غنت.",
-    "cta": {
-      "mosques": "عرض المساجد",
-      "events": "عرض الفعاليات"
-    }
-  },
-  "Features": {
-    "title": "ميزاتنا",
-    "subtitle": "اكتشف ما يمكن لـ VGM أن يقدمه لك",
-    "mosqueDirectory": {
-      "title": "دليل المساجد",
-      "description": "ابحث عن جميع المساجد في غنت مع معلومات مفصلة ومواقع."
-    },
-    "events": {
-      "title": "الفعاليات",
-      "description": "ابق على اطلاع بجميع الفعاليات والأنشطة الإسلامية."
-    },
-    "donations": {
-      "title": "التبرعات",
-      "description": "ادعم مساجدك المحلية بتبرعات آمنة وشفافة."
-    },
-    "notifications": {
-      "title": "الإشعارات",
-      "description": "احصل على التحديثات والتذكيرات المهمة عبر البريد الإلكتروني والتطبيق."
-    },
-    "community": {
-      "title": "المجتمع",
-      "description": "تواصل مع أعضاء آخرين من المجتمع المسلم في غنت."
-    },
-    "multilingual": {
-      "title": "متعدد اللغات",
-      "description": "متوفر بـ 6 لغات بما في ذلك العربية والبشتو مع دعم RTL."
-    }
+    "contact": "اتصل بنا",
+    "login": "تسجيل الدخول",
+    "register": "التسجيل",
+    "profile": "الملف الشخصي",
+    "logout": "تسجيل الخروج",
+    "admin": "الإدارة",
+    "analytics": "التحليلات"
   },
   "Mosques": {
-    "title": "مساجدنا",
-    "subtitle": "اكتشف المساجد في غنت",
-    "mosque1": {
-      "name": "المسجد المركزي غنت",
-      "description": "أكبر مسجد في غنت مع مرافق واسعة.",
-      "address": "وسط غنت"
+    "title": "المساجد في غنت",
+    "subtitle": "اكتشف جميع المساجد المنتسبة وخدماتها",
+    "searchPlaceholder": "البحث بالاسم أو العنوان أو الوصف...",
+    "filterBy": "تصفية حسب",
+    "allMosques": "جميع المساجد",
+    "capacity": "السعة",
+    "established": "تأسست",
+    "imam": "الإمام",
+    "phone": "الهاتف",
+    "email": "البريد الإلكتروني",
+    "website": "الموقع الإلكتروني",
+    "address": "العنوان",
+    "services": "الخدمات",
+    "prayerTimes": "أوقات الصلاة",
+    "events": "الفعاليات",
+    "boardMembers": "أعضاء المجلس",
+    "history": "التاريخ",
+    "photos": "الصور",
+    "videos": "الفيديوهات",
+    "documents": "الوثائق",
+    "viewDetails": "عرض التفاصيل",
+    "viewOnMap": "عرض على الخريطة",
+    "noMosquesFound": "لم يتم العثور على مساجد",
+    "tryDifferentSearch": "جرب مصطلح بحث مختلف",
+    "error": "حدث خطأ أثناء تحميل المساجد",
+    "loading": "تحميل المساجد...",
+    "map": {
+      "title": "المساجد على الخريطة",
+      "description": "عرض جميع المساجد في غنت على الخريطة",
+      "searchPlaceholder": "البحث عن موقع...",
+      "noResults": "لم يتم العثور على نتائج",
+      "error": "حدث خطأ أثناء تحميل الخريطة"
     },
-    "mosque2": {
-      "name": "مسجد النور",
-      "description": "مسجد دافئ ومضياف في قلب المدينة.",
-      "address": "شرق غنت"
+    "search": {
+      "title": "البحث عن المساجد",
+      "description": "العثور على مساجد في غنت"
     },
-    "mosque3": {
-      "name": "مسجد الرحمن",
-      "description": "مسجد حديث يركز على التعليم والمجتمع.",
-      "address": "جنوب غنت"
+    "description": "العثور على مساجد في غنت بناءً على الخدمات والمرافق",
+    "searchPlaceholder": "الاسم، العنوان، الوصف"
+  },
+  "MosqueRegistration": {
+    "title": "تسجيل المسجد",
+    "description": "سجل مسجدك مع VGM"
+  },
+  "Auth": {
+    "Shared": {
+      "email": "عنوان البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "firstName": "الاسم الأول",
+      "lastName": "اسم العائلة",
+      "placeholders": {
+        "firstName": "أدخل اسمك الأول",
+        "lastName": "أدخل اسم عائلتك"
+      },
+      "errors": {
+        "passwordMismatch": "كلمات المرور غير متطابقة",
+        "passwordLength": "يجب أن تحتوي كلمة المرور على 6 أحرف على الأقل"
+      },
+      "genericError": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+      "supportTitle": "تحتاج مساعدة؟",
+      "phoneLabel": "رقم الهاتف"
     },
-    "learnMore": "اعرف المزيد",
-    "viewAll": "عرض جميع المساجد"
+    "Login": {
+      "title": "تسجيل الدخول إلى حسابك",
+      "subtitle": "مرحباً بعودتك! سجل الدخول للمتابعة.",
+      "cta": "أو {create} حساب جديد",
+      "errors": {
+        "invalidCredentials": "عنوان بريد إلكتروني أو كلمة مرور غير صحيحة"
+      },
+      "placeholders": {
+        "email": "أدخل عنوان بريدك الإلكتروني",
+        "password": "أدخل كلمة المرور"
+      },
+      "rememberMe": "تذكرني",
+      "forgotPassword": "نسيت كلمة المرور؟",
+      "actions": {
+        "signingIn": "جاري تسجيل الدخول...",
+        "signIn": "تسجيل الدخول"
+      },
+      "demo": {
+        "title": "حسابات تجريبية",
+        "admin": "المدير: admin@vgm.be / admin123",
+        "mosqueAdmin": "مدير المسجد: imam@salahaddien.be / imam123",
+        "user": "المستخدم: user@example.com / user123"
+      },
+      "support": {
+        "title": "تواجه مشكلة في تسجيل الدخول؟",
+        "description": "تحقق من عنوان بريدك الإلكتروني وتأكد من صحة كلمة المرور.",
+        "tips": [
+          "تأكد من إيقاف تشغيل Caps Lock",
+          "استخدم عنوان البريد الإلكتروني الذي سجلت به",
+          "اتصل بالدعم إذا كنت بحاجة إلى مساعدة"
+        ],
+        "cta": "ما زلت تواجه مشاكل؟ {link}",
+        "ctaLinkLabel": "اتصل بالدعم"
+      }
+    },
+    "Register": {
+      "title": "إنشاء حساب",
+      "subtitle": "أنشئ حساباً شخصياً للوصول إلى خدمات VGM.",
+      "cta": "مسجل بالفعل؟ {login}",
+      "errors": {
+        "mosqueLoad": "لم نتمكن من تحميل قائمة المساجد. يرجى المحاولة لاحقاً.",
+        "mosqueRequired": "اختر المسجد الذي تمثله."
+      },
+      "success": "تم التسجيل بنجاح. يرجى تسجيل الدخول للمتابعة.",
+      "accountType": {
+        "label": "اختر نوع الحساب الذي يناسب دورك",
+        "user": {
+          "title": "عضو المجتمع",
+          "description": "ابق على اطلاع بالأنشطة والأخبار والخدمات."
+        },
+        "mosqueAdmin": {
+          "title": "مدير المسجد",
+          "description": "إدارة معلومات المسجد والفعاليات والإعلانات."
+        },
+        "cta": "تريد أن تصبح مدير مسجد؟ {link}",
+        "ctaLinkLabel": "قدم طلباً"
+      },
+      "placeholders": {
+        "email": "أدخل عنوان بريدك الإلكتروني",
+        "password": "أنشئ كلمة مرور آمنة"
+      },
+      "phone": {
+        "label": "رقم الهاتف (اختياري)",
+        "placeholder": "+32 9 123 45 67"
+      },
+      "mosque": {
+        "label": "المسجد المرتبط",
+        "loading": "تحميل المساجد...",
+        "placeholder": "اختر مسجداً",
+        "notRequired": "غير مطلوب لحسابات الأعضاء",
+        "help": "المسجد غير مرئي؟ اتصل بـ {contact} للوصول.",
+        "customLabel": "اسم المسجد إذا لم يكن في القائمة",
+        "customPlaceholder": "اذكر الاسم الرسمي للمسجد"
+      },
+      "confirmPassword": {
+        "label": "تأكيد كلمة المرور",
+        "placeholder": "أدخل كلمة المرور مرة أخرى"
+      },
+      "actions": {
+        "creating": "جاري إنشاء الحساب...",
+        "create": "إنشاء الحساب"
+      },
+      "support": {
+        "title": "نصائح للتسجيل السلس",
+        "points": [
+          "استخدم عنوان بريد إلكتروني تتحقق منه بانتظام",
+          "اختر كلمة مرور قوية من 6 أحرف على الأقل",
+          "اختر المسجد الصحيح إذا كنت بحاجة إلى صلاحيات إدارية"
+        ]
+      },
+      "nextSteps": {
+        "title": "ماذا يحدث بعد ذلك؟",
+        "description": "بعد تسجيل الدخول، يمكنك إكمال ملفك الشخصي وطلب صلاحيات إضافية إذا لزم الأمر."
+      },
+      "motivation": {
+        "label": "لماذا تحتاج إلى صلاحيات إدارية؟",
+        "placeholder": "صف مسؤولياتك وكيف ستستخدم البوابة",
+        "helper": "فريق VGM يراجع الطلبات يدوياً. قدم تفاصيل عن دورك ومعلومات التحقق."
+      },
+      "successUser": "تم التسجيل بنجاح. يرجى تسجيل الدخول للمتابعة.",
+      "successMosqueAdmin": "تم استلام التسجيل. سيراجع فريق VGM طلب إدارة المسجد. يمكنك تتبع الحالة بعد تسجيل الدخول."
+    },
+    "ForgotPassword": {
+      "title": "استرداد كلمة المرور",
+      "subtitle": "دعنا نعرف كيف يمكننا مساعدتك في استرداد الوصول.",
+      "steps": {
+        "title": "اتبع هذه الخطوات",
+        "items": [
+          "قدم عنوان البريد الإلكتروني المرتبط بحسابك",
+          "صف بإيجاز المشكلة التي تواجهها",
+          "سيتصل بك فريق الدعم مع الخطوات التالية"
+        ]
+      },
+      "contact": {
+        "title": "اتصل بدعم VGM",
+        "description": "أرسل بريداً إلكترونياً إلى {email} مع اسمك والمسجد (إن أمكن) ووصف مختصر للمشكلة.",
+        "note": "نرد خلال يوم عمل واحد."
+      },
+      "backToLogin": "العودة إلى {link}",
+      "security": {
+        "title": "نصائح الأمان",
+        "tips": [
+          "لا تشارك كلمة المرور أبداً مع الآخرين",
+          "استخدم كلمة مرور فريدة لهذه المنصة",
+          "اتصل بنا إذا كنت تشك في وصول غير مصرح به"
+        ]
+      },
+      "support": {
+        "description": "تريد التحدث مع شخص؟ اتصل بنا عبر معلومات الاتصال في صفحة الاتصال."
+      },
+      "errors": {
+        "emailRequired": "يرجى تقديم عنوان البريد الإلكتروني المرتبط بحسابك.",
+        "requestFailed": "فشل في بدء الاسترداد. يرجى المحاولة مرة أخرى.",
+        "tokenAndPasswordRequired": "يرجى تقديم الرمز المميز وكلمة المرور الجديدة.",
+        "resetFailed": "فشل في إعادة تعيين كلمة المرور. تحقق من الرمز المميز وحاول مرة أخرى."
+      },
+      "request": {
+        "title": "طلب رابط الاسترداد",
+        "description": "أدخل عنوان بريدك الإلكتروني وسنرسل لك تعليمات إعادة تعيين كلمة المرور.",
+        "placeholder": "name@example.com",
+        "submit": "إرسال التعليمات",
+        "submitBusy": "جاري الإرسال...",
+        "success": "تم إرسال تعليمات الاسترداد إلى عنوان بريدك الإلكتروني."
+      },
+      "reset": {
+        "title": "تعيين كلمة مرور جديدة",
+        "description": "أدخل الرمز المميز من بريدك الإلكتروني وكلمة مرور جديدة.",
+        "tokenPlaceholder": "الرمز المميز من البريد الإلكتروني",
+        "passwordPlaceholder": "كلمة المرور الجديدة",
+        "confirmPasswordPlaceholder": "تأكيد كلمة المرور الجديدة",
+        "submit": "تحديث كلمة المرور",
+        "submitBusy": "جاري التحديث...",
+        "success": "تم تحديث كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول."
+      }
+    }
   },
   "Events": {
     "title": "الفعاليات القادمة",
     "subtitle": "ابق على اطلاع بجميع الأنشطة",
     "event1": {
       "title": "صلاة الجمعة",
-      "description": "صلاة الجمعة الأسبوعية مع خطبة باللغة الهولندية.",
+      "description": "صلاة الجمعة الأسبوعية مع خطبة باللغة العربية.",
       "date": "الجمعة",
       "time": "13:00",
-      "location": "المسجد المركزي غنت"
+      "location": "المسجد المركزي في غنت"
     },
     "event2": {
       "title": "دراسة القرآن",
-      "description": "دراسة القرآن الأسبوعية لجميع الأعمار.",
+      "description": "دراسة أسبوعية للقرآن لجميع الأعمار.",
       "date": "الأحد",
       "time": "10:00",
       "location": "مسجد النور"
@@ -118,281 +284,211 @@
       "time": "15:00",
       "location": "مسجد الرحمن"
     },
-    "learnMore": "اعرف المزيد",
+    "learnMore": "مزيد من المعلومات",
     "viewAll": "عرض جميع الفعاليات"
   },
   "RamadanPage": {
     "title": "رمضان 2025",
-    "description": "اكتشف جميع أنشطة رمضان ومواقع الإفطار في غنت."
+    "description": "اكتشف جميع أنشطة رمضان وأماكن الإفطار في غنت."
   },
-  "IftarMap": {
-    "map": {
-      "title": "خريطة الإفطار"
-    },
-    "events": {
-      "title": "الإفطارات المجدولة",
-      "familyFriendly": "مناسب للعائلة",
-      "noEvents": "لم يتم العثور على إفطارات لهذه الفترة."
-    },
-    "prayerTimes": {
-      "title": "أوقات الصلاة اليوم"
-    }
-  },
-  "About": {
-    "title": "حول VGM",
-    "description": "رابطة مساجد غنت تربط وتدعم المجتمع المسلم في غنت."
-  },
-  "Janazah": {
-    "title": "صلاة الجنازة",
-    "description": "معلومات حول صلاة الجنازة والخدمات."
-  },
-  "News": {
-    "title": "الأخبار",
-    "description": "آخر الأخبار والإعلانات من VGM."
+  "PrayerTimes": {
+    "title": "أوقات الصلاة",
+    "subtitle": "عرض أوقات الصلاة اليومية لغنت",
+    "today": "اليوم",
+    "tomorrow": "غداً",
+    "fajr": "الفجر",
+    "sunrise": "الشروق",
+    "dhuhr": "الظهر",
+    "asr": "العصر",
+    "maghrib": "المغرب",
+    "isha": "العشاء",
+    "nextPrayer": "الصلاة التالية",
+    "timeUntil": "بعد",
+    "source": "المصدر",
+    "calculationMethod": "طريقة الحساب",
+    "location": "الموقع",
+    "coordinates": "الإحداثيات",
+    "timezone": "المنطقة الزمنية",
+    "adjustments": "التعديلات",
+    "error": "حدث خطأ أثناء تحميل أوقات الصلاة",
+    "loading": "تحميل أوقات الصلاة...",
+    "noData": "لا توجد أوقات صلاة متاحة",
+    "tryAgain": "حاول مرة أخرى"
   },
   "Donations": {
     "title": "التبرعات",
-    "description": "ادعم مجتمع VGM"
-  },
-  "Memorandum": {
-    "title": "المذكرة",
-    "description": "مهمتنا ورؤيتنا وقيمنا"
-  },
-  "Board": {
-    "title": "المجلس",
-    "description": "تعرف على مجلس VGM"
-  },
-  "MosqueSearch": {
-    "title": "البحث عن المساجد",
-    "description": "ابحث عن المساجد في غنت"
-  },
-  "MosqueRegistration": {
-    "title": "تسجيل المسجد",
-    "description": "سجل مسجدك مع VGM"
-  },
-  "Auth": {
-    "Shared": {
-      "email": "Email address",
-      "password": "Password",
-      "firstName": "First name",
-      "lastName": "Last name",
-      "placeholders": {
-        "firstName": "Enter your first name",
-        "lastName": "Enter your last name"
-      },
-      "errors": {
-        "passwordMismatch": "Passwords do not match",
-        "passwordLength": "Password must be at least 6 characters long"
-      },
-      "genericError": "Something went wrong. Please try again.",
-      "supportTitle": "Need help?",
-      "phoneLabel": "Phone number"
-    },
-    "Login": {
-      "title": "Sign in to your account",
-      "cta": "Or {create} a new account",
-      "errors": {
-        "invalidCredentials": "Invalid email or password"
-      },
-      "placeholders": {
-        "email": "Enter your email",
-        "password": "Enter your password"
-      },
-      "rememberMe": "Remember me",
-      "forgotPassword": "Forgot your password?",
-      "actions": {
-        "signingIn": "Signing in...",
-        "signIn": "Sign in"
-      },
-      "demo": {
-        "title": "Demo accounts",
-        "admin": "Admin: admin@vgm.be / admin123",
-        "mosqueAdmin": "Mosque Admin: imam@salahaddien.be / imam123",
-        "user": "User: user@example.com / user123"
-      },
-      "support": {
-        "title": "Having trouble logging in?",
-        "description": "Check your email address and make sure your password is correct.",
-        "tips": [
-          "Verify that Caps Lock is off",
-          "Use the email address you registered with",
-          "Contact support if you need help"
-        ],
-        "cta": "Need mosque admin access? {link}",
-        "ctaLinkLabel": "Submit a request here"
-      },
-      "security": {
-        "title": "Your data is secure",
-        "description": "Logins are protected with encrypted connections and monitored for unusual activity."
-      },
-      "subtitle": "Access your personalised dashboard and community updates."
-    },
-    "Register": {
-      "title": "Create your account",
-      "cta": "Already registered? {login}",
-      "errors": {
-        "mosqueLoad": "We could not load the list of mosques. Please try again later.",
-        "mosqueRequired": "Select the mosque you represent."
-      },
-      "success": "Registration successful. Please log in to continue.",
-      "accountType": {
-        "label": "Choose the account type that fits your role",
-        "user": {
-          "title": "Community member",
-          "description": "Stay informed about events, news and services."
-        },
-        "mosqueAdmin": {
-          "title": "Mosque administrator",
-          "description": "Manage mosque information, events and announcements."
-        },
-        "cta": "Need access to manage a mosque? {link}",
-        "ctaLinkLabel": "Submit a request"
-      },
-      "placeholders": {
-        "email": "Enter your email",
-        "password": "Create a secure password"
-      },
-      "phone": {
-        "label": "Phone number (optional)",
-        "placeholder": "+32 9 123 45 67"
-      },
-      "mosque": {
-        "label": "Associated mosque",
-        "loading": "Loading mosques...",
-        "placeholder": "Select a mosque",
-        "notRequired": "Not required for community member accounts",
-        "help": "Mosque missing? Contact {contact} to request access.",
-        "customLabel": "Mosque name if not listed",
-        "customPlaceholder": "Provide the official mosque name"
-      },
-      "confirmPassword": {
-        "label": "Confirm password",
-        "placeholder": "Re-enter your password"
-      },
-      "actions": {
-        "creating": "Creating account...",
-        "create": "Create account"
-      },
-      "support": {
-        "title": "Tips for a smooth registration",
-        "points": [
-          "Use an email address you check regularly",
-          "Choose a strong password with at least 6 characters",
-          "Select the correct mosque if you need admin access"
-        ]
-      },
-      "nextSteps": {
-        "title": "What happens next?",
-        "description": "After logging in you can complete your profile and request additional permissions if needed."
-      },
-      "motivation": {
-        "label": "Why do you need administrator access?",
-        "placeholder": "Describe your responsibilities and how you will use the portal",
-        "helper": "The VGM team reviews requests manually. Include details about your role and verification information."
-      },
-      "successUser": "Registration successful. Please log in to continue.",
-      "successMosqueAdmin": "Registration received. The VGM team will review your mosque admin request. You can track its status after signing in.",
-      "subtitle": "Create a personal account to access VGM services."
-    },
-    "ForgotPassword": {
-      "title": "Reset your password",
-      "subtitle": "Let us know how we can help you recover access to your account.",
-      "steps": {
-        "title": "Follow these steps",
-        "items": [
-          "Provide the email address linked to your account",
-          "Describe the issue you are experiencing",
-          "Our support team will contact you with the next steps"
-        ]
-      },
-      "contact": {
-        "title": "Contact the VGM support team",
-        "description": "Send an email to {email} with your name, mosque (if applicable) and a short description of the problem.",
-        "note": "We respond within one business day."
-      },
-      "backToLogin": "Back to {link}",
-      "security": {
-        "title": "Security reminders",
-        "tips": [
-          "Never share your password with others",
-          "Use a unique password for this platform",
-          "Contact us if you suspect unauthorised access"
-        ]
-      },
-      "support": {
-        "description": "Prefer to talk to someone? Call us via the contact details on the contact page."
-      },
-      "errors": {
-        "emailRequired": "Please enter the email associated with your account.",
-        "requestFailed": "We could not start the reset process. Please try again.",
-        "tokenAndPasswordRequired": "Provide both the reset token and a new password.",
-        "resetFailed": "Unable to reset the password. Double-check the token and try again."
-      },
-      "request": {
-        "title": "Request a reset link",
-        "description": "Enter your email address and we will send instructions to reset your password.",
-        "placeholder": "name@example.com",
-        "submit": "Send reset instructions",
-        "submitBusy": "Sending...",
-        "success": "If an account exists, a reset message has been sent.",
-        "tokenNotice": "Development token (only visible locally):"
-      },
-      "reset": {
-        "title": "Reset your password",
-        "description": "Paste the token you received and choose a new password.",
-        "tokenLabel": "Reset token",
-        "passwordLabel": "New password",
-        "submit": "Reset password",
-        "submitBusy": "Resetting...",
-        "success": "Password reset successfully. You can now sign in with your new password."
-      }
-    }
-  },
-  "MosqueAccessRequest": {
-    "title": "Request mosque administrator access",
-    "subtitle": "Submit a request so the VGM team can verify your role before granting management permissions.",
-    "success": "Your request has been submitted. The VGM team will review it shortly.",
-    "errors": {
-      "load": "Unable to load access request data.",
-      "pending": "You already have a pending request.",
-      "submit": "Unable to submit your request. Please try again."
-    },
-    "authRequired": {
-      "title": "Sign in to continue",
-      "description": "Please {link} to request mosque administrator access."
+    "subtitle": "ادعم المساجد ومشاريع المجتمع",
+    "campaigns": {
+      "title": "الحملات النشطة",
+      "description": "عرض جميع حملات التبرع الجارية",
+      "viewAll": "عرض جميع الحملات",
+      "donate": "تبرع",
+      "target": "الهدف",
+      "raised": "المجموع",
+      "progress": "التقدم",
+      "daysLeft": "أيام متبقية",
+      "completed": "مكتمل",
+      "noCampaigns": "لا توجد حملات نشطة",
+      "error": "حدث خطأ أثناء تحميل الحملات"
     },
     "form": {
-      "existingMosqueLabel": "Select an existing mosque",
-      "existingMosquePlaceholder": "Choose a mosque from the list",
-      "newMosqueLabel": "Or provide the mosque name",
-      "newMosquePlaceholder": "Enter the mosque name if it is not listed",
-      "newMosqueHelper": "The VGM team will contact you if additional verification is required.",
-      "contactEmailPlaceholder": "Contact email for follow-up",
-      "contactPhoneLabel": "Contact phone (optional)",
-      "contactPhonePlaceholder": "+32 9 123 45 67",
-      "motivationLabel": "Explain your request",
-      "motivationPlaceholder": "Provide context about your role and responsibilities",
-      "motivationHelper": "Include links or references that help us verify your position.",
-      "submit": "Submit request",
-      "submitBusy": "Submitting..."
+      "title": "تقديم تبرع",
+      "amount": "المبلغ",
+      "currency": "EUR",
+      "description": "الوصف",
+      "donate": "تبرع",
+      "processing": "جاري المعالجة...",
+      "success": "تم معالجة التبرع بنجاح",
+      "error": "حدث خطأ أثناء معالجة التبرع"
+    }
+  },
+  "Contact": {
+    "title": "اتصل بنا",
+    "subtitle": "تواصل مع VGM",
+    "form": {
+      "name": "الاسم",
+      "email": "البريد الإلكتروني",
+      "subject": "الموضوع",
+      "message": "الرسالة",
+      "submit": "إرسال",
+      "success": "تم إرسال الرسالة بنجاح",
+      "error": "حدث خطأ أثناء إرسال الرسالة"
     },
-    "tips": {
-      "title": "Tips for approval",
-      "items": [
-        "Use your official mosque email address if possible",
-        "Mention existing roles or responsibilities within the mosque",
-        "Ensure your contact details are accurate so we can reach you"
-      ]
+    "info": {
+      "title": "معلومات الاتصال",
+      "address": "العنوان",
+      "phone": "الهاتف",
+      "email": "البريد الإلكتروني",
+      "hours": "ساعات العمل"
+    }
+  },
+  "Search": {
+    "title": "البحث",
+    "subtitle": "ابحث عن المساجد والفعاليات والأخبار",
+    "placeholder": "أدخل مصطلح البحث...",
+    "filters": {
+      "title": "المرشحات",
+      "contentType": "نوع المحتوى",
+      "dateRange": "نطاق التاريخ",
+      "location": "الموقع",
+      "capacity": "السعة",
+      "clear": "مسح المرشحات"
     },
-    "history": {
-      "title": "Request history",
-      "empty": "You have not submitted any requests yet.",
-      "unknownMosque": "Mosque not specified"
+    "results": {
+      "title": "نتائج البحث",
+      "noResults": "لم يتم العثور على نتائج",
+      "tryDifferentSearch": "جرب مصطلح بحث مختلف",
+      "mosques": "المساجد",
+      "events": "الفعاليات",
+      "news": "الأخبار",
+      "campaigns": "الحملات"
+    },
+    "error": "حدث خطأ أثناء البحث",
+    "loading": "جاري البحث..."
+  },
+  "Notifications": {
+    "title": "الإشعارات",
+    "subtitle": "عرض جميع إشعاراتك",
+    "markAllRead": "وضع علامة مقروء على الكل",
+    "noNotifications": "لا توجد إشعارات",
+    "loading": "تحميل الإشعارات...",
+    "error": "حدث خطأ أثناء تحميل الإشعارات",
+    "types": {
+      "event": "فعالية",
+      "donation": "تبرع",
+      "mosque": "مسجد",
+      "news": "خبر",
+      "system": "النظام",
+      "general": "عام"
+    }
+  },
+  "Analytics": {
+    "title": "التحليلات",
+    "subtitle": "عرض الإحصائيات والتقارير",
+    "overview": "نظرة عامة",
+    "users": "المستخدمون",
+    "mosques": "المساجد",
+    "events": "الفعاليات",
+    "donations": "التبرعات",
+    "pageViews": "مشاهدات الصفحة",
+    "uniqueVisitors": "الزوار الفريدون",
+    "totalUsers": "إجمالي المستخدمين",
+    "activeUsers": "المستخدمون النشطون",
+    "totalMosques": "إجمالي المساجد",
+    "totalEvents": "إجمالي الفعاليات",
+    "totalDonations": "إجمالي التبرعات",
+    "loading": "تحميل التحليلات...",
+    "error": "حدث خطأ أثناء تحميل التحليلات"
+  },
+  "Admin": {
+    "title": "لوحة تحكم الإدارة",
+    "subtitle": "إدارة منصة VGM",
+    "overview": "نظرة عامة",
+    "users": "المستخدمون",
+    "events": "الفعاليات",
+    "news": "الأخبار",
+    "accessRequests": "طلبات الوصول",
+    "totalUsers": "إجمالي المستخدمين",
+    "totalEvents": "إجمالي الفعاليات",
+    "totalNews": "إجمالي الأخبار",
+    "pendingRequests": "الطلبات المعلقة",
+    "approve": "موافقة",
+    "reject": "رفض",
+    "loading": "تحميل بيانات الإدارة...",
+    "error": "حدث خطأ أثناء تحميل بيانات الإدارة"
+  },
+  "Profile": {
+    "title": "الملف الشخصي",
+    "subtitle": "إدارة معلومات حسابك",
+    "personalInfo": "المعلومات الشخصية",
+    "mosqueInfo": "معلومات المسجد",
+    "preferences": "التفضيلات",
+    "save": "حفظ",
+    "saving": "جاري الحفظ...",
+    "success": "تم تحديث الملف الشخصي بنجاح",
+    "error": "حدث خطأ أثناء تحديث الملف الشخصي"
+  },
+  "MosqueAccessRequest": {
+    "title": "طلب الوصول للمسجد",
+    "subtitle": "اطلب الوصول لإدارة مسجد",
+    "form": {
+      "mosque": "المسجد",
+      "motivation": "الدافع",
+      "submit": "إرسال الطلب",
+      "submitting": "جاري الإرسال...",
+      "success": "تم إرسال الطلب بنجاح",
+      "error": "حدث خطأ أثناء إرسال الطلب"
     },
     "status": {
-      "pending": "Pending",
-      "approved": "Approved",
-      "rejected": "Rejected"
+      "pending": "معلق",
+      "approved": "موافق عليه",
+      "rejected": "مرفوض"
     }
+  },
+  "Footer": {
+    "title": "جمعية مساجد غنت",
+    "description": "المجتمع الرقمي لمساجد غنت",
+    "links": {
+      "about": "حولنا",
+      "mosques": "المساجد",
+      "events": "الفعاليات",
+      "donations": "التبرعات",
+      "contact": "اتصل بنا",
+      "privacy": "الخصوصية",
+      "terms": "الشروط"
+    },
+    "community": {
+      "title": "المجتمع",
+      "news": "الأخبار",
+      "events": "الفعاليات",
+      "prayerTimes": "أوقات الصلاة",
+      "donations": "التبرعات"
+    },
+    "contact": {
+      "title": "اتصل بنا",
+      "address": "غنت، بلجيكا",
+      "email": "info@vgm-gent.be"
+    },
+    "copyright": "© 2025 جمعية مساجد غنت. جميع الحقوق محفوظة."
   }
 }

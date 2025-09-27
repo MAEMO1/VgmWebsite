@@ -1,108 +1,274 @@
 {
-  "HomePage": {
-    "title": "Bienvenue à VGM",
-    "description": "Association des Mosquées de Gand"
+  "Home": {
+    "title": "Association des Mosquées de Gand",
+    "subtitle": "Bienvenue dans la communauté numérique des mosquées de Gand",
+    "description": "Découvrez toutes les mosquées affiliées, événements et services à Gand",
+    "mosques": {
+      "title": "Mosquées à Gand",
+      "description": "Découvrez toutes les mosquées affiliées et leurs services",
+      "viewAll": "Voir toutes les mosquées",
+      "viewDetails": "Plus d'informations",
+      "capacity": "capacité",
+      "established": "fondée",
+      "error": "Une erreur s'est produite lors du chargement des mosquées"
+    },
+    "events": {
+      "title": "Événements à venir",
+      "description": "Restez informé de toutes les activités",
+      "viewAll": "Voir tous les événements",
+      "viewDetails": "Plus d'informations",
+      "error": "Une erreur s'est produite lors du chargement des événements"
+    },
+    "news": {
+      "title": "Dernières nouvelles",
+      "description": "Restez informé des dernières nouvelles",
+      "viewAll": "Voir toutes les nouvelles",
+      "viewDetails": "Lire plus",
+      "error": "Une erreur s'est produite lors du chargement des nouvelles"
+    }
   },
   "Navigation": {
     "home": "Accueil",
     "mosques": "Mosquées",
-    "community": "Communauté",
-    "about": "À propos",
     "events": "Événements",
-    "ramadan": "Ramadan",
+    "news": "Actualités",
     "donations": "Dons",
-    "requestAdminAccess": "Request mosque admin access"
-  },
-  "Footer": {
-    "about": {
-      "title": "À propos de VGM",
-      "description": "L'Association des Mosquées de Gand connecte et soutient la communauté musulmane à Gand."
-    },
-    "links": {
-      "privacy": "Confidentialité",
-      "terms": "Conditions",
-      "contact": "Contact"
-    },
-    "quickLinks": {
-      "title": "Liens Rapides",
-      "mosques": "Mosquées",
-      "events": "Événements",
-      "ramadan": "Ramadan"
-    },
-    "contact": {
-      "title": "Contact",
-      "address": "Gand, Belgique",
-      "phone": "+32 9 123 45 67",
-      "email": "info@vgm.be"
-    },
-    "rights": "Tous droits réservés."
-  },
-  "Hero": {
-    "title": "Bienvenue à VGM",
-    "subtitle": "L'Association des Mosquées de Gand connecte et soutient la communauté musulmane à Gand.",
-    "cta": {
-      "mosques": "Voir les Mosquées",
-      "events": "Voir les Événements"
-    }
-  },
-  "Features": {
-    "title": "Nos Fonctionnalités",
-    "subtitle": "Découvrez ce que VGM peut faire pour vous",
-    "mosqueDirectory": {
-      "title": "Annuaire des Mosquées",
-      "description": "Trouvez toutes les mosquées à Gand avec des informations détaillées et des emplacements."
-    },
-    "events": {
-      "title": "Événements",
-      "description": "Restez informé de tous les événements et activités islamiques."
-    },
-    "donations": {
-      "title": "Dons",
-      "description": "Soutenez vos mosquées locales avec des dons sécurisés et transparents."
-    },
-    "notifications": {
-      "title": "Notifications",
-      "description": "Recevez des mises à jour importantes et des rappels par e-mail et application."
-    },
-    "community": {
-      "title": "Communauté",
-      "description": "Connectez-vous avec d'autres membres de la communauté musulmane à Gand."
-    },
-    "multilingual": {
-      "title": "Multilingue",
-      "description": "Disponible en 6 langues dont l'arabe et le pachto avec support RTL."
-    }
+    "contact": "Contact",
+    "login": "Connexion",
+    "register": "S'inscrire",
+    "profile": "Profil",
+    "logout": "Déconnexion",
+    "admin": "Admin",
+    "analytics": "Analytiques"
   },
   "Mosques": {
-    "title": "Nos Mosquées",
-    "subtitle": "Découvrez les mosquées à Gand",
-    "mosque1": {
-      "name": "Mosquée Centrale de Gand",
-      "description": "La plus grande mosquée de Gand avec des installations étendues.",
-      "address": "Centre de Gand"
+    "title": "Mosquées à Gand",
+    "subtitle": "Découvrez toutes les mosquées affiliées et leurs services",
+    "searchPlaceholder": "Rechercher par nom, adresse ou description...",
+    "filterBy": "Filtrer par",
+    "allMosques": "Toutes les Mosquées",
+    "capacity": "Capacité",
+    "established": "Fondée",
+    "imam": "Imam",
+    "phone": "Téléphone",
+    "email": "E-mail",
+    "website": "Site web",
+    "address": "Adresse",
+    "services": "Services",
+    "prayerTimes": "Heures de prière",
+    "events": "Événements",
+    "boardMembers": "Membres du conseil",
+    "history": "Histoire",
+    "photos": "Photos",
+    "videos": "Vidéos",
+    "documents": "Documents",
+    "viewDetails": "Voir les détails",
+    "viewOnMap": "Voir sur la carte",
+    "noMosquesFound": "Aucune mosquée trouvée",
+    "tryDifferentSearch": "Essayez un autre terme de recherche",
+    "error": "Une erreur s'est produite lors du chargement des mosquées",
+    "loading": "Chargement des mosquées...",
+    "map": {
+      "title": "Mosquées sur la carte",
+      "description": "Voir toutes les mosquées de Gand sur la carte",
+      "searchPlaceholder": "Rechercher un lieu...",
+      "noResults": "Aucun résultat trouvé",
+      "error": "Une erreur s'est produite lors du chargement de la carte"
     },
-    "mosque2": {
-      "name": "Mosquée Al-Noor",
-      "description": "Une mosquée chaleureuse et accueillante au cœur de la ville.",
-      "address": "Gand Est"
+    "search": {
+      "title": "Rechercher des mosquées",
+      "description": "Trouvez des mosquées à Gand"
     },
-    "mosque3": {
-      "name": "Masjid Al-Rahman",
-      "description": "Mosquée moderne axée sur l'éducation et la communauté.",
-      "address": "Gand Sud"
+    "description": "Trouvez des mosquées à Gand basées sur les services et installations",
+    "searchPlaceholder": "Nom, adresse, description"
+  },
+  "MosqueRegistration": {
+    "title": "Enregistrement de mosquée",
+    "description": "Enregistrez votre mosquée avec VGM"
+  },
+  "Auth": {
+    "Shared": {
+      "email": "Adresse e-mail",
+      "password": "Mot de passe",
+      "firstName": "Prénom",
+      "lastName": "Nom de famille",
+      "placeholders": {
+        "firstName": "Entrez votre prénom",
+        "lastName": "Entrez votre nom de famille"
+      },
+      "errors": {
+        "passwordMismatch": "Les mots de passe ne correspondent pas",
+        "passwordLength": "Le mot de passe doit contenir au moins 6 caractères"
+      },
+      "genericError": "Quelque chose s'est mal passé. Veuillez réessayer.",
+      "supportTitle": "Besoin d'aide ?",
+      "phoneLabel": "Numéro de téléphone"
     },
-    "learnMore": "En Savoir Plus",
-    "viewAll": "Voir Toutes les Mosquées"
+    "Login": {
+      "title": "Connectez-vous à votre compte",
+      "subtitle": "Bon retour ! Connectez-vous pour continuer.",
+      "cta": "Ou {create} un nouveau compte",
+      "errors": {
+        "invalidCredentials": "Adresse e-mail ou mot de passe invalide"
+      },
+      "placeholders": {
+        "email": "Entrez votre adresse e-mail",
+        "password": "Entrez votre mot de passe"
+      },
+      "rememberMe": "Se souvenir de moi",
+      "forgotPassword": "Mot de passe oublié ?",
+      "actions": {
+        "signingIn": "Connexion en cours...",
+        "signIn": "Se connecter"
+      },
+      "demo": {
+        "title": "Comptes de démonstration",
+        "admin": "Admin: admin@vgm.be / admin123",
+        "mosqueAdmin": "Admin Mosquée: imam@salahaddien.be / imam123",
+        "user": "Utilisateur: user@example.com / user123"
+      },
+      "support": {
+        "title": "Problème de connexion ?",
+        "description": "Vérifiez votre adresse e-mail et assurez-vous que votre mot de passe est correct.",
+        "tips": [
+          "Vérifiez que le verrouillage des majuscules est désactivé",
+          "Utilisez l'adresse e-mail avec laquelle vous vous êtes inscrit",
+          "Contactez le support si vous avez besoin d'aide"
+        ],
+        "cta": "Vous avez encore des problèmes ? {link}",
+        "ctaLinkLabel": "Contactez le support"
+      }
+    },
+    "Register": {
+      "title": "Créer un compte",
+      "subtitle": "Créez un compte personnel pour accéder aux services VGM.",
+      "cta": "Déjà inscrit ? {login}",
+      "errors": {
+        "mosqueLoad": "Nous n'avons pas pu charger la liste des mosquées. Veuillez réessayer plus tard.",
+        "mosqueRequired": "Sélectionnez la mosquée que vous représentez."
+      },
+      "success": "Inscription réussie. Veuillez vous connecter pour continuer.",
+      "accountType": {
+        "label": "Choisissez le type de compte qui correspond à votre rôle",
+        "user": {
+          "title": "Membre de la communauté",
+          "description": "Restez informé des activités, actualités et services."
+        },
+        "mosqueAdmin": {
+          "title": "Administrateur de mosquée",
+          "description": "Gérez les informations de la mosquée, les événements et les annonces."
+        },
+        "cta": "Vous voulez devenir administrateur d'une mosquée ? {link}",
+        "ctaLinkLabel": "Soumettre une demande"
+      },
+      "placeholders": {
+        "email": "Entrez votre adresse e-mail",
+        "password": "Créez un mot de passe sécurisé"
+      },
+      "phone": {
+        "label": "Numéro de téléphone (optionnel)",
+        "placeholder": "+32 9 123 45 67"
+      },
+      "mosque": {
+        "label": "Mosquée associée",
+        "loading": "Chargement des mosquées...",
+        "placeholder": "Sélectionnez une mosquée",
+        "notRequired": "Non requis pour les comptes membres",
+        "help": "Mosquée non visible ? Contactez {contact} pour l'accès.",
+        "customLabel": "Nom de la mosquée si elle n'est pas dans la liste",
+        "customPlaceholder": "Indiquez le nom officiel de la mosquée"
+      },
+      "confirmPassword": {
+        "label": "Confirmer le mot de passe",
+        "placeholder": "Entrez votre mot de passe à nouveau"
+      },
+      "actions": {
+        "creating": "Création du compte...",
+        "create": "Créer le compte"
+      },
+      "support": {
+        "title": "Conseils pour une inscription fluide",
+        "points": [
+          "Utilisez une adresse e-mail que vous consultez régulièrement",
+          "Choisissez un mot de passe fort d'au moins 6 caractères",
+          "Sélectionnez la bonne mosquée si vous avez besoin de droits d'administrateur"
+        ]
+      },
+      "nextSteps": {
+        "title": "Que se passe-t-il ensuite ?",
+        "description": "Après la connexion, vous pouvez compléter votre profil et demander des droits supplémentaires si nécessaire."
+      },
+      "motivation": {
+        "label": "Pourquoi avez-vous besoin de droits d'administrateur ?",
+        "placeholder": "Décrivez vos responsabilités et comment vous utiliserez le portail",
+        "helper": "L'équipe VGM examine les demandes manuellement. Fournissez des détails sur votre rôle et les informations de vérification."
+      },
+      "successUser": "Inscription réussie. Veuillez vous connecter pour continuer.",
+      "successMosqueAdmin": "Inscription reçue. L'équipe VGM examinera votre demande d'administration de mosquée. Vous pouvez suivre le statut après la connexion."
+    },
+    "ForgotPassword": {
+      "title": "Récupération du mot de passe",
+      "subtitle": "Faites-nous savoir comment nous pouvons vous aider à retrouver l'accès.",
+      "steps": {
+        "title": "Suivez ces étapes",
+        "items": [
+          "Fournissez l'adresse e-mail associée à votre compte",
+          "Décrivez brièvement le problème que vous rencontrez",
+          "Notre équipe de support vous contactera avec les prochaines étapes"
+        ]
+      },
+      "contact": {
+        "title": "Contactez le support VGM",
+        "description": "Envoyez un e-mail à {email} avec votre nom, mosquée (le cas échéant) et une brève description du problème.",
+        "note": "Nous répondons dans un délai d'un jour ouvrable."
+      },
+      "backToLogin": "Retour à {link}",
+      "security": {
+        "title": "Conseils de sécurité",
+        "tips": [
+          "Ne partagez jamais votre mot de passe avec d'autres",
+          "Utilisez un mot de passe unique pour cette plateforme",
+          "Contactez-nous si vous soupçonnez un accès non autorisé"
+        ]
+      },
+      "support": {
+        "description": "Vous voulez parler à quelqu'un ? Appelez-nous via les coordonnées de la page de contact."
+      },
+      "errors": {
+        "emailRequired": "Veuillez fournir l'adresse e-mail associée à votre compte.",
+        "requestFailed": "Impossible de démarrer la récupération. Veuillez réessayer.",
+        "tokenAndPasswordRequired": "Veuillez fournir à la fois le token et un nouveau mot de passe.",
+        "resetFailed": "La réinitialisation du mot de passe a échoué. Vérifiez le token et réessayez."
+      },
+      "request": {
+        "title": "Demander un lien de récupération",
+        "description": "Entrez votre adresse e-mail et nous vous enverrons les instructions pour réinitialiser votre mot de passe.",
+        "placeholder": "nom@exemple.be",
+        "submit": "Envoyer les instructions",
+        "submitBusy": "Envoi en cours...",
+        "success": "Les instructions de récupération ont été envoyées à votre adresse e-mail."
+      },
+      "reset": {
+        "title": "Définir un nouveau mot de passe",
+        "description": "Entrez le token de votre e-mail et un nouveau mot de passe.",
+        "tokenPlaceholder": "Token de l'e-mail",
+        "passwordPlaceholder": "Nouveau mot de passe",
+        "confirmPasswordPlaceholder": "Confirmer le nouveau mot de passe",
+        "submit": "Mettre à jour le mot de passe",
+        "submitBusy": "Mise à jour en cours...",
+        "success": "Votre mot de passe a été mis à jour avec succès. Vous pouvez maintenant vous connecter."
+      }
+    }
   },
   "Events": {
-    "title": "Événements à Venir",
+    "title": "Événements à venir",
     "subtitle": "Restez informé de toutes les activités",
     "event1": {
-      "title": "Prière du Vendredi",
-      "description": "Prière du vendredi hebdomadaire avec khutbah en néerlandais.",
+      "title": "Prière du vendredi",
+      "description": "Prière du vendredi hebdomadaire avec khutbah en français.",
       "date": "Vendredi",
       "time": "13:00",
-      "location": "Mosquée Centrale de Gand"
+      "location": "Mosquée centrale de Gand"
     },
     "event2": {
       "title": "Étude du Coran",
@@ -112,287 +278,217 @@
       "location": "Mosquée Al-Noor"
     },
     "event3": {
-      "title": "Réunion Communautaire",
+      "title": "Réunion communautaire",
       "description": "Réunion mensuelle pour les activités communautaires.",
-      "date": "Premier Samedi",
+      "date": "Premier samedi",
       "time": "15:00",
       "location": "Masjid Al-Rahman"
     },
-    "learnMore": "En Savoir Plus",
-    "viewAll": "Voir Tous les Événements"
+    "learnMore": "Plus d'informations",
+    "viewAll": "Voir tous les événements"
   },
   "RamadanPage": {
     "title": "Ramadan 2025",
     "description": "Découvrez toutes les activités du Ramadan et les lieux d'iftar à Gand."
   },
-  "IftarMap": {
-    "map": {
-      "title": "Carte Iftar"
-    },
-    "events": {
-      "title": "Iftars Programmés",
-      "familyFriendly": "Convivial pour la Famille",
-      "noEvents": "Aucun iftar trouvé pour cette période."
-    },
-    "prayerTimes": {
-      "title": "Heures de Prière d'Aujourd'hui"
-    }
-  },
-  "About": {
-    "title": "À propos de VGM",
-    "description": "L'Association des Mosquées de Gand connecte et soutient la communauté musulmane à Gand."
-  },
-  "Janazah": {
-    "title": "Prière Funéraire",
-    "description": "Informations sur les prières funéraires et services."
-  },
-  "News": {
-    "title": "Actualités",
-    "description": "Dernières actualités et annonces de VGM."
+  "PrayerTimes": {
+    "title": "Heures de prière",
+    "subtitle": "Voir les heures de prière quotidiennes pour Gand",
+    "today": "Aujourd'hui",
+    "tomorrow": "Demain",
+    "fajr": "Fajr",
+    "sunrise": "Lever du soleil",
+    "dhuhr": "Dhuhr",
+    "asr": "Asr",
+    "maghrib": "Maghrib",
+    "isha": "Isha",
+    "nextPrayer": "Prochaine prière",
+    "timeUntil": "dans",
+    "source": "Source",
+    "calculationMethod": "Méthode de calcul",
+    "location": "Lieu",
+    "coordinates": "Coordonnées",
+    "timezone": "Fuseau horaire",
+    "adjustments": "Ajustements",
+    "error": "Une erreur s'est produite lors du chargement des heures de prière",
+    "loading": "Chargement des heures de prière...",
+    "noData": "Aucune heure de prière disponible",
+    "tryAgain": "Réessayer"
   },
   "Donations": {
     "title": "Dons",
-    "description": "Soutenez la communauté VGM"
-  },
-  "Memorandum": {
-    "title": "Mémorandum",
-    "description": "Notre mission, vision et valeurs"
-  },
-  "Board": {
-    "title": "Conseil",
-    "description": "Rencontrez le conseil VGM"
-  },
-  "MosqueSearch": {
-    "title": "Recherche de Mosquées",
-    "description": "Trouvez des mosquées à Gand"
-  },
-  "MosqueRegistration": {
-    "title": "Enregistrement de Mosquée",
-    "description": "Enregistrez votre mosquée avec VGM"
-  },
-  "Auth": {
-    "Shared": {
-      "email": "Email address",
-      "password": "Password",
-      "firstName": "First name",
-      "lastName": "Last name",
-      "placeholders": {
-        "firstName": "Enter your first name",
-        "lastName": "Enter your last name"
-      },
-      "errors": {
-        "passwordMismatch": "Passwords do not match",
-        "passwordLength": "Password must be at least 6 characters long"
-      },
-      "genericError": "Something went wrong. Please try again.",
-      "supportTitle": "Need help?",
-      "phoneLabel": "Phone number"
-    },
-    "Login": {
-      "title": "Sign in to your account",
-      "cta": "Or {create} a new account",
-      "errors": {
-        "invalidCredentials": "Invalid email or password"
-      },
-      "placeholders": {
-        "email": "Enter your email",
-        "password": "Enter your password"
-      },
-      "rememberMe": "Remember me",
-      "forgotPassword": "Forgot your password?",
-      "actions": {
-        "signingIn": "Signing in...",
-        "signIn": "Sign in"
-      },
-      "demo": {
-        "title": "Demo accounts",
-        "admin": "Admin: admin@vgm.be / admin123",
-        "mosqueAdmin": "Mosque Admin: imam@salahaddien.be / imam123",
-        "user": "User: user@example.com / user123"
-      },
-      "support": {
-        "title": "Having trouble logging in?",
-        "description": "Check your email address and make sure your password is correct.",
-        "tips": [
-          "Verify that Caps Lock is off",
-          "Use the email address you registered with",
-          "Contact support if you need help"
-        ],
-        "cta": "Need mosque admin access? {link}",
-        "ctaLinkLabel": "Submit a request here"
-      },
-      "security": {
-        "title": "Your data is secure",
-        "description": "Logins are protected with encrypted connections and monitored for unusual activity."
-      },
-      "subtitle": "Access your personalised dashboard and community updates."
-    },
-    "Register": {
-      "title": "Create your account",
-      "cta": "Already registered? {login}",
-      "errors": {
-        "mosqueLoad": "We could not load the list of mosques. Please try again later.",
-        "mosqueRequired": "Select the mosque you represent."
-      },
-      "success": "Registration successful. Please log in to continue.",
-      "accountType": {
-        "label": "Choose the account type that fits your role",
-        "user": {
-          "title": "Community member",
-          "description": "Stay informed about events, news and services."
-        },
-        "mosqueAdmin": {
-          "title": "Mosque administrator",
-          "description": "Manage mosque information, events and announcements."
-        },
-        "cta": "Need access to manage a mosque? {link}",
-        "ctaLinkLabel": "Submit a request"
-      },
-      "placeholders": {
-        "email": "Enter your email",
-        "password": "Create a secure password"
-      },
-      "phone": {
-        "label": "Phone number (optional)",
-        "placeholder": "+32 9 123 45 67"
-      },
-      "mosque": {
-        "label": "Associated mosque",
-        "loading": "Loading mosques...",
-        "placeholder": "Select a mosque",
-        "notRequired": "Not required for community member accounts",
-        "help": "Mosque missing? Contact {contact} to request access.",
-        "customLabel": "Mosque name if not listed",
-        "customPlaceholder": "Provide the official mosque name"
-      },
-      "confirmPassword": {
-        "label": "Confirm password",
-        "placeholder": "Re-enter your password"
-      },
-      "actions": {
-        "creating": "Creating account...",
-        "create": "Create account"
-      },
-      "support": {
-        "title": "Tips for a smooth registration",
-        "points": [
-          "Use an email address you check regularly",
-          "Choose a strong password with at least 6 characters",
-          "Select the correct mosque if you need admin access"
-        ]
-      },
-      "nextSteps": {
-        "title": "What happens next?",
-        "description": "After logging in you can complete your profile and request additional permissions if needed."
-      },
-      "motivation": {
-        "label": "Why do you need administrator access?",
-        "placeholder": "Describe your responsibilities and how you will use the portal",
-        "helper": "The VGM team reviews requests manually. Include details about your role and verification information."
-      },
-      "successUser": "Registration successful. Please log in to continue.",
-      "successMosqueAdmin": "Registration received. The VGM team will review your mosque admin request. You can track its status after signing in.",
-      "subtitle": "Create a personal account to access VGM services."
-    },
-    "ForgotPassword": {
-      "title": "Reset your password",
-      "subtitle": "Let us know how we can help you recover access to your account.",
-      "steps": {
-        "title": "Follow these steps",
-        "items": [
-          "Provide the email address linked to your account",
-          "Describe the issue you are experiencing",
-          "Our support team will contact you with the next steps"
-        ]
-      },
-      "contact": {
-        "title": "Contact the VGM support team",
-        "description": "Send an email to {email} with your name, mosque (if applicable) and a short description of the problem.",
-        "note": "We respond within one business day."
-      },
-      "backToLogin": "Back to {link}",
-      "security": {
-        "title": "Security reminders",
-        "tips": [
-          "Never share your password with others",
-          "Use a unique password for this platform",
-          "Contact us if you suspect unauthorised access"
-        ]
-      },
-      "support": {
-        "description": "Prefer to talk to someone? Call us via the contact details on the contact page."
-      },
-      "errors": {
-        "emailRequired": "Please enter the email associated with your account.",
-        "requestFailed": "We could not start the reset process. Please try again.",
-        "tokenAndPasswordRequired": "Provide both the reset token and a new password.",
-        "resetFailed": "Unable to reset the password. Double-check the token and try again."
-      },
-      "request": {
-        "title": "Request a reset link",
-        "description": "Enter your email address and we will send instructions to reset your password.",
-        "placeholder": "name@example.com",
-        "submit": "Send reset instructions",
-        "submitBusy": "Sending...",
-        "success": "If an account exists, a reset message has been sent.",
-        "tokenNotice": "Development token (only visible locally):"
-      },
-      "reset": {
-        "title": "Reset your password",
-        "description": "Paste the token you received and choose a new password.",
-        "tokenLabel": "Reset token",
-        "passwordLabel": "New password",
-        "submit": "Reset password",
-        "submitBusy": "Resetting...",
-        "success": "Password reset successfully. You can now sign in with your new password."
-      }
-    }
-  },
-  "MosqueAccessRequest": {
-    "title": "Request mosque administrator access",
-    "subtitle": "Submit a request so the VGM team can verify your role before granting management permissions.",
-    "success": "Your request has been submitted. The VGM team will review it shortly.",
-    "errors": {
-      "load": "Unable to load access request data.",
-      "pending": "You already have a pending request.",
-      "submit": "Unable to submit your request. Please try again."
-    },
-    "authRequired": {
-      "title": "Sign in to continue",
-      "description": "Please {link} to request mosque administrator access."
+    "subtitle": "Soutenez les mosquées et les projets communautaires",
+    "campaigns": {
+      "title": "Campagnes actives",
+      "description": "Voir toutes les campagnes de don en cours",
+      "viewAll": "Voir toutes les campagnes",
+      "donate": "Faire un don",
+      "target": "Objectif",
+      "raised": "Collecté",
+      "progress": "Progrès",
+      "daysLeft": "jours restants",
+      "completed": "Terminé",
+      "noCampaigns": "Aucune campagne active",
+      "error": "Une erreur s'est produite lors du chargement des campagnes"
     },
     "form": {
-      "existingMosqueLabel": "Select an existing mosque",
-      "existingMosquePlaceholder": "Choose a mosque from the list",
-      "newMosqueLabel": "Or provide the mosque name",
-      "newMosquePlaceholder": "Enter the mosque name if it is not listed",
-      "newMosqueHelper": "The VGM team will contact you if additional verification is required.",
-      "contactEmailPlaceholder": "Contact email for follow-up",
-      "contactPhoneLabel": "Contact phone (optional)",
-      "contactPhonePlaceholder": "+32 9 123 45 67",
-      "motivationLabel": "Explain your request",
-      "motivationPlaceholder": "Provide context about your role and responsibilities",
-      "motivationHelper": "Include links or references that help us verify your position.",
-      "submit": "Submit request",
-      "submitBusy": "Submitting..."
+      "title": "Faire un don",
+      "amount": "Montant",
+      "currency": "EUR",
+      "description": "Description",
+      "donate": "Faire un don",
+      "processing": "Traitement en cours...",
+      "success": "Don traité avec succès",
+      "error": "Une erreur s'est produite lors du traitement du don"
+    }
+  },
+  "Contact": {
+    "title": "Contact",
+    "subtitle": "Contactez VGM",
+    "form": {
+      "name": "Nom",
+      "email": "E-mail",
+      "subject": "Sujet",
+      "message": "Message",
+      "submit": "Envoyer",
+      "success": "Message envoyé avec succès",
+      "error": "Une erreur s'est produite lors de l'envoi du message"
     },
-    "tips": {
-      "title": "Tips for approval",
-      "items": [
-        "Use your official mosque email address if possible",
-        "Mention existing roles or responsibilities within the mosque",
-        "Ensure your contact details are accurate so we can reach you"
-      ]
+    "info": {
+      "title": "Informations de contact",
+      "address": "Adresse",
+      "phone": "Téléphone",
+      "email": "E-mail",
+      "hours": "Heures d'ouverture"
+    }
+  },
+  "Search": {
+    "title": "Recherche",
+    "subtitle": "Recherchez des mosquées, événements et actualités",
+    "placeholder": "Entrez votre terme de recherche...",
+    "filters": {
+      "title": "Filtres",
+      "contentType": "Type de contenu",
+      "dateRange": "Plage de dates",
+      "location": "Lieu",
+      "capacity": "Capacité",
+      "clear": "Effacer les filtres"
     },
-    "history": {
-      "title": "Request history",
-      "empty": "You have not submitted any requests yet.",
-      "unknownMosque": "Mosque not specified"
+    "results": {
+      "title": "Résultats de recherche",
+      "noResults": "Aucun résultat trouvé",
+      "tryDifferentSearch": "Essayez un autre terme de recherche",
+      "mosques": "Mosquées",
+      "events": "Événements",
+      "news": "Actualités",
+      "campaigns": "Campagnes"
+    },
+    "error": "Une erreur s'est produite lors de la recherche",
+    "loading": "Recherche en cours..."
+  },
+  "Notifications": {
+    "title": "Notifications",
+    "subtitle": "Voir toutes vos notifications",
+    "markAllRead": "Marquer tout comme lu",
+    "noNotifications": "Aucune notification",
+    "loading": "Chargement des notifications...",
+    "error": "Une erreur s'est produite lors du chargement des notifications",
+    "types": {
+      "event": "Événement",
+      "donation": "Don",
+      "mosque": "Mosquée",
+      "news": "Actualité",
+      "system": "Système",
+      "general": "Général"
+    }
+  },
+  "Analytics": {
+    "title": "Analytiques",
+    "subtitle": "Voir les statistiques et rapports",
+    "overview": "Aperçu",
+    "users": "Utilisateurs",
+    "mosques": "Mosquées",
+    "events": "Événements",
+    "donations": "Dons",
+    "pageViews": "Vues de page",
+    "uniqueVisitors": "Visiteurs uniques",
+    "totalUsers": "Total utilisateurs",
+    "activeUsers": "Utilisateurs actifs",
+    "totalMosques": "Total mosquées",
+    "totalEvents": "Total événements",
+    "totalDonations": "Total dons",
+    "loading": "Chargement des analytiques...",
+    "error": "Une erreur s'est produite lors du chargement des analytiques"
+  },
+  "Admin": {
+    "title": "Tableau de bord Admin",
+    "subtitle": "Gérer la plateforme VGM",
+    "overview": "Aperçu",
+    "users": "Utilisateurs",
+    "events": "Événements",
+    "news": "Actualités",
+    "accessRequests": "Demandes d'accès",
+    "totalUsers": "Total utilisateurs",
+    "totalEvents": "Total événements",
+    "totalNews": "Total actualités",
+    "pendingRequests": "Demandes en attente",
+    "approve": "Approuver",
+    "reject": "Rejeter",
+    "loading": "Chargement des données admin...",
+    "error": "Une erreur s'est produite lors du chargement des données admin"
+  },
+  "Profile": {
+    "title": "Profil",
+    "subtitle": "Gérer vos informations de compte",
+    "personalInfo": "Informations personnelles",
+    "mosqueInfo": "Informations de la mosquée",
+    "preferences": "Préférences",
+    "save": "Enregistrer",
+    "saving": "Enregistrement en cours...",
+    "success": "Profil mis à jour avec succès",
+    "error": "Une erreur s'est produite lors de la mise à jour du profil"
+  },
+  "MosqueAccessRequest": {
+    "title": "Demande d'accès à la mosquée",
+    "subtitle": "Demandez l'accès pour gérer une mosquée",
+    "form": {
+      "mosque": "Mosquée",
+      "motivation": "Motivation",
+      "submit": "Soumettre la demande",
+      "submitting": "Soumission en cours...",
+      "success": "Demande soumise avec succès",
+      "error": "Une erreur s'est produite lors de la soumission de la demande"
     },
     "status": {
-      "pending": "Pending",
-      "approved": "Approved",
-      "rejected": "Rejected"
+      "pending": "En attente",
+      "approved": "Approuvé",
+      "rejected": "Rejeté"
     }
+  },
+  "Footer": {
+    "title": "Association des Mosquées de Gand",
+    "description": "La communauté numérique pour les mosquées de Gand",
+    "links": {
+      "about": "À propos",
+      "mosques": "Mosquées",
+      "events": "Événements",
+      "donations": "Dons",
+      "contact": "Contact",
+      "privacy": "Confidentialité",
+      "terms": "Conditions"
+    },
+    "community": {
+      "title": "Communauté",
+      "news": "Actualités",
+      "events": "Événements",
+      "prayerTimes": "Heures de prière",
+      "donations": "Dons"
+    },
+    "contact": {
+      "title": "Contact",
+      "address": "Gand, Belgique",
+      "email": "info@vgm-gent.be"
+    },
+    "copyright": "© 2025 Association des Mosquées de Gand. Tous droits réservés."
   }
 }

@@ -1,120 +1,286 @@
 {
-  "HomePage": {
-    "title": "VGM ته ښه راغلاست",
-    "description": "د ګینټ جوماتو ټولنه"
+  "Home": {
+    "title": "د ګینټ جوماتو ټولنه",
+    "subtitle": "د ګینټ په جوماتو کې ډیجیټل ټولنې ته ښه راغلاست",
+    "description": "په ګینټ کې د ټولو تړل شویو جوماتو، پیښو او خدماتو څخه پوه شئ",
+    "mosques": {
+      "title": "په ګینټ کې جوماتونه",
+      "description": "د ټولو تړل شویو جوماتو او د دوی خدماتو څخه پوه شئ",
+      "viewAll": "ټول جوماتونه وګورئ",
+      "viewDetails": "نور معلومات",
+      "capacity": "ظرفیت",
+      "established": "تاسیس شوی",
+      "error": "د جوماتو د پورته کولو پر وخت یوه تیروتنه رامنځ ته شوه"
+    },
+    "events": {
+      "title": "راتلونکي پیښې",
+      "description": "د ټولو فعالیتونو څخه خبر اوسئ",
+      "viewAll": "ټولې پیښې وګورئ",
+      "viewDetails": "نور معلومات",
+      "error": "د پیښو د پورته کولو پر وخت یوه تیروتنه رامنځ ته شوه"
+    },
+    "news": {
+      "title": "وروستي خبرونه",
+      "description": "د وروستي خبرونو څخه خبر اوسئ",
+      "viewAll": "ټول خبرونه وګورئ",
+      "viewDetails": "نور یی ولولئ",
+      "error": "د خبرونو د پورته کولو پر وخت یوه تیروتنه رامنځ ته شوه"
+    }
   },
   "Navigation": {
     "home": "کور",
-    "mosques": "جومات",
-    "community": "ټولنه",
-    "about": "په اړه",
+    "mosques": "جوماتونه",
     "events": "پیښې",
-    "ramadan": "رمضان",
+    "news": "خبرونه",
     "donations": "خیرات",
-    "requestAdminAccess": "Request mosque admin access"
-  },
-  "Footer": {
-    "about": {
-      "title": "د VGM په اړه",
-      "description": "د ګینټ جوماتو ټولنه د ګینټ په مسلمان ټولنه کې اړیکې جوړوي او ملاتړ کوي."
-    },
-    "links": {
-      "privacy": "محرمیت",
-      "terms": "شرایط",
-      "contact": "اړیکه"
-    },
-    "quickLinks": {
-      "title": "ګړندي لینکونه",
-      "mosques": "جومات",
-      "events": "پیښې",
-      "ramadan": "رمضان"
-    },
-    "contact": {
-      "title": "اړیکه",
-      "address": "ګینټ، بلجیم",
-      "phone": "+32 9 123 45 67",
-      "email": "info@vgm.be"
-    },
-    "rights": "ټول حقونه خوندي دي."
-  },
-  "Hero": {
-    "title": "VGM ته ښه راغلاست",
-    "subtitle": "د ګینټ جوماتو ټولنه د ګینټ په مسلمان ټولنه کې اړیکې جوړوي او ملاتړ کوي.",
-    "cta": {
-      "mosques": "جومات وګورئ",
-      "events": "پیښې وګورئ"
-    }
-  },
-  "Features": {
-    "title": "زموږ ځانګړتیاوې",
-    "subtitle": "وګورئ چې VGM ستاسو لپاره څه کولی شي",
-    "mosqueDirectory": {
-      "title": "د جوماتو لارښود",
-      "description": "د ګینټ ټول جومات د تفصيلي معلوماتو او موقعیتونو سره ومومئ."
-    },
-    "events": {
-      "title": "پیښې",
-      "description": "د ټولو اسلامي پیښو او فعالیتونو په اړه تازه پاتې شئ."
-    },
-    "donations": {
-      "title": "خیرات",
-      "description": "خپل سیمه ییز جومات د خوندي او شفاف خیراتونو سره ملاتړ وکړئ."
-    },
-    "notifications": {
-      "title": "خبرتیاوې",
-      "description": "د بریښنالیک او اپلیکیشن له لارې مهم تازه معلومات او یادښتونه ترلاسه کړئ."
-    },
-    "community": {
-      "title": "ټولنه",
-      "description": "د ګینټ په مسلمان ټولنه کې د نورو غړو سره اړیکه ونیسئ."
-    },
-    "multilingual": {
-      "title": "څو ژبنی",
-      "description": "په 6 ژبو کې شتون لري پشمول عربي او پښتو د RTL ملاتړ سره."
-    }
+    "contact": "اړیکه",
+    "login": "ننوتل",
+    "register": "ثبت",
+    "profile": "پروفایل",
+    "logout": "وتل",
+    "admin": "اداره کوونکی",
+    "analytics": "تحلیلي"
   },
   "Mosques": {
-    "title": "زموږ جومات",
-    "subtitle": "د ګینټ جومات ومومئ",
-    "mosque1": {
-      "name": "د ګینټ مرکزي جومات",
-      "description": "د ګینټ ترټولو لوی جومات د پراخو وسیلو سره.",
-      "address": "د ګینټ مرکز"
+    "title": "په ګینټ کې جوماتونه",
+    "subtitle": "د ټولو تړل شویو جوماتو او د دوی خدماتو څخه پوه شئ",
+    "searchPlaceholder": "د نوم، پته یا توضیحاتو له مخې پلټئ...",
+    "filterBy": "فلټر",
+    "allMosques": "ټول جوماتونه",
+    "capacity": "ظرفیت",
+    "established": "تاسیس شوی",
+    "imam": "امام",
+    "phone": "تلیفون",
+    "email": "بریښنالیک",
+    "website": "وېب پاڼه",
+    "address": "پته",
+    "services": "خدمات",
+    "prayerTimes": "د لمونځ وختونه",
+    "events": "پیښې",
+    "boardMembers": "د بورډ غړي",
+    "history": "تاریخ",
+    "photos": "عکسونه",
+    "videos": "ویډیوګانې",
+    "documents": "اسناد",
+    "viewDetails": "تفصیلات وګورئ",
+    "viewOnMap": "په نقشه کې وګورئ",
+    "noMosquesFound": "هیڅ جومات ونه موندل شو",
+    "tryDifferentSearch": "یوه بله پلټنې اصطلاح وازمایئ",
+    "error": "د جوماتو د پورته کولو پر وخت یوه تیروتنه رامنځ ته شوه",
+    "loading": "جوماتونه پورته کیږي...",
+    "map": {
+      "title": "په نقشه کې جوماتونه",
+      "description": "په ګینټ کې ټول جوماتونه په نقشه کې وګورئ",
+      "searchPlaceholder": "یوه ځای پلټئ...",
+      "noResults": "هیڅ پایلې ونه موندل شوې",
+      "error": "د نقشې د پورته کولو پر وخت یوه تیروتنه رامنځ ته شوه"
     },
-    "mosque2": {
-      "name": "النور جومات",
-      "description": "د ښار په منځ کې ګرم او مینه ناک جومات.",
-      "address": "د ګینټ ختیځ"
+    "search": {
+      "title": "جومات پلټئ",
+      "description": "په ګینټ کې جوماتونه ومومئ"
     },
-    "mosque3": {
-      "name": "مسجد الرحمن",
-      "description": "د زده کړې او ټولنې پر تمرکز سره عصري جومات.",
-      "address": "د ګینټ سویل"
+    "description": "د خدماتو او تاسیساتو پر بنسټ په ګینټ کې جوماتونه ومومئ",
+    "searchPlaceholder": "نوم، پته، توضیحات"
+  },
+  "MosqueRegistration": {
+    "title": "د جومات ثبت",
+    "description": "خپل جومات د VGM سره ثبت کړئ"
+  },
+  "Auth": {
+    "Shared": {
+      "email": "د بریښنالیک پته",
+      "password": "پاسورډ",
+      "firstName": "لومړی نوم",
+      "lastName": "د کورنۍ نوم",
+      "placeholders": {
+        "firstName": "خپل لومړی نوم ولیکئ",
+        "lastName": "د خپلې کورنۍ نوم ولیکئ"
+      },
+      "errors": {
+        "passwordMismatch": "پاسورډونه سمون نلري",
+        "passwordLength": "پاسورډ باید لږ تر لږه 6 حروف ولري"
+      },
+      "genericError": "یوه شی غلطه شوه. مهرباني وکړئ بیا هڅه وکړئ.",
+      "supportTitle": "مرستې ته اړتیا لرئ؟",
+      "phoneLabel": "د تلیفون شمیره"
     },
-    "learnMore": "نور معلومات",
-    "viewAll": "ټول جومات وګورئ"
+    "Login": {
+      "title": "خپل حساب ته ننوځئ",
+      "subtitle": "بیرته ښه راغلاست! د دوام لپاره ننوځئ.",
+      "cta": "یا {create} نوی حساب",
+      "errors": {
+        "invalidCredentials": "غلط بریښنالیک پته یا پاسورډ"
+      },
+      "placeholders": {
+        "email": "خپله د بریښنالیک پته ولیکئ",
+        "password": "خپل پاسورډ ولیکئ"
+      },
+      "rememberMe": "ما یاد وساتئ",
+      "forgotPassword": "خپل پاسورډ هیر شوی؟",
+      "actions": {
+        "signingIn": "ننوتل کیږي...",
+        "signIn": "ننوتل"
+      },
+      "demo": {
+        "title": "دیمو حسابونه",
+        "admin": "اداره کوونکی: admin@vgm.be / admin123",
+        "mosqueAdmin": "د جومات اداره کوونکی: imam@salahaddien.be / imam123",
+        "user": "کارونکی: user@example.com / user123"
+      },
+      "support": {
+        "title": "د ننوتلو کې ستونزې لرئ؟",
+        "description": "خپله د بریښنالیک پته وګورئ او ډاډه اوسئ چې ستاسو پاسورډ سم دی.",
+        "tips": [
+          "وګورئ چې Caps Lock بند دی",
+          "هغه د بریښنالیک پته وکاروئ چې تاسو پکې ثبت شوي یاست",
+          "که مرستې ته اړتیا لرئ نو د ملاتړ سره اړیکه ونیسئ"
+        ],
+        "cta": "لا هم ستونزې لرئ؟ {link}",
+        "ctaLinkLabel": "د ملاتړ سره اړیکه ونیسئ"
+      }
+    },
+    "Register": {
+      "title": "حساب جوړ کړئ",
+      "subtitle": "د VGM خدماتو ته د لاسرسي لپاره شخصي حساب جوړ کړئ.",
+      "cta": "دمخه ثبت شوي یاست؟ {login}",
+      "errors": {
+        "mosqueLoad": "موږ نشو کولی د جوماتونو لیست پورته کړو. مهرباني وکړئ وروسته بیا هڅه وکړئ.",
+        "mosqueRequired": "هغه جومات وټاکئ چې تاسو یې استازیتوب کوئ."
+      },
+      "success": "ثبت بریالی شو. د دوام لپاره مهرباني وکړئ ننوځئ.",
+      "accountType": {
+        "label": "هغه د حساب ډول وټاکئ چې ستاسو د رول سره سمون لري",
+        "user": {
+          "title": "د ټولنې غړی",
+          "description": "د فعالیتونو، خبرونو او خدماتو څخه خبر اوسئ."
+        },
+        "mosqueAdmin": {
+          "title": "د جومات اداره کوونکی",
+          "description": "د جومات معلومات، پیښې او اعلانات اداره کړئ."
+        },
+        "cta": "غواړئ د جومات اداره کوونکی شئ؟ {link}",
+        "ctaLinkLabel": "غوښتنه واستوئ"
+      },
+      "placeholders": {
+        "email": "خپله د بریښنالیک پته ولیکئ",
+        "password": "یوه خوندي پاسورډ جوړ کړئ"
+      },
+      "phone": {
+        "label": "د تلیفون شمیره (اختیاري)",
+        "placeholder": "+32 9 123 45 67"
+      },
+      "mosque": {
+        "label": "تړل شوی جومات",
+        "loading": "جوماتونه پورته کیږي...",
+        "placeholder": "یو جومات وټاکئ",
+        "notRequired": "د غړو حسابونو لپاره اړین ندی",
+        "help": "جومات نه ښکاري؟ د لاسرسي لپاره {contact} سره اړیکه ونیسئ.",
+        "customLabel": "د جومات نوم که په لیست کې نه وي",
+        "customPlaceholder": "د جومات رسمي نوم وښایاست"
+      },
+      "confirmPassword": {
+        "label": "پاسورډ تصدیق کړئ",
+        "placeholder": "خپل پاسورډ بیا ولیکئ"
+      },
+      "actions": {
+        "creating": "حساب جوړیږي...",
+        "create": "حساب جوړ کړئ"
+      },
+      "support": {
+        "title": "د روان ثبت لپاره لارښوونې",
+        "points": [
+          "هغه د بریښنالیک پته وکاروئ چې تاسو یې په منظم ډول وګورئ",
+          "لږ تر لږه 6 حروفو یوه قوي پاسورډ وټاکئ",
+          "که تاسو د اداره کوونکي حقونو ته اړتیا لرئ نو سم جومات وټاکئ"
+        ]
+      },
+      "nextSteps": {
+        "title": "وروسته څه کیږي؟",
+        "description": "د ننوتلو وروسته، تاسو کولی شئ خپل پروفایل بشپړ کړئ او که اړین وي نو اضافي حقونه وغواړئ."
+      },
+      "motivation": {
+        "label": "تاسو ولې د اداره کوونکي حقونو ته اړتیا لرئ؟",
+        "placeholder": "خپل مسؤولیتونه او د پورټل کارولو څرنګوالی تشریح کړئ",
+        "helper": "د VGM ټیم غوښتنې لاسي ډول وګوري. د خپل رول او د تصدیق معلوماتو په اړه تفصیلات ورکړئ."
+      },
+      "successUser": "ثبت بریالی شو. د دوام لپاره مهرباني وکړئ ننوځئ.",
+      "successMosqueAdmin": "ثبت ترلاسه شو. د VGM ټیم به ستاسو د جومات د اداره کولو غوښتنه وګوري. تاسو کولی شئ د ننوتلو وروسته حالت تعقیب کړئ."
+    },
+    "ForgotPassword": {
+      "title": "د پاسورډ بیرته راګرځول",
+      "subtitle": "موږ ته ووایاست چې موږ څنګه کولی شو تاسو ته د بیرته لاسرسي کولو کې مرسته وکړو.",
+      "steps": {
+        "title": "دا ګامونه تعقیب کړئ",
+        "items": [
+          "هغه د بریښنالیک پته ورکړئ چې ستاسو حساب سره تړلې ده",
+          "د ستونزې لنډه تشریح ورکړئ چې تاسو یې تجربه کوئ",
+          "زموږ د ملاتړ ټیم به ستاسو سره د راتلونکو ګامونو سره اړیکه ونیسي"
+        ]
+      },
+      "contact": {
+        "title": "د VGM ملاتړ سره اړیکه ونیسئ",
+        "description": "ستاسو نوم، جومات (که اړین وي) او د ستونزې لنډه تشریح سره {email} ته بریښنالیک واستوئ.",
+        "note": "موږ د یوه ورځني کار په موده کې ځواب ورکوو."
+      },
+      "backToLogin": "{link} ته بیرته",
+      "security": {
+        "title": "د امنیت لارښوونې",
+        "tips": [
+          "خپل پاسورډ هیڅکله د نورو سره شریک مه کړئ",
+          "د دې پلیټفارم لپاره یو ځانګړی پاسورډ وکاروئ",
+          "که تاسو د غیر مجاز لاسرسي شک لرئ نو موږ سره اړیکه ونیسئ"
+        ]
+      },
+      "support": {
+        "description": "غواړئ چې یو سړي سره خبرې وکړئ؟ د اړیکو د پاڼې د معلوماتو له لارې موږ وروکړئ."
+      },
+      "errors": {
+        "emailRequired": "مهرباني وکړئ هغه د بریښنالیک پته ورکړئ چې ستاسو حساب سره تړلې ده.",
+        "requestFailed": "بیرته راګرځول پیل نشو کولی. مهرباني وکړئ بیا هڅه وکړئ.",
+        "tokenAndPasswordRequired": "مهرباني وکړئ د ټوکن او نوي پاسورډ دواړه ورکړئ.",
+        "resetFailed": "د پاسورډ بیرته تنظیم کول ناکام شول. ټوکن وګورئ او بیا هڅه وکړئ."
+      },
+      "request": {
+        "title": "د بیرته راګرځولو لینک غواړئ",
+        "description": "خپله د بریښنالیک پته ولیکئ او موږ به تاسو ته د خپل پاسورډ بیرته تنظیم کولو لارښوونې واستوو.",
+        "placeholder": "name@example.com",
+        "submit": "لارښوونې واستوئ",
+        "submitBusy": "لیږل کیږي...",
+        "success": "د بیرته راګرځولو لارښوونې ستاسو د بریښنالیک پتې ته واستول شوې."
+      },
+      "reset": {
+        "title": "نوی پاسورډ تنظیم کړئ",
+        "description": "د خپل بریښنالیک څخه ټوکن او نوی پاسورډ ولیکئ.",
+        "tokenPlaceholder": "د بریښنالیک څخه ټوکن",
+        "passwordPlaceholder": "نوی پاسورډ",
+        "confirmPasswordPlaceholder": "نوی پاسورډ تصدیق کړئ",
+        "submit": "پاسورډ تازه کړئ",
+        "submitBusy": "تازه کیږي...",
+        "success": "ستاسو پاسورډ په بریالیتوب سره تازه شو. اوس تاسو کولی شئ ننوځئ."
+      }
+    }
   },
   "Events": {
     "title": "راتلونکي پیښې",
-    "subtitle": "د ټولو فعالیتونو په اړه تازه پاتې شئ",
+    "subtitle": "د ټولو فعالیتونو څخه خبر اوسئ",
     "event1": {
       "title": "د جمعې لمونځ",
-      "description": "د اونۍ د جمعې لمونځ د هالنډي خطبې سره.",
+      "description": "د پښتو خطبې سره د اونۍ د جمعې لمونځ.",
       "date": "جمعه",
       "time": "13:00",
       "location": "د ګینټ مرکزي جومات"
     },
     "event2": {
-      "title": "د قرآن مطالع",
-      "description": "د ټولو عمرونو لپاره د اونۍ د قرآن مطالع.",
+      "title": "د قرآن مطالعه",
+      "description": "د ټولو عمرونو لپاره د اونۍ د قرآن مطالعه.",
       "date": "یکشنبه",
       "time": "10:00",
       "location": "النور جومات"
     },
     "event3": {
       "title": "د ټولنې غونډه",
-      "description": "د ټولنیزو فعالیتونو لپاره میاشتنی غونډه.",
-      "date": "لومړۍ شنبه",
+      "description": "د ټولنیزو فعالیتونو لپاره د میاشتې غونډه.",
+      "date": "لومړی شنبه",
       "time": "15:00",
       "location": "مسجد الرحمن"
     },
@@ -123,276 +289,206 @@
   },
   "RamadanPage": {
     "title": "رمضان 2025",
-    "description": "د ګینټ ټول رمضان فعالیتونه او د افطار ځایونه ومومئ."
+    "description": "په ګینټ کې د ټولو د رمضان فعالیتونو او د افطار ځایونو څخه پوه شئ."
   },
-  "IftarMap": {
-    "map": {
-      "title": "د افطار نقشه"
-    },
-    "events": {
-      "title": "پلان شوي افطارونه",
-      "familyFriendly": "د کورنۍ لپاره مناسب",
-      "noEvents": "د دې مودې لپاره افطار ونه موندل شو."
-    },
-    "prayerTimes": {
-      "title": "د نن لمونځ وختونه"
-    }
-  },
-  "About": {
-    "title": "د VGM په اړه",
-    "description": "د ګینټ جوماتو ټولنه د ګینټ په مسلمان ټولنه کې اړیکې جوړوي او ملاتړ کوي."
-  },
-  "Janazah": {
-    "title": "د جنازې لمونځ",
-    "description": "د جنازې لمونځ او خدماتو په اړه معلومات."
-  },
-  "News": {
-    "title": "خبرونه",
-    "description": "د VGM څخه تازه خبرونه او اعلانات."
+  "PrayerTimes": {
+    "title": "د لمونځ وختونه",
+    "subtitle": "د ګینټ لپاره د ورځني لمونځ وختونه وګورئ",
+    "today": "نن",
+    "tomorrow": "سبا",
+    "fajr": "فجر",
+    "sunrise": "د لمر ختځیدل",
+    "dhuhr": "ظهر",
+    "asr": "عصر",
+    "maghrib": "مغرب",
+    "isha": "عشاء",
+    "nextPrayer": "راتلونکی لمونځ",
+    "timeUntil": "پورې",
+    "source": "سرچینه",
+    "calculationMethod": "د محاسباتو میتود",
+    "location": "ځای",
+    "coordinates": "کورډیناټونه",
+    "timezone": "د وخت زون",
+    "adjustments": "تنظیمات",
+    "error": "د لمونځ د وختونو د پورته کولو پر وخت یوه تیروتنه رامنځ ته شوه",
+    "loading": "د لمونځ وختونه پورته کیږي...",
+    "noData": "د لمونځ وختونه شتون نلري",
+    "tryAgain": "بیا هڅه وکړئ"
   },
   "Donations": {
     "title": "خیرات",
-    "description": "د VGM ټولنې ملاتړ وکړئ"
-  },
-  "Memorandum": {
-    "title": "یادداشت",
-    "description": "زموږ ماموریت، لید او ارزښتونه"
-  },
-  "Board": {
-    "title": "بورډ",
-    "description": "د VGM بورډ سره وپیژنئ"
-  },
-  "MosqueSearch": {
-    "title": "د جوماتو لټون",
-    "description": "په ګینټ کې جوماتونه ومومئ"
-  },
-  "MosqueRegistration": {
-    "title": "د جومات ثبت",
-    "description": "خپل جومات د VGM سره ثبت کړئ"
-  },
-  "Auth": {
-    "Shared": {
-      "email": "Email address",
-      "password": "Password",
-      "firstName": "First name",
-      "lastName": "Last name",
-      "placeholders": {
-        "firstName": "Enter your first name",
-        "lastName": "Enter your last name"
-      },
-      "errors": {
-        "passwordMismatch": "Passwords do not match",
-        "passwordLength": "Password must be at least 6 characters long"
-      },
-      "genericError": "Something went wrong. Please try again.",
-      "supportTitle": "Need help?",
-      "phoneLabel": "Phone number"
-    },
-    "Login": {
-      "title": "Sign in to your account",
-      "cta": "Or {create} a new account",
-      "errors": {
-        "invalidCredentials": "Invalid email or password"
-      },
-      "placeholders": {
-        "email": "Enter your email",
-        "password": "Enter your password"
-      },
-      "rememberMe": "Remember me",
-      "forgotPassword": "Forgot your password?",
-      "actions": {
-        "signingIn": "Signing in...",
-        "signIn": "Sign in"
-      },
-      "demo": {
-        "title": "Demo accounts",
-        "admin": "Admin: admin@vgm.be / admin123",
-        "mosqueAdmin": "Mosque Admin: imam@salahaddien.be / imam123",
-        "user": "User: user@example.com / user123"
-      },
-      "support": {
-        "title": "Having trouble logging in?",
-        "description": "Check your email address and make sure your password is correct.",
-        "tips": [
-          "Verify that Caps Lock is off",
-          "Use the email address you registered with",
-          "Contact support if you need help"
-        ],
-        "cta": "Need mosque admin access? {link}",
-        "ctaLinkLabel": "Submit a request here"
-      },
-      "security": {
-        "title": "Your data is secure",
-        "description": "Logins are protected with encrypted connections and monitored for unusual activity."
-      },
-      "subtitle": "Access your personalised dashboard and community updates."
-    },
-    "Register": {
-      "title": "Create your account",
-      "cta": "Already registered? {login}",
-      "errors": {
-        "mosqueLoad": "We could not load the list of mosques. Please try again later.",
-        "mosqueRequired": "Select the mosque you represent."
-      },
-      "success": "Registration successful. Please log in to continue.",
-      "accountType": {
-        "label": "Choose the account type that fits your role",
-        "user": {
-          "title": "Community member",
-          "description": "Stay informed about events, news and services."
-        },
-        "mosqueAdmin": {
-          "title": "Mosque administrator",
-          "description": "Manage mosque information, events and announcements."
-        },
-        "cta": "Need access to manage a mosque? {link}",
-        "ctaLinkLabel": "Submit a request"
-      },
-      "placeholders": {
-        "email": "Enter your email",
-        "password": "Create a secure password"
-      },
-      "phone": {
-        "label": "Phone number (optional)",
-        "placeholder": "+32 9 123 45 67"
-      },
-      "mosque": {
-        "label": "Associated mosque",
-        "loading": "Loading mosques...",
-        "placeholder": "Select a mosque",
-        "notRequired": "Not required for community member accounts",
-        "help": "Mosque missing? Contact {contact} to request access.",
-        "customLabel": "Mosque name if not listed",
-        "customPlaceholder": "Provide the official mosque name"
-      },
-      "confirmPassword": {
-        "label": "Confirm password",
-        "placeholder": "Re-enter your password"
-      },
-      "actions": {
-        "creating": "Creating account...",
-        "create": "Create account"
-      },
-      "support": {
-        "title": "Tips for a smooth registration",
-        "points": [
-          "Use an email address you check regularly",
-          "Choose a strong password with at least 6 characters",
-          "Select the correct mosque if you need admin access"
-        ]
-      },
-      "nextSteps": {
-        "title": "What happens next?",
-        "description": "After logging in you can complete your profile and request additional permissions if needed."
-      },
-      "motivation": {
-        "label": "Why do you need administrator access?",
-        "placeholder": "Describe your responsibilities and how you will use the portal",
-        "helper": "The VGM team reviews requests manually. Include details about your role and verification information."
-      },
-      "successUser": "Registration successful. Please log in to continue.",
-      "successMosqueAdmin": "Registration received. The VGM team will review your mosque admin request. You can track its status after signing in.",
-      "subtitle": "Create a personal account to access VGM services."
-    },
-    "ForgotPassword": {
-      "title": "Reset your password",
-      "subtitle": "Let us know how we can help you recover access to your account.",
-      "steps": {
-        "title": "Follow these steps",
-        "items": [
-          "Provide the email address linked to your account",
-          "Describe the issue you are experiencing",
-          "Our support team will contact you with the next steps"
-        ]
-      },
-      "contact": {
-        "title": "Contact the VGM support team",
-        "description": "Send an email to {email} with your name, mosque (if applicable) and a short description of the problem.",
-        "note": "We respond within one business day."
-      },
-      "backToLogin": "Back to {link}",
-      "security": {
-        "title": "Security reminders",
-        "tips": [
-          "Never share your password with others",
-          "Use a unique password for this platform",
-          "Contact us if you suspect unauthorised access"
-        ]
-      },
-      "support": {
-        "description": "Prefer to talk to someone? Call us via the contact details on the contact page."
-      },
-      "errors": {
-        "emailRequired": "Please enter the email associated with your account.",
-        "requestFailed": "We could not start the reset process. Please try again.",
-        "tokenAndPasswordRequired": "Provide both the reset token and a new password.",
-        "resetFailed": "Unable to reset the password. Double-check the token and try again."
-      },
-      "request": {
-        "title": "Request a reset link",
-        "description": "Enter your email address and we will send instructions to reset your password.",
-        "placeholder": "name@example.com",
-        "submit": "Send reset instructions",
-        "submitBusy": "Sending...",
-        "success": "If an account exists, a reset message has been sent.",
-        "tokenNotice": "Development token (only visible locally):"
-      },
-      "reset": {
-        "title": "Reset your password",
-        "description": "Paste the token you received and choose a new password.",
-        "tokenLabel": "Reset token",
-        "passwordLabel": "New password",
-        "submit": "Reset password",
-        "submitBusy": "Resetting...",
-        "success": "Password reset successfully. You can now sign in with your new password."
-      }
-    }
-  },
-  "MosqueAccessRequest": {
-    "title": "Request mosque administrator access",
-    "subtitle": "Submit a request so the VGM team can verify your role before granting management permissions.",
-    "success": "Your request has been submitted. The VGM team will review it shortly.",
-    "errors": {
-      "load": "Unable to load access request data.",
-      "pending": "You already have a pending request.",
-      "submit": "Unable to submit your request. Please try again."
-    },
-    "authRequired": {
-      "title": "Sign in to continue",
-      "description": "Please {link} to request mosque administrator access."
+    "subtitle": "جوماتونه او د ټولنې پروژې ملاتړ وکړئ",
+    "campaigns": {
+      "title": "فعالې کمپاینونه",
+      "description": "د روانو ټولو د خیراتو کمپاینونه وګورئ",
+      "viewAll": "ټول کمپاینونه وګورئ",
+      "donate": "خیرات ورکړئ",
+      "target": "هدف",
+      "raised": "راغونډ شوی",
+      "progress": "پرمختګ",
+      "daysLeft": "ورځې پاتې",
+      "completed": "بشپړ شوی",
+      "noCampaigns": "فعال کمپاینونه نشته",
+      "error": "د کمپاینونو د پورته کولو پر وخت یوه تیروتنه رامنځ ته شوه"
     },
     "form": {
-      "existingMosqueLabel": "Select an existing mosque",
-      "existingMosquePlaceholder": "Choose a mosque from the list",
-      "newMosqueLabel": "Or provide the mosque name",
-      "newMosquePlaceholder": "Enter the mosque name if it is not listed",
-      "newMosqueHelper": "The VGM team will contact you if additional verification is required.",
-      "contactEmailPlaceholder": "Contact email for follow-up",
-      "contactPhoneLabel": "Contact phone (optional)",
-      "contactPhonePlaceholder": "+32 9 123 45 67",
-      "motivationLabel": "Explain your request",
-      "motivationPlaceholder": "Provide context about your role and responsibilities",
-      "motivationHelper": "Include links or references that help us verify your position.",
-      "submit": "Submit request",
-      "submitBusy": "Submitting..."
+      "title": "خیرات ورکړئ",
+      "amount": "مقدار",
+      "currency": "EUR",
+      "description": "توضیحات",
+      "donate": "خیرات ورکړئ",
+      "processing": "پروسس کیږي...",
+      "success": "خیرات په بریالیتوب سره پروسس شو",
+      "error": "د خیراتو د پروسس پر وخت یوه تیروتنه رامنځ ته شوه"
+    }
+  },
+  "Contact": {
+    "title": "اړیکه",
+    "subtitle": "د VGM سره اړیکه ونیسئ",
+    "form": {
+      "name": "نوم",
+      "email": "بریښنالیک",
+      "subject": "موضوع",
+      "message": "پیغام",
+      "submit": "استوئ",
+      "success": "پیغام په بریالیتوب سره واستول شو",
+      "error": "د پیغام د استولو پر وخت یوه تیروتنه رامنځ ته شوه"
     },
-    "tips": {
-      "title": "Tips for approval",
-      "items": [
-        "Use your official mosque email address if possible",
-        "Mention existing roles or responsibilities within the mosque",
-        "Ensure your contact details are accurate so we can reach you"
-      ]
+    "info": {
+      "title": "د اړیکو معلومات",
+      "address": "پته",
+      "phone": "تلیفون",
+      "email": "بریښنالیک",
+      "hours": "د کار ساعات"
+    }
+  },
+  "Search": {
+    "title": "پلټنه",
+    "subtitle": "د جوماتونو، پیښو او خبرونو لپاره پلټنه وکړئ",
+    "placeholder": "خپل د پلټنې اصطلاح ولیکئ...",
+    "filters": {
+      "title": "فلټرونه",
+      "contentType": "د مینځپانګې ډول",
+      "dateRange": "د نیټې سلسله",
+      "location": "ځای",
+      "capacity": "ظرفیت",
+      "clear": "فلټرونه پاک کړئ"
     },
-    "history": {
-      "title": "Request history",
-      "empty": "You have not submitted any requests yet.",
-      "unknownMosque": "Mosque not specified"
+    "results": {
+      "title": "د پلټنې پایلې",
+      "noResults": "هیڅ پایلې ونه موندل شوې",
+      "tryDifferentSearch": "یوه بله د پلټنې اصطلاح وازمایئ",
+      "mosques": "جوماتونه",
+      "events": "پیښې",
+      "news": "خبرونه",
+      "campaigns": "کمپاینونه"
+    },
+    "error": "د پلټنې پر وخت یوه تیروتنه رامنځ ته شوه",
+    "loading": "پلټل کیږي..."
+  },
+  "Notifications": {
+    "title": "خبرتیاوې",
+    "subtitle": "ټولې خبرتیاوې وګورئ",
+    "markAllRead": "ټولې لوستل شوې وګڼئ",
+    "noNotifications": "هیڅ خبرتیاوې نشته",
+    "loading": "خبرتیاوې پورته کیږي...",
+    "error": "د خبرتیاوو د پورته کولو پر وخت یوه تیروتنه رامنځ ته شوه",
+    "types": {
+      "event": "پیښه",
+      "donation": "خیرات",
+      "mosque": "جومات",
+      "news": "خبر",
+      "system": "سیستم",
+      "general": "عمومي"
+    }
+  },
+  "Analytics": {
+    "title": "تحلیلي",
+    "subtitle": "احصائیه او راپورونه وګورئ",
+    "overview": "عمومي کتنه",
+    "users": "کارونکي",
+    "mosques": "جوماتونه",
+    "events": "پیښې",
+    "donations": "خیرات",
+    "pageViews": "د پاڼې کتنې",
+    "uniqueVisitors": "ځانګړي لیدونکي",
+    "totalUsers": "ټول کارونکي",
+    "activeUsers": "فعال کارونکي",
+    "totalMosques": "ټول جوماتونه",
+    "totalEvents": "ټولې پیښې",
+    "totalDonations": "ټول خیرات",
+    "loading": "تحلیلي پورته کیږي...",
+    "error": "د تحلیلي د پورته کولو پر وخت یوه تیروتنه رامنځ ته شوه"
+  },
+  "Admin": {
+    "title": "د اداره کوونکي پینل",
+    "subtitle": "د VGM پلیټفارم اداره کړئ",
+    "overview": "عمومي کتنه",
+    "users": "کارونکي",
+    "events": "پیښې",
+    "news": "خبرونه",
+    "accessRequests": "د لاسرسي غوښتنې",
+    "totalUsers": "ټول کارونکي",
+    "totalEvents": "ټولې پیښې",
+    "totalNews": "ټول خبرونه",
+    "pendingRequests": "انتظاري غوښتنې",
+    "approve": "منل",
+    "reject": "رد کړئ",
+    "loading": "د اداره کوونکي معلومات پورته کیږي...",
+    "error": "د اداره کوونکي معلوماتو د پورته کولو پر وخت یوه تیروتنه رامنځ ته شوه"
+  },
+  "Profile": {
+    "title": "پروفایل",
+    "subtitle": "د خپل حساب معلومات اداره کړئ",
+    "personalInfo": "شخصي معلومات",
+    "mosqueInfo": "د جومات معلومات",
+    "preferences": "غوره توبونه",
+    "save": "خوندي کړئ",
+    "saving": "خوندي کیږي...",
+    "success": "پروفایل په بریالیتوب سره تازه شو",
+    "error": "د پروفایل د تازه کولو پر وخت یوه تیروتنه رامنځ ته شوه"
+  },
+  "MosqueAccessRequest": {
+    "title": "د جومات د لاسرسي غوښتنه",
+    "subtitle": "د جومات د اداره کولو لپاره لاسرسي وغواړئ",
+    "form": {
+      "mosque": "جومات",
+      "motivation": "انګیزه",
+      "submit": "غوښتنه واستوئ",
+      "submitting": "لیږل کیږي...",
+      "success": "غوښتنه په بریالیتوب سره واستول شوه",
+      "error": "د غوښتنې د استولو پر وخت یوه تیروتنه رامنځ ته شوه"
     },
     "status": {
-      "pending": "Pending",
-      "approved": "Approved",
-      "rejected": "Rejected"
+      "pending": "انتظار کې",
+      "approved": "منل شوی",
+      "rejected": "رد شوی"
     }
+  },
+  "Footer": {
+    "title": "د ګینټ جوماتو ټولنه",
+    "description": "د ګینټ په جوماتو کې ډیجیټل ټولنه",
+    "links": {
+      "about": "زموږ په اړه",
+      "mosques": "جوماتونه",
+      "events": "پیښې",
+      "donations": "خیرات",
+      "contact": "اړیکه",
+      "privacy": "محرمیت",
+      "terms": "شرایط"
+    },
+    "community": {
+      "title": "ټولنه",
+      "news": "خبرونه",
+      "events": "پیښې",
+      "prayerTimes": "د لمونځ وختونه",
+      "donations": "خیرات"
+    },
+    "contact": {
+      "title": "اړیکه",
+      "address": "ګینټ، بلجیم",
+      "email": "info@vgm-gent.be"
+    },
+    "copyright": "© 2025 د ګینټ جوماتو ټولنه. ټول حقونه خوندي دي."
   }
 }

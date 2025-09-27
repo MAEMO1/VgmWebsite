@@ -1,398 +1,494 @@
 {
-  "HomePage": {
-    "title": "Welcome to VGM",
-    "description": "Association of Ghent Mosques"
+  "Home": {
+    "title": "Vereniging van Gentse Moskeeën",
+    "subtitle": "Welkom bij de digitale gemeenschap van moskeeën in Gent",
+    "description": "Ontdek alle aangesloten moskeeën, evenementen en diensten in Gent",
+    "mosques": {
+      "title": "Moskeeën in Gent",
+      "description": "Ontdek alle aangesloten moskeeën en hun diensten",
+      "viewAll": "Alle moskeeën bekijken",
+      "viewDetails": "Meer informatie",
+      "capacity": "capaciteit",
+      "established": "opgericht",
+      "error": "Er is een fout opgetreden bij het laden van de moskeeën"
+    },
+    "events": {
+      "title": "Aankomende Evenementen",
+      "description": "Blijf op de hoogte van alle activiteiten",
+      "viewAll": "Alle evenementen bekijken",
+      "viewDetails": "Meer informatie",
+      "error": "Er is een fout opgetreden bij het laden van de evenementen"
+    },
+    "news": {
+      "title": "Laatste Nieuws",
+      "description": "Blijf op de hoogte van het laatste nieuws",
+      "viewAll": "Alle nieuws bekijken",
+      "viewDetails": "Lees meer",
+      "error": "Er is een fout opgetreden bij het laden van het nieuws"
+    }
   },
   "Navigation": {
     "home": "Home",
-    "mosques": "Mosques",
-    "community": "Community",
-    "about": "About",
-    "events": "Events",
-    "ramadan": "Ramadan",
-    "donations": "Donations",
-    "requestAdminAccess": "Request mosque admin access"
-  },
-  "Footer": {
-    "about": {
-      "title": "About VGM",
-      "description": "The Association of Ghent Mosques connects and supports the Muslim community in Ghent."
-    },
-    "links": {
-      "privacy": "Privacy",
-      "terms": "Terms",
-      "contact": "Contact"
-    },
-    "quickLinks": {
-      "title": "Quick Links",
-      "mosques": "Mosques",
-      "events": "Events",
-      "ramadan": "Ramadan"
-    },
-    "contact": {
-      "title": "Contact",
-      "address": "Ghent, Belgium",
-      "phone": "+32 9 123 45 67",
-      "email": "info@vgm.be"
-    },
-    "rights": "All rights reserved."
-  },
-  "Hero": {
-    "title": "Welcome to VGM",
-    "subtitle": "The Association of Ghent Mosques connects and supports the Muslim community in Ghent.",
-    "cta": {
-      "mosques": "View Mosques",
-      "events": "View Events"
-    }
-  },
-  "Features": {
-    "title": "Our Features",
-    "subtitle": "Discover what VGM can do for you",
-    "mosqueDirectory": {
-      "title": "Mosque Directory",
-      "description": "Find all mosques in Ghent with detailed information and locations."
-    },
-    "events": {
-      "title": "Events",
-      "description": "Stay updated on all Islamic events and activities."
-    },
-    "donations": {
-      "title": "Donations",
-      "description": "Support your local mosques with secure and transparent donations."
-    },
-    "notifications": {
-      "title": "Notifications",
-      "description": "Receive important updates and reminders via email and app."
-    },
-    "community": {
-      "title": "Community",
-      "description": "Connect with other members of the Muslim community in Ghent."
-    },
-    "multilingual": {
-      "title": "Multilingual",
-      "description": "Available in 6 languages including Arabic and Pashto with RTL support."
-    }
+    "mosques": "Moskeeën",
+    "events": "Evenementen",
+    "news": "Nieuws",
+    "donations": "Donaties",
+    "contact": "Contact",
+    "login": "Inloggen",
+    "register": "Registreren",
+    "profile": "Profiel",
+    "logout": "Uitloggen",
+    "admin": "Admin",
+    "analytics": "Analytics"
   },
   "Mosques": {
-    "title": "Our Mosques",
-    "subtitle": "Discover the mosques in Ghent",
-    "mosque1": {
-      "name": "Central Mosque Ghent",
-      "description": "The largest mosque in Ghent with extensive facilities.",
-      "address": "Ghent Center"
-    },
-    "mosque2": {
-      "name": "Al-Noor Mosque",
-      "description": "A warm and welcoming mosque in the heart of the city.",
-      "address": "Ghent East"
-    },
-    "mosque3": {
-      "name": "Masjid Al-Rahman",
-      "description": "Modern mosque with focus on education and community.",
-      "address": "Ghent South"
-    },
-    "learnMore": "Learn More",
-    "viewAll": "View All Mosques"
-  },
-  "Events": {
-    "title": "Upcoming Events",
-    "subtitle": "Stay updated on all activities",
-    "event1": {
-      "title": "Friday Prayer",
-      "description": "Weekly Friday prayer with khutbah in Dutch.",
-      "date": "Friday",
-      "time": "13:00",
-      "location": "Central Mosque Ghent"
-    },
-    "event2": {
-      "title": "Quran Study",
-      "description": "Weekly Quran study for all ages.",
-      "date": "Sunday",
-      "time": "10:00",
-      "location": "Al-Noor Mosque"
-    },
-    "event3": {
-      "title": "Community Meeting",
-      "description": "Monthly meeting for community activities.",
-      "date": "First Saturday",
-      "time": "15:00",
-      "location": "Masjid Al-Rahman"
-    },
-    "learnMore": "Learn More",
-    "viewAll": "View All Events"
-  },
-  "RamadanPage": {
-    "title": "Ramadan 2025",
-    "description": "Discover all Ramadan activities and iftar locations in Ghent."
-  },
-  "IftarMap": {
+    "title": "Moskeeën in Gent",
+    "subtitle": "Ontdek alle aangesloten moskeeën en hun diensten",
+    "searchPlaceholder": "Zoek op naam, adres of beschrijving...",
+    "filterBy": "Filter op",
+    "allMosques": "Alle Moskeeën",
+    "capacity": "Capaciteit",
+    "established": "Opgericht",
+    "imam": "Imam",
+    "phone": "Telefoon",
+    "email": "E-mail",
+    "website": "Website",
+    "address": "Adres",
+    "services": "Diensten",
+    "prayerTimes": "Gebedstijden",
+    "events": "Evenementen",
+    "boardMembers": "Bestuursleden",
+    "history": "Geschiedenis",
+    "photos": "Foto's",
+    "videos": "Video's",
+    "documents": "Documenten",
+    "viewDetails": "Bekijk Details",
+    "viewOnMap": "Bekijk op Kaart",
+    "noMosquesFound": "Geen moskeeën gevonden",
+    "tryDifferentSearch": "Probeer een andere zoekterm",
+    "error": "Er is een fout opgetreden bij het laden van de moskeeën",
+    "loading": "Moskeeën laden...",
     "map": {
-      "title": "Iftar Map"
+      "title": "Moskeeën op de Kaart",
+      "description": "Bekijk alle moskeeën in Gent op de kaart",
+      "searchPlaceholder": "Zoek naar een locatie...",
+      "noResults": "Geen resultaten gevonden",
+      "error": "Er is een fout opgetreden bij het laden van de kaart"
     },
-    "events": {
-      "title": "Scheduled Iftars",
-      "familyFriendly": "Family Friendly",
-      "noEvents": "No iftars found for this period."
+    "search": {
+      "title": "Zoek Moskeeën",
+      "description": "Vind moskeeën in Gent"
     },
-    "prayerTimes": {
-      "title": "Today's Prayer Times"
-    }
-  },
-  "About": {
-    "title": "About VGM",
-    "description": "The Association of Ghent Mosques connects and supports the Muslim community in Ghent."
-  },
-  "Janazah": {
-    "title": "Funeral Prayers",
-    "description": "Information about funeral prayers and services."
-  },
-  "News": {
-    "title": "News",
-    "description": "Latest news and announcements from VGM."
-  },
-  "Donations": {
-    "title": "Donations",
-    "description": "Support the VGM community"
-  },
-  "Memorandum": {
-    "title": "Memorandum",
-    "description": "Our mission, vision and values"
-  },
-  "Board": {
-    "title": "Board",
-    "description": "Meet the VGM board"
-  },
-  "MosqueSearch": {
-    "title": "Mosque Search",
-    "description": "Find mosques in Ghent"
+    "description": "Vind moskeeën in Gent op basis van diensten en faciliteiten",
+    "searchPlaceholder": "Naam, adres, beschrijving"
   },
   "MosqueRegistration": {
-    "title": "Mosque Registration",
-    "description": "Register your mosque with VGM"
+    "title": "Moskee Registratie",
+    "description": "Registreer uw moskee bij VGM"
   },
   "Auth": {
     "Shared": {
-      "email": "Email address",
-      "password": "Password",
-      "firstName": "First name",
-      "lastName": "Last name",
+      "email": "E-mailadres",
+      "password": "Wachtwoord",
+      "firstName": "Voornaam",
+      "lastName": "Achternaam",
       "placeholders": {
-        "firstName": "Enter your first name",
-        "lastName": "Enter your last name"
+        "firstName": "Vul uw voornaam in",
+        "lastName": "Vul uw achternaam in"
       },
       "errors": {
-        "passwordMismatch": "Passwords do not match",
-        "passwordLength": "Password must be at least 6 characters long"
+        "passwordMismatch": "Wachtwoorden komen niet overeen",
+        "passwordLength": "Het wachtwoord moet minimaal 6 tekens bevatten"
       },
-      "genericError": "Something went wrong. Please try again.",
-      "supportTitle": "Need help?",
-      "phoneLabel": "Phone number"
+      "genericError": "Er ging iets mis. Probeer het opnieuw.",
+      "supportTitle": "Hulp nodig?",
+      "phoneLabel": "Telefoonnummer"
     },
     "Login": {
-      "title": "Sign in to your account",
-      "cta": "Or {create} a new account",
+      "title": "Log in op uw account",
+      "subtitle": "Welkom terug! Log in om verder te gaan.",
+      "cta": "Of {create} een nieuw account",
       "errors": {
-        "invalidCredentials": "Invalid email or password"
+        "invalidCredentials": "Ongeldig e-mailadres of wachtwoord"
       },
       "placeholders": {
-        "email": "Enter your email",
-        "password": "Enter your password"
+        "email": "Voer uw e-mailadres in",
+        "password": "Voer uw wachtwoord in"
       },
-      "rememberMe": "Remember me",
-      "forgotPassword": "Forgot your password?",
+      "rememberMe": "Onthoud mij",
+      "forgotPassword": "Wachtwoord vergeten?",
       "actions": {
-        "signingIn": "Signing in...",
-        "signIn": "Sign in"
+        "signingIn": "Bezig met inloggen...",
+        "signIn": "Inloggen"
       },
       "demo": {
-        "title": "Demo accounts",
+        "title": "Demo-accounts",
         "admin": "Admin: admin@vgm.be / admin123",
-        "mosqueAdmin": "Mosque Admin: imam@salahaddien.be / imam123",
-        "user": "User: user@example.com / user123"
+        "mosqueAdmin": "Moskee Admin: imam@salahaddien.be / imam123",
+        "user": "Gebruiker: user@example.com / user123"
       },
       "support": {
-        "title": "Having trouble logging in?",
-        "description": "Check your email address and make sure your password is correct.",
+        "title": "Lukt inloggen niet?",
+        "description": "Controleer uw e-mailadres en zorg ervoor dat uw wachtwoord klopt.",
         "tips": [
-          "Verify that Caps Lock is off",
-          "Use the email address you registered with",
-          "Contact support if you need help"
+          "Controleer of Caps Lock uitstaat",
+          "Gebruik het e-mailadres waarmee u zich heeft geregistreerd",
+          "Neem contact op met support als u hulp nodig heeft"
         ],
-        "cta": "Need mosque admin access? {link}",
-        "ctaLinkLabel": "Submit a request here"
-      },
-      "security": {
-        "title": "Your data is secure",
-        "description": "Logins are protected with encrypted connections and monitored for unusual activity."
-      },
-      "subtitle": "Access your personalised dashboard and community updates."
+        "cta": "Heeft u nog steeds problemen? {link}",
+        "ctaLinkLabel": "Neem contact op met support"
+      }
     },
     "Register": {
-      "title": "Create your account",
-      "cta": "Already registered? {login}",
+      "title": "Maak een account aan",
+      "subtitle": "Maak een persoonlijk account aan om toegang te krijgen tot VGM-diensten.",
+      "cta": "Al geregistreerd? {login}",
       "errors": {
-        "mosqueLoad": "We could not load the list of mosques. Please try again later.",
-        "mosqueRequired": "Select the mosque you represent."
+        "mosqueLoad": "We konden de lijst van moskeeën niet laden. Probeer het later opnieuw.",
+        "mosqueRequired": "Selecteer de moskee die u vertegenwoordigt."
       },
-      "success": "Registration successful. Please log in to continue.",
+      "success": "Registratie gelukt. Log in om verder te gaan.",
       "accountType": {
-        "label": "Choose the account type that fits your role",
+        "label": "Kies het accounttype dat bij uw rol past",
         "user": {
-          "title": "Community member",
-          "description": "Stay informed about events, news and services."
+          "title": "Gemeenschapslid",
+          "description": "Blijf op de hoogte van activiteiten, nieuws en diensten."
         },
         "mosqueAdmin": {
-          "title": "Mosque administrator",
-          "description": "Manage mosque information, events and announcements."
+          "title": "Moskee beheerder",
+          "description": "Beheer moskee-informatie, evenementen en aankondigingen."
         },
-        "cta": "Need access to manage a mosque? {link}",
-        "ctaLinkLabel": "Submit a request"
+        "cta": "Wilt u beheerder worden van een moskee? {link}",
+        "ctaLinkLabel": "Dien een aanvraag in"
       },
       "placeholders": {
-        "email": "Enter your email",
-        "password": "Create a secure password"
+        "email": "Voer uw e-mailadres in",
+        "password": "Maak een veilig wachtwoord"
       },
       "phone": {
-        "label": "Phone number (optional)",
+        "label": "Telefoonnummer (optioneel)",
         "placeholder": "+32 9 123 45 67"
       },
       "mosque": {
-        "label": "Associated mosque",
-        "loading": "Loading mosques...",
-        "placeholder": "Select a mosque",
-        "notRequired": "Not required for community member accounts",
-        "help": "Mosque missing? Contact {contact} to request access.",
-        "customLabel": "Mosque name if not listed",
-        "customPlaceholder": "Provide the official mosque name"
+        "label": "Gekoppelde moskee",
+        "loading": "Moskeeën laden...",
+        "placeholder": "Selecteer een moskee",
+        "notRequired": "Niet nodig voor lid-accounts",
+        "help": "Moskee niet zichtbaar? Neem contact op met {contact} voor toegang.",
+        "customLabel": "Moskeenaam indien niet in de lijst",
+        "customPlaceholder": "Vermeld de officiële naam van de moskee"
       },
       "confirmPassword": {
-        "label": "Confirm password",
-        "placeholder": "Re-enter your password"
+        "label": "Bevestig wachtwoord",
+        "placeholder": "Voer uw wachtwoord opnieuw in"
       },
       "actions": {
-        "creating": "Creating account...",
-        "create": "Create account"
+        "creating": "Account wordt aangemaakt...",
+        "create": "Account aanmaken"
       },
       "support": {
-        "title": "Tips for a smooth registration",
+        "title": "Tips voor een vlotte registratie",
         "points": [
-          "Use an email address you check regularly",
-          "Choose a strong password with at least 6 characters",
-          "Select the correct mosque if you need admin access"
+          "Gebruik een e-mailadres dat u regelmatig leest",
+          "Kies een sterk wachtwoord van minimaal 6 tekens",
+          "Selecteer de juiste moskee als u beheerdersrechten nodig heeft"
         ]
       },
       "nextSteps": {
-        "title": "What happens next?",
-        "description": "After logging in you can complete your profile and request additional permissions if needed."
+        "title": "Wat gebeurt er daarna?",
+        "description": "Na het inloggen kunt u uw profiel aanvullen en indien nodig extra rechten aanvragen."
       },
       "motivation": {
-        "label": "Why do you need administrator access?",
-        "placeholder": "Describe your responsibilities and how you will use the portal",
-        "helper": "The VGM team reviews requests manually. Include details about your role and verification information."
+        "label": "Waarom heeft u beheerdersrechten nodig?",
+        "placeholder": "Beschrijf uw verantwoordelijkheden en hoe u het portaal zult gebruiken",
+        "helper": "Het VGM-team beoordeelt aanvragen handmatig. Geef details over uw rol en verificatie-informatie."
       },
-      "successUser": "Registration successful. Please log in to continue.",
-      "successMosqueAdmin": "Registration received. The VGM team will review your mosque admin request. You can track its status after signing in.",
-      "subtitle": "Create a personal account to access VGM services."
+      "successUser": "Registratie gelukt. Log in om verder te gaan.",
+      "successMosqueAdmin": "Registratie ontvangen. Het VGM-team beoordeelt uw aanvraag voor moskee-beheer. U kunt de status volgen na het inloggen."
     },
     "ForgotPassword": {
-      "title": "Reset your password",
-      "subtitle": "Let us know how we can help you recover access to your account.",
+      "title": "Wachtwoord herstellen",
+      "subtitle": "Laat ons weten hoe we u kunnen helpen opnieuw toegang te krijgen.",
       "steps": {
-        "title": "Follow these steps",
+        "title": "Volg deze stappen",
         "items": [
-          "Provide the email address linked to your account",
-          "Describe the issue you are experiencing",
-          "Our support team will contact you with the next steps"
+          "Geef het e-mailadres op dat aan uw account is gekoppeld",
+          "Beschrijf kort het probleem dat u ervaart",
+          "Ons supportteam neemt contact met u op met vervolgstappen"
         ]
       },
       "contact": {
-        "title": "Contact the VGM support team",
-        "description": "Send an email to {email} with your name, mosque (if applicable) and a short description of the problem.",
-        "note": "We respond within one business day."
+        "title": "Neem contact op met VGM support",
+        "description": "Stuur een e-mail naar {email} met uw naam, moskee (indien van toepassing) en een korte omschrijving van het probleem.",
+        "note": "Wij reageren binnen één werkdag."
       },
-      "backToLogin": "Back to {link}",
+      "backToLogin": "Terug naar {link}",
       "security": {
-        "title": "Security reminders",
+        "title": "Veiligheidsadvies",
         "tips": [
-          "Never share your password with others",
-          "Use a unique password for this platform",
-          "Contact us if you suspect unauthorised access"
+          "Deel uw wachtwoord nooit met anderen",
+          "Gebruik een uniek wachtwoord voor dit platform",
+          "Neem contact op als u ongeautoriseerde toegang vermoedt"
         ]
       },
       "support": {
-        "description": "Prefer to talk to someone? Call us via the contact details on the contact page."
+        "description": "Wilt u iemand spreken? Bel ons via de contactgegevens op de contactpagina."
       },
       "errors": {
-        "emailRequired": "Please enter the email associated with your account.",
-        "requestFailed": "We could not start the reset process. Please try again.",
-        "tokenAndPasswordRequired": "Provide both the reset token and a new password.",
-        "resetFailed": "Unable to reset the password. Double-check the token and try again."
+        "emailRequired": "Vul het e-mailadres in dat aan uw account is gekoppeld.",
+        "requestFailed": "Het is niet gelukt om het herstel te starten. Probeer het opnieuw.",
+        "tokenAndPasswordRequired": "Vul zowel het token als een nieuw wachtwoord in.",
+        "resetFailed": "Wachtwoord resetten mislukt. Controleer het token en probeer opnieuw."
       },
       "request": {
-        "title": "Request a reset link",
-        "description": "Enter your email address and we will send instructions to reset your password.",
-        "placeholder": "name@example.com",
-        "submit": "Send reset instructions",
-        "submitBusy": "Sending...",
-        "success": "If an account exists, a reset message has been sent.",
-        "tokenNotice": "Development token (only visible locally):"
+        "title": "Vraag een herstel link aan",
+        "description": "Voer uw e-mailadres in en we sturen u de instructies voor het resetten van uw wachtwoord.",
+        "placeholder": "naam@voorbeeld.be",
+        "submit": "Verstuur instructies",
+        "submitBusy": "Bezig met verzenden...",
+        "success": "Herstel instructies zijn verzonden naar uw e-mailadres."
       },
       "reset": {
-        "title": "Reset your password",
-        "description": "Paste the token you received and choose a new password.",
-        "tokenLabel": "Reset token",
-        "passwordLabel": "New password",
-        "submit": "Reset password",
-        "submitBusy": "Resetting...",
-        "success": "Password reset successfully. You can now sign in with your new password."
+        "title": "Stel een nieuw wachtwoord in",
+        "description": "Voer het token uit uw e-mail en een nieuw wachtwoord in.",
+        "tokenPlaceholder": "Token uit e-mail",
+        "passwordPlaceholder": "Nieuw wachtwoord",
+        "confirmPasswordPlaceholder": "Bevestig nieuw wachtwoord",
+        "submit": "Wachtwoord bijwerken",
+        "submitBusy": "Bezig met bijwerken...",
+        "success": "Uw wachtwoord is succesvol bijgewerkt. U kunt nu inloggen."
       }
     }
   },
-  "MosqueAccessRequest": {
-    "title": "Request mosque administrator access",
-    "subtitle": "Submit a request so the VGM team can verify your role before granting management permissions.",
-    "success": "Your request has been submitted. The VGM team will review it shortly.",
-    "errors": {
-      "load": "Unable to load access request data.",
-      "pending": "You already have a pending request.",
-      "submit": "Unable to submit your request. Please try again."
+  "Events": {
+    "title": "Aankomende Evenementen",
+    "subtitle": "Blijf op de hoogte van alle activiteiten",
+    "event1": {
+      "title": "Vrijdaggebed",
+      "description": "Wekelijks vrijdaggebed met khutbah in het Nederlands.",
+      "date": "Vrijdag",
+      "time": "13:00",
+      "location": "Centrale Moskee Gent"
     },
-    "authRequired": {
-      "title": "Sign in to continue",
-      "description": "Please {link} to request mosque administrator access."
+    "event2": {
+      "title": "Koranstudie",
+      "description": "Wekelijkse Koranstudie voor alle leeftijden.",
+      "date": "Zondag",
+      "time": "10:00",
+      "location": "Al-Noor Moskee"
+    },
+    "event3": {
+      "title": "Gemeenschapsbijeenkomst",
+      "description": "Maandelijkse bijeenkomst voor gemeenschapsactiviteiten.",
+      "date": "Eerste Zaterdag",
+      "time": "15:00",
+      "location": "Masjid Al-Rahman"
+    },
+    "learnMore": "Meer informatie",
+    "viewAll": "Bekijk Alle Evenementen"
+  },
+  "RamadanPage": {
+    "title": "Ramadan 2025",
+    "description": "Ontdek alle Ramadan activiteiten en iftar locaties in Gent."
+  },
+  "PrayerTimes": {
+    "title": "Gebedstijden",
+    "subtitle": "Bekijk de dagelijkse gebedstijden voor Gent",
+    "today": "Vandaag",
+    "tomorrow": "Morgen",
+    "fajr": "Fajr",
+    "sunrise": "Zonsopgang",
+    "dhuhr": "Dhuhr",
+    "asr": "Asr",
+    "maghrib": "Maghrib",
+    "isha": "Isha",
+    "nextPrayer": "Volgende gebed",
+    "timeUntil": "over",
+    "source": "Bron",
+    "calculationMethod": "Berekeningsmethode",
+    "location": "Locatie",
+    "coordinates": "Coördinaten",
+    "timezone": "Tijdzone",
+    "adjustments": "Aanpassingen",
+    "error": "Er is een fout opgetreden bij het laden van de gebedstijden",
+    "loading": "Gebedstijden laden...",
+    "noData": "Geen gebedstijden beschikbaar",
+    "tryAgain": "Probeer opnieuw"
+  },
+  "Donations": {
+    "title": "Donaties",
+    "subtitle": "Steun de moskeeën en gemeenschapsprojecten",
+    "campaigns": {
+      "title": "Actieve Campagnes",
+      "description": "Bekijk alle lopende donatiecampagnes",
+      "viewAll": "Alle campagnes bekijken",
+      "donate": "Doneren",
+      "target": "Doel",
+      "raised": "Opgehaald",
+      "progress": "Voortgang",
+      "daysLeft": "dagen over",
+      "completed": "Voltooid",
+      "noCampaigns": "Geen actieve campagnes",
+      "error": "Er is een fout opgetreden bij het laden van de campagnes"
     },
     "form": {
-      "existingMosqueLabel": "Select an existing mosque",
-      "existingMosquePlaceholder": "Choose a mosque from the list",
-      "newMosqueLabel": "Or provide the mosque name",
-      "newMosquePlaceholder": "Enter the mosque name if it is not listed",
-      "newMosqueHelper": "The VGM team will contact you if additional verification is required.",
-      "contactEmailPlaceholder": "Contact email for follow-up",
-      "contactPhoneLabel": "Contact phone (optional)",
-      "contactPhonePlaceholder": "+32 9 123 45 67",
-      "motivationLabel": "Explain your request",
-      "motivationPlaceholder": "Provide context about your role and responsibilities",
-      "motivationHelper": "Include links or references that help us verify your position.",
-      "submit": "Submit request",
-      "submitBusy": "Submitting..."
+      "title": "Maak een donatie",
+      "amount": "Bedrag",
+      "currency": "EUR",
+      "description": "Beschrijving",
+      "donate": "Doneren",
+      "processing": "Bezig met verwerken...",
+      "success": "Donatie succesvol verwerkt",
+      "error": "Er is een fout opgetreden bij het verwerken van de donatie"
+    }
+  },
+  "Contact": {
+    "title": "Contact",
+    "subtitle": "Neem contact op met VGM",
+    "form": {
+      "name": "Naam",
+      "email": "E-mail",
+      "subject": "Onderwerp",
+      "message": "Bericht",
+      "submit": "Verzenden",
+      "success": "Bericht succesvol verzonden",
+      "error": "Er is een fout opgetreden bij het verzenden van het bericht"
     },
-    "tips": {
-      "title": "Tips for approval",
-      "items": [
-        "Use your official mosque email address if possible",
-        "Mention existing roles or responsibilities within the mosque",
-        "Ensure your contact details are accurate so we can reach you"
-      ]
+    "info": {
+      "title": "Contactinformatie",
+      "address": "Adres",
+      "phone": "Telefoon",
+      "email": "E-mail",
+      "hours": "Openingstijden"
+    }
+  },
+  "Search": {
+    "title": "Zoeken",
+    "subtitle": "Zoek naar moskeeën, evenementen en nieuws",
+    "placeholder": "Voer uw zoekterm in...",
+    "filters": {
+      "title": "Filters",
+      "contentType": "Inhoudstype",
+      "dateRange": "Datumbereik",
+      "location": "Locatie",
+      "capacity": "Capaciteit",
+      "clear": "Filters wissen"
     },
-    "history": {
-      "title": "Request history",
-      "empty": "You have not submitted any requests yet.",
-      "unknownMosque": "Mosque not specified"
+    "results": {
+      "title": "Zoekresultaten",
+      "noResults": "Geen resultaten gevonden",
+      "tryDifferentSearch": "Probeer een andere zoekterm",
+      "mosques": "Moskeeën",
+      "events": "Evenementen",
+      "news": "Nieuws",
+      "campaigns": "Campagnes"
+    },
+    "error": "Er is een fout opgetreden bij het zoeken",
+    "loading": "Zoeken..."
+  },
+  "Notifications": {
+    "title": "Notificaties",
+    "subtitle": "Bekijk al uw notificaties",
+    "markAllRead": "Markeer alles als gelezen",
+    "noNotifications": "Geen notificaties",
+    "loading": "Notificaties laden...",
+    "error": "Er is een fout opgetreden bij het laden van de notificaties",
+    "types": {
+      "event": "Evenement",
+      "donation": "Donatie",
+      "mosque": "Moskee",
+      "news": "Nieuws",
+      "system": "Systeem",
+      "general": "Algemeen"
+    }
+  },
+  "Analytics": {
+    "title": "Analytics",
+    "subtitle": "Bekijk statistieken en rapporten",
+    "overview": "Overzicht",
+    "users": "Gebruikers",
+    "mosques": "Moskeeën",
+    "events": "Evenementen",
+    "donations": "Donaties",
+    "pageViews": "Paginaweergaven",
+    "uniqueVisitors": "Unieke bezoekers",
+    "totalUsers": "Totaal gebruikers",
+    "activeUsers": "Actieve gebruikers",
+    "totalMosques": "Totaal moskeeën",
+    "totalEvents": "Totaal evenementen",
+    "totalDonations": "Totaal donaties",
+    "loading": "Analytics laden...",
+    "error": "Er is een fout opgetreden bij het laden van de analytics"
+  },
+  "Admin": {
+    "title": "Admin Dashboard",
+    "subtitle": "Beheer het VGM platform",
+    "overview": "Overzicht",
+    "users": "Gebruikers",
+    "events": "Evenementen",
+    "news": "Nieuws",
+    "accessRequests": "Toegangsaanvragen",
+    "totalUsers": "Totaal gebruikers",
+    "totalEvents": "Totaal evenementen",
+    "totalNews": "Totaal nieuws",
+    "pendingRequests": "Wachtende aanvragen",
+    "approve": "Goedkeuren",
+    "reject": "Afwijzen",
+    "loading": "Admin data laden...",
+    "error": "Er is een fout opgetreden bij het laden van de admin data"
+  },
+  "Profile": {
+    "title": "Profiel",
+    "subtitle": "Beheer uw accountgegevens",
+    "personalInfo": "Persoonlijke informatie",
+    "mosqueInfo": "Moskee informatie",
+    "preferences": "Voorkeuren",
+    "save": "Opslaan",
+    "saving": "Bezig met opslaan...",
+    "success": "Profiel succesvol bijgewerkt",
+    "error": "Er is een fout opgetreden bij het bijwerken van het profiel"
+  },
+  "MosqueAccessRequest": {
+    "title": "Moskee Toegangsaanvraag",
+    "subtitle": "Vraag toegang aan om een moskee te beheren",
+    "form": {
+      "mosque": "Moskee",
+      "motivation": "Motivatie",
+      "submit": "Aanvraag indienen",
+      "submitting": "Bezig met indienen...",
+      "success": "Aanvraag succesvol ingediend",
+      "error": "Er is een fout opgetreden bij het indienen van de aanvraag"
     },
     "status": {
-      "pending": "Pending",
-      "approved": "Approved",
-      "rejected": "Rejected"
+      "pending": "In behandeling",
+      "approved": "Goedgekeurd",
+      "rejected": "Afgewezen"
     }
+  },
+  "Footer": {
+    "title": "Vereniging van Gentse Moskeeën",
+    "description": "De digitale gemeenschap voor moskeeën in Gent",
+    "links": {
+      "about": "Over ons",
+      "mosques": "Moskeeën",
+      "events": "Evenementen",
+      "donations": "Donaties",
+      "contact": "Contact",
+      "privacy": "Privacy",
+      "terms": "Voorwaarden"
+    },
+    "community": {
+      "title": "Gemeenschap",
+      "news": "Nieuws",
+      "events": "Evenementen",
+      "prayerTimes": "Gebedstijden",
+      "donations": "Donaties"
+    },
+    "contact": {
+      "title": "Contact",
+      "address": "Gent, België",
+      "email": "info@vgm-gent.be"
+    },
+    "copyright": "© 2025 Vereniging van Gentse Moskeeën. Alle rechten voorbehouden."
   }
 }
