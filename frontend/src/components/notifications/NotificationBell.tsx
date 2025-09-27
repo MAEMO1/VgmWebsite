@@ -29,10 +29,6 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    loadNotifications();
-  }, [loadNotifications]);
-
   const loadNotifications = useCallback(async () => {
     try {
       setLoading(true);
@@ -50,6 +46,10 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    loadNotifications();
+  }, [loadNotifications]);
 
   const markAsRead = async (notificationId: number) => {
     try {
