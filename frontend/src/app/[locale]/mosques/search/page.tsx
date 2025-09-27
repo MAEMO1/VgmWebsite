@@ -337,22 +337,19 @@ export default function MosqueSearchPage() {
                       </div>
 
                       {/* Services */}
-                      {mosque.services && mosque.services.length > 0 && (
-                        <div className="mb-4">
-                          <div className="flex flex-wrap gap-1">
-                            {mosque.services.slice(0, 3).map((service) => (
-                              <span key={service} className="bg-teal-100 text-teal-800 text-xs px-2 py-1 rounded-full">
-                                {service}
-                              </span>
-                            ))}
-                            {mosque.services.length > 3 && (
-                              <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full">
-                                +{mosque.services.length - 3} meer
-                              </span>
-                            )}
-                          </div>
+                      <div className="mb-4">
+                        <div className="flex flex-wrap gap-1">
+                          <span className="bg-teal-100 text-teal-800 text-xs px-2 py-1 rounded-full">
+                            Vrijdaggebed
+                          </span>
+                          <span className="bg-teal-100 text-teal-800 text-xs px-2 py-1 rounded-full">
+                            Dagelijkse gebeden
+                          </span>
+                          <span className="bg-teal-100 text-teal-800 text-xs px-2 py-1 rounded-full">
+                            Koranlessen
+                          </span>
                         </div>
-                      )}
+                      </div>
 
                       {/* Action */}
                       <button className="w-full bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-700 transition-colors">
