@@ -326,6 +326,30 @@
       },
       "support": {
         "description": "Wilt u iemand spreken? Bel ons via de contactgegevens op de contactpagina."
+      },
+      "errors": {
+        "emailRequired": "Vul het e-mailadres in dat aan uw account is gekoppeld.",
+        "requestFailed": "Het is niet gelukt om het herstel te starten. Probeer het opnieuw.",
+        "tokenAndPasswordRequired": "Vul zowel het token als een nieuw wachtwoord in.",
+        "resetFailed": "Wachtwoord resetten mislukt. Controleer het token en probeer opnieuw."
+      },
+      "request": {
+        "title": "Vraag een herstel link aan",
+        "description": "Voer uw e-mailadres in en we sturen u de instructies voor het resetten van uw wachtwoord.",
+        "placeholder": "naam@voorbeeld.be",
+        "submit": "Verstuur instructies",
+        "submitBusy": "Bezig met verzenden...",
+        "success": "Als het e-mailadres bekend is, ontvangt u zo meteen een bericht.",
+        "tokenNotice": "Ontwikkel-token (alleen zichtbaar lokaal):"
+      },
+      "reset": {
+        "title": "Reset uw wachtwoord",
+        "description": "Plak het ontvangen token en kies een nieuw wachtwoord.",
+        "tokenLabel": "Reset token",
+        "passwordLabel": "Nieuw wachtwoord",
+        "submit": "Wachtwoord resetten",
+        "submitBusy": "Wachtwoord wordt gewijzigd...",
+        "success": "Wachtwoord succesvol gewijzigd. U kunt nu inloggen met uw nieuwe wachtwoord."
       }
     }
   },

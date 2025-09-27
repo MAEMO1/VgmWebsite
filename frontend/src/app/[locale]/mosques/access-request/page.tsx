@@ -48,7 +48,7 @@ export default function MosqueAccessRequestPage() {
           apiClient.getMosques(),
           apiClient.getMyMosqueAccessRequests(),
         ]);
-        setMosques(mosqueResponse || []);
+        setMosques((mosqueResponse || []).filter((mosque): mosque is Mosque => mosque.id !== undefined));
         setRequests(requestResponse);
         setForm((prev) => ({
           ...prev,

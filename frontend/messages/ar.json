@@ -313,6 +313,30 @@
       },
       "support": {
         "description": "Prefer to talk to someone? Call us via the contact details on the contact page."
+      },
+      "errors": {
+        "emailRequired": "Please enter the email associated with your account.",
+        "requestFailed": "We could not start the reset process. Please try again.",
+        "tokenAndPasswordRequired": "Provide both the reset token and a new password.",
+        "resetFailed": "Unable to reset the password. Double-check the token and try again."
+      },
+      "request": {
+        "title": "Request a reset link",
+        "description": "Enter your email address and we will send instructions to reset your password.",
+        "placeholder": "name@example.com",
+        "submit": "Send reset instructions",
+        "submitBusy": "Sending...",
+        "success": "If an account exists, a reset message has been sent.",
+        "tokenNotice": "Development token (only visible locally):"
+      },
+      "reset": {
+        "title": "Reset your password",
+        "description": "Paste the token you received and choose a new password.",
+        "tokenLabel": "Reset token",
+        "passwordLabel": "New password",
+        "submit": "Reset password",
+        "submitBusy": "Resetting...",
+        "success": "Password reset successfully. You can now sign in with your new password."
       }
     }
   },
