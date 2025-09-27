@@ -170,6 +170,86 @@ def create_app():
         conn.close()
         return count
     
+    def track_analytics_event(event_type, user_id=None, mosque_id=None, event_data=None, ip_address=None, user_agent=None):
+        """Track an analytics event"""
+        conn = get_db_connection()
+        conn.execute('''
+            INSERT INTO analytics_events (event_type, user_id, mosque_id, event_data, ip_address, user_agent)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (event_type, user_id, mosque_id, event_data, ip_address, user_agent))
+        conn.commit()
+        conn.close()
+    
+    def track_page_view(page_path, user_id=None, session_id=None, ip_address=None, user_agent=None, referrer=None):
+        """Track a page view"""
+        conn = get_db_connection()
+        conn.execute('''
+            INSERT INTO page_views (page_path, user_id, session_id, ip_address, user_agent, referrer)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (page_path, user_id, session_id, ip_address, user_agent, referrer))
+        conn.commit()
+        conn.close()
+    
+    def track_user_activity(user_id, activity_type, activity_data=None, ip_address=None):
+        """Track user activity"""
+        conn = get_db_connection()
+        conn.execute('''
+            INSERT INTO user_activity (user_id, activity_type, activity_data, ip_address)
+            VALUES (?, ?, ?, ?)
+        ''', (user_id, activity_type, activity_data, ip_address))
+        conn.commit()
+        conn.close()
+    
+    def get_analytics_summary(days=30):
+        """Get analytics summary for the last N days"""
+        conn = get_db_connection()
+        
+        # Page views
+        page_views = conn.execute('''
+            SELECT page_path, COUNT(*) as views
+            FROM page_views
+            WHERE created_at >= datetime('now', '-{} days')
+            GROUP BY page_path
+            ORDER BY views DESC
+            LIMIT 10
+        '''.format(days)).fetchall()
+        
+        # Event types
+        events = conn.execute('''
+            SELECT event_type, COUNT(*) as count
+            FROM analytics_events
+            WHERE created_at >= datetime('now', '-{} days')
+            GROUP BY event_type
+            ORDER BY count DESC
+        '''.format(days)).fetchall()
+        
+        # User activity
+        user_activity = conn.execute('''
+            SELECT activity_type, COUNT(*) as count
+            FROM user_activity
+            WHERE created_at >= datetime('now', '-{} days')
+            GROUP BY activity_type
+            ORDER BY count DESC
+        '''.format(days)).fetchall()
+        
+        # Daily stats
+        daily_stats = conn.execute('''
+            SELECT DATE(created_at) as date, COUNT(*) as page_views
+            FROM page_views
+            WHERE created_at >= datetime('now', '-{} days')
+            GROUP BY DATE(created_at)
+            ORDER BY date DESC
+        '''.format(days)).fetchall()
+        
+        conn.close()
+        
+        return {
+            'page_views': [dict(row) for row in page_views],
+            'events': [dict(row) for row in events],
+            'user_activity': [dict(row) for row in user_activity],
+            'daily_stats': [dict(row) for row in daily_stats]
+        }
+    
     def init_database():
         """Initialize database with payment tables"""
         conn = get_db_connection()
@@ -374,6 +454,47 @@ def create_app():
                 is_active BOOLEAN DEFAULT 1,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS analytics_events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                event_type TEXT NOT NULL,
+                user_id INTEGER,
+                mosque_id INTEGER,
+                event_data TEXT,
+                ip_address TEXT,
+                user_agent TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users (id),
+                FOREIGN KEY (mosque_id) REFERENCES mosques (id)
+            )
+        ''')
+        
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS page_views (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                page_path TEXT NOT NULL,
+                user_id INTEGER,
+                session_id TEXT,
+                ip_address TEXT,
+                user_agent TEXT,
+                referrer TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users (id)
+            )
+        ''')
+        
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS user_activity (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                activity_type TEXT NOT NULL,
+                activity_data TEXT,
+                ip_address TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users (id)
             )
         ''')
         
@@ -959,6 +1080,146 @@ def create_app():
             
         except Exception as e:
             logger.error(f"Error creating notification: {e}")
+            return jsonify({'error': str(e)}), 500
+    
+    # Analytics endpoints
+    @app.route('/api/analytics/track', methods=['POST'])
+    def track_event():
+        """Track an analytics event"""
+        try:
+            data = request.get_json()
+            event_type = data.get('event_type')
+            user_id = data.get('user_id')
+            mosque_id = data.get('mosque_id')
+            event_data = data.get('event_data')
+            
+            if not event_type:
+                return jsonify({'error': 'event_type is required'}), 400
+            
+            ip_address = request.remote_addr
+            user_agent = request.headers.get('User-Agent')
+            
+            track_analytics_event(event_type, user_id, mosque_id, event_data, ip_address, user_agent)
+            
+            return jsonify({'message': 'Event tracked successfully'})
+            
+        except Exception as e:
+            logger.error(f"Error tracking event: {e}")
+            return jsonify({'error': str(e)}), 500
+    
+    @app.route('/api/analytics/page-view', methods=['POST'])
+    def track_page_view_endpoint():
+        """Track a page view"""
+        try:
+            data = request.get_json()
+            page_path = data.get('page_path')
+            user_id = data.get('user_id')
+            session_id = data.get('session_id')
+            
+            if not page_path:
+                return jsonify({'error': 'page_path is required'}), 400
+            
+            ip_address = request.remote_addr
+            user_agent = request.headers.get('User-Agent')
+            referrer = request.headers.get('Referer')
+            
+            track_page_view(page_path, user_id, session_id, ip_address, user_agent, referrer)
+            
+            return jsonify({'message': 'Page view tracked successfully'})
+            
+        except Exception as e:
+            logger.error(f"Error tracking page view: {e}")
+            return jsonify({'error': str(e)}), 500
+    
+    @app.route('/api/analytics/summary', methods=['GET'])
+    @require_auth
+    @require_role('admin')
+    def get_analytics_summary_endpoint():
+        """Get analytics summary (admin only)"""
+        try:
+            days = int(request.args.get('days', 30))
+            summary = get_analytics_summary(days)
+            
+            return jsonify(summary)
+            
+        except Exception as e:
+            logger.error(f"Error getting analytics summary: {e}")
+            return jsonify({'error': str(e)}), 500
+    
+    @app.route('/api/analytics/reports', methods=['GET'])
+    @require_auth
+    @require_role('admin')
+    def get_analytics_reports():
+        """Get detailed analytics reports (admin only)"""
+        try:
+            days = int(request.args.get('days', 30))
+            report_type = request.args.get('type', 'overview')
+            
+            conn = get_db_connection()
+            
+            if report_type == 'overview':
+                # Overview report
+                total_users = conn.execute('SELECT COUNT(*) FROM users').fetchone()[0]
+                total_mosques = conn.execute('SELECT COUNT(*) FROM mosques WHERE is_active = 1').fetchone()[0]
+                total_events = conn.execute('SELECT COUNT(*) FROM events WHERE is_active = 1').fetchone()[0]
+                total_donations = conn.execute('SELECT COUNT(*) FROM donations').fetchone()[0]
+                total_page_views = conn.execute('''
+                    SELECT COUNT(*) FROM page_views 
+                    WHERE created_at >= datetime('now', '-{} days')
+                '''.format(days)).fetchone()[0]
+                
+                report = {
+                    'total_users': total_users,
+                    'total_mosques': total_mosques,
+                    'total_events': total_events,
+                    'total_donations': total_donations,
+                    'total_page_views': total_page_views,
+                    'period_days': days
+                }
+                
+            elif report_type == 'users':
+                # User activity report
+                user_stats = conn.execute('''
+                    SELECT 
+                        u.id, u.first_name, u.last_name, u.email, u.role,
+                        COUNT(ua.id) as activity_count,
+                        MAX(ua.created_at) as last_activity
+                    FROM users u
+                    LEFT JOIN user_activity ua ON u.id = ua.user_id
+                    WHERE ua.created_at >= datetime('now', '-{} days') OR ua.created_at IS NULL
+                    GROUP BY u.id
+                    ORDER BY activity_count DESC
+                '''.format(days)).fetchall()
+                
+                report = [dict(row) for row in user_stats]
+                
+            elif report_type == 'mosques':
+                # Mosque activity report
+                mosque_stats = conn.execute('''
+                    SELECT 
+                        m.id, m.name, m.address,
+                        COUNT(DISTINCT e.id) as event_count,
+                        COUNT(DISTINCT d.id) as donation_count,
+                        COUNT(DISTINCT ae.id) as analytics_events
+                    FROM mosques m
+                    LEFT JOIN events e ON m.id = e.mosque_id AND e.is_active = 1
+                    LEFT JOIN donations d ON m.id = d.mosque_id
+                    LEFT JOIN analytics_events ae ON m.id = ae.mosque_id
+                    WHERE ae.created_at >= datetime('now', '-{} days') OR ae.created_at IS NULL
+                    GROUP BY m.id
+                    ORDER BY analytics_events DESC
+                '''.format(days)).fetchall()
+                
+                report = [dict(row) for row in mosque_stats]
+                
+            else:
+                return jsonify({'error': 'Invalid report type'}), 400
+            
+            conn.close()
+            return jsonify(report)
+            
+        except Exception as e:
+            logger.error(f"Error getting analytics reports: {e}")
             return jsonify({'error': str(e)}), 500
     
     # Existing authentication endpoints (unchanged)

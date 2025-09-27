@@ -6,12 +6,14 @@ import Image from 'next/image';
 import { useTranslations, useLocale } from 'next-intl';
 import { Bars3Icon, XMarkIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import NotificationBell from '@/components/notifications/NotificationBell';
+import { useAuth } from '@/contexts/AuthContext';
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const t = useTranslations('Navigation');
   const locale = useLocale();
+  const { user } = useAuth();
 
   const navigation = [
     { name: t('home'), href: `/${locale}` },
@@ -112,6 +114,22 @@ export function Navigation() {
           
           <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
             <NotificationBell />
+            {user?.role === 'admin' && (
+              <>
+                <Link
+                  href={`/${locale}/admin`}
+                  className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200"
+                >
+                  Admin
+                </Link>
+                <Link
+                  href={`/${locale}/analytics`}
+                  className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200"
+                >
+                  Analytics
+                </Link>
+              </>
+            )}
             <Link
               href={`/${locale}/login`}
               className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200"
