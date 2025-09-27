@@ -39,11 +39,6 @@ function PaymentForm({
   const [loading, setLoading] = useState(false);
   const [clientSecret, setClientSecret] = useState('');
 
-  useEffect(() => {
-    // Create payment intent when component mounts
-    createPaymentIntent();
-  }, [amount, donationType, mosqueId, campaignId, createPaymentIntent]);
-
   const createPaymentIntent = useCallback(async () => {
     try {
       const response = await apiClient.post<{
@@ -64,6 +59,11 @@ function PaymentForm({
       onError('Failed to initialize payment');
     }
   }, [amount, donationType, mosqueId, campaignId, donorName, donorEmail, onError]);
+
+  useEffect(() => {
+    // Create payment intent when component mounts
+    createPaymentIntent();
+  }, [amount, donationType, mosqueId, campaignId, createPaymentIntent]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
