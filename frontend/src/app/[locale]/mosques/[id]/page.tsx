@@ -162,25 +162,33 @@ export default function MosqueDetailPage({ params }: { params: { id: string } })
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Aankomende Evenementen</h3>
               <div className="space-y-4">
-                {mosque.events.map((event) => (
-                  <div key={event.id} className="bg-white border border-gray-200 rounded-lg p-4">
-                    <div className="flex flex-col md:flex-row md:items-start md:justify-between">
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-gray-900 mb-1">{event.title}</h4>
-                        <p className="text-gray-600 text-sm mb-2">{event.description}</p>
-                        <div className="flex items-center text-sm text-gray-500">
-                          <CalendarIcon className="h-4 w-4 mr-1" />
-                          <span>{new Date(event.date).toLocaleDateString('nl-NL')}</span>
-                          <ClockIcon className="h-4 w-4 ml-4 mr-1" />
-                          <span>{event.time}</span>
+                <div className="bg-gray-50 rounded-lg p-6 text-center">
+                  <p className="text-gray-600 mb-4">
+                    Evenementen voor deze moskee worden binnenkort geladen.
+                  </p>
+                  <div className="space-y-3">
+                    <div className="bg-white border border-gray-200 rounded-lg p-4">
+                      <div className="flex flex-col md:flex-row md:items-start md:justify-between">
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-gray-900 mb-1">Vrijdaggebed</h4>
+                          <p className="text-gray-600 text-sm mb-2">Wekelijks vrijdaggebed</p>
+                          <div className="flex items-center text-sm text-gray-500">
+                            <CalendarIcon className="h-4 w-4 mr-1" />
+                            <span>Elke vrijdag</span>
+                            <ClockIcon className="h-4 w-4 ml-4 mr-1" />
+                            <span>13:00</span>
+                          </div>
                         </div>
+                        <button className="mt-2 md:mt-0 bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700 transition-colors text-sm">
+                          Meer Info
+                        </button>
                       </div>
-                      <button className="mt-2 md:mt-0 bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700 transition-colors text-sm">
-                        Meer Info
-                      </button>
                     </div>
                   </div>
-                ))}
+                  <p className="text-sm text-gray-500 mt-4">
+                    * Dit zijn voorbeeldevenementen. Werkelijke evenementen worden binnenkort geladen.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
