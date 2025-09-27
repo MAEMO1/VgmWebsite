@@ -76,6 +76,91 @@ export default function ForgotPasswordPage() {
           <p className="mt-2 text-center text-sm text-gray-600">{t('subtitle')}</p>
 
           <div className="mt-8 space-y-6">
+            <form onSubmit={handleRequestReset} className="rounded-2xl border border-gray-100 bg-gray-50 p-6">
+              <h2 className="text-lg font-semibold text-gray-900">{t('request.title')}</h2>
+              <p className="mt-2 text-sm text-gray-600">{t('request.description')}</p>
+              <div className="mt-4">
+                <label htmlFor="reset-email" className="block text-sm font-medium text-gray-700">
+                  {shared('email')}
+                </label>
+                <input
+                  id="reset-email"
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder={t('request.placeholder')}
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={requestLoading}
+                className="mt-4 inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {requestLoading ? (
+                  <>
+                    <span className="inline-flex h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    {t('request.submitBusy')}
+                  </>
+                ) : (
+                  t('request.submit')
+                )}
+              </button>
+              {debugToken && (
+                <p className="mt-3 text-xs text-gray-500">
+                  {t('request.tokenNotice')}{' '}
+                  <span className="font-mono text-gray-700">{debugToken}</span>
+                </p>
+              )}
+            </form>
+
+            <form onSubmit={handleResetPassword} className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-gray-900">{t('reset.title')}</h2>
+              <p className="mt-2 text-sm text-gray-600">{t('reset.description')}</p>
+
+              <div className="mt-4 space-y-4">
+                <div>
+                  <label htmlFor="reset-token" className="block text-sm font-medium text-gray-700">
+                    {t('reset.tokenLabel')}
+                  </label>
+                  <input
+                    id="reset-token"
+                    type="text"
+                    value={token}
+                    onChange={(event) => setToken(event.target.value)}
+                    className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="new-password" className="block text-sm font-medium text-gray-700">
+                    {t('reset.passwordLabel')}
+                  </label>
+                  <input
+                    id="new-password"
+                    type="password"
+                    value={newPassword}
+                    onChange={(event) => setNewPassword(event.target.value)}
+                    className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={resetLoading}
+                className="mt-4 inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {resetLoading ? (
+                  <>
+                    <span className="inline-flex h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    {t('reset.submitBusy')}
+                  </>
+                ) : (
+                  t('reset.submit')
+                )}
+              </button>
+            </form>
+
             <div className="rounded-2xl border border-gray-100 bg-gray-50 p-6">
               <h2 className="text-lg font-semibold text-gray-900">{t('steps.title')}</h2>
               <ol className="mt-4 space-y-3 text-sm text-gray-700">
