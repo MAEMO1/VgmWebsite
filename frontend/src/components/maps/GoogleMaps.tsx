@@ -2,20 +2,7 @@
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
-
-interface Mosque {
-  id: number;
-  name: string;
-  address: string;
-  latitude: number;
-  longitude: number;
-  phone?: string;
-  email?: string;
-  website?: string;
-  capacity?: number;
-  imam_name?: string;
-  description?: string;
-}
+import type { Mosque } from '@/types/api';
 
 interface GoogleMapsProps {
   mosques: Mosque[];
