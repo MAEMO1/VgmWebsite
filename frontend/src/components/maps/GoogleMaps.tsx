@@ -149,7 +149,7 @@ export default function GoogleMaps({
   useEffect(() => {
     if (map && markers.length > 0 && selectedMosqueId) {
       const selectedMosque = mosques.find(m => m.id === selectedMosqueId);
-      if (selectedMosque) {
+      if (selectedMosque && selectedMosque.latitude && selectedMosque.longitude) {
         map.setCenter({ lat: selectedMosque.latitude, lng: selectedMosque.longitude });
         map.setZoom(16);
       }
