@@ -406,7 +406,7 @@ export function SearchResults({ results, onMosqueSelect, onEventSelect, onNewsSe
                 <h4 className="font-semibold text-gray-900 mb-2">{campaign.title}</h4>
                 <p className="text-sm text-gray-600 mb-2">{campaign.mosque_name}</p>
                 <p className="text-sm text-gray-500">
-                  {formatCurrency(campaign.current_amount)} / {formatCurrency(campaign.target_amount || 0)}
+                  {formatCurrency(campaign.current_amount || 0)} / {formatCurrency(campaign.target_amount || 0)}
                 </p>
               </div>
             ))}
