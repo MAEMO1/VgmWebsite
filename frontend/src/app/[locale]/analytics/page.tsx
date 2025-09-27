@@ -4,6 +4,15 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import { apiClient } from '@/api/client';
+import { 
+  ChartBarIcon, 
+  BuildingOfficeIcon, 
+  ChartBarSquareIcon,
+  EyeIcon,
+  UserGroupIcon,
+  CalendarIcon,
+  CurrencyDollarIcon
+} from '@heroicons/react/24/outline';
 
 interface AnalyticsSummary {
   page_views: Array<{ page_path: string; views: number }>;
@@ -133,10 +142,10 @@ function AnalyticsDashboardContent() {
           <div className="border-b border-gray-200">
             <nav className="-mb-px flex space-x-8">
               {[
-                { key: 'overview', label: 'Overview', icon: '📊' },
-                { key: 'users', label: 'Users', icon: '👥' },
-                { key: 'mosques', label: 'Mosques', icon: '🕌' },
-                { key: 'summary', label: 'Summary', icon: '📈' }
+                { key: 'overview', label: 'Overview', icon: <ChartBarIcon className="w-4 h-4" /> },
+                { key: 'users', label: 'Users', icon: <UserGroupIcon className="w-4 h-4" /> },
+                { key: 'mosques', label: 'Mosques', icon: <BuildingOfficeIcon className="w-4 h-4" /> },
+                { key: 'summary', label: 'Summary', icon: <ChartBarSquareIcon className="w-4 h-4" /> }
               ].map((tab) => (
                 <button
                   key={tab.key}
@@ -171,7 +180,9 @@ function AnalyticsDashboardContent() {
               
               <div className="bg-white rounded-lg shadow p-6">
                 <div className="flex items-center">
-                  <div className="text-2xl text-green-600">🕌</div>
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                    <BuildingOfficeIcon className="w-6 h-6 text-green-600" />
+                  </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-500">Active Mosques</p>
                     <p className="text-2xl font-semibold text-gray-900">{formatNumber(overview.total_mosques)}</p>
@@ -181,7 +192,9 @@ function AnalyticsDashboardContent() {
               
               <div className="bg-white rounded-lg shadow p-6">
                 <div className="flex items-center">
-                  <div className="text-2xl text-purple-600">📅</div>
+                  <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                    <CalendarIcon className="w-6 h-6 text-purple-600" />
+                  </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-500">Events</p>
                     <p className="text-2xl font-semibold text-gray-900">{formatNumber(overview.total_events)}</p>
@@ -191,7 +204,9 @@ function AnalyticsDashboardContent() {
               
               <div className="bg-white rounded-lg shadow p-6">
                 <div className="flex items-center">
-                  <div className="text-2xl text-yellow-600">💰</div>
+                  <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                    <CurrencyDollarIcon className="w-6 h-6 text-yellow-600" />
+                  </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-500">Donations</p>
                     <p className="text-2xl font-semibold text-gray-900">{formatNumber(overview.total_donations)}</p>
@@ -201,7 +216,9 @@ function AnalyticsDashboardContent() {
               
               <div className="bg-white rounded-lg shadow p-6">
                 <div className="flex items-center">
-                  <div className="text-2xl text-red-600">👁️</div>
+                  <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                    <EyeIcon className="w-6 h-6 text-red-600" />
+                  </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-500">Page Views</p>
                     <p className="text-2xl font-semibold text-gray-900">{formatNumber(overview.total_page_views)}</p>
