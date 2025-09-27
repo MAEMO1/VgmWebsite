@@ -246,20 +246,43 @@ export default function MosqueDetailPage({ params }: { params: { id: string } })
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Geschiedenis van de Moskee</h3>
               <div className="space-y-4">
-                {mosque.history.map((item, index) => (
-                  <div key={index} className="flex">
-                    <div className="flex-shrink-0">
-                      <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center">
-                        <span className="text-teal-600 font-semibold">{item.year}</span>
-                      </div>
-                    </div>
-                    <div className="ml-4 flex-1">
-                      <h4 className="font-semibold text-gray-900 mb-1">{item.event}</h4>
-                      <p className="text-gray-600">{item.description}</p>
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center">
+                      <span className="text-teal-600 font-semibold">{mosque.established_year || '1985'}</span>
                     </div>
                   </div>
-                ))}
+                  <div className="ml-4 flex-1">
+                    <h4 className="font-semibold text-gray-900 mb-1">Oprichting van de moskee</h4>
+                    <p className="text-gray-600">De moskee werd opgericht en heeft sindsdien een belangrijke rol gespeeld in de lokale gemeenschap.</p>
+                  </div>
+                </div>
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center">
+                      <span className="text-teal-600 font-semibold">2000</span>
+                    </div>
+                  </div>
+                  <div className="ml-4 flex-1">
+                    <h4 className="font-semibold text-gray-900 mb-1">Uitbreiding van faciliteiten</h4>
+                    <p className="text-gray-600">De moskee werd uitgebreid met nieuwe faciliteiten voor de groeiende gemeenschap.</p>
+                  </div>
+                </div>
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center">
+                      <span className="text-teal-600 font-semibold">2015</span>
+                    </div>
+                  </div>
+                  <div className="ml-4 flex-1">
+                    <h4 className="font-semibold text-gray-900 mb-1">Modernisering</h4>
+                    <p className="text-gray-600">De moskee werd gemoderniseerd met nieuwe technologieën en verbeterde faciliteiten.</p>
+                  </div>
+                </div>
               </div>
+              <p className="text-sm text-gray-500 mt-4">
+                * Dit zijn voorbeeldgebeurtenissen. Werkelijke geschiedenis wordt binnenkort geladen.
+              </p>
             </div>
           </div>
         );
