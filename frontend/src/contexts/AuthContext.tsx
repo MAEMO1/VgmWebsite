@@ -54,10 +54,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (storedToken && storedUser) {
       setToken(storedToken);
       setUser(JSON.parse(storedUser));
+      apiClient.setAuthToken(storedToken);
     }
-    
+
     setLoading(false);
   }, []);
+
+  useEffect(() => {
+    if (token) {
+      apiClient.setAuthToken(token);
+    } else {
+      apiClient.clearAuthToken();
+    }
+  }, [token]);
 
   // Login function
   const login = async (email: string, password: string): Promise<boolean> => {
@@ -77,6 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         setToken(newToken);
         setUser(userData);
+        apiClient.setAuthToken(newToken);
         
         // Store in localStorage
         localStorage.setItem('auth_token', newToken);
@@ -130,6 +140,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Clear state regardless of API call success
       setUser(null);
       setToken(null);
+      apiClient.clearAuthToken();
       localStorage.removeItem('auth_token');
       localStorage.removeItem('auth_user');
     }

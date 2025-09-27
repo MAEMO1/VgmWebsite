@@ -91,7 +91,9 @@
       "address": "Gent Zuid"
     },
     "learnMore": "Meer informatie",
-    "viewAll": "Bekijk Alle Moskeeën"
+    "viewAll": "Bekijk Alle Moskeeën",
+    "description": "Vind moskeeën in Gent op basis van diensten en faciliteiten",
+    "searchPlaceholder": "Naam, adres, beschrijving"
   },
   "Home": {
     "mosques": {

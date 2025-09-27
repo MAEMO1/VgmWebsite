@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '@/api/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Notification {
   id: number;
@@ -28,8 +29,15 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { token, isAuthenticated } = useAuth();
 
   const loadNotifications = useCallback(async () => {
+    if (!isAuthenticated || !token) {
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
+    }
+
     try {
       setLoading(true);
       const response = await apiClient.get<{
@@ -37,7 +45,7 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
         unread_count: number;
         total_count: number;
       }>('/api/notifications?limit=10');
-      
+
       setNotifications(response.notifications);
       setUnreadCount(response.unread_count);
     } catch (error) {
@@ -45,11 +53,16 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [isAuthenticated, token]);
 
   useEffect(() => {
+    if (!isAuthenticated || !token) {
+      setIsOpen(false);
+      return;
+    }
+
     loadNotifications();
-  }, [loadNotifications]);
+  }, [isAuthenticated, token, loadNotifications]);
 
   const markAsRead = async (notificationId: number) => {
     try {
@@ -109,8 +122,9 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
     <div className={`relative ${className}`}>
       {/* Notification Bell */}
       <button
+        disabled={!isAuthenticated || !token}
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-full"
+        className="relative p-2 text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-full disabled:text-gray-300 disabled:hover:text-gray-300"
       >
         <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -125,7 +139,7 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
       </button>
 
       {/* Notification Dropdown */}
-      {isOpen && (
+      {isOpen && isAuthenticated && token && (
         <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between">

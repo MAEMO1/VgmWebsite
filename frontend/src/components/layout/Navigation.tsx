@@ -13,7 +13,7 @@ export function Navigation() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const t = useTranslations('Navigation');
   const locale = useLocale();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
   const navigation = [
     { name: t('home'), href: `/${locale}` },
@@ -113,7 +113,7 @@ export function Navigation() {
           </div>
           
           <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
-            <NotificationBell />
+            {isAuthenticated && <NotificationBell />}
             {user?.role === 'admin' && (
               <>
                 <Link
