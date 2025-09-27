@@ -42,29 +42,22 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="mx-auto flex max-w-5xl flex-col gap-8 lg:flex-row">
-        <section className="mx-auto w-full max-w-lg rounded-2xl border border-gray-100 bg-white p-8 shadow-sm lg:p-10">
-          <div className="flex items-center justify-center rounded-full bg-primary/10 p-3 text-primary">
-            <LockClosedIcon className="h-6 w-6" aria-hidden="true" />
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-md">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 bg-gradient-to-r from-teal-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <LockClosedIcon className="h-8 w-8 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              {t('title')}
+            </h1>
+            <p className="text-gray-600">
+              {t('subtitle')}
+            </p>
           </div>
-          <h1 className="mt-6 text-center text-3xl font-semibold text-gray-900">
-            {t('title')}
-          </h1>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            {t.rich('cta', {
-              create: (chunks) => (
-                <Link
-                  href={`/${locale}/register`}
-                  className="font-medium text-primary hover:text-primary-dark"
-                >
-                  {chunks}
-                </Link>
-              ),
-            })}
-          </p>
 
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6" onSubmit={handleSubmit}>
             {successMessage && (
               <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
                 {successMessage}
@@ -76,9 +69,9 @@ export default function LoginPage() {
               </div>
             )}
 
-            <div className="space-y-5">
+            <div className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                   {shared('email')}
                 </label>
                 <input
@@ -89,13 +82,13 @@ export default function LoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
                   placeholder={t('placeholders.email')}
                 />
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                   {shared('password')}
                 </label>
                 <input
@@ -106,7 +99,7 @@ export default function LoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
                   placeholder={t('placeholders.password')}
                 />
               </div>
@@ -120,14 +113,14 @@ export default function LoginPage() {
                   type="checkbox"
                   checked={remember}
                   onChange={(e) => setRemember(e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                  className="h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500"
                 />
                 <span>{t('rememberMe')}</span>
               </label>
 
               <Link
                 href={`/${locale}/forgot-password`}
-                className="font-medium text-primary hover:text-primary-dark"
+                className="font-medium text-teal-600 hover:text-teal-700 transition-colors"
               >
                 {t('forgotPassword')}
               </Link>
@@ -136,7 +129,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full flex items-center justify-center gap-2 rounded-lg bg-teal-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? (
                 <>
@@ -148,32 +141,22 @@ export default function LoginPage() {
               )}
             </button>
 
-            <div className="rounded-lg bg-gray-50 px-4 py-3 text-xs text-gray-600">
-              <p className="font-medium text-gray-700">{t('demo.title')}</p>
-              <ul className="mt-2 space-y-1">
-                <li>{t('demo.admin')}</li>
-                <li>{t('demo.mosqueAdmin')}</li>
-                <li>{t('demo.user')}</li>
-              </ul>
+            <div className="text-center">
+              <p className="text-sm text-gray-600">
+                {t.rich('cta', {
+                  create: (chunks) => (
+                    <Link
+                      href={`/${locale}/register`}
+                      className="font-medium text-teal-600 hover:text-teal-700 transition-colors"
+                    >
+                      {chunks}
+                    </Link>
+                  ),
+                })}
+              </p>
             </div>
           </form>
-        </section>
-
-        <aside className="mx-auto max-w-lg space-y-6 text-sm text-gray-700">
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-900">{t('support.title')}</h2>
-            <p className="mt-2 text-gray-600">{t('support.description')}</p>
-            <ul className="mt-4 space-y-2 text-gray-600">
-              <li>• {t('support.tips.0')}</li>
-              <li>• {t('support.tips.1')}</li>
-              <li>• {t('support.tips.2')}</li>
-            </ul>
-          </div>
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-900">{t('security.title')}</h2>
-            <p className="mt-2 text-gray-600">{t('security.description')}</p>
-          </div>
-        </aside>
+        </div>
       </div>
     </div>
   );

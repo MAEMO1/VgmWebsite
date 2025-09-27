@@ -119,29 +119,22 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="mx-auto flex max-w-5xl flex-col gap-8 lg:flex-row">
-        <section className="mx-auto w-full max-w-2xl rounded-2xl border border-gray-100 bg-white p-8 shadow-sm lg:p-10">
-          <div className="flex items-center justify-center rounded-full bg-primary/10 p-3 text-primary">
-            <UserPlusIcon className="h-6 w-6" aria-hidden="true" />
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-2xl">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 bg-gradient-to-r from-teal-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <UserPlusIcon className="h-8 w-8 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              {t('title')}
+            </h1>
+            <p className="text-gray-600">
+              {t('subtitle')}
+            </p>
           </div>
-          <h1 className="mt-6 text-center text-3xl font-semibold text-gray-900">
-            {t('title')}
-          </h1>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            {t.rich('cta', {
-              login: (chunks) => (
-                <Link
-                  href={`/${locale}/login`}
-                  className="font-medium text-primary hover:text-primary-dark"
-                >
-                  {chunks}
-                </Link>
-              ),
-            })}
-          </p>
 
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
               <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
                 {error}
@@ -211,7 +204,7 @@ export default function RegisterPage() {
                     required
                     value={formData.first_name}
                     onChange={handleChange}
-                    className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
                     placeholder={shared('placeholders.firstName')}
                   />
                 </div>
@@ -227,7 +220,7 @@ export default function RegisterPage() {
                     required
                     value={formData.last_name}
                     onChange={handleChange}
-                    className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
                     placeholder={shared('placeholders.lastName')}
                   />
                 </div>
@@ -245,7 +238,7 @@ export default function RegisterPage() {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
                   placeholder={t('placeholders.email')}
                 />
               </div>
@@ -260,7 +253,7 @@ export default function RegisterPage() {
                   type="tel"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
                   placeholder={t('phone.placeholder')}
                 />
               </div>
@@ -296,7 +289,7 @@ export default function RegisterPage() {
                     contact: (chunks) => (
                       <Link
                         href={`/${locale}/contact`}
-                        className="font-medium text-primary hover:text-primary-dark"
+                        className="font-medium text-teal-600 hover:text-teal-700 transition-colors"
                       >
                         {chunks}
                       </Link>
@@ -318,7 +311,7 @@ export default function RegisterPage() {
                     type="text"
                     value={formData.mosque_name}
                     onChange={handleChange}
-                    className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
                     placeholder={t('mosque.customPlaceholder')}
                   />
                 </div>
@@ -333,7 +326,7 @@ export default function RegisterPage() {
                     value={formData.admin_motivation}
                     onChange={handleChange}
                     rows={4}
-                    className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
                     placeholder={t('motivation.placeholder')}
                   />
                   <p className="mt-2 text-xs text-gray-500">{t('motivation.helper')}</p>
@@ -353,7 +346,7 @@ export default function RegisterPage() {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
                   placeholder={t('placeholders.password')}
                 />
               </div>
@@ -370,7 +363,7 @@ export default function RegisterPage() {
                   required
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
                   placeholder={t('confirmPassword.placeholder')}
                 />
               </div>
@@ -379,7 +372,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-teal-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? (
                 <>
