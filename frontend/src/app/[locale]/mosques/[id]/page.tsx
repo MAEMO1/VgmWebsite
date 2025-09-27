@@ -293,40 +293,64 @@ export default function MosqueDetailPage({ params }: { params: { id: string } })
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Foto&apos;s</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {mosque.photos.map((photo, index) => (
-                  <div key={index} className="bg-gray-200 rounded-lg h-48 flex items-center justify-center">
-                    <PhotoIcon className="h-12 w-12 text-gray-400" />
-                  </div>
-                ))}
+                <div className="bg-gray-200 rounded-lg h-48 flex items-center justify-center">
+                  <PhotoIcon className="h-12 w-12 text-gray-400" />
+                </div>
+                <div className="bg-gray-200 rounded-lg h-48 flex items-center justify-center">
+                  <PhotoIcon className="h-12 w-12 text-gray-400" />
+                </div>
+                <div className="bg-gray-200 rounded-lg h-48 flex items-center justify-center">
+                  <PhotoIcon className="h-12 w-12 text-gray-400" />
+                </div>
+                <div className="bg-gray-200 rounded-lg h-48 flex items-center justify-center">
+                  <PhotoIcon className="h-12 w-12 text-gray-400" />
+                </div>
               </div>
+              <p className="text-sm text-gray-500 mt-4">
+                * Foto&apos;s worden binnenkort geladen.
+              </p>
             </div>
             
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Video&apos;s</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {mosque.videos.map((video, index) => (
-                  <div key={index} className="bg-gray-200 rounded-lg h-48 flex items-center justify-center">
-                    <VideoCameraIcon className="h-12 w-12 text-gray-400" />
-                  </div>
-                ))}
+                <div className="bg-gray-200 rounded-lg h-48 flex items-center justify-center">
+                  <VideoCameraIcon className="h-12 w-12 text-gray-400" />
+                </div>
+                <div className="bg-gray-200 rounded-lg h-48 flex items-center justify-center">
+                  <VideoCameraIcon className="h-12 w-12 text-gray-400" />
+                </div>
               </div>
+              <p className="text-sm text-gray-500 mt-4">
+                * Video&apos;s worden binnenkort geladen.
+              </p>
             </div>
             
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Documenten</h3>
               <div className="space-y-2">
-                {mosque.documents.map((doc, index) => (
-                  <div key={index} className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
-                    <div className="flex items-center">
-                      <DocumentTextIcon className="h-5 w-5 text-gray-400 mr-3" />
-                      <span className="text-gray-900">{doc.name}</span>
-                    </div>
-                    <button className="text-teal-600 hover:text-teal-700 font-medium">
-                      Download
-                    </button>
+                <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                  <div className="flex items-center">
+                    <DocumentTextIcon className="h-5 w-5 text-gray-400 mr-3" />
+                    <span className="text-gray-900">Moskee Informatie</span>
                   </div>
-                ))}
+                  <button className="text-teal-600 hover:text-teal-700 font-medium">
+                    Download
+                  </button>
+                </div>
+                <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                  <div className="flex items-center">
+                    <DocumentTextIcon className="h-5 w-5 text-gray-400 mr-3" />
+                    <span className="text-gray-900">Gebedstijden</span>
+                  </div>
+                  <button className="text-teal-600 hover:text-teal-700 font-medium">
+                    Download
+                  </button>
+                </div>
               </div>
+              <p className="text-sm text-gray-500 mt-4">
+                * Documenten worden binnenkort geladen.
+              </p>
             </div>
           </div>
         );
