@@ -1,9 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
+import { apiClient } from '@/api/client';
+import type { Mosque } from '@/types/api';
+import { UserPlusIcon } from '@heroicons/react/24/outline';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -13,19 +17,59 @@ export default function RegisterPage() {
     first_name: '',
     last_name: '',
     phone: '',
-    mosque_id: ''
+    mosque_id: '',
+    mosque_name: '',
+    admin_motivation: ''
   });
+  const [accountType, setAccountType] = useState<'user' | 'mosque_admin'>('user');
+  const [mosques, setMosques] = useState<Mosque[]>([]);
+  const [mosqueLoading, setMosqueLoading] = useState(false);
+  const [mosqueError, setMosqueError] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
   const router = useRouter();
+  const locale = useLocale();
+  const t = useTranslations('Auth.Register');
+  const shared = useTranslations('Auth.Shared');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
   };
+
+  useEffect(() => {
+    const fetchMosques = async () => {
+      try {
+        setMosqueLoading(true);
+        const response = await apiClient.get<Mosque[]>('/api/mosques');
+        setMosques(response);
+        setMosqueError('');
+      } catch (err) {
+        console.error('Failed to load mosques', err);
+        setMosqueError(t('errors.mosqueLoad'));
+      } finally {
+        setMosqueLoading(false);
+      }
+    };
+
+    fetchMosques();
+  }, [t]);
+
+  useEffect(() => {
+    if (accountType !== 'mosque_admin') {
+      setFormData((prev) => ({
+        ...prev,
+        mosque_id: '',
+        mosque_name: '',
+        admin_motivation: '',
+      }));
+    }
+  }, [accountType]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,12 +77,17 @@ export default function RegisterPage() {
 
     // Validation
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      setError(shared('errors.passwordMismatch'));
       return;
     }
 
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
+      setError(shared('errors.passwordLength'));
+      return;
+    }
+
+    if (accountType === 'mosque_admin' && !formData.mosque_id) {
+      setError(t('errors.mosqueRequired'));
       return;
     }
 
@@ -51,180 +100,313 @@ export default function RegisterPage() {
         first_name: formData.first_name,
         last_name: formData.last_name,
         phone: formData.phone || undefined,
-        mosque_id: formData.mosque_id ? parseInt(formData.mosque_id) : undefined,
+        mosque_id: formData.mosque_id ? parseInt(formData.mosque_id, 10) : undefined,
+        role: accountType,
+        mosque_name: formData.mosque_name || undefined,
+        admin_motivation: formData.admin_motivation || undefined,
       });
       
       if (success) {
-        router.push('/login?message=Registration successful. Please log in.');
+        router.push(`/${locale}/login?message=${encodeURIComponent(t('success'))}`);
       } else {
-        setError('Registration failed. Please try again.');
+        setError(shared('genericError'));
       }
     } catch (err) {
-      setError('Registration failed. Please try again.');
+      setError(shared('genericError'));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
-            <Link href="/login" className="font-medium text-primary hover:text-primary-dark">
-              sign in to your existing account
-            </Link>
-          </p>
-        </div>
-        
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
-              {error}
-            </div>
-          )}
-          
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="first_name" className="block text-sm font-medium text-gray-700">
-                  First Name
-                </label>
-                <input
-                  id="first_name"
-                  name="first_name"
-                  type="text"
-                  required
-                  value={formData.first_name}
-                  onChange={handleChange}
-                  className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
-                  placeholder="First name"
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="last_name" className="block text-sm font-medium text-gray-700">
-                  Last Name
-                </label>
-                <input
-                  id="last_name"
-                  name="last_name"
-                  type="text"
-                  required
-                  value={formData.last_name}
-                  onChange={handleChange}
-                  className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
-                  placeholder="Last name"
-                />
-              </div>
-            </div>
-            
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
-                placeholder="Enter your email"
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                Phone Number (Optional)
-              </label>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                value={formData.phone}
-                onChange={handleChange}
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
-                placeholder="+32 9 123 45 67"
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="mosque_id" className="block text-sm font-medium text-gray-700">
-                Associated Mosque (Optional)
-              </label>
-              <select
-                id="mosque_id"
-                name="mosque_id"
-                value={formData.mosque_id}
-                onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-              >
-                <option value="">Select a mosque</option>
-                <option value="1">Moskee Salahaddien</option>
-                <option value="2">Moskee Al-Fath</option>
-                <option value="3">Moskee Selimiye</option>
-              </select>
-            </div>
-            
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                required
-                value={formData.password}
-                onChange={handleChange}
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
-                placeholder="Create a password"
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                Confirm Password
-              </label>
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                autoComplete="new-password"
-                required
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
-                placeholder="Confirm your password"
-              />
-            </div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-5xl flex-col gap-8 lg:flex-row">
+        <section className="mx-auto w-full max-w-2xl rounded-2xl border border-gray-100 bg-white p-8 shadow-sm lg:p-10">
+          <div className="flex items-center justify-center rounded-full bg-primary/10 p-3 text-primary">
+            <UserPlusIcon className="h-6 w-6" aria-hidden="true" />
           </div>
+          <h1 className="mt-6 text-center text-3xl font-semibold text-gray-900">
+            {t('title')}
+          </h1>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            {t.rich('cta', {
+              login: (chunks) => (
+                <Link
+                  href={`/${locale}/login`}
+                  className="font-medium text-primary hover:text-primary-dark"
+                >
+                  {chunks}
+                </Link>
+              ),
+            })}
+          </p>
 
-          <div>
+          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+            {error && (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                {error}
+              </div>
+            )}
+
+            {mosqueError && (
+              <div className="rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-yellow-700">
+                {mosqueError}
+              </div>
+            )}
+
+            <div className="space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  {t('accountType.label')}
+                </label>
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  <label className={`flex cursor-pointer flex-col rounded-lg border px-4 py-3 text-sm shadow-sm transition ${
+                    accountType === 'user'
+                      ? 'border-primary bg-primary/5 text-primary'
+                      : 'border-gray-200 hover:border-primary/60'
+                  }`}>
+                    <span className="font-medium">{t('accountType.user.title')}</span>
+                    <span className="mt-1 text-xs text-gray-600">
+                      {t('accountType.user.description')}
+                    </span>
+                    <input
+                      type="radio"
+                      name="accountType"
+                      value="user"
+                      checked={accountType === 'user'}
+                      onChange={() => setAccountType('user')}
+                      className="sr-only"
+                    />
+                  </label>
+                  <label className={`flex cursor-pointer flex-col rounded-lg border px-4 py-3 text-sm shadow-sm transition ${
+                    accountType === 'mosque_admin'
+                      ? 'border-primary bg-primary/5 text-primary'
+                      : 'border-gray-200 hover:border-primary/60'
+                  }`}>
+                    <span className="font-medium">{t('accountType.mosqueAdmin.title')}</span>
+                    <span className="mt-1 text-xs text-gray-600">
+                      {t('accountType.mosqueAdmin.description')}
+                    </span>
+                    <input
+                      type="radio"
+                      name="accountType"
+                      value="mosque_admin"
+                      checked={accountType === 'mosque_admin'}
+                      onChange={() => setAccountType('mosque_admin')}
+                      className="sr-only"
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="first_name" className="block text-sm font-medium text-gray-700">
+                    {shared('firstName')}
+                  </label>
+                  <input
+                    id="first_name"
+                    name="first_name"
+                    type="text"
+                    required
+                    value={formData.first_name}
+                    onChange={handleChange}
+                    className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder={shared('placeholders.firstName')}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="last_name" className="block text-sm font-medium text-gray-700">
+                    {shared('lastName')}
+                  </label>
+                  <input
+                    id="last_name"
+                    name="last_name"
+                    type="text"
+                    required
+                    value={formData.last_name}
+                    onChange={handleChange}
+                    className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder={shared('placeholders.lastName')}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                  {shared('email')}
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder={t('placeholders.email')}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                  {t('phone.label')}
+                </label>
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder={t('phone.placeholder')}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="mosque_id" className="block text-sm font-medium text-gray-700">
+                  {t('mosque.label')}
+                </label>
+                <select
+                  id="mosque_id"
+                  name="mosque_id"
+                  value={formData.mosque_id}
+                  onChange={handleChange}
+                  disabled={accountType !== 'mosque_admin'}
+                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-gray-100 disabled:text-gray-500"
+                >
+                  <option value="">
+                    {accountType === 'mosque_admin'
+                      ? mosqueLoading
+                        ? t('mosque.loading')
+                        : t('mosque.placeholder')
+                      : t('mosque.notRequired')}
+                  </option>
+                  {mosques.map((mosque) => (
+                    <option key={mosque.id} value={mosque.id.toString()}>
+                      {mosque.name}
+                    </option>
+                  ))}
+              </select>
+              {accountType === 'mosque_admin' && (
+                <p className="mt-2 text-xs text-gray-500">
+                  {t.rich('mosque.help', {
+                    contact: (chunks) => (
+                      <Link
+                        href={`/${locale}/contact`}
+                        className="font-medium text-primary hover:text-primary-dark"
+                      >
+                        {chunks}
+                      </Link>
+                    ),
+                  })}
+                </p>
+              )}
+            </div>
+
+            {accountType === 'mosque_admin' && (
+              <>
+                <div>
+                  <label htmlFor="mosque_name" className="block text-sm font-medium text-gray-700">
+                    {t('mosque.customLabel')}
+                  </label>
+                  <input
+                    id="mosque_name"
+                    name="mosque_name"
+                    type="text"
+                    value={formData.mosque_name}
+                    onChange={handleChange}
+                    className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder={t('mosque.customPlaceholder')}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="admin_motivation" className="block text-sm font-medium text-gray-700">
+                    {t('motivation.label')}
+                  </label>
+                  <textarea
+                    id="admin_motivation"
+                    name="admin_motivation"
+                    value={formData.admin_motivation}
+                    onChange={handleChange}
+                    rows={4}
+                    className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder={t('motivation.placeholder')}
+                  />
+                  <p className="mt-2 text-xs text-gray-500">{t('motivation.helper')}</p>
+                </div>
+              </>
+            )}
+
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                  {shared('password')}
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder={t('placeholders.password')}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                  {t('confirmPassword.label')}
+                </label>
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className="mt-2 block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder={t('confirmPassword.placeholder')}
+                />
+              </div>
+            </div>
+
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? (
-                <div className="flex items-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Creating account...
-                </div>
+                <>
+                  <span className="inline-flex h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  {t('actions.creating')}
+                </>
               ) : (
-                'Create account'
+                t('actions.create')
               )}
             </button>
+          </form>
+        </section>
+
+        <aside className="mx-auto max-w-lg space-y-6 text-sm text-gray-700">
+          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-gray-900">{t('support.title')}</h2>
+            <ul className="mt-3 space-y-2 text-gray-600">
+              <li>• {t('support.points.0')}</li>
+              <li>• {t('support.points.1')}</li>
+              <li>• {t('support.points.2')}</li>
+            </ul>
           </div>
-        </form>
+          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-gray-900">{t('nextSteps.title')}</h2>
+            <p className="mt-2 text-gray-600">{t('nextSteps.description')}</p>
+          </div>
+        </aside>
       </div>
     </div>
   );

@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { apiClient } from '@/api/client';
-import { withAuth } from '@/contexts/AuthContext';
+import toast from 'react-hot-toast';
+import { useAuth, withAuth } from '@/contexts/AuthContext';
+import { apiClient, MosqueAccessRequest } from '@/api/client';
 
 interface User {
   id: number;
@@ -39,6 +39,7 @@ function AdminDashboard() {
   const [users, setUsers] = useState<User[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [news, setNews] = useState<News[]>([]);
+  const [accessRequests, setAccessRequests] = useState<MosqueAccessRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -61,11 +62,73 @@ function AdminDashboard() {
       // Load news
       const newsResponse = await apiClient.get<News[]>('/api/news');
       setNews(newsResponse);
+
+      if (user?.role === 'admin') {
+        const requestsResponse = await apiClient.getMosqueAccessRequests();
+        setAccessRequests(requestsResponse);
+      } else {
+        setAccessRequests([]);
+      }
       
     } catch (error) {
       console.error('Error loading data:', error);
+      toast.error('Failed to load admin data.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAccessRequestUpdate = async (
+    requestId: number,
+    status: 'approved' | 'rejected',
+    defaultMosqueId?: number | null | undefined
+  ) => {
+    try {
+      let mosqueIdValue = defaultMosqueId ?? undefined;
+      let adminNotes: string | undefined;
+
+      if (status === 'approved') {
+        const promptValue = window.prompt(
+          'Enter the mosque ID to link (leave empty to keep unchanged):',
+          mosqueIdValue ? mosqueIdValue.toString() : ''
+        );
+        if (promptValue) {
+          const parsed = Number(promptValue);
+          if (!Number.isNaN(parsed)) {
+            mosqueIdValue = parsed;
+          } else {
+            toast.error('Invalid mosque ID');
+            return;
+          }
+        }
+      }
+
+      if (status === 'rejected') {
+        const notesPrompt = window.prompt('Provide a reason for rejection (optional):');
+        adminNotes = notesPrompt || undefined;
+      }
+
+      const response = await apiClient.updateMosqueAccessRequest(requestId, {
+        status,
+        mosque_id: mosqueIdValue,
+        admin_notes: adminNotes,
+      });
+
+      toast.success(
+        status === 'approved'
+          ? 'Request approved and user promoted to mosque admin.'
+          : 'Request rejected.'
+      );
+
+      setAccessRequests((prev) =>
+        prev.map((request) => (request.id === requestId ? response.request : request))
+      );
+
+      // Refresh other data such as user list to reflect new roles
+      loadData();
+    } catch (error) {
+      console.error('Failed to update access request', error);
+      toast.error('Unable to update access request.');
     }
   };
 
@@ -113,6 +176,9 @@ function AdminDashboard() {
               { id: 'users', name: 'Users' },
               { id: 'events', name: 'Events' },
               { id: 'news', name: 'News' },
+              ...(user?.role === 'admin'
+                ? [{ id: 'accessRequests', name: 'Mosque Access Requests' }]
+                : []),
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -291,6 +357,80 @@ function AdminDashboard() {
                   </div>
                 </li>
               ))}
+            </ul>
+          </div>
+        )}
+
+        {activeTab === 'accessRequests' && (
+          <div className="bg-white shadow overflow-hidden sm:rounded-md">
+            <div className="px-4 py-5 sm:px-6">
+              <h3 className="text-lg leading-6 font-medium text-gray-900">Mosque Access Requests</h3>
+              <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                Review and manage administrator access requests submitted by community members.
+              </p>
+            </div>
+            <ul className="divide-y divide-gray-200">
+              {accessRequests.length === 0 ? (
+                <li className="px-4 py-4 text-sm text-gray-500">No requests found.</li>
+              ) : (
+                accessRequests.map((request) => (
+                  <li key={request.id} className="px-4 py-4 sm:px-6">
+                    <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">
+                          {request.requester?.first_name} {request.requester?.last_name}
+                        </p>
+                        <p className="text-sm text-gray-600">{request.requester?.email}</p>
+                        <p className="mt-2 text-sm text-gray-700">
+                          <span className="font-medium">Mosque:</span>{' '}
+                          {request.mosque?.name || request.mosque_name || 'Not specified'}
+                        </p>
+                        {request.motivation && (
+                          <p className="mt-2 text-sm text-gray-600">
+                            <span className="font-medium">Motivation:</span> {request.motivation}
+                          </p>
+                        )}
+                        <p className="mt-2 text-xs text-gray-500">
+                          Submitted{' '}
+                          {request.created_at ? new Date(request.created_at).toLocaleString() : ''}
+                        </p>
+                        {request.admin_notes && (
+                          <p className="mt-2 text-xs text-gray-500">Admin notes: {request.admin_notes}</p>
+                        )}
+                      </div>
+                      <div className="flex flex-col items-start gap-2 md:items-end">
+                        <span
+                          className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${
+                            request.status === 'approved'
+                              ? 'bg-green-100 text-green-800'
+                              : request.status === 'rejected'
+                              ? 'bg-red-100 text-red-700'
+                              : 'bg-yellow-100 text-yellow-800'
+                          }`}
+                        >
+                          {request.status.toUpperCase()}
+                        </span>
+                        {request.status === 'pending' && (
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleAccessRequestUpdate(request.id, 'approved', request.mosque_id)}
+                              className="rounded-md bg-green-600 px-3 py-1 text-xs font-medium text-white hover:bg-green-700"
+                            >
+                              Approve
+                            </button>
+                            <button
+                              onClick={() => handleAccessRequestUpdate(request.id, 'rejected', request.mosque_id)}
+                              className="rounded-md bg-red-600 px-3 py-1 text-xs font-medium text-white hover:bg-red-700"
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </li>
+                ))
+              )}
             </ul>
           </div>
         )}

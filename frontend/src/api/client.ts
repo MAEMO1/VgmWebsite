@@ -177,6 +177,68 @@ class APIClient {
     });
   }
 
+  // Password reset endpoints
+  async requestPasswordReset(email: string) {
+    return this.request<{ message: string; reset_token?: string }>({
+      method: 'POST',
+      url: '/api/auth/request-password-reset',
+      body: { email },
+    });
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    return this.request<{ message: string }>({
+      method: 'POST',
+      url: '/api/auth/reset-password',
+      body: { token, new_password: newPassword },
+    });
+  }
+
+  // Mosque access requests
+  async submitMosqueAccessRequest(data: {
+    mosque_id?: number | null;
+    mosque_name?: string;
+    motivation?: string;
+    contact_email?: string;
+    contact_phone?: string;
+  }) {
+    return this.request<{ message: string; request: MosqueAccessRequest }>({
+      method: 'POST',
+      url: '/api/mosques/access-requests',
+      body: data,
+    });
+  }
+
+  async getMyMosqueAccessRequests() {
+    return this.request<MosqueAccessRequest[]>({
+      method: 'GET',
+      url: '/api/mosques/access-requests/me',
+    });
+  }
+
+  async getMosqueAccessRequests(status?: string) {
+    const query = status ? `?status=${encodeURIComponent(status)}` : '';
+    return this.request<MosqueAccessRequest[]>({
+      method: 'GET',
+      url: `/api/mosques/access-requests${query}`,
+    });
+  }
+
+  async updateMosqueAccessRequest(
+    requestId: number,
+    payload: {
+      status: 'approved' | 'rejected';
+      mosque_id?: number | null;
+      admin_notes?: string;
+    }
+  ) {
+    return this.request<{ message: string; request: MosqueAccessRequest }>({
+      method: 'PATCH',
+      url: `/api/mosques/access-requests/${requestId}`,
+      body: payload,
+    });
+  }
+
   // Event endpoints
   async getEvents() {
     return this.request<operations['getEvents']['responses']['200']['content']['application/json']>({
@@ -237,3 +299,33 @@ export type Event = paths['/api/events/{event_id}']['get']['responses']['200']['
 export type IftarEvent = paths['/api/ramadan/iftar-events']['get']['responses']['200']['content']['application/json'][0];
 export type Donation = paths['/api/donations']['get']['responses']['200']['content']['application/json'][0];
 export type News = paths['/api/news/{news_id}']['get']['responses']['200']['content']['application/json'];
+export interface MosqueAccessRequest {
+  id: number;
+  user_id: number;
+  mosque_id?: number | null;
+  mosque_name?: string | null;
+  motivation?: string | null;
+  contact_email?: string | null;
+  contact_phone?: string | null;
+  status: 'pending' | 'approved' | 'rejected';
+  admin_notes?: string | null;
+  processed_at?: string | null;
+  processed_by?: number | null;
+  created_at?: string | null;
+  requester?: {
+    id: number;
+    first_name: string;
+    last_name: string;
+    email: string;
+  } | null;
+  processed_by_user?: {
+    id: number;
+    first_name: string;
+    last_name: string;
+    email: string;
+  } | null;
+  mosque?: {
+    id: number;
+    name: string;
+  } | null;
+}

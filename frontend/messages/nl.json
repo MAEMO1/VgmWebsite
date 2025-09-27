@@ -10,7 +10,8 @@
     "about": "Over ons",
     "events": "Evenementen",
     "ramadan": "Ramadan",
-    "donations": "Donaties"
+    "donations": "Donaties",
+    "requestAdminAccess": "Vraag moskee-beheerdersrechten aan"
   },
   "Footer": {
     "about": {
@@ -181,5 +182,198 @@
   "MosqueRegistration": {
     "title": "Moskee Registratie",
     "description": "Registreer uw moskee bij VGM"
+  },
+  "Auth": {
+    "Shared": {
+      "email": "E-mailadres",
+      "password": "Wachtwoord",
+      "firstName": "Voornaam",
+      "lastName": "Achternaam",
+      "placeholders": {
+        "firstName": "Vul uw voornaam in",
+        "lastName": "Vul uw achternaam in"
+      },
+      "errors": {
+        "passwordMismatch": "Wachtwoorden komen niet overeen",
+        "passwordLength": "Het wachtwoord moet minimaal 6 tekens bevatten"
+      },
+      "genericError": "Er ging iets mis. Probeer het opnieuw.",
+      "supportTitle": "Hulp nodig?",
+      "phoneLabel": "Phone number"
+    },
+    "Login": {
+      "title": "Log in op uw account",
+      "cta": "Of {create} een nieuw account",
+      "errors": {
+        "invalidCredentials": "Ongeldig e-mailadres of wachtwoord"
+      },
+      "placeholders": {
+        "email": "Voer uw e-mailadres in",
+        "password": "Voer uw wachtwoord in"
+      },
+      "rememberMe": "Onthoud mij",
+      "forgotPassword": "Wachtwoord vergeten?",
+      "actions": {
+        "signingIn": "Bezig met inloggen...",
+        "signIn": "Inloggen"
+      },
+      "demo": {
+        "title": "Demo-accounts",
+        "admin": "Admin: admin@vgm.be / admin123",
+        "mosqueAdmin": "Moskee Admin: imam@salahaddien.be / imam123",
+        "user": "Gebruiker: user@example.com / user123"
+      },
+      "support": {
+        "title": "Lukt inloggen niet?",
+        "description": "Controleer uw e-mailadres en zorg ervoor dat uw wachtwoord klopt.",
+        "tips": [
+          "Controleer of Caps Lock uitstaat",
+          "Gebruik het e-mailadres waarmee u bent geregistreerd",
+          "Neem contact op met support als u hulp nodig heeft"
+        ]
+      },
+      "security": {
+        "title": "Uw gegevens zijn beveiligd",
+        "description": "Aanmeldingen verlopen via een versleutelde verbinding en worden gecontroleerd op ongebruikelijke activiteit."
+      }
+    },
+    "Register": {
+      "title": "Maak uw account aan",
+      "cta": "Al geregistreerd? {login}",
+      "errors": {
+        "mosqueLoad": "De lijst met moskeeën kan niet worden geladen. Probeer het later opnieuw.",
+        "mosqueRequired": "Selecteer de moskee die u vertegenwoordigt."
+      },
+      "success": "Registratie gelukt. Log in om verder te gaan.",
+      "accountType": {
+        "label": "Kies het accounttype dat bij uw rol past",
+        "user": {
+          "title": "Gemeenschapslid",
+          "description": "Blijf op de hoogte van activiteiten, nieuws en diensten."
+        },
+        "mosqueAdmin": {
+          "title": "Moskee beheerder",
+          "description": "Beheer moskee-informatie, evenementen en aankondigingen."
+        }
+      },
+      "placeholders": {
+        "email": "Voer uw e-mailadres in",
+        "password": "Maak een veilig wachtwoord"
+      },
+      "phone": {
+        "label": "Telefoonnummer (optioneel)",
+        "placeholder": "+32 9 123 45 67"
+      },
+      "mosque": {
+        "label": "Gekoppelde moskee",
+        "loading": "Moskeeën laden...",
+        "placeholder": "Selecteer een moskee",
+        "notRequired": "Niet nodig voor lid-accounts",
+        "help": "Moskee niet zichtbaar? Neem contact op met {contact} voor toegang.",
+        "customLabel": "Moskeenaam indien niet in de lijst",
+        "customPlaceholder": "Vermeld de officiële naam van de moskee"
+      },
+      "confirmPassword": {
+        "label": "Bevestig wachtwoord",
+        "placeholder": "Voer uw wachtwoord opnieuw in"
+      },
+      "actions": {
+        "creating": "Account wordt aangemaakt...",
+        "create": "Account aanmaken"
+      },
+      "support": {
+        "title": "Tips voor een vlotte registratie",
+        "points": [
+          "Gebruik een e-mailadres dat u regelmatig leest",
+          "Kies een sterk wachtwoord van minimaal 6 tekens",
+          "Selecteer de juiste moskee als u beheerdersrechten nodig heeft"
+        ]
+      },
+      "nextSteps": {
+        "title": "Wat gebeurt er daarna?",
+        "description": "Na het inloggen kunt u uw profiel aanvullen en indien nodig extra rechten aanvragen."
+      },
+      "motivation": {
+        "label": "Waarom heeft u beheerdersrechten nodig?",
+        "placeholder": "Beschrijf uw verantwoordelijkheden en hoe u het portaal zult gebruiken",
+        "helper": "Het VGM-team beoordeelt aanvragen handmatig. Geef details over uw rol en verificatie-informatie."
+      }
+    },
+    "ForgotPassword": {
+      "title": "Wachtwoord herstellen",
+      "subtitle": "Laat ons weten hoe we u kunnen helpen opnieuw toegang te krijgen.",
+      "steps": {
+        "title": "Volg deze stappen",
+        "items": [
+          "Geef het e-mailadres op dat aan uw account is gekoppeld",
+          "Beschrijf kort het probleem dat u ervaart",
+          "Ons supportteam neemt contact met u op met vervolgstappen"
+        ]
+      },
+      "contact": {
+        "title": "Neem contact op met VGM support",
+        "description": "Stuur een e-mail naar {email} met uw naam, moskee (indien van toepassing) en een korte omschrijving van het probleem.",
+        "note": "Wij reageren binnen één werkdag."
+      },
+      "backToLogin": "Terug naar {link}",
+      "security": {
+        "title": "Veiligheidsadvies",
+        "tips": [
+          "Deel uw wachtwoord nooit met anderen",
+          "Gebruik een uniek wachtwoord voor dit platform",
+          "Neem contact op als u ongeautoriseerde toegang vermoedt"
+        ]
+      },
+      "support": {
+        "description": "Wilt u iemand spreken? Bel ons via de contactgegevens op de contactpagina."
+      }
+    }
+  },
+  "MosqueAccessRequest": {
+    "title": "Aanvraag voor moskee-beheerdersrechten",
+    "subtitle": "Dien een aanvraag in zodat het VGM-team uw rol kan verifiëren voordat beheerdersrechten worden toegekend.",
+    "success": "Uw aanvraag is verstuurd. Het VGM-team behandelt deze zo snel mogelijk.",
+    "errors": {
+      "load": "Kan aanvragen niet laden.",
+      "pending": "U heeft al een lopende aanvraag.",
+      "submit": "Aanvraag verzenden mislukt. Probeer het opnieuw."
+    },
+    "authRequired": {
+      "title": "Log in om verder te gaan",
+      "description": "{link} om een aanvraag voor moskee-beheerdersrechten in te dienen."
+    },
+    "form": {
+      "existingMosqueLabel": "Kies een bestaande moskee",
+      "existingMosquePlaceholder": "Selecteer een moskee uit de lijst",
+      "newMosqueLabel": "Of geef de moskeenaam op",
+      "newMosquePlaceholder": "Voer de moskeenaam in als deze niet in de lijst staat",
+      "newMosqueHelper": "Het VGM-team neemt contact op als er extra verificatie nodig is.",
+      "contactEmailPlaceholder": "Contact e-mailadres voor opvolging",
+      "contactPhoneLabel": "Contacttelefoon (optioneel)",
+      "contactPhonePlaceholder": "+32 9 123 45 67",
+      "motivationLabel": "Licht uw aanvraag toe",
+      "motivationPlaceholder": "Beschrijf uw rol en verantwoordelijkheden",
+      "motivationHelper": "Voeg eventueel links of referenties toe om uw positie te bevestigen.",
+      "submit": "Aanvraag indienen",
+      "submitBusy": "Aanvraag wordt verstuurd..."
+    },
+    "tips": {
+      "title": "Tips voor een snelle goedkeuring",
+      "items": [
+        "Gebruik indien mogelijk het officiële moskee e-mailadres",
+        "Vermeld uw huidige functies of verantwoordelijkheden binnen de moskee",
+        "Controleer of uw contactgegevens correct zijn zodat we u kunnen bereiken"
+      ]
+    },
+    "history": {
+      "title": "Eerdere aanvragen",
+      "empty": "U heeft nog geen aanvragen ingediend.",
+      "unknownMosque": "Moskee niet opgegeven"
+    },
+    "status": {
+      "pending": "In behandeling",
+      "approved": "Goedgekeurd",
+      "rejected": "Afgewezen"
+    }
   }
 }

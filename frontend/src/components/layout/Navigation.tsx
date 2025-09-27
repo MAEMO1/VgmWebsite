@@ -14,6 +14,7 @@ export function Navigation() {
   const t = useTranslations('Navigation');
   const locale = useLocale();
   const { user, isAuthenticated } = useAuth();
+  const canRequestAdmin = isAuthenticated && user?.role !== 'admin' && user?.role !== 'mosque_admin';
 
   const navigation = [
     { name: t('home'), href: `/${locale}` },
@@ -49,6 +50,16 @@ export function Navigation() {
     { name: 'Gebedstijden', href: `/${locale}/prayer-times` },
   ];
 
+  if (canRequestAdmin) {
+    const mosquesNav = navigation.find((item) => item.name === t('mosques'));
+    if (mosquesNav?.dropdown) {
+      mosquesNav.dropdown.push({
+        name: t('requestAdminAccess'),
+        href: `/${locale}/mosques/access-request`,
+      });
+    }
+  }
+
   return (
     <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-6">
@@ -79,18 +90,18 @@ export function Navigation() {
                     <div className="relative">
                       <button
                         onClick={() => setOpenDropdown(openDropdown === item.name ? null : item.name)}
-                        className="text-gray-600 hover:text-gray-900 whitespace-nowrap py-2 px-1 border-b-2 border-transparent hover:border-gray-300 font-medium text-sm transition-colors duration-200 flex items-center"
+                        className="text-gray-600 hover:text-teal-600 whitespace-nowrap py-2 px-1 border-b-2 border-transparent hover:border-teal-300 font-medium text-sm transition-colors duration-200 flex items-center"
                       >
                         {item.name}
                         <ChevronDownIcon className="ml-1 h-4 w-4" />
                       </button>
                       {openDropdown === item.name && (
-                        <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50">
+                        <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
                           {item.dropdown.map((dropdownItem) => (
                             <Link
                               key={dropdownItem.name}
                               href={dropdownItem.href}
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                              className="block px-4 py-3 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-colors duration-200"
                               onClick={() => setOpenDropdown(null)}
                             >
                               {dropdownItem.name}
@@ -102,7 +113,7 @@ export function Navigation() {
                   ) : (
                     <Link
                       href={item.href}
-                      className="text-gray-600 hover:text-gray-900 whitespace-nowrap py-2 px-1 border-b-2 border-transparent hover:border-gray-300 font-medium text-sm transition-colors duration-200"
+                      className="text-gray-600 hover:text-teal-600 whitespace-nowrap py-2 px-1 border-b-2 border-transparent hover:border-teal-300 font-medium text-sm transition-colors duration-200"
                     >
                       {item.name}
                     </Link>

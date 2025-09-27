@@ -19,7 +19,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   token: string | null;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string, remember?: boolean) => Promise<boolean>;
   register: (userData: RegisterData) => Promise<boolean>;
   logout: () => void;
   loading: boolean;
@@ -35,6 +35,9 @@ interface RegisterData {
   last_name: string;
   phone?: string;
   mosque_id?: number;
+  role?: 'admin' | 'mosque_admin' | 'user';
+  mosque_name?: string;
+  admin_motivation?: string;
 }
 
 // Create context
@@ -69,7 +72,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [token]);
 
   // Login function
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (
+    email: string,
+    password: string,
+    remember = false
+  ): Promise<boolean> => {
     try {
       setLoading(true);
       
@@ -79,6 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }>('/api/auth/login', {
         email,
         password,
+        remember,
       });
 
       if (response.token) {
@@ -110,15 +118,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       
       const response = await apiClient.post<{
-        message: string;
-        user_id: number;
-      }>('/api/auth/register', userData);
-      
-      if (response.message === 'User created successfully') {
-        return true;
-      }
-      
-      return false;
+        message?: string;
+        user?: {
+          id: number;
+          email: string;
+          first_name: string;
+          last_name: string;
+          role: string;
+        };
+        token?: string;
+      }>('/api/auth/register', {
+        ...userData,
+        role: userData.role ?? 'user',
+      });
+
+      return Boolean(response?.token || response?.user);
     } catch (error) {
       console.error('Registration error:', error);
       return false;

@@ -61,3 +61,18 @@ export interface SearchResult {
   per_page: number;
   total_pages: number;
 }
+
+export interface MosqueAccessRequest {
+  id: number;
+  user_id: number;
+  mosque_id?: number | null;
+  mosque_name?: string | null;
+  motivation?: string | null;
+  contact_email?: string | null;
+  contact_phone?: string | null;
+  status: 'pending' | 'approved' | 'rejected';
+  admin_notes?: string | null;
+  processed_at?: string | null;
+  processed_by?: number | null;
+  created_at?: string | null;
+}

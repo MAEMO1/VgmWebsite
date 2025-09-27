@@ -3,15 +3,16 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLocale } from 'next-intl';
+import { MapPinIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
 
 export function Footer() {
   const locale = useLocale();
 
   return (
-    <footer className="bg-gray-900 text-white">
-      <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Logo and Description */}
+    <footer className="bg-gray-800 text-white">
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* VGM Information */}
           <div className="md:col-span-1">
             <div className="flex items-center mb-4">
               <Image
@@ -23,66 +24,77 @@ export function Footer() {
               />
               <span className="text-xl font-bold">VGM</span>
             </div>
-            <p className="text-gray-300 mb-4">
-              De koepelorganisatie voor de Gentse moskeegemeenschap, die samenwerking en gemeenschapsontwikkeling bevordert.
+            <p className="text-gray-300 mb-6 leading-relaxed">
+              Welkom bij de Vereniging van Gentse Moskeeën - uw centrale platform voor moskee-informatie, evenementen en gemeenschapsdiensten.
             </p>
-            <div className="text-gray-300 text-sm">
-              <p>Gent, België</p>
-              <p>info@vgm-gent.be</p>
+            <div className="space-y-2 text-gray-300">
+              <div className="flex items-center">
+                <MapPinIcon className="w-4 h-4 mr-2" />
+                <span>Gent, België</span>
+              </div>
+              <div className="flex items-center">
+                <EnvelopeIcon className="w-4 h-4 mr-2" />
+                <span>info@vgmgent.be</span>
+              </div>
             </div>
           </div>
 
-          {/* VGM Links */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">VGM</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href={`/${locale}/about`} className="text-gray-300 hover:text-white transition-colors">
-                  Over Ons
-                </Link>
-              </li>
-              <li>
-                <Link href={`/${locale}/news`} className="text-gray-300 hover:text-white transition-colors">
-                  Nieuws
-                </Link>
-              </li>
-              <li>
-                <Link href={`/${locale}/contact`} className="text-gray-300 hover:text-white transition-colors">
-                  Contact
-                </Link>
-              </li>
-              <li>
-                <Link href={`/${locale}/mosques/register`} className="text-gray-300 hover:text-white transition-colors">
-                  Moskee Registratie
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {/* VGM & Moskeeën Links */}
+          <div className="md:col-span-1">
+            <div className="grid grid-cols-2 gap-8">
+              {/* VGM Links */}
+              <div>
+                <h3 className="text-lg font-semibold mb-4">VGM</h3>
+                <ul className="space-y-2">
+                  <li>
+                    <Link href={`/${locale}/about`} className="text-gray-300 hover:text-white transition-colors">
+                      Over Ons
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={`/${locale}/news`} className="text-gray-300 hover:text-white transition-colors">
+                      Nieuws
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={`/${locale}/contact`} className="text-gray-300 hover:text-white transition-colors">
+                      Contact
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={`/${locale}/mosques/register`} className="text-gray-300 hover:text-white transition-colors">
+                      Moskee Registreren
+                    </Link>
+                  </li>
+                </ul>
+              </div>
 
-          {/* Moskeeën Links */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Moskeeën</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href={`/${locale}/mosques`} className="text-gray-300 hover:text-white transition-colors">
-                  Alle Moskeeën
-                </Link>
-              </li>
-              <li>
-                <Link href={`/${locale}/mosques/register`} className="text-gray-300 hover:text-white transition-colors">
-                  Registratie Proces
-                </Link>
-              </li>
-              <li>
-                <Link href={`/${locale}/janazah`} className="text-gray-300 hover:text-white transition-colors">
-                  Begrafenisgebeden
-                </Link>
-              </li>
-            </ul>
+              {/* Moskeeën Links */}
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Moskeeën</h3>
+                <ul className="space-y-2">
+                  <li>
+                    <Link href={`/${locale}/mosques`} className="text-gray-300 hover:text-white transition-colors">
+                      Alle Moskeeën
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={`/${locale}/mosques/register`} className="text-gray-300 hover:text-white transition-colors">
+                      Registratieproces
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={`/${locale}/janazah`} className="text-gray-300 hover:text-white transition-colors">
+                      Begrafenisgebeden
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
 
           {/* Gemeenschap Links */}
-          <div>
+          <div className="md:col-span-1">
             <h3 className="text-lg font-semibold mb-4">Gemeenschap</h3>
             <ul className="space-y-2">
               <li>
@@ -106,48 +118,6 @@ export function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="border-t border-gray-700 mt-12 pt-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center">
-              <h4 className="text-lg font-semibold mb-2">Evenementen</h4>
-              <p className="text-gray-300 mb-4">
-                Ontdek gemeenschapsevenementen, educatieve workshops en culturele bijeenkomsten in de Gentse moskeeën.
-              </p>
-              <Link
-                href={`/${locale}/events`}
-                className="inline-flex items-center text-teal-400 hover:text-teal-300 transition-colors"
-              >
-                Bekijk Evenementen →
-              </Link>
-            </div>
-            <div className="text-center">
-              <h4 className="text-lg font-semibold mb-2">Begrafenisgebeden</h4>
-              <p className="text-gray-300 mb-4">
-                Meld begrafenisgebeden aan bij moskeeën in Gent voor gemeenschapsondersteuning tijdens rouwperiodes.
-              </p>
-              <Link
-                href={`/${locale}/janazah`}
-                className="inline-flex items-center text-teal-400 hover:text-teal-300 transition-colors"
-              >
-                Meld Gebed →
-              </Link>
-            </div>
-            <div className="text-center">
-              <h4 className="text-lg font-semibold mb-2">Donaties</h4>
-              <p className="text-gray-300 mb-4">
-                Steun VGM en lokale moskeeprojecten door donaties voor gemeenschapsontwikkeling en religieuze diensten.
-              </p>
-              <Link
-                href={`/${locale}/donations`}
-                className="inline-flex items-center text-teal-400 hover:text-teal-300 transition-colors"
-              >
-                Doneer Nu →
-              </Link>
-            </div>
           </div>
         </div>
 

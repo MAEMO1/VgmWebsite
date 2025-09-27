@@ -10,7 +10,8 @@
     "about": "Hakkında",
     "events": "Etkinlikler",
     "ramadan": "Ramazan",
-    "donations": "Bağışlar"
+    "donations": "Bağışlar",
+    "requestAdminAccess": "Request mosque admin access"
   },
   "Footer": {
     "about": {
@@ -168,5 +169,198 @@
   "MosqueRegistration": {
     "title": "Cami Kaydı",
     "description": "Caminizi VGM ile kaydedin"
+  },
+  "Auth": {
+    "Shared": {
+      "email": "Email address",
+      "password": "Password",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "placeholders": {
+        "firstName": "Enter your first name",
+        "lastName": "Enter your last name"
+      },
+      "errors": {
+        "passwordMismatch": "Passwords do not match",
+        "passwordLength": "Password must be at least 6 characters long"
+      },
+      "genericError": "Something went wrong. Please try again.",
+      "supportTitle": "Need help?",
+      "phoneLabel": "Phone number"
+    },
+    "Login": {
+      "title": "Sign in to your account",
+      "cta": "Or {create} a new account",
+      "errors": {
+        "invalidCredentials": "Invalid email or password"
+      },
+      "placeholders": {
+        "email": "Enter your email",
+        "password": "Enter your password"
+      },
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot your password?",
+      "actions": {
+        "signingIn": "Signing in...",
+        "signIn": "Sign in"
+      },
+      "demo": {
+        "title": "Demo accounts",
+        "admin": "Admin: admin@vgm.be / admin123",
+        "mosqueAdmin": "Mosque Admin: imam@salahaddien.be / imam123",
+        "user": "User: user@example.com / user123"
+      },
+      "support": {
+        "title": "Having trouble logging in?",
+        "description": "Check your email address and make sure your password is correct.",
+        "tips": [
+          "Verify that Caps Lock is off",
+          "Use the email address you registered with",
+          "Contact support if you need help"
+        ]
+      },
+      "security": {
+        "title": "Your data is secure",
+        "description": "Logins are protected with encrypted connections and monitored for unusual activity."
+      }
+    },
+    "Register": {
+      "title": "Create your account",
+      "cta": "Already registered? {login}",
+      "errors": {
+        "mosqueLoad": "We could not load the list of mosques. Please try again later.",
+        "mosqueRequired": "Select the mosque you represent."
+      },
+      "success": "Registration successful. Please log in to continue.",
+      "accountType": {
+        "label": "Choose the account type that fits your role",
+        "user": {
+          "title": "Community member",
+          "description": "Stay informed about events, news and services."
+        },
+        "mosqueAdmin": {
+          "title": "Mosque administrator",
+          "description": "Manage mosque information, events and announcements."
+        }
+      },
+      "placeholders": {
+        "email": "Enter your email",
+        "password": "Create a secure password"
+      },
+      "phone": {
+        "label": "Phone number (optional)",
+        "placeholder": "+32 9 123 45 67"
+      },
+      "mosque": {
+        "label": "Associated mosque",
+        "loading": "Loading mosques...",
+        "placeholder": "Select a mosque",
+        "notRequired": "Not required for community member accounts",
+        "help": "Mosque missing? Contact {contact} to request access.",
+        "customLabel": "Mosque name if not listed",
+        "customPlaceholder": "Provide the official mosque name"
+      },
+      "confirmPassword": {
+        "label": "Confirm password",
+        "placeholder": "Re-enter your password"
+      },
+      "actions": {
+        "creating": "Creating account...",
+        "create": "Create account"
+      },
+      "support": {
+        "title": "Tips for a smooth registration",
+        "points": [
+          "Use an email address you check regularly",
+          "Choose a strong password with at least 6 characters",
+          "Select the correct mosque if you need admin access"
+        ]
+      },
+      "nextSteps": {
+        "title": "What happens next?",
+        "description": "After logging in you can complete your profile and request additional permissions if needed."
+      },
+      "motivation": {
+        "label": "Why do you need administrator access?",
+        "placeholder": "Describe your responsibilities and how you will use the portal",
+        "helper": "The VGM team reviews requests manually. Include details about your role and verification information."
+      }
+    },
+    "ForgotPassword": {
+      "title": "Reset your password",
+      "subtitle": "Let us know how we can help you recover access to your account.",
+      "steps": {
+        "title": "Follow these steps",
+        "items": [
+          "Provide the email address linked to your account",
+          "Describe the issue you are experiencing",
+          "Our support team will contact you with the next steps"
+        ]
+      },
+      "contact": {
+        "title": "Contact the VGM support team",
+        "description": "Send an email to {email} with your name, mosque (if applicable) and a short description of the problem.",
+        "note": "We respond within one business day."
+      },
+      "backToLogin": "Back to {link}",
+      "security": {
+        "title": "Security reminders",
+        "tips": [
+          "Never share your password with others",
+          "Use a unique password for this platform",
+          "Contact us if you suspect unauthorised access"
+        ]
+      },
+      "support": {
+        "description": "Prefer to talk to someone? Call us via the contact details on the contact page."
+      }
+    }
+  },
+  "MosqueAccessRequest": {
+    "title": "Request mosque administrator access",
+    "subtitle": "Submit a request so the VGM team can verify your role before granting management permissions.",
+    "success": "Your request has been submitted. The VGM team will review it shortly.",
+    "errors": {
+      "load": "Unable to load access request data.",
+      "pending": "You already have a pending request.",
+      "submit": "Unable to submit your request. Please try again."
+    },
+    "authRequired": {
+      "title": "Sign in to continue",
+      "description": "Please {link} to request mosque administrator access."
+    },
+    "form": {
+      "existingMosqueLabel": "Select an existing mosque",
+      "existingMosquePlaceholder": "Choose a mosque from the list",
+      "newMosqueLabel": "Or provide the mosque name",
+      "newMosquePlaceholder": "Enter the mosque name if it is not listed",
+      "newMosqueHelper": "The VGM team will contact you if additional verification is required.",
+      "contactEmailPlaceholder": "Contact email for follow-up",
+      "contactPhoneLabel": "Contact phone (optional)",
+      "contactPhonePlaceholder": "+32 9 123 45 67",
+      "motivationLabel": "Explain your request",
+      "motivationPlaceholder": "Provide context about your role and responsibilities",
+      "motivationHelper": "Include links or references that help us verify your position.",
+      "submit": "Submit request",
+      "submitBusy": "Submitting..."
+    },
+    "tips": {
+      "title": "Tips for approval",
+      "items": [
+        "Use your official mosque email address if possible",
+        "Mention existing roles or responsibilities within the mosque",
+        "Ensure your contact details are accurate so we can reach you"
+      ]
+    },
+    "history": {
+      "title": "Request history",
+      "empty": "You have not submitted any requests yet.",
+      "unknownMosque": "Mosque not specified"
+    },
+    "status": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    }
   }
 }
