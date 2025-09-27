@@ -49,7 +49,7 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const markAsRead = async (notificationId: number) => {
     try {

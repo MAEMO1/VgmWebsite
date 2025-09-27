@@ -82,7 +82,7 @@ function AnalyticsDashboardContent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [days]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('nl-BE');

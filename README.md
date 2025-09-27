@@ -1,6 +1,6 @@
 # VGM Platform – Vereniging van Gentse Moskeeën
 
-Enterprise-grade beheersysteem voor Gentse moskeeën. Het platform centraliseert administratie (directory, evenementen, notificaties, donaties) met behoud van lokale autonomie per moskee. Focus op performance, security, meertaligheid (NL/EN/FR/TR/AR/PS, RTL) en productie‑rijpe backend.
+Dit project bundelt een Flask-API en een Next.js-frontend om moskeegegevens, evenementen, donaties en Ramadan-informatie voor Gent te beheren. De focus ligt op meertaligheid (NL/EN/FR/TR/AR/PS), betalingsverwerking via Stripe en tooling voor beheerders.
 
 ## Inhoud
 - [Belangrijkste features](#belangrijkste-features)
@@ -9,166 +9,100 @@ Enterprise-grade beheersysteem voor Gentse moskeeën. Het platform centraliseert
 - [Omgevingsvariabelen](#omgevingsvariabelen)
 - [Development workflow](#development-workflow)
 - [Testen & Kwaliteit](#testen--kwaliteit)
-- [Security & Privacy](#security--privacy)
-- [Documentatie](#documentatie)
 - [Bijdragen](#bijdragen)
 - [Licentie](#licentie)
 
 ## Belangrijkste features
-- **Moskee Directory** met profielen en kaartweergave
-- **Evenementenbeheer** + persoonlijke kalender
-- **Begrafenisgebeden** (gespecialiseerde flow)
-- **Donaties** via Stripe Connect (platform fee 5%)
-- **Notificaties** (in‑app + e‑mail, realtime via websockets)
-- **Dashboards**: gebruiker, moskee‑manager, platform‑admin
-- **Meertaligheid** (6 talen) + **RTL** (AR/PS)
-- **WCAG AA** en responsief ontwerp
+- **Moskee directory** met kaartweergave (Google Maps)
+- **Evenementen & Ramadan iftar** kaart + kalender
+- **Donaties** met Stripe Payment Intents
+- **Bestandsbeheer** voor moskeeën (uploads, galerij)
+- **Notificaties & analytics** voor admins (API endpoints + frontend componenten)
+- **Geavanceerde zoekfunctie** over moskeeën, nieuws, evenementen en campagnes
 
 ## Architectuur
-- **Frontend**: Next.js 14 (App Router), React 18, TypeScript, Tailwind, React Query
-- **Backend**: Django 4.2 + DRF (+ Channels voor realtime), PostgreSQL, Redis
-- **API‑contract**: OpenAPI (drf‑spectacular) → type‑veilige TS‑client
-- **Infra**: CI/CD via GitHub Actions, previews per PR, Sentry/monitoring
+- **Frontend**: Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS, React Query, next-intl
+- **Backend**: Flask 3 met sqlite (instance database) en RESTful endpoints (`app.py`), Stripe SDK, file uploads
+- **Legacy**: er staat nog een oudere Flask/SQLAlchemy app (`main.py`, `routes/`, `templates/`) die gradueel wordt uitgefaseerd
+- **Infra**: Dockerfiles voor backend/frontend, GitHub Actions workflow (`.github/workflows/deploy.yml`)
 
-> Zie: `docs/ARCHITECTURE.md` voor details (componenten, datamodellen, indexes).
+> Let op: documentatie in `docs/` verwijst nog deels naar een eerdere Django-architectuur. Gebruik dit README als bron van waarheid totdat die documenten zijn bijgewerkt.
 
 ## Snel starten
 
 ### Vereisten
-- Node.js 20 + pnpm 9
-- Python 3.12
-- PostgreSQL 16
-- Redis 7
-- (Aanbevolen) VS Code Devcontainer of Docker
+- Python 3.11+
+- Node.js 18+
+- npm (of pnpm/yarn)
 
-### 1) Repo clonen & dependencies
+### 1) Dependencies installeren
 ```bash
-pnpm -v          # verwacht 9.x
-python --version # 3.12.x
+python3 -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
 
-# Frontend
-cd frontend && pnpm install && cd ..
-
-# Backend
-python -m pip install --upgrade pip
-pip install -r backend/requirements.txt
+cd frontend
+npm install
+cd ..
 ```
 
-### 2) Omgevingsvariabelen
-
-Kopieer voorbeeldbestanden en vul waarden in:
-
+### 2) Omgevingsvariabelen instellen
 ```bash
-cp backend/.env.example backend/.env
-cp frontend/.env.local.example frontend/.env.local
+cp .env.example .env
+cp frontend/.env.example frontend/.env.local
 ```
+Vul je eigen waarden in (Stripe sleutel, Google Maps API key, enz.).
 
-Zie sectie **Omgevingsvariabelen** hieronder.
+### 3) Database initialiseren
+De nieuwe Flask-API maakt en seedt de sqlite-database automatisch bij de eerste start (`instance/vgm_website.db`). Wil je opnieuw beginnen, verwijder dan het bestand of roep `python app.py --initdb` (in aanbouw).
 
-### 3) Database & migrations
-
+### 4) Project starten
 ```bash
-# Vergeet niet: stel DATABASE_URL in je backend .env in
-python backend/manage.py migrate
-python backend/manage.py createsuperuser
+# Terminal 1 – API (Flask)
+python app.py
+
+# Terminal 2 – Frontend (Next.js)
+cd frontend
+npm run dev
 ```
-
-### 4) Starten (lokaal)
-
-In 2 terminals:
-
-```bash
-# Backend
-python backend/manage.py runserver
-
-# Frontend
-cd frontend && pnpm dev
-```
-
-Frontend draait standaard op `http://localhost:3000`, backend op `http://localhost:8000`.
+Frontend draait op `http://localhost:3000`, de API op `http://localhost:5001`.
 
 ## Omgevingsvariabelen
 
-**Backend (`backend/.env`):**
-
+`.env` (backend):
 ```
-DJANGO_SECRET_KEY=change-me
-DJANGO_DEBUG=True
-ALLOWED_HOSTS=localhost,127.0.0.1
-CSRF_TRUSTED_ORIGINS=http://localhost:3000
-
-DATABASE_URL=postgres://postgres:postgres@localhost:5432/vgm
-REDIS_URL=redis://localhost:6379/0
-
-EMAIL_HOST=smtp.example.org
-EMAIL_HOST_USER=apikey
-EMAIL_HOST_PASSWORD=secret
-EMAIL_PORT=587
-EMAIL_USE_TLS=True
-DEFAULT_FROM_EMAIL=no-reply@vgm.example.org
-
+DATABASE_URL=sqlite:///instance/vgm_website.db
+SESSION_SECRET=change-me
 STRIPE_SECRET_KEY=sk_test_xxx
-STRIPE_WEBHOOK_SECRET=whsec_xxx
-STRIPE_PLATFORM_FEE_PERCENT=5
-
-MAPS_BACKEND_API_KEY=xxx  # indien backend geocoding aanroept
+STRIPE_PUBLISHABLE_KEY=pk_test_xxx
+PORT=5001
 ```
 
-**Frontend (`frontend/.env.local`):**
-
+`frontend/.env.local`:
 ```
-NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+NEXT_PUBLIC_API_BASE_URL=http://localhost:5001
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=<your-key>
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_xxx
 NEXT_PUBLIC_DEFAULT_LOCALE=nl
 NEXT_PUBLIC_SUPPORTED_LOCALES=nl,en,fr,tr,ar,ps
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=xxx
-NEXT_PUBLIC_SENTRY_DSN=
 ```
 
 ## Development workflow
-
-* **OpenAPI first**: backend past endpoints aan → schema wordt gegenereerd → frontend types/hooks worden opnieuw gegenereerd.
-* **Cursor AI**: richtlijnen en playbooks in `.cursor/rules/`. Start features met Composer‑playbooks.
-* **Conventional Commits** voor nette changelogs en semantische releases.
-* **E2E previews** per PR (frontend + backend + tijdelijke database).
-
-Details: `docs/DEVELOPMENT.md`, `docs/CI-CD.md`, `.cursor/rules/*`.
+- Backend code leeft primair in `app.py` en `/services`. Houd `main.py` en `routes/` alleen aan als je legacy paginas nodig hebt.
+- Frontend haalt data op via `frontend/src/api/client.ts` en React Query hooks.
+- Gebruik `uvicorn`/`gunicorn` in productie (zie `Dockerfile`/`render.yaml`).
+- OpenAPI-schema (`openapi.json`) en orval-config helpen bij typegeneratie.
 
 ## Testen & Kwaliteit
-
-* **Backend**: Pytest, coverage, ruff/black/mypy
-* **Frontend**: ESLint/Prettier/TS strict, React Testing Library, Playwright (E2E)
-* **Accessibility**: axe checks
-* **i18n**: key‑sync check (alle 6 talen up‑to‑date)
-
-Zie: `docs/TESTING.md`.
-
-## Security & Privacy
-
-* Headers: CSP, HSTS, XFO, XCTO, RP
-* Auth: session‑based, CSRF, RBAC, 2FA (TOTP)
-* Rate limiting & audit logging
-* GDPR: DSR endpoints (export/delete), consent
-
-Zie: `docs/SECURITY.md` en `docs/GDPR.md`.
-
-## Documentatie
-
-Start bij:
-
-* `docs/OVERVIEW.md` – productoverzicht
-* `docs/ARCHITECTURE.md` – technische architectuur
-* `docs/API.md` – schema & clientgeneratie
-* `docs/I18N.md` – meertaligheid & RTL
-* `docs/STRIPE.md` – betaalstromen
-* `docs/NOTIFICATIONS.md` – notificatie‑ontwerp
-* `docs/ADR/*` – beslissingen
+- **Backend**: pytest (nog te schrijven), black/ruff ingesteld via `pyproject.toml`
+- **Frontend**: Jest + React Testing Library, Playwright E2E (scripts staan in `package.json`)
+- Draai lokaal `npm run lint` en `npm run test` voordat je push verricht.
 
 ## Bijdragen
-
-Lees `docs/CONTRIBUTING.md` en `docs/ONBOARDING.md`.
-PR‑template en CODEOWNERS zijn aanwezig; CI moet groen zijn.
+- Gebruik feature branches, schrijf korte changelog/commit beschrijvingen.
+- Synchroniseer met het team over het uitfaseren van de legacy Flask-app voordat je grote refactors doet.
+- Houd de TODO-lijst (`TODO.md`) bij voor resterende P1–P3 items.
 
 ## Licentie
 
-© VGM. Alle rechten voorbehouden (interne bedrijfssoftware).
-# GitHub Actions Test
+© VGM. Interne bedrijfssoftware; niet bedoeld voor publieke distributie.

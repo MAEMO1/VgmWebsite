@@ -63,7 +63,7 @@ function PaymentForm({
       console.error('Error creating payment intent:', error);
       onError('Failed to initialize payment');
     }
-  };
+  }, [amount, donationType, mosqueId, campaignId, donorName, donorEmail, onError]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
