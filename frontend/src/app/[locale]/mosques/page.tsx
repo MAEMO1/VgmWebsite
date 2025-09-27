@@ -4,23 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { apiClient } from '@/api/client';
 import GoogleMaps from '@/components/maps/GoogleMaps';
-
-interface Mosque {
-  id: number;
-  name: string;
-  address: string;
-  phone?: string;
-  email?: string;
-  website?: string;
-  capacity?: number;
-  established_year?: number;
-  imam_name?: string;
-  description?: string;
-  latitude: number;
-  longitude: number;
-  is_active: boolean;
-  created_at: string;
-}
+import type { Mosque } from '@/types/api';
 
 export default function MosquesPage() {
   const t = useTranslations('Mosques');
