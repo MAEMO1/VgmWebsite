@@ -242,10 +242,6 @@ export function NotificationsPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
 
-  useEffect(() => {
-    loadNotifications();
-  }, [filter, loadNotifications]);
-
   const loadNotifications = useCallback(async () => {
     try {
       setLoading(true);
@@ -264,6 +260,10 @@ export function NotificationsPage() {
       setLoading(false);
     }
   }, [filter]);
+
+  useEffect(() => {
+    loadNotifications();
+  }, [filter, loadNotifications]);
 
   const markAsRead = async (notificationId: number) => {
     try {
