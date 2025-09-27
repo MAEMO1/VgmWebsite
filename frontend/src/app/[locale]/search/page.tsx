@@ -98,7 +98,9 @@ export default function SearchPage() {
         {/* No Search Performed */}
         {!results && !loading && !error && (
           <div className="text-center py-12">
-            <div className="text-gray-400 text-6xl mb-4">🔍</div>
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <MagnifyingGlassIcon className="w-8 h-8 text-gray-400" />
+            </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
               Start Your Search
             </h2>

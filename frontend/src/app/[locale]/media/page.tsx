@@ -5,6 +5,15 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { apiClient } from '@/api/client';
 import FileUpload, { FileList } from '@/components/upload/FileUpload';
+import { 
+  DocumentIcon, 
+  PhotoIcon, 
+  VideoCameraIcon,
+  PresentationChartBarIcon,
+  TableCellsIcon,
+  CalendarIcon,
+  BuildingOfficeIcon
+} from '@heroicons/react/24/outline';
 
 interface MediaFile {
   id: number;
@@ -101,12 +110,12 @@ export default function MediaGalleryPage() {
   };
 
   const getFileIcon = (fileType: string) => {
-    if (fileType.startsWith('image/')) return '🖼️';
-    if (fileType.includes('pdf')) return '📄';
-    if (fileType.includes('word')) return '📝';
-    if (fileType.includes('excel') || fileType.includes('spreadsheet')) return '📊';
-    if (fileType.includes('powerpoint') || fileType.includes('presentation')) return '📽️';
-    return '📁';
+    if (fileType.startsWith('image/')) return <PhotoIcon className="w-5 h-5" />;
+    if (fileType.includes('pdf')) return <DocumentIcon className="w-5 h-5" />;
+    if (fileType.includes('word')) return <DocumentIcon className="w-5 h-5" />;
+    if (fileType.includes('excel') || fileType.includes('spreadsheet')) return <TableCellsIcon className="w-5 h-5" />;
+    if (fileType.includes('powerpoint') || fileType.includes('presentation')) return <PresentationChartBarIcon className="w-5 h-5" />;
+    return <DocumentIcon className="w-5 h-5" />;
   };
 
   if (loading) {
@@ -233,9 +242,15 @@ export default function MediaGalleryPage() {
                   
                   <div className="space-y-1 text-sm text-gray-600">
                     <p>📏 {formatFileSize(file.file_size)}</p>
-                    <p>📅 {formatDate(file.created_at)}</p>
+                    <div className="flex items-center space-x-2 text-gray-500">
+                      <CalendarIcon className="w-4 h-4" />
+                      <p>{formatDate(file.created_at)}</p>
+                    </div>
                     {file.mosque_name && (
-                      <p>🕌 {file.mosque_name}</p>
+                      <div className="flex items-center space-x-2 text-gray-500">
+                        <BuildingOfficeIcon className="w-4 h-4" />
+                        <p>{file.mosque_name}</p>
+                      </div>
                     )}
                     {file.first_name && file.last_name && (
                       <p>👤 {file.first_name} {file.last_name}</p>

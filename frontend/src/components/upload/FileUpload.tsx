@@ -2,6 +2,13 @@
 
 import React, { useState, useRef } from 'react';
 import { apiClient } from '@/api/client';
+import { 
+  DocumentIcon, 
+  PhotoIcon, 
+  VideoCameraIcon,
+  PresentationChartBarIcon,
+  TableCellsIcon
+} from '@heroicons/react/24/outline';
 
 interface FileUploadProps {
   onUploadSuccess: (file: any) => void;
@@ -128,12 +135,12 @@ export default function FileUpload({
   };
 
   const getFileIcon = (fileType: string) => {
-    if (fileType.startsWith('image/')) return '🖼️';
-    if (fileType.includes('pdf')) return '📄';
-    if (fileType.includes('word')) return '📝';
-    if (fileType.includes('excel') || fileType.includes('spreadsheet')) return '📊';
-    if (fileType.includes('powerpoint') || fileType.includes('presentation')) return '📽️';
-    return '📁';
+    if (fileType.startsWith('image/')) return <PhotoIcon className="w-5 h-5" />;
+    if (fileType.includes('pdf')) return <DocumentIcon className="w-5 h-5" />;
+    if (fileType.includes('word')) return <DocumentIcon className="w-5 h-5" />;
+    if (fileType.includes('excel') || fileType.includes('spreadsheet')) return <TableCellsIcon className="w-5 h-5" />;
+    if (fileType.includes('powerpoint') || fileType.includes('presentation')) return <PresentationChartBarIcon className="w-5 h-5" />;
+    return <DocumentIcon className="w-5 h-5" />;
   };
 
   return (
@@ -220,12 +227,12 @@ export function FileList({ files, onDelete, showActions = true }: FileListProps)
   };
 
   const getFileIcon = (fileType: string) => {
-    if (fileType.startsWith('image/')) return '🖼️';
-    if (fileType.includes('pdf')) return '📄';
-    if (fileType.includes('word')) return '📝';
-    if (fileType.includes('excel') || fileType.includes('spreadsheet')) return '📊';
-    if (fileType.includes('powerpoint') || fileType.includes('presentation')) return '📽️';
-    return '📁';
+    if (fileType.startsWith('image/')) return <PhotoIcon className="w-5 h-5" />;
+    if (fileType.includes('pdf')) return <DocumentIcon className="w-5 h-5" />;
+    if (fileType.includes('word')) return <DocumentIcon className="w-5 h-5" />;
+    if (fileType.includes('excel') || fileType.includes('spreadsheet')) return <TableCellsIcon className="w-5 h-5" />;
+    if (fileType.includes('powerpoint') || fileType.includes('presentation')) return <PresentationChartBarIcon className="w-5 h-5" />;
+    return <DocumentIcon className="w-5 h-5" />;
   };
 
   const formatDate = (dateString: string) => {
