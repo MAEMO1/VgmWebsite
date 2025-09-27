@@ -50,6 +50,9 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
       setUnreadCount(response.unread_count);
     } catch (error) {
       console.error('Error loading notifications:', error);
+      // Don't show error to user, just log it
+      setNotifications([]);
+      setUnreadCount(0);
     } finally {
       setLoading(false);
     }
@@ -58,6 +61,8 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
   useEffect(() => {
     if (!isAuthenticated || !token) {
       setIsOpen(false);
+      setNotifications([]);
+      setUnreadCount(0);
       return;
     }
 
@@ -124,7 +129,7 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
       <button
         disabled={!isAuthenticated || !token}
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-full disabled:text-gray-300 disabled:hover:text-gray-300"
+        className="relative p-2 text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-full disabled:text-gray-300 disabled:hover:text-gray-300 disabled:cursor-not-allowed"
       >
         <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -149,7 +154,7 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
               {unreadCount > 0 && (
                 <button
                   onClick={markAllAsRead}
-                  className="text-sm text-primary hover:text-primary-dark font-medium"
+                  className="text-sm text-teal-600 hover:text-teal-700 font-medium"
                 >
                   Mark all as read
                 </button>
@@ -160,7 +165,7 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
           <div className="max-h-96 overflow-y-auto">
             {loading ? (
               <div className="p-4 text-center">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto"></div>
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-teal-600 mx-auto"></div>
               </div>
             ) : notifications.length === 0 ? (
               <div className="p-4 text-center text-gray-500">
@@ -229,7 +234,7 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
                   // Navigate to full notifications page
                   window.location.href = '/notifications';
                 }}
-                className="w-full text-center text-sm text-primary hover:text-primary-dark font-medium"
+                className="w-full text-center text-sm text-teal-600 hover:text-teal-700 font-medium"
               >
                 View all notifications
               </button>
