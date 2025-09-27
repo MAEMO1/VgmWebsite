@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { apiClient } from '@/api/client';
+import type { Campaign, EventItem, Mosque, NewsArticle, SearchResult } from '@/types/api';
 
 interface SearchFilters {
   query: string;
@@ -12,17 +13,6 @@ interface SearchFilters {
   capacityMin: number | null;
   capacityMax: number | null;
   sortBy: string;
-}
-
-interface SearchResult {
-  mosques: any[];
-  events: any[];
-  news: any[];
-  campaigns: any[];
-  total_results: number;
-  page: number;
-  per_page: number;
-  total_pages: number;
 }
 
 interface AdvancedSearchProps {
@@ -65,10 +55,11 @@ export default function AdvancedSearch({ onResults, onLoading, onError }: Advanc
 
       const response = await apiClient.get<SearchResult>(`/api/search?${params.toString()}`);
       onResults(response);
-      
-    } catch (error: any) {
+
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Search failed';
       console.error('Search error:', error);
-      onError(error.message || 'Search failed');
+      onError(message);
     } finally {
       setSearching(false);
       onLoading(false);
@@ -283,10 +274,10 @@ export default function AdvancedSearch({ onResults, onLoading, onError }: Advanc
 // Search Results Component
 interface SearchResultsProps {
   results: SearchResult;
-  onMosqueSelect?: (mosque: any) => void;
-  onEventSelect?: (event: any) => void;
-  onNewsSelect?: (news: any) => void;
-  onCampaignSelect?: (campaign: any) => void;
+  onMosqueSelect?: (mosque: Mosque) => void;
+  onEventSelect?: (event: EventItem) => void;
+  onNewsSelect?: (news: NewsArticle) => void;
+  onCampaignSelect?: (campaign: Campaign) => void;
 }
 
 export function SearchResults({ results, onMosqueSelect, onEventSelect, onNewsSelect, onCampaignSelect }: SearchResultsProps) {

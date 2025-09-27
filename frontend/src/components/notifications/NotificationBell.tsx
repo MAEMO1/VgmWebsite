@@ -263,7 +263,7 @@ export function NotificationsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter]);
 
   const markAsRead = async (notificationId: number) => {
     try {
