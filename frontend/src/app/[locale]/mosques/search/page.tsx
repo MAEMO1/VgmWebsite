@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { useQuery } from '@tanstack/react-query';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { 
   MagnifyingGlassIcon, 
@@ -12,22 +13,8 @@ import {
   UsersIcon,
   FunnelIcon
 } from '@heroicons/react/24/outline';
-
-interface Mosque {
-  id: number;
-  name: string;
-  address: string;
-  phone?: string;
-  email?: string;
-  capacity?: number;
-  imamName?: string;
-  establishedYear?: number;
-  description?: string;
-  latitude?: number;
-  longitude?: number;
-  services?: string[];
-  features?: string[];
-}
+import { apiClient } from '@/api/client';
+import type { Mosque } from '@/types/api';
 
 export default function MosqueSearchPage() {
   const t = useTranslations('MosqueSearch');
@@ -36,42 +23,13 @@ export default function MosqueSearchPage() {
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState('name');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [mosques, setMosques] = useState<Mosque[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: mosques = [], isLoading, isError } = useQuery<Mosque[]>({
+    queryKey: ['mosques'],
+    queryFn: () => apiClient.get<Mosque[]>('/api/mosques'),
+    refetchOnWindowFocus: false,
+  });
 
-  // Mock data - in real app this would come from API
-  const mockMosques: Mosque[] = [
-    {
-      id: 1,
-      name: 'Moskee Salahaddien',
-      address: 'Sint-Pietersnieuwstraat 120, 9000 Gent',
-      phone: '+32 9 123 45 67',
-      email: 'info@salahaddien.be',
-      capacity: 500,
-      imamName: 'Sheikh Ahmed Al-Mansouri',
-      establishedYear: 1985,
-      description: 'Moskee Salahaddien is een van de oudste en grootste moskeeën in Gent.',
-      latitude: 51.0543,
-      longitude: 3.7174,
-      services: ['Vrijdaggebed', 'Dagelijkse gebeden', 'Koranlessen', 'Arabische lessen'],
-      features: ['Parking', 'Vrouwenafdeling', 'Rolstoeltoegankelijk']
-    },
-    {
-      id: 2,
-      name: 'Moskee Al-Fath',
-      address: 'Korte Meer 11, 9000 Gent',
-      phone: '+32 9 234 56 78',
-      email: 'info@alfath.be',
-      capacity: 350,
-      imamName: 'Sheikh Ibrahim Al-Turk',
-      establishedYear: 1992,
-      description: 'Moskee Al-Fath is gelegen in het centrum van Gent en richt zich op educatie en gemeenschapsopbouw.',
-      latitude: 51.0538,
-      longitude: 3.7251,
-      services: ['Vrijdaggebed', 'Dagelijkse gebeden', 'Jeugdprogramma\'s', 'Vrouwenprogramma\'s'],
-      features: ['Parking', 'Vrouwenafdeling', 'Kinderruimte']
-    }
-  ];
+  const loading = isLoading;
 
   const services = [
     'Vrijdaggebed',
@@ -94,29 +52,14 @@ export default function MosqueSearchPage() {
     'Cafetaria'
   ];
 
-  useEffect(() => {
-    // Simulate API call
-    const loadMosques = async () => {
-      setTimeout(() => {
-        setMosques(mockMosques);
-        setLoading(false);
-      }, 1000);
-    };
-    loadMosques();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filteredMosques = mosques.filter(mosque => {
     const matchesSearch = mosque.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          mosque.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          mosque.description?.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesServices = selectedServices.length === 0 || 
-                           selectedServices.every(service => mosque.services?.includes(service));
-    
-    const matchesFeatures = selectedFeatures.length === 0 || 
-                           selectedFeatures.every(feature => mosque.features?.includes(feature));
-    
-    return matchesSearch && matchesServices && matchesFeatures;
+    // Note: API data doesn't have services/features arrays, so we skip those filters for now
+    return matchesSearch;
   });
 
   const sortedMosques = [...filteredMosques].sort((a, b) => {
@@ -126,7 +69,7 @@ export default function MosqueSearchPage() {
       case 'capacity':
         return (b.capacity || 0) - (a.capacity || 0);
       case 'established':
-        return (b.establishedYear || 0) - (a.establishedYear || 0);
+        return (b.established_year || 0) - (a.established_year || 0);
       default:
         return 0;
     }
@@ -373,10 +316,10 @@ export default function MosqueSearchPage() {
                             <span>{mosque.capacity} personen</span>
                           </div>
                         )}
-                        {mosque.establishedYear && (
+                        {mosque.established_year && (
                           <div className="flex items-center">
                             <ClockIcon className="w-4 h-4 mr-1" />
-                            <span>Sinds {mosque.establishedYear}</span>
+                            <span>Sinds {mosque.established_year}</span>
                           </div>
                         )}
                         {mosque.phone && (

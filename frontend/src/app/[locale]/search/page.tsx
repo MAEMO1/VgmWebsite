@@ -3,17 +3,7 @@
 import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import AdvancedSearch, { SearchResults } from '@/components/search/AdvancedSearch';
-
-interface SearchResult {
-  mosques: any[];
-  events: any[];
-  news: any[];
-  campaigns: any[];
-  total_results: number;
-  page: number;
-  per_page: number;
-  total_pages: number;
-}
+import type { Campaign, EventItem, Mosque, NewsArticle, SearchResult } from '@/types/api';
 
 export default function SearchPage() {
   const t = useTranslations('Search');
@@ -33,22 +23,22 @@ export default function SearchPage() {
     setError(errorMessage);
   };
 
-  const handleMosqueSelect = (mosque: any) => {
+  const handleMosqueSelect = (mosque: Mosque) => {
     // Navigate to mosque details
     console.log('Selected mosque:', mosque);
   };
 
-  const handleEventSelect = (event: any) => {
+  const handleEventSelect = (event: EventItem) => {
     // Navigate to event details
     console.log('Selected event:', event);
   };
 
-  const handleNewsSelect = (news: any) => {
+  const handleNewsSelect = (news: NewsArticle) => {
     // Navigate to news details
     console.log('Selected news:', news);
   };
 
-  const handleCampaignSelect = (campaign: any) => {
+  const handleCampaignSelect = (campaign: Campaign) => {
     // Navigate to campaign details
     console.log('Selected campaign:', campaign);
   };

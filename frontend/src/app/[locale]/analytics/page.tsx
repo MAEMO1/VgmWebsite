@@ -51,12 +51,6 @@ function AnalyticsDashboardContent() {
   const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'mosques' | 'summary'>('overview');
   const [days, setDays] = useState(30);
 
-  useEffect(() => {
-    if (isAdmin) {
-      loadAnalytics();
-    }
-  }, [isAdmin, days, loadAnalytics]);
-
   const loadAnalytics = useCallback(async () => {
     try {
       setLoading(true);
@@ -83,6 +77,12 @@ function AnalyticsDashboardContent() {
       setLoading(false);
     }
   }, [days]);
+
+  useEffect(() => {
+    if (isAdmin) {
+      loadAnalytics();
+    }
+  }, [isAdmin, loadAnalytics]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('nl-BE');

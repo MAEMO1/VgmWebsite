@@ -1,9 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
-import { getMosqueById } from '@/data/mosques';
+import { apiClient } from '@/api/client';
 import { notFound } from 'next/navigation';
+import type { Mosque } from '@/types/api';
 import { 
   MapPinIcon, 
   PhoneIcon, 
@@ -22,10 +24,21 @@ import {
 export default function MosqueDetailPage({ params }: { params: { id: string } }) {
   const [activeTab, setActiveTab] = useState('overview');
 
-  // Get real mosque data
-  const mosque = getMosqueById(parseInt(params.id));
-  
-  if (!mosque) {
+  const { data: mosque, isLoading, isError } = useQuery<Mosque>({
+    queryKey: ['mosque', params.id],
+    queryFn: () => apiClient.get<Mosque>(`/api/mosques/${params.id}`),
+    enabled: !!params.id,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (isError || !mosque) {
     notFound();
   }
 
@@ -51,12 +64,21 @@ export default function MosqueDetailPage({ params }: { params: { id: string } })
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Faciliteiten</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {mosque.features.map((feature, index) => (
-                  <div key={index} className="flex items-center">
+                {/* Note: API data doesn't have features array, so we show basic info */}
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-teal-500 rounded-full mr-3"></div>
+                  <span className="text-gray-700">Vrijdaggebed</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-teal-500 rounded-full mr-3"></div>
+                  <span className="text-gray-700">Dagelijkse gebeden</span>
+                </div>
+                {mosque.capacity && (
+                  <div className="flex items-center">
                     <div className="w-2 h-2 bg-teal-500 rounded-full mr-3"></div>
-                    <span className="text-gray-700">{feature}</span>
+                    <span className="text-gray-700">Capaciteit: {mosque.capacity} personen</span>
                   </div>
-                ))}
+                )}
               </div>
             </div>
 
@@ -88,11 +110,11 @@ export default function MosqueDetailPage({ params }: { params: { id: string } })
                   </div>
                   <div className="flex items-center">
                     <CalendarIcon className="h-4 w-4 text-gray-400 mr-2" />
-                    <span>Opgericht: {mosque.establishedYear}</span>
+                    <span>Opgericht: {mosque.established_year}</span>
                   </div>
                   <div className="flex items-center">
                     <UserGroupIcon className="h-4 w-4 text-gray-400 mr-2" />
-                    <span>Imam: {mosque.imam}</span>
+                    <span>Imam: {mosque.imam_name}</span>
                   </div>
                 </div>
               </div>

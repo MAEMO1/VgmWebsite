@@ -164,8 +164,28 @@ export default function EventsCalendarPage() {
           </div>
         </div>
 
-        {/* Calendar View */}
-        {viewMode === 'calendar' && (
+        {isLoading && (
+          <div className="flex items-center justify-center py-16">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" aria-label="Evenementen worden geladen" />
+          </div>
+        )}
+
+        {isError && (
+          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+            Het laden van evenementen is mislukt. Probeer het later opnieuw.
+          </div>
+        )}
+
+        {!isLoading && !isError && sortedEvents.length === 0 && (
+          <div className="rounded-lg border border-gray-200 bg-white p-8 text-center text-gray-600">
+            Er zijn momenteel geen evenementen gepland.
+          </div>
+        )}
+
+        {!isLoading && !isError && sortedEvents.length > 0 && (
+          <>
+            {/* Calendar View */}
+            {viewMode === 'calendar' && (
           <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
             {/* Calendar Header */}
             <div className="grid grid-cols-7 bg-gray-50 border-b border-gray-200">
@@ -199,7 +219,7 @@ export default function EventsCalendarPage() {
                           {dayEvents.slice(0, 2).map((event) => (
                             <div
                               key={event.id}
-                              className={`text-xs px-2 py-1 rounded ${getEventTypeColor(event.type)} truncate`}
+                              className={`text-xs px-2 py-1 rounded ${getEventTypeColor(event.event_type)} truncate`}
                               title={event.title}
                             >
                               {event.title}
@@ -220,8 +240,8 @@ export default function EventsCalendarPage() {
           </div>
         )}
 
-        {/* List View */}
-        {viewMode === 'list' && (
+            {/* List View */}
+            {viewMode === 'list' && (
           <div className="space-y-4">
             {sortedEvents.map((event) => (
               <div key={event.id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
@@ -262,30 +282,32 @@ export default function EventsCalendarPage() {
               </div>
             ))}
           </div>
-        )}
+            )}
 
-        {/* Legend */}
-        <div className="mt-8 bg-gray-50 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Legenda</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-blue-100 rounded mr-2"></div>
-              <span className="text-sm text-gray-700">Gebeden</span>
+            {/* Legend */}
+            <div className="mt-8 bg-gray-50 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Legenda</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="flex items-center">
+                  <div className="w-3 h-3 bg-blue-100 rounded mr-2"></div>
+                  <span className="text-sm text-gray-700">Gebeden</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-3 h-3 bg-green-100 rounded mr-2"></div>
+                  <span className="text-sm text-gray-700">Evenementen</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-3 h-3 bg-purple-100 rounded mr-2"></div>
+                  <span className="text-sm text-gray-700">Lezingen</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-3 h-3 bg-orange-100 rounded mr-2"></div>
+                  <span className="text-sm text-gray-700">Gemeenschap</span>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-green-100 rounded mr-2"></div>
-              <span className="text-sm text-gray-700">Evenementen</span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-purple-100 rounded mr-2"></div>
-              <span className="text-sm text-gray-700">Lezingen</span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-orange-100 rounded mr-2"></div>
-              <span className="text-sm text-gray-700">Gemeenschap</span>
-            </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
     </div>
   );
