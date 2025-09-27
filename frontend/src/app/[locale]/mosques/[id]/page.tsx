@@ -200,17 +200,42 @@ export default function MosqueDetailPage({ params }: { params: { id: string } })
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Bestuursleden</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {mosque.boardMembers.map((member, index) => (
-                  <div key={index} className="bg-white border border-gray-200 rounded-lg p-4">
-                    <h4 className="font-semibold text-gray-900 mb-1">{member.name}</h4>
-                    <p className="text-teal-600 font-medium mb-2">{member.position}</p>
-                    <div className="flex items-center text-sm text-gray-600">
-                      <EnvelopeIcon className="h-4 w-4 mr-1" />
-                      <span>{member.email}</span>
-                    </div>
+                <div className="bg-white border border-gray-200 rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-1">Voorzitter</h4>
+                  <p className="text-teal-600 font-medium mb-2">Bestuursvoorzitter</p>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <EnvelopeIcon className="h-4 w-4 mr-1" />
+                    <span>contact@{mosque.name.toLowerCase().replace(/\s+/g, '')}.be</span>
                   </div>
-                ))}
+                </div>
+                <div className="bg-white border border-gray-200 rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-1">Secretaris</h4>
+                  <p className="text-teal-600 font-medium mb-2">Bestuurssecretaris</p>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <EnvelopeIcon className="h-4 w-4 mr-1" />
+                    <span>secretaris@{mosque.name.toLowerCase().replace(/\s+/g, '')}.be</span>
+                  </div>
+                </div>
+                <div className="bg-white border border-gray-200 rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-1">Penningmeester</h4>
+                  <p className="text-teal-600 font-medium mb-2">Financieel beheerder</p>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <EnvelopeIcon className="h-4 w-4 mr-1" />
+                    <span>financieel@{mosque.name.toLowerCase().replace(/\s+/g, '')}.be</span>
+                  </div>
+                </div>
+                <div className="bg-white border border-gray-200 rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-1">Imam</h4>
+                  <p className="text-teal-600 font-medium mb-2">Spiritueel leider</p>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <EnvelopeIcon className="h-4 w-4 mr-1" />
+                    <span>{mosque.imam_name || 'imam@moskee.be'}</span>
+                  </div>
+                </div>
               </div>
+              <p className="text-sm text-gray-500 mt-4">
+                * Dit zijn voorbeeldbestuursleden. Werkelijke bestuursinformatie wordt binnenkort geladen.
+              </p>
             </div>
           </div>
         );
