@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import AdvancedSearch from '../AdvancedSearch';
-import type { SearchResult } from '@/types/api';
+import { SearchResult } from '@/types/api';
 import { apiClient } from '@/api/client';
 
 jest.mock('@/api/client', () => ({
