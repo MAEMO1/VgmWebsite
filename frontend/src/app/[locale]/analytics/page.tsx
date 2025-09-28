@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import { apiClient } from '@/api/client';
+import { Protected } from '@/app/components/Protected';
 import { 
   ChartBarIcon, 
   BuildingOfficeIcon, 
@@ -396,18 +397,22 @@ function AnalyticsDashboardContent() {
 }
 
 export default function AnalyticsDashboardPage() {
-  const { user, isAdmin } = useAuth();
+  const { user } = useAuth();
   
-  if (!user || !isAdmin) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h1>
-          <p className="text-gray-600">You need admin privileges to access this page.</p>
+  return (
+    <Protected 
+      user={user} 
+      capability="analytics.view_platform"
+      fallback={
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h1>
+            <p className="text-gray-600">You need admin privileges to access this page.</p>
+          </div>
         </div>
-      </div>
-    );
-  }
-  
-  return <AnalyticsDashboardContent />;
+      }
+    >
+      <AnalyticsDashboardContent />
+    </Protected>
+  );
 }

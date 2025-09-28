@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import { apiClient, MosqueAccessRequest } from '@/api/client';
 import type { Mosque } from '@/types/api';
 import { useAuth } from '@/contexts/AuthContext';
+import { Protected } from '@/app/components/Protected';
 
 interface FormState {
   mosque_id: string;
@@ -17,7 +18,7 @@ interface FormState {
   motivation: string;
 }
 
-export default function MosqueAccessRequestPage() {
+function MosqueAccessRequestPageContent() {
   const { isAuthenticated, user } = useAuth();
   const t = useTranslations('MosqueAccessRequest');
   const shared = useTranslations('Auth.Shared');
@@ -299,5 +300,26 @@ export default function MosqueAccessRequestPage() {
         </aside>
       </div>
     </div>
+  );
+}
+
+export default function MosqueAccessRequestPage() {
+  const { user } = useAuth();
+  
+  return (
+    <Protected 
+      user={user} 
+      capability="profile.manage"
+      fallback={
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h1>
+            <p className="text-gray-600">You need to be logged in to request mosque access.</p>
+          </div>
+        </div>
+      }
+    >
+      <MosqueAccessRequestPageContent />
+    </Protected>
   );
 }

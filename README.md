@@ -26,6 +26,17 @@ Dit project bundelt een Flask-API en een Next.js-frontend om moskeegegevens, eve
 - **Legacy**: er staat nog een oudere Flask/SQLAlchemy app (`main.py`, `routes/`, `templates/`) die gradueel wordt uitgefaseerd
 - **Infra**: Dockerfiles voor backend/frontend, GitHub Actions workflow (`.github/workflows/deploy.yml`)
 
+### RBAC Architecture
+Het platform gebruikt een Role-Based Access Control (RBAC) systeem voor toegangsbeheer:
+
+- **Single Source of Truth**: De RBAC-configuratie staat in `config/rbac.config.json` en definieert rollen, capabilities en scopes
+- **Server-side**: De Flask-backend gebruikt de RBAC-engine (`rbac/rbac.py`) voor capability-checking op API-endpoints
+- **Client-side**: De Next.js-frontend heeft een TypeScript RBAC-engine (`frontend/app/lib/rbac/`) met een `Protected` component voor conditional rendering
+- **Route Guards**: Middleware (`frontend/middleware.ts`) beheert route-level toegang en dashboard-redirects op basis van gebruikersrollen
+
+**Rollen**: `GAST` → `LID` → `MOSKEE_BEHEERDER` → `BEHEERDER` (hiërarchisch)
+**Scopes**: `own` (eigen resources), `any` (alle resources), `platform` (platformbreed)
+
 > Let op: documentatie in `docs/` verwijst nog deels naar een eerdere Django-architectuur. Gebruik dit README als bron van waarheid totdat die documenten zijn bijgewerkt.
 
 ## Snel starten

@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { useAuth, withAuth } from '@/contexts/AuthContext';
 import { apiClient, MosqueAccessRequest } from '@/api/client';
 import MosqueAccessModal from '@/components/admin/MosqueAccessModal';
+import { Protected } from '@/app/components/Protected';
 
 interface User {
   id: number;
@@ -502,4 +503,25 @@ function AdminDashboard() {
   );
 }
 
-export default withAuth(AdminDashboard, 'admin');
+function AdminPage() {
+  const { user } = useAuth();
+  
+  return (
+    <Protected 
+      user={user} 
+      capability="site.admin"
+      fallback={
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h1>
+            <p className="text-gray-600">You need admin privileges to access this page.</p>
+          </div>
+        </div>
+      }
+    >
+      <AdminDashboard />
+    </Protected>
+  );
+}
+
+export default withAuth(AdminPage, 'admin');
