@@ -21,12 +21,15 @@ COPY . .
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:$PORT/health || exit 1
+# Set default port
+ENV PORT=8000
 
 # Expose port
-EXPOSE $PORT
+EXPOSE 8000
 
-# Start command
-CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "--workers", "2", "--timeout", "30", "app:app"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:${PORT:-8000}/health || exit 1
+
+# Start command (shell form for $PORT expansion)
+CMD sh -c 'gunicorn --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 30 app:app'
