@@ -99,6 +99,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Store in localStorage
         localStorage.setItem('auth_token', newToken);
         localStorage.setItem('auth_user', JSON.stringify(userData));
+
+        const roleMap: Record<User['role'], string> = {
+          admin: 'BEHEERDER',
+          mosque_admin: 'MOSKEE_BEHEERDER',
+          user: 'LID',
+        };
+        const cookieRole = roleMap[userData.role] ?? 'LID';
+        const cookieExpiry = remember ? '; Max-Age=604800' : '';
+        document.cookie = `x-role=${cookieRole}; SameSite=Lax; Path=/${cookieExpiry}`;
+        if (userData.mosque_id) {
+          document.cookie = `x-mosque=${userData.mosque_id}; SameSite=Lax; Path=/${cookieExpiry}`;
+        } else {
+          document.cookie = 'x-mosque=; Max-Age=0; Path=/; SameSite=Lax';
+        }
         
         return true;
       }
@@ -157,6 +171,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       apiClient.clearAuthToken();
       localStorage.removeItem('auth_token');
       localStorage.removeItem('auth_user');
+      document.cookie = 'x-role=; Max-Age=0; Path=/; SameSite=Lax';
+      document.cookie = 'x-mosque=; Max-Age=0; Path=/; SameSite=Lax';
     }
   };
 

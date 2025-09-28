@@ -2,7 +2,7 @@ import os
 from flask import Flask, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.ext.declarative import declarative_base
 from flask_babel import Babel
 import logging
 
@@ -14,8 +14,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Create the base class for SQLAlchemy models
-class Base(DeclarativeBase):
-    pass
+Base = declarative_base()
 
 # Initialize extensions
 db = SQLAlchemy(model_class=Base)
@@ -28,18 +27,26 @@ app = Flask(__name__)
 # Configure the app
 app.secret_key = os.environ.get("SESSION_SECRET")
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
-app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-    "pool_pre_ping": True,  # Enable connection health checks
-    "pool_recycle": 300,    # Recycle connections every 5 minutes
-    "pool_timeout": 30,     # Connection timeout after 30 seconds
-    "pool_size": 20,        # Maximum number of connections
-    "max_overflow": 5       # Allow 5 connections above pool_size when needed
-}
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['BABEL_DEFAULT_LOCALE'] = 'nl'
 app.config['BABEL_SUPPORTED_LOCALES'] = ['en', 'nl', 'ar']
 app.config['BABEL_DEFAULT_TIMEZONE'] = 'Europe/Amsterdam'
 app.config['FRONTEND_BASE_URL'] = os.environ.get('FRONTEND_BASE_URL', 'http://localhost:3000')
+
+# Configure database engine options based on database type
+database_url = os.environ.get("DATABASE_URL", "sqlite:///vgm.db")
+if database_url.startswith("sqlite"):
+    # SQLite doesn't support connection pooling
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {}
+else:
+    # PostgreSQL/other databases support connection pooling
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+        "pool_pre_ping": True,  # Enable connection health checks
+        "pool_recycle": 300,    # Recycle connections every 5 minutes
+        "pool_timeout": 30,     # Connection timeout after 30 seconds
+        "pool_size": 20,        # Maximum number of connections
+        "max_overflow": 5       # Allow 5 connections above pool_size when needed
+    }
 
 # Initialize extensions with app
 db.init_app(app)
@@ -69,16 +76,30 @@ with app.app_context():
         from models import (
             User,
             Event,
-            EventRegistration,
-            EventNotification,
             PrayerTime,
-            Obituary,
-            ObituaryNotification,
             BlogPost,
-            Message,
             FundraisingCampaign,
             PasswordResetToken,
             MosqueAccessRequest,
+            Mosque,
+            BoardMember,
+            MosqueHistory,
+            MediaFile,
+            JanazahEvent,
+            Donation,
+            ContactSubmission,
+            UserSession,
+            IfterEvent,
+            MosqueImage,
+            MosqueVideo,
+            MosqueNotificationPreference,
+            MosqueBoardMember,
+            MosquePhoto,
+            ContentChangeLog,
+            EventMosqueCollaboration,
+            BlogCategory,
+            LearningContent,
+            PaymentConfig,
         )
         # Create all database tables
         db.create_all()

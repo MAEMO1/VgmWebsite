@@ -1,0 +1,86 @@
+version: "1.0"
+resources:
+  mosque:   { key: mosque, idType: string }
+  event:    { key: event, idType: string }
+  campaign: { key: campaign, idType: string }
+  prayer:   { key: prayer, idType: string }
+
+capabilities:
+  content.view_public: {}
+  content.view_members: {}
+  profile.manage: {}
+  events.register: {}
+  funeral.submit: {}
+  donations.use: {}
+
+  mosque.manage:           { scoped: true, resource: mosque }
+  prayers.approve:         { scoped: true, resource: mosque }
+  events.manage:           { scoped: true, resource: mosque }
+  campaigns.manage:        { scoped: true, resource: mosque }
+  payments.configure:      { scoped: true, resource: mosque }
+  notifications.manage:    { scoped: true, resource: mosque }
+  news.publish:            { scoped: true, resource: mosque }
+  times.edit:              { scoped: true, resource: mosque }
+  photos.upload:           { scoped: true, resource: mosque }
+
+  analytics.view_mosque:   { scoped: true, resource: mosque }
+  analytics.view_platform: {}
+  events.approve: {}
+  campaigns.approve: {}
+  users.manage: {}
+  roles.manage: {}
+  site.admin: {}
+  audit.view: {}
+  gdpr.process: {}
+  content.moderate: {}
+  payments.configure_platform: {}
+
+roles:
+  GAST:
+    extends: []
+    grants:
+      - content.view_public
+
+  LID:
+    extends: [GAST]
+    grants:
+      - profile.manage
+      - content.view_members
+      - events.register
+      - funeral.submit
+      - donations.use
+
+  MOSKEE_BEHEERDER:
+    extends: [LID]
+    grants:
+      - mosque.manage:own
+      - prayers.approve:own
+      - events.manage:own
+      - campaigns.manage:own
+      - payments.configure:own
+      - notifications.manage:own
+      - news.publish:own
+      - times.edit:own
+      - photos.upload:own
+      - analytics.view_mosque:own
+
+  BEHEERDER:
+    extends: [MOSKEE_BEHEERDER]
+    grants:
+      - mosque.manage:any
+      - prayers.approve:any
+      - events.manage:any
+      - campaigns.manage:any
+      - payments.configure:any
+      - analytics.view_mosque:any
+
+      - analytics.view_platform
+      - events.approve
+      - campaigns.approve
+      - users.manage
+      - roles.manage
+      - site.admin
+      - audit.view
+      - gdpr.process
+      - content.moderate
+      - payments.configure_platform

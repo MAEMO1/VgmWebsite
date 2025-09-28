@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { useAuth, withAuth } from '@/contexts/AuthContext';
 import { apiClient, MosqueAccessRequest } from '@/api/client';
