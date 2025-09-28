@@ -3,7 +3,7 @@
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { NotificationsPage } from '@/components/notifications/NotificationBell';
-import { Protected } from '@/app/components/Protected';
+import { Protected } from '@/components/Protected';
 
 export default function NotificationsPageRoute() {
   const { user } = useAuth();

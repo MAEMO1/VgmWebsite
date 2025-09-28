@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 import { apiClient, MosqueAccessRequest } from '@/api/client';
 import type { Mosque } from '@/types/api';
 import { useAuth } from '@/contexts/AuthContext';
-import { Protected } from '@/app/components/Protected';
+import { Protected } from '@/components/Protected';
 
 interface FormState {
   mosque_id: string;

@@ -3,10 +3,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
+import { useLocale } from 'next-intl';
 import { useAuth, withAuth } from '@/contexts/AuthContext';
 import { apiClient, MosqueAccessRequest } from '@/api/client';
 import MosqueAccessModal from '@/components/admin/MosqueAccessModal';
-import { Protected } from '@/app/components/Protected';
+import { Protected } from '@/components/Protected';
 
 interface User {
   id: number;
@@ -55,6 +56,7 @@ interface Mosque {
 
 function AdminDashboard() {
   const { user, logout } = useAuth();
+  const locale = useLocale();
   const [users, setUsers] = useState<User[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [news, setNews] = useState<News[]>([]);
@@ -468,7 +470,7 @@ function AdminDashboard() {
                         {request.status === 'pending' && (
                           <div className="flex items-center gap-2">
                             <button
-                              onClick={() => openModal('approve', request.id, request.mosque_id)}
+                              onClick={() => openModal('approve', request.id, request.mosque_id || undefined)}
                               className="rounded-md bg-green-600 px-3 py-1 text-xs font-medium text-white hover:bg-green-700"
                             >
                               Approve
@@ -494,7 +496,7 @@ function AdminDashboard() {
       <MosqueAccessModal
         isOpen={modalState.isOpen}
         onClose={closeModal}
-        onSubmit={(data) => handleAccessRequestUpdate(modalState.requestId, modalState.type, data.mosqueId, data.adminNotes)}
+        onSubmit={(data) => handleAccessRequestUpdate(modalState.requestId, modalState.type === 'approve' ? 'approved' : 'rejected', data.mosqueId, data.adminNotes)}
         type={modalState.type}
         currentMosqueId={modalState.currentMosqueId}
         mosques={mosques}

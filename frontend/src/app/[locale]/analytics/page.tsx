@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import { apiClient } from '@/api/client';
-import { Protected } from '@/app/components/Protected';
+import { Protected } from '@/components/Protected';
 import { 
   ChartBarIcon, 
   BuildingOfficeIcon, 
