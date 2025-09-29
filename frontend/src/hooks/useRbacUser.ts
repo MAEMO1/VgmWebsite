@@ -2,8 +2,8 @@
 
 import { useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import type { AuthUser } from '../lib/rbac/types';
-import { createAuthUser } from '../lib/rbac/transform';
+import type { AuthUser } from '@/lib/rbac/types';
+import { createAuthUser } from '@/lib/rbac/transform';
 
 export function useRbacUser(): AuthUser | null {
   const { user } = useAuth();

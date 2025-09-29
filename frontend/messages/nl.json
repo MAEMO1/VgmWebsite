@@ -189,6 +189,7 @@
       "password": "Wachtwoord",
       "firstName": "Voornaam",
       "lastName": "Achternaam",
+      "confirmPassword": "Bevestig wachtwoord",
       "placeholders": {
         "firstName": "Vul uw voornaam in",
         "lastName": "Vul uw achternaam in"
@@ -243,6 +244,17 @@
     "Register": {
       "title": "Maak uw account aan",
       "cta": "Al geregistreerd? {login}",
+      "placeholders": {
+        "firstName": "Voer je voornaam in",
+        "lastName": "Voer je achternaam in",
+        "email": "voornaam@voorbeeld.com",
+        "password": "Minimaal 8 karakters",
+        "confirmPassword": "Bevestig je wachtwoord",
+        "motivation": "Leg uit waarom je beheerdersrechten nodig hebt"
+      },
+      "actions": {
+        "createAccount": "Account aanmaken"
+      },
       "errors": {
         "mosqueLoad": "De lijst met moskeeën kan niet worden geladen. Probeer het later opnieuw.",
         "mosqueRequired": "Selecteer de moskee die u vertegenwoordigt."
@@ -407,5 +419,7 @@
       "approved": "Goedgekeurd",
       "rejected": "Afgewezen"
     }
-  }
+  },
+  "Search": "Zoeken",
+  "MediaGallery": "Mediagalerij"
 }

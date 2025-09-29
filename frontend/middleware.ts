@@ -1,7 +1,7 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { ROLE_ORDER } from './app/lib/rbac/config';
-import type { AuthUser } from './app/lib/rbac/types';
+import { ROLE_ORDER } from '@/lib/rbac/config';
+import type { AuthUser } from '@/lib/rbac/types';
 
 function getAuthUserFromRequest(req: NextRequest): AuthUser | null {
   const roleCookie = req.cookies.get('x-role')?.value as AuthUser['role'] | undefined;
