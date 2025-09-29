@@ -4,7 +4,7 @@
   "installCommand": "cd frontend && npm install",
   "framework": "nextjs",
   "functions": {
-    "frontend/app/api/**/*.ts": {
+    "frontend/src/app/api/**/*.ts": {
       "maxDuration": 30
     }
   },
