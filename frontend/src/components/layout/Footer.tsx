@@ -16,7 +16,7 @@ export function Footer() {
           <div className="md:col-span-1">
             <div className="flex items-center mb-4">
               <Image
-                src="/logo.svg"
+                src="/vgmsvg.svg"
                 alt="VGM Logo"
                 width={40}
                 height={40}
