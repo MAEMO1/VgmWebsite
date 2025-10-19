@@ -1,13 +1,38 @@
 'use client';
 
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { CalendarIcon, UserIcon, TagIcon } from '@heroicons/react/24/outline';
+import { apiClient } from '@/api/client';
+import { ErrorState } from '@/components/ui/ErrorState';
+
+interface NewsArticle {
+  id: number;
+  title: string;
+  content: string;
+  excerpt: string;
+  author_id: number;
+  first_name: string;
+  last_name: string;
+  category: string;
+  featured_image: string;
+  status: string;
+  published_at: string;
+  created_at: string;
+  updated_at: string;
+}
 
 export default function NewsPage() {
   const t = useTranslations('News');
   const [activeTab, setActiveTab] = useState('overview');
+
+  const { data: newsArticles = [], isLoading, isError } = useQuery<NewsArticle[]>({
+    queryKey: ['news'],
+    queryFn: () => apiClient.get<NewsArticle[]>('/api/news'),
+    refetchOnWindowFocus: false,
+  });
 
   const tabs = [
     { id: 'overview', name: 'Overzicht' },
@@ -16,27 +41,54 @@ export default function NewsPage() {
     { id: 'reflections', name: 'Reflecties' }
   ];
 
-  // Mock data - in real app this would come from API
-  const newsArticles = [
-    {
-      id: 1,
-      title: 'Ramadan 2024: Gemeenschappelijke Iftar-maaltijden',
-      excerpt: 'De VGM organiseert deze Ramadan verschillende gemeenschappelijke iftar-maaltijden in verschillende moskeeën.',
-      category: 'Aankondiging',
-      author: 'VGM Bestuur',
-      date: '2024-01-10',
-      image: '/api/placeholder/400/200'
-    },
-    {
-      id: 2,
-      title: 'Nieuwe Gebedstijden voor Winterperiode',
-      excerpt: 'De gebedstijden zijn aangepast voor de winterperiode. Bekijk de nieuwe tijden op onze website.',
-      category: 'Nieuws',
-      author: 'VGM Bestuur',
-      date: '2024-01-08',
-      image: '/api/placeholder/400/200'
+  const filteredArticles = newsArticles.filter(article => {
+    switch (activeTab) {
+      case 'news':
+        return article.category === 'news';
+      case 'announcements':
+        return article.category === 'announcement';
+      case 'reflections':
+        return article.category === 'reflection';
+      default:
+        return true;
     }
-  ];
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Breadcrumbs items={[
+          { name: 'Gemeenschap', href: '/community' },
+          { name: 'Nieuws' }
+        ]} />
+        
+        <div className="max-w-6xl mx-auto px-6 py-8">
+          <div className="flex items-center justify-center py-16">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" aria-label="Nieuws wordt geladen" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Breadcrumbs items={[
+          { name: 'Gemeenschap', href: '/community' },
+          { name: 'Nieuws' }
+        ]} />
+        
+        <div className="max-w-6xl mx-auto px-6 py-8">
+          <ErrorState
+            title="Nieuws laden mislukt"
+            message="Het laden van nieuwsartikelen is mislukt. Probeer het later opnieuw."
+            tone="critical"
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -81,31 +133,43 @@ export default function NewsPage() {
             {/* Latest News */}
             <div>
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Laatste Nieuws</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {newsArticles.map((article) => (
-                  <div key={article.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
-                    <div className="h-48 bg-gray-200"></div>
-                    <div className="p-6">
-                      <div className="flex items-center mb-2">
-                        <TagIcon className="h-4 w-4 text-gray-400 mr-2" />
-                        <span className="text-sm text-blue-600 font-medium">{article.category}</span>
-                      </div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">{article.title}</h3>
-                      <p className="text-gray-600 text-sm mb-4">{article.excerpt}</p>
-                      <div className="flex items-center justify-between text-sm text-gray-500">
-                        <div className="flex items-center">
-                          <UserIcon className="h-4 w-4 mr-1" />
-                          {article.author}
+              {filteredArticles.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredArticles.slice(0, 6).map((article) => (
+                    <div key={article.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+                      <div className="h-48 bg-gray-200"></div>
+                      <div className="p-6">
+                        <div className="flex items-center mb-2">
+                          <TagIcon className="h-4 w-4 text-gray-400 mr-2" />
+                          <span className="text-sm text-blue-600 font-medium">{article.category}</span>
                         </div>
-                        <div className="flex items-center">
-                          <CalendarIcon className="h-4 w-4 mr-1" />
-                          {new Date(article.date).toLocaleDateString('nl-NL')}
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">{article.title}</h3>
+                        <p className="text-gray-600 text-sm mb-4">{article.excerpt || 'Meer informatie volgt binnenkort.'}</p>
+                        <div className="flex items-center justify-between text-sm text-gray-500">
+                          <div className="flex items-center">
+                            <UserIcon className="h-4 w-4 mr-1" />
+                            {article.first_name} {article.last_name}
+                          </div>
+                          <div className="flex items-center">
+                            <CalendarIcon className="h-4 w-4 mr-1" />
+                            {new Date(article.published_at).toLocaleDateString('nl-NL')}
+                          </div>
                         </div>
                       </div>
                     </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="text-gray-400 mb-4">
+                    <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                    </svg>
                   </div>
-                ))}
-              </div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Geen nieuwsartikelen</h3>
+                  <p className="text-gray-500">Er zijn momenteel geen nieuwsartikelen beschikbaar.</p>
+                </div>
+              )}
             </div>
 
             {/* Quick Actions */}
@@ -127,38 +191,113 @@ export default function NewsPage() {
         )}
 
         {activeTab === 'news' && (
-          <div className="text-center py-12">
-            <div className="text-gray-400 mb-4">
-              <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Geen nieuwsartikelen</h3>
-            <p className="text-gray-500">Er zijn momenteel geen nieuwsartikelen beschikbaar.</p>
+          <div className="space-y-6">
+            {filteredArticles.length > 0 ? (
+              filteredArticles.map((article) => (
+                <div key={article.id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
+                  <div className="flex items-center mb-2">
+                    <TagIcon className="h-4 w-4 text-gray-400 mr-2" />
+                    <span className="text-sm text-blue-600 font-medium">{article.category}</span>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{article.title}</h3>
+                  <p className="text-gray-600 mb-4">{article.excerpt || 'Meer informatie volgt binnenkort.'}</p>
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <div className="flex items-center">
+                      <UserIcon className="h-4 w-4 mr-1" />
+                      {article.first_name} {article.last_name}
+                    </div>
+                    <div className="flex items-center">
+                      <CalendarIcon className="h-4 w-4 mr-1" />
+                      {new Date(article.published_at).toLocaleDateString('nl-NL')}
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-12">
+                <div className="text-gray-400 mb-4">
+                  <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Geen nieuwsartikelen</h3>
+                <p className="text-gray-500">Er zijn momenteel geen nieuwsartikelen beschikbaar.</p>
+              </div>
+            )}
           </div>
         )}
 
         {activeTab === 'announcements' && (
-          <div className="text-center py-12">
-            <div className="text-gray-400 mb-4">
-              <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Geen aankondigingen</h3>
-            <p className="text-gray-500">Er zijn momenteel geen aankondigingen beschikbaar.</p>
+          <div className="space-y-6">
+            {filteredArticles.length > 0 ? (
+              filteredArticles.map((article) => (
+                <div key={article.id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
+                  <div className="flex items-center mb-2">
+                    <TagIcon className="h-4 w-4 text-gray-400 mr-2" />
+                    <span className="text-sm text-blue-600 font-medium">{article.category}</span>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{article.title}</h3>
+                  <p className="text-gray-600 mb-4">{article.excerpt || 'Meer informatie volgt binnenkort.'}</p>
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <div className="flex items-center">
+                      <UserIcon className="h-4 w-4 mr-1" />
+                      {article.first_name} {article.last_name}
+                    </div>
+                    <div className="flex items-center">
+                      <CalendarIcon className="h-4 w-4 mr-1" />
+                      {new Date(article.published_at).toLocaleDateString('nl-NL')}
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-12">
+                <div className="text-gray-400 mb-4">
+                  <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Geen aankondigingen</h3>
+                <p className="text-gray-500">Er zijn momenteel geen aankondigingen beschikbaar.</p>
+              </div>
+            )}
           </div>
         )}
 
         {activeTab === 'reflections' && (
-          <div className="text-center py-12">
-            <div className="text-gray-400 mb-4">
-              <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Geen reflecties</h3>
-            <p className="text-gray-500">Er zijn momenteel geen reflecties beschikbaar.</p>
+          <div className="space-y-6">
+            {filteredArticles.length > 0 ? (
+              filteredArticles.map((article) => (
+                <div key={article.id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
+                  <div className="flex items-center mb-2">
+                    <TagIcon className="h-4 w-4 text-gray-400 mr-2" />
+                    <span className="text-sm text-blue-600 font-medium">{article.category}</span>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{article.title}</h3>
+                  <p className="text-gray-600 mb-4">{article.excerpt || 'Meer informatie volgt binnenkort.'}</p>
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <div className="flex items-center">
+                      <UserIcon className="h-4 w-4 mr-1" />
+                      {article.first_name} {article.last_name}
+                    </div>
+                    <div className="flex items-center">
+                      <CalendarIcon className="h-4 w-4 mr-1" />
+                      {new Date(article.published_at).toLocaleDateString('nl-NL')}
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-12">
+                <div className="text-gray-400 mb-4">
+                  <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Geen reflecties</h3>
+                <p className="text-gray-500">Er zijn momenteel geen reflecties beschikbaar.</p>
+              </div>
+            )}
           </div>
         )}
       </div>

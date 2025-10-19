@@ -1,213 +1,209 @@
 'use client';
 
-import { useState } from 'react';
-import { useTodayPrayerTimes, useTomorrowPrayerTimes } from '@/hooks/usePrayerTimes';
-import { PrayerTimesWidget } from './PrayerTimesWidget';
-import { 
-  CalendarIcon, 
-  ClockIcon, 
-  MapPinIcon,
-  SunIcon 
-} from '@heroicons/react/24/outline';
-import { Skeleton } from '@/components/ui/Skeleton';
+import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
+import { ClockIcon, MapPinIcon, CalendarIcon } from '@heroicons/react/24/outline';
+import { apiClient } from '@/api/client';
+import { ErrorState } from '@/components/ui/ErrorState';
+
+interface PrayerTime {
+  id: number;
+  mosque_id: number;
+  date: string;
+  fajr: string;
+  dhuhr: string;
+  asr: string;
+  maghrib: string;
+  isha: string;
+}
+
+interface Mosque {
+  id: number;
+  name: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+}
 
 export function PrayerTimesPage() {
-  const [selectedDate, setSelectedDate] = useState<'today' | 'tomorrow'>('today');
-  
-  const { data: todayData, isLoading: todayLoading } = useTodayPrayerTimes();
-  const { data: tomorrowData, isLoading: tomorrowLoading } = useTomorrowPrayerTimes();
+  const t = useTranslations('PrayerTimes');
+  const [selectedMosque, setSelectedMosque] = useState<number | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
 
-  const isLoading = selectedDate === 'today' ? todayLoading : tomorrowLoading;
-  const data = selectedDate === 'today' ? todayData : tomorrowData;
+  // Fetch mosques
+  const { data: mosques = [], isLoading: mosquesLoading } = useQuery<Mosque[]>({
+    queryKey: ['mosques'],
+    queryFn: () => apiClient.get<Mosque[]>('/api/mosques'),
+    refetchOnWindowFocus: false,
+  });
+
+  // Fetch prayer times
+  const { data: prayerTimes, isLoading: prayerTimesLoading, isError: prayerTimesError } = useQuery<PrayerTime>({
+    queryKey: ['prayer-times', selectedMosque, selectedDate],
+    queryFn: () => apiClient.get<PrayerTime>(`/api/prayer-times?mosque_id=${selectedMosque}&date=${selectedDate}`),
+    enabled: !!selectedMosque,
+    refetchOnWindowFocus: false,
+  });
+
+  // Auto-select first mosque if available
+  useEffect(() => {
+    if (mosques.length > 0 && !selectedMosque) {
+      setSelectedMosque(mosques[0].id);
+    }
+  }, [mosques, selectedMosque]);
+
+  const prayerNames = [
+    { key: 'fajr', name: 'Fajr', time: prayerTimes?.fajr },
+    { key: 'dhuhr', name: 'Dhuhr', time: prayerTimes?.dhuhr },
+    { key: 'asr', name: 'Asr', time: prayerTimes?.asr },
+    { key: 'maghrib', name: 'Maghrib', time: prayerTimes?.maghrib },
+    { key: 'isha', name: 'Isha', time: prayerTimes?.isha },
+  ];
+
+  const selectedMosqueData = mosques.find(m => m.id === selectedMosque);
+
+  if (mosquesLoading) {
+    return (
+      <div className="min-h-screen bg-white">
+        <div className="max-w-6xl mx-auto px-6 py-8">
+          <div className="flex items-center justify-center py-16">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" aria-label="Gebedstijden worden geladen" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-blue-50">
-      {/* Hero Header */}
-      <div className="bg-gradient-to-r from-teal-600 to-teal-700 text-white">
-        <div className="max-w-7xl mx-auto px-6 py-12">
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-4">
-              <ClockIcon className="w-8 h-8 text-white" />
-            </div>
-            <h1 className="text-4xl font-bold mb-3">
+    <div className="min-h-screen bg-white">
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
               Gebedstijden
             </h1>
-            <p className="text-xl text-teal-100 mb-8">
-              Gebedstijden voor Gent en omgeving
-            </p>
-            
-            {/* Date Selector */}
-            <div className="flex items-center justify-center space-x-3">
-              <button
-                onClick={() => setSelectedDate('today')}
-                className={`px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                  selectedDate === 'today'
-                    ? 'bg-white text-teal-600 shadow-lg'
-                    : 'bg-white/20 text-white hover:bg-white/30'
-                }`}
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Bekijk de dagelijkse gebedstijden voor alle VGM moskeeën in Gent
+          </p>
+        </div>
+
+        {/* Controls */}
+        <div className="bg-gray-50 rounded-lg p-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Mosque Selection */}
+            <div>
+              <label htmlFor="mosque-select" className="block text-sm font-medium text-gray-700 mb-2">
+                <MapPinIcon className="inline w-4 h-4 mr-1" />
+                Selecteer Moskee
+              </label>
+              <select
+                id="mosque-select"
+                value={selectedMosque || ''}
+                onChange={(e) => setSelectedMosque(Number(e.target.value))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
               >
-                Vandaag
-              </button>
-              <button
-                onClick={() => setSelectedDate('tomorrow')}
-                className={`px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                  selectedDate === 'tomorrow'
-                    ? 'bg-white text-teal-600 shadow-lg'
-                    : 'bg-white/20 text-white hover:bg-white/30'
-                }`}
-              >
-                Morgen
-              </button>
+                <option value="">Selecteer een moskee</option>
+                {mosques.map((mosque) => (
+                  <option key={mosque.id} value={mosque.id}>
+                    {mosque.name}
+                  </option>
+                ))}
+              </select>
             </div>
+
+            {/* Date Selection */}
+            <div>
+              <label htmlFor="date-select" className="block text-sm font-medium text-gray-700 mb-2">
+                <CalendarIcon className="inline w-4 h-4 mr-1" />
+                Selecteer Datum
+              </label>
+              <input
+                type="date"
+                id="date-select"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+              />
           </div>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Prayer Times */}
-          <div className="lg:col-span-2">
-            <PrayerTimesWidget />
-          </div>
+        {/* Prayer Times Display */}
+        {selectedMosque && (
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+            {/* Mosque Info */}
+            {selectedMosqueData && (
+              <div className="bg-primary text-white p-6">
+                <h2 className="text-2xl font-bold mb-2">{selectedMosqueData.name}</h2>
+                <p className="text-primary-100">{selectedMosqueData.address}</p>
+              </div>
+            )}
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Location Info */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
-                  <MapPinIcon className="w-5 h-5 text-teal-600" />
+            {/* Prayer Times */}
+            <div className="p-6">
+              {prayerTimesLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
                 </div>
+              ) : prayerTimesError ? (
+                <ErrorState
+                  title="Gebedstijden laden mislukt"
+                  message="Het laden van gebedstijden is mislukt. Probeer het later opnieuw."
+                  tone="critical"
+                />
+              ) : prayerTimes ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                  {prayerNames.map((prayer) => (
+                    <div
+                      key={prayer.key}
+                      className="bg-gray-50 rounded-lg p-4 text-center"
+                    >
+                      <div className="flex items-center justify-center mb-2">
+                        <ClockIcon className="w-5 h-5 text-primary mr-2" />
                 <h3 className="text-lg font-semibold text-gray-900">
-                  Locatie
+                          {prayer.name}
                 </h3>
               </div>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    <MapPinIcon className="w-4 h-4 text-blue-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Gent, België</p>
-                    <p className="text-xs text-gray-500">51.0543°N, 3.7174°E</p>
-                  </div>
+                      <div className="text-2xl font-bold text-primary">
+                        {prayer.time}
+                      </div>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                    <ClockIcon className="w-4 h-4 text-green-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Tijdzone</p>
-                    <p className="text-xs text-gray-500">CET (UTC+1)</p>
-                  </div>
+                  ))}
                 </div>
-              </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">Geen gebedstijden beschikbaar voor de geselecteerde datum.</p>
+                </div>
+              )}
             </div>
 
-            {/* Calculation Method */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                  <CalendarIcon className="w-5 h-5 text-purple-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Berekening
-                </h3>
-              </div>
-              <div className="space-y-4">
-                <div className="p-3 bg-teal-50 rounded-lg">
-                  <p className="text-sm font-medium text-gray-900">Primaire bron</p>
-                  <p className="text-xs text-gray-600">Diyanet İşleri Başkanlığı</p>
-                </div>
-                <div className="p-3 bg-blue-50 rounded-lg">
-                  <p className="text-sm font-medium text-gray-900">Fallback methode</p>
-                  <p className="text-xs text-gray-600">ISNA (Islamic Society of North America)</p>
-                </div>
-                <div className="p-3 bg-green-50 rounded-lg">
-                  <p className="text-sm font-medium text-gray-900">Hoge breedtegraad</p>
-                  <p className="text-xs text-gray-600">Angle-based aanpassing</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Prayer Times Info */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-                  <ClockIcon className="w-5 h-5 text-orange-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Gebedstijden Details
-                </h3>
-              </div>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
-                  <span className="text-sm font-medium text-gray-700">Fajr (Dageraad)</span>
-                  <span className="text-sm font-semibold text-gray-900">15°</span>
-                </div>
-                <div className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
-                  <span className="text-sm font-medium text-gray-700">Sunrise (Zonsopgang)</span>
-                  <span className="text-sm font-semibold text-gray-900">-0.833°</span>
-                </div>
-                <div className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
-                  <span className="text-sm font-medium text-gray-700">Dhuhr (Middag)</span>
-                  <span className="text-sm font-semibold text-gray-900">Zon hoogste punt</span>
-                </div>
-                <div className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
-                  <span className="text-sm font-medium text-gray-700">Asr (Namiddag)</span>
-                  <span className="text-sm font-semibold text-gray-900">Hanafi methode</span>
-                </div>
-                <div className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
-                  <span className="text-sm font-medium text-gray-700">Maghrib (Zonsondergang)</span>
-                  <span className="text-sm font-semibold text-gray-900">-0.833°</span>
-                </div>
-                <div className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
-                  <span className="text-sm font-medium text-gray-700">Isha (Avond)</span>
-                  <span className="text-sm font-semibold text-gray-900">15°</span>
-                </div>
+            {/* Additional Info */}
+            <div className="bg-gray-50 px-6 py-4 border-t">
+              <div className="text-sm text-gray-600 text-center">
+                <p className="mb-2">
+                  <strong>Let op:</strong> Gebedstijden zijn berekend op basis van de locatie van de moskee.
+                </p>
+                <p>
+                  Voor de meest accurate tijden, raadpleeg de lokale moskee of gebruik een betrouwbare gebedstijden app.
+                </p>
               </div>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Additional Info */}
-        <div className="mt-12 bg-white rounded-2xl shadow-lg border border-gray-200 p-8 hover:shadow-xl transition-all duration-300">
-          <div className="flex items-center space-x-3 mb-6">
-            <div className="w-12 h-12 bg-gradient-to-r from-teal-500 to-blue-500 rounded-full flex items-center justify-center">
-              <ClockIcon className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900">
-              Belangrijke informatie
+        {/* Instructions */}
+        {!selectedMosque && (
+          <div className="text-center py-12">
+            <ClockIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              Selecteer een moskee
             </h3>
+            <p className="text-gray-600">
+              Kies een moskee uit de lijst om de gebedstijden te bekijken.
+            </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="p-6 bg-gradient-to-br from-teal-50 to-teal-100 rounded-xl">
-              <div className="flex items-center space-x-3 mb-3">
-                <div className="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center">
-                  <ClockIcon className="w-4 h-4 text-white" />
-                </div>
-                <h4 className="text-lg font-semibold text-gray-900">Gebedstijden</h4>
-              </div>
-              <p className="text-sm text-gray-700 leading-relaxed">
-                Gebedstijden worden automatisch bijgewerkt en zijn gebaseerd op de exacte locatie van Gent. 
-                Bij storingen van de Diyanet API wordt automatisch overgeschakeld naar astronomische berekeningen.
-              </p>
-            </div>
-            <div className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl">
-              <div className="flex items-center space-x-3 mb-3">
-                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                  <SunIcon className="w-4 h-4 text-white" />
-                </div>
-                <h4 className="text-lg font-semibold text-gray-900">Zomertijd</h4>
-              </div>
-              <p className="text-sm text-gray-700 leading-relaxed">
-                Tijdens de zomertijd (CEST, UTC+2) worden de gebedstijden automatisch aangepast. 
-                De berekeningen houden rekening met de seizoensgebonden veranderingen in daglicht.
-              </p>
-            </div>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

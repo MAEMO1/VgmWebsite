@@ -28,6 +28,9 @@ jobs:
       - name: Run type checking
         run: cd frontend && npm run type-check
       
+      - name: Run unit tests
+        run: cd frontend && npm test -- --ci --coverage
+      
       - name: Build project
         run: cd frontend && npm run build
       
