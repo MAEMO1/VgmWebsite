@@ -25,26 +25,41 @@ export default function MosquesClient() {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    loadMosques();
-  }, []);
-
-  const loadMosques = async () => {
-    try {
-      setLoading(true);
-      // Use local API route for Vercel deployment
-      const response = await fetch('/api/mosques');
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    let isMounted = true;
+    
+    const loadMosquesAsync = async () => {
+      try {
+        if (!isMounted) return;
+        
+        setLoading(true);
+        // Use local API route for Vercel deployment
+        const response = await fetch('/api/mosques');
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        const data = await response.json();
+        
+        if (isMounted) {
+          setMosques(data.data || data);
+        }
+      } catch (error) {
+        console.error('Error loading mosques:', error);
+        if (isMounted) {
+          setError('Failed to load mosques');
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
-      const data = await response.json();
-      setMosques(data.data || data);
-    } catch (error) {
-      console.error('Error loading mosques:', error);
-      setError('Failed to load mosques');
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    loadMosquesAsync();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleMosqueSelect = (mosque: Mosque) => {
     // Navigate to mosque detail page
@@ -75,7 +90,7 @@ export default function MosquesClient() {
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Error</h2>
           <p className="text-gray-600 mb-4">{error}</p>
           <button 
-            onClick={loadMosques}
+            onClick={() => window.location.reload()}
             className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark"
           >
             Try Again
