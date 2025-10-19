@@ -3,6 +3,9 @@ const withNextIntl = require('next-intl/plugin')('./src/i18n.ts');
 
 const nextConfig = {
   trailingSlash: false,
+  env: {
+    _next_intl_trailing_slash: 'false',
+  },
   images: {
     domains: ['localhost', 'images.unsplash.com'],
     remotePatterns: [
