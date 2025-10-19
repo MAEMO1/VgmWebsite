@@ -67,7 +67,7 @@ export function Navigation() {
             <div className="flex-shrink-0 flex items-center">
               <Link href={`/${locale}`} className="flex items-center space-x-3">
                 <Image
-                  src="/vgmsvg.svg"
+                  src="/logo-transparent.png"
                   alt="VGM Logo"
                   width={32}
                   height={32}
