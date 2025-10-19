@@ -254,6 +254,7 @@
         "motivation": "Leg uit waarom je beheerdersrechten nodig hebt"
       },
       "actions": {
+        "creating": "Account wordt aangemaakt...",
         "createAccount": "Account aanmaken"
       },
       "errors": {
@@ -294,10 +295,6 @@
       "confirmPassword": {
         "label": "Bevestig wachtwoord",
         "placeholder": "Voer uw wachtwoord opnieuw in"
-      },
-      "actions": {
-        "creating": "Account wordt aangemaakt...",
-        "create": "Account aanmaken"
       },
       "support": {
         "title": "Tips voor een vlotte registratie",

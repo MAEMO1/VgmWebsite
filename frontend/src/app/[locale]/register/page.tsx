@@ -280,11 +280,11 @@ export default function RegisterPage() {
               <>
                 <div>
                   <label htmlFor="mosque_id" className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('mosque')}
+                    {t('mosque.label')}
                   </label>
                   {mosqueLoading ? (
                     <div className="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-3 text-gray-500">
-                      {t('loadingMosques')}
+                      {t('mosque.loading')}
                     </div>
                   ) : mosqueError ? (
                     <div className="w-full rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-red-600">
@@ -299,7 +299,7 @@ export default function RegisterPage() {
                       onChange={handleChange}
                       className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
                     >
-                      <option value="">{t('selectMosque')}</option>
+                      <option value="">{t('mosque.placeholder')}</option>
                       {mosques.map((mosque) => (
                         <option key={mosque.id} value={mosque.id}>
                           {mosque.name}
@@ -311,7 +311,7 @@ export default function RegisterPage() {
 
                 <div>
                   <label htmlFor="admin_motivation" className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('motivation')}
+                    {t('motivation.label')}
                   </label>
                   <textarea
                     id="admin_motivation"
@@ -320,13 +320,13 @@ export default function RegisterPage() {
                     value={formData.admin_motivation}
                     onChange={handleChange}
                     className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 shadow-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-colors"
-                    placeholder={t('placeholders.motivation')}
+                    placeholder={t('motivation.placeholder')}
                   />
                 </div>
 
                 <div className="rounded-lg bg-blue-50 border border-blue-200 p-4">
                   <p className="text-sm text-blue-800">
-                    {t('mosqueAdminNote')}
+                    {t('motivation.helper')}
                   </p>
                 </div>
               </>
