@@ -38,33 +38,35 @@
                 <div class="row g-4">
                     {% for mosque in mosques %}
                     <div class="col-md-6 col-lg-4">
-                        <div class="mosque-card" data-lat="{{ mosque.latitude }}" data-lng="{{ mosque.longitude }}">
-                            <div class="mosque-image">
-                                {% if mosque.mosque_image %}
-                                <img src="{{ mosque.mosque_image }}" alt="{{ mosque.mosque_name }}" class="img-fluid">
-                                {% else %}
-                                <div class="mosque-placeholder">
-                                    <i class="fas fa-mosque"></i>
+                        <a href="{{ url_for('main.mosque_detail', mosque_id=mosque.id) }}" class="text-decoration-none">
+                            <div class="mosque-card mosque-item" data-lat="{{ mosque.latitude }}" data-lng="{{ mosque.longitude }}" data-mosque-id="{{ mosque.id }}">
+                                <div class="mosque-image">
+                                    {% if mosque.mosque_image %}
+                                    <img src="{{ mosque.mosque_image }}" alt="{{ mosque.mosque_name }}" class="img-fluid">
+                                    {% else %}
+                                    <div class="mosque-placeholder">
+                                        <i class="fas fa-mosque"></i>
+                                    </div>
+                                    {% endif %}
                                 </div>
-                                {% endif %}
+                                <div class="mosque-details">
+                                    <h3 class="mosque-name">{{ mosque.mosque_name }}</h3>
+                                    <div class="mosque-address">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>{{ mosque.get_full_address() }}</span>
+                                    </div>
+                                    {% if mosque.mosque_phone %}
+                                    <div class="mosque-contact">
+                                        <i class="fas fa-phone"></i>
+                                        <span>{{ mosque.mosque_phone }}</span>
+                                    </div>
+                                    {% endif %}
+                                    <div class="btn btn-outline-primary mt-3">
+                                        {{ _('Meer informatie') }}
+                                    </div>
+                                </div>
                             </div>
-                            <div class="mosque-details">
-                                <h3 class="mosque-name">{{ mosque.mosque_name }}</h3>
-                                <div class="mosque-address">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <span>{{ mosque.get_full_address() }}</span>
-                                </div>
-                                {% if mosque.mosque_phone %}
-                                <div class="mosque-contact">
-                                    <i class="fas fa-phone"></i>
-                                    <span>{{ mosque.mosque_phone }}</span>
-                                </div>
-                                {% endif %}
-                                <a href="{{ url_for('main.mosque_detail', mosque_id=mosque.id) }}" class="btn btn-outline-primary mt-3">
-                                    {{ _('Meer informatie') }}
-                                </a>
-                            </div>
-                        </div>
+                        </a>
                     </div>
                     {% endfor %}
                 </div>

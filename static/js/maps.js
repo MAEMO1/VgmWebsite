@@ -64,10 +64,10 @@ function initMap() {
 
             markers.push({ marker, infoWindow });
 
-            // Show info window when marker is clicked
+            // Navigate to mosque detail page when marker is clicked
             marker.addListener('click', () => {
-                markers.forEach(m => m.infoWindow.close());
-                infoWindow.open(map, marker);
+                // Navigate to mosque detail page
+                window.location.href = `/mosque/${item.dataset.mosqueId || 'unknown'}`;
             });
         });
     } catch (error) {

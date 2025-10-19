@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { apiClient } from '@/api/client';
 import GoogleMaps from '@/components/maps/GoogleMaps';
 import type { Mosque } from '@/types/api';
@@ -16,6 +17,7 @@ import {
 
 export default function MosquesPage() {
   const t = useTranslations('Mosques');
+  const router = useRouter();
   const [mosques, setMosques] = useState<Mosque[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -42,8 +44,8 @@ export default function MosquesPage() {
   };
 
   const handleMosqueSelect = (mosque: Mosque) => {
-    setSelectedMosque(mosque);
-    setViewMode('list');
+    // Navigate to mosque detail page
+    router.push(`/mosques/${mosque.id}`);
   };
 
   const filteredMosques = mosques.filter(mosque => {
@@ -188,12 +190,8 @@ export default function MosquesPage() {
             {filteredMosques.map((mosque) => (
               <div
                 key={mosque.id}
-                className={`bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-200 ${
-                  selectedMosque?.id === mosque.id
-                    ? 'ring-2 ring-primary shadow-lg'
-                    : 'hover:shadow-lg'
-                }`}
-                onClick={() => setSelectedMosque(mosque)}
+                className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-lg"
+                onClick={() => router.push(`/mosques/${mosque.id}`)}
               >
                 <div className="p-6">
                   <div className="mb-4">
@@ -261,21 +259,21 @@ export default function MosquesPage() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        setSelectedMosque(mosque);
-                        setViewMode('map');
+                        router.push(`/mosques/${mosque.id}`);
                       }}
                       className="flex-1 bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-md transition-colors"
                     >
-                      View on Map
+                      View Details
                     </button>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        // TODO: Implement mosque details page
+                        setSelectedMosque(mosque);
+                        setViewMode('map');
                       }}
                       className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md transition-colors"
                     >
-                      Details
+                      View on Map
                     </button>
                   </div>
                 </div>

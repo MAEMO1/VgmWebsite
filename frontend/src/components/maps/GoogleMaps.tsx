@@ -100,14 +100,10 @@ export default function GoogleMaps({
               </div>
             `;
 
-            // Add click listener to marker
+            // Navigate to mosque detail page when marker is clicked
             marker.addListener('click', () => {
-              infoWindowInstance.setContent(infoContent);
-              infoWindowInstance.open(mapInstance, marker);
-              
-              if (onMosqueSelect) {
-                onMosqueSelect(mosque);
-              }
+              // Navigate to mosque detail page
+              window.location.href = `/mosques/${mosque.id}`;
             });
 
             newMarkers.push(marker);
