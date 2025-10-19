@@ -3,7 +3,6 @@
   "devCommand": "cd frontend && npm run dev",
   "installCommand": "cd frontend && npm install",
   "outputDirectory": "frontend/.next",
-  "rootDirectory": "frontend",
   "framework": "nextjs",
   "headers": [
     {
