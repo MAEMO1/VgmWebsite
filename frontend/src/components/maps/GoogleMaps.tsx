@@ -33,8 +33,16 @@ export default function GoogleMaps({
         setLoading(true);
         setError(null);
 
+        // Check if API key is available
+        const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+        if (!apiKey || apiKey === 'AIzaSyB...') {
+          setError('Google Maps API key not configured');
+          setLoading(false);
+          return;
+        }
+
         const loader = new Loader({
-          apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
+          apiKey: apiKey,
           version: 'weekly',
           libraries: ['places']
         });

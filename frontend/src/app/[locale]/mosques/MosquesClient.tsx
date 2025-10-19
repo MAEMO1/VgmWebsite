@@ -121,23 +121,25 @@ export default function MosquesClient() {
             <div className="flex bg-gray-100 rounded-lg p-1">
               <button
                 onClick={() => setViewMode('list')}
-                className={`px-4 py-2 rounded-md transition-colors ${
+                className={`px-4 py-2 rounded-md transition-colors flex items-center gap-2 ${
                   viewMode === 'list' 
                     ? 'bg-white text-primary shadow-sm' 
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
                 <BuildingOfficeIcon className="w-5 h-5" />
+                <span className="text-sm font-medium">Lijst</span>
               </button>
               <button
                 onClick={() => setViewMode('map')}
-                className={`px-4 py-2 rounded-md transition-colors ${
+                className={`px-4 py-2 rounded-md transition-colors flex items-center gap-2 ${
                   viewMode === 'map' 
                     ? 'bg-white text-primary shadow-sm' 
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
                 <MapIcon className="w-5 h-5" />
+                <span className="text-sm font-medium">Kaart</span>
               </button>
             </div>
           </div>
