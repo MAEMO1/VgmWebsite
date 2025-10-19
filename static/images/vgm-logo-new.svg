@@ -1,0 +1,33 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Define the eight-pointed star shape -->
+    <path id="star" d="M150,20 L180,60 L240,60 L195,90 L210,150 L150,120 L90,150 L105,90 L60,60 L120,60 Z"/>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="300" height="300" fill="white"/>
+  
+  <!-- Outer golden yellow star border -->
+  <use href="#star" fill="none" stroke="#D4AF37" stroke-width="8"/>
+  
+  <!-- Inner teal star border -->
+  <use href="#star" fill="none" stroke="#41B7AC" stroke-width="4"/>
+  
+  <!-- Mosque dome (teal) -->
+  <path d="M120,80 Q150,50 180,80 L180,100 L120,100 Z" fill="#41B7AC"/>
+  
+  <!-- Crescent moon (teal) -->
+  <path d="M165,75 Q170,80 165,85 Q160,80 165,75" fill="#41B7AC"/>
+  
+  <!-- VGM text (black, serif) -->
+  <text x="150" y="160" text-anchor="middle" font-family="serif" font-size="36" font-weight="bold" fill="black">VGM</text>
+  
+  <!-- Top horizontal line -->
+  <line x1="100" y1="180" x2="200" y2="180" stroke="black" stroke-width="2"/>
+  
+  <!-- Bottom horizontal line -->
+  <line x1="100" y1="200" x2="200" y2="200" stroke="black" stroke-width="2"/>
+  
+  <!-- Full name text (lighter teal, sans-serif) -->
+  <text x="150" y="195" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#41B7AC">VERENIGING VAN GENTSE MOSKEEËN</text>
+</svg>
