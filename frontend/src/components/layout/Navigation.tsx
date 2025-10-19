@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations, useLocale } from 'next-intl';
 import { Bars3Icon, XMarkIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
-import NotificationBell from '@/components/notifications/NotificationBell';
+// import NotificationBell from '@/components/notifications/NotificationBell';
 import { useAuth } from '@/contexts/AuthContext';
 
 export function Navigation() {
@@ -125,7 +125,8 @@ export function Navigation() {
           </div>
           
           <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
-            {isAuthenticated && <NotificationBell />}
+            {/* Temporarily disabled to prevent 401 errors */}
+            {/* {isAuthenticated && <NotificationBell />} */}
             {user?.role === 'admin' && (
               <>
                 <Link
