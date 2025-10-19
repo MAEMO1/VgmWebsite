@@ -16,11 +16,12 @@ export function Footer() {
           <div className="md:col-span-1">
             <div className="flex items-center mb-4">
               <Image
-                src="/vgm-logo-new.svg"
+                src="/images/LogoVGM.jpg"
                 alt="VGM Logo"
                 width={40}
-                height={40}
+                height={Math.round(40 * 1596 / 1600)}
                 className="mr-3"
+                style={{ height: "auto" }}
               />
               <span className="text-xl font-bold">VGM</span>
             </div>

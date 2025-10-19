@@ -323,9 +323,10 @@
                          alt="{{ featured.title }}"
                          loading="lazy">
                     {% else %}
-                    <img src="{{ url_for('static', filename='images/vgm-logo-new.svg') }}"
+                    <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}"
                          class="featured-image"
-                         alt="VGM Logo">
+                         alt="VGM Logo"
+                         style="display:block; max-width:100%; height:auto">
                     {% endif %}
                 </div>
                 <div class="col-lg-6">
@@ -356,9 +357,10 @@
                          alt="{{ post.title }}"
                          loading="lazy">
                     {% else %}
-                    <img src="{{ url_for('static', filename='images/vgm-logo-new.svg') }}"
+                    <img src="{{ url_for('static', filename='images/LogoVGM.jpg') }}"
                          class="article-image"
-                         alt="VGM Logo">
+                         alt="VGM Logo"
+                         style="display:block; max-width:100%; height:auto">
                     {% endif %}
                 </div>
                 <div class="article-content">

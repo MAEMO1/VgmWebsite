@@ -67,10 +67,12 @@ export function Navigation() {
             <div className="flex-shrink-0 flex items-center">
               <Link href={`/${locale}`} className="flex items-center space-x-3">
                 <Image
-                  src="/vgm-logo-new.svg"
+                  src="/images/LogoVGM.jpg"
                   alt="VGM Logo"
                   width={32}
-                  height={32}
+                  height={Math.round(32 * 1596 / 1600)}
+                  priority
+                  style={{ height: "auto" }}
                 />
                 <div>
                   <div className="text-lg font-semibold text-gray-900">
