@@ -1,5 +1,7 @@
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { Navigation } from '@/components/layout/Navigation';
+import { Footer } from '@/components/layout/Footer';
 
 export async function generateMetadata({
   params: { locale }
@@ -94,7 +96,11 @@ export default async function LocaleLayout({
         <meta name="theme-color" content="#1e40af" />
       </head>
       <body>
-        {children}
+        <Navigation />
+        <main>
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );

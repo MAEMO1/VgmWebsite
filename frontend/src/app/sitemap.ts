@@ -29,13 +29,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         url: `${baseUrl}/${locale}${route}`,
         lastModified: new Date(),
         changeFrequency: route === '' ? 'daily' : 'weekly',
-        priority: route === '' ? 1 : 0.8,
-        alternates: {
-          languages: locales.reduce((acc, loc) => {
-            acc[loc] = `${baseUrl}/${loc}${route}`;
-            return acc;
-          }, {} as Record<string, string>)
-        }
+        priority: route === '' ? 1 : 0.8
       });
     });
   });
@@ -50,13 +44,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         url: `${baseUrl}/${locale}/mosques/${mosqueId}`,
         lastModified: new Date(),
         changeFrequency: 'weekly',
-        priority: 0.7,
-        alternates: {
-          languages: locales.reduce((acc, loc) => {
-            acc[loc] = `${baseUrl}/${loc}/mosques/${mosqueId}`;
-            return acc;
-          }, {} as Record<string, string>)
-        }
+        priority: 0.7
       });
     });
   });

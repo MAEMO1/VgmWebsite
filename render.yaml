@@ -3,7 +3,7 @@ services:
     name: vgm-backend
     env: python
     buildCommand: pip install -e .
-    startCommand: gunicorn --bind 0.0.0.0:$PORT app:app
+    startCommand: gunicorn --bind 0.0.0.0:$PORT app_main:app
     healthCheckPath: /health
     envVars:
       - key: FLASK_ENV

@@ -138,7 +138,7 @@ export function IftarMap() {
 
             <div className="bg-gradient-to-r from-primary to-primary-600 rounded-lg p-8 text-white text-center">
               <MoonIcon className="w-16 h-16 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold mb-2">Vandaag's Iftar Tijd</h3>
+              <h3 className="text-2xl font-bold mb-2">Vandaag&apos;s Iftar Tijd</h3>
               <div className="text-4xl font-bold mb-4">18:30</div>
               <p className="text-primary-100">
                 De tijd voor het breken van het vasten wordt bepaald door de zonsondergang.

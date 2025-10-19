@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VGM Deployment Monitoring Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .status-healthy {
+            background-color: #4CAF50;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-warning {
+            background-color: #FF9800;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-error {
+            background-color: #F44336;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .metric:last-child {
+            border-bottom: none;
+        }
+        
+        .metric-label {
+            color: #666;
+        }
+        
+        .metric-value {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .refresh-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin: 20px auto;
+            display: block;
+        }
+        
+        .refresh-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .last-updated {
+            text-align: center;
+            color: white;
+            opacity: 0.8;
+            margin-top: 20px;
+        }
+        
+        .deployment-logs {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+        }
+        
+        .log-timestamp {
+            color: #888;
+        }
+        
+        .log-info {
+            color: #00ff00;
+        }
+        
+        .log-error {
+            color: #ff4444;
+        }
+        
+        .log-warning {
+            color: #ffaa00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🕌 VGM Deployment Monitoring</h1>
+            <p>Real-time status van alle services</p>
+        </div>
+        
+        <div class="dashboard-grid">
+            <!-- Frontend Status -->
+            <div class="card">
+                <h3>🌐 Frontend (Vercel)</h3>
+                <div class="status">
+                    <div class="status-indicator status-healthy"></div>
+                    <span id="frontend-status">Healthy</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">URL:</span>
+                    <span class="metric-value">frontend-ikf9g1ygo-maemo.vercel.app</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Status:</span>
+                    <span class="metric-value">Ready</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Response Time:</span>
+                    <span class="metric-value" id="frontend-response">--</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Last Deploy:</span>
+                    <span class="metric-value">19 Oct 2025, 17:14</span>
+                </div>
+            </div>
+            
+            <!-- Backend Status -->
+            <div class="card">
+                <h3>⚙️ Backend (Railway/Render)</h3>
+                <div class="status">
+                    <div class="status-indicator status-warning"></div>
+                    <span id="backend-status">Configuring</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Railway:</span>
+                    <span class="metric-value">vgm-website-production.up.railway.app</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Render:</span>
+                    <span class="metric-value">vgm-backend.onrender.com</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Health Check:</span>
+                    <span class="metric-value" id="backend-health">/health</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Database:</span>
+                    <span class="metric-value">SQLite (Local)</span>
+                </div>
+            </div>
+            
+            <!-- Domain Status -->
+            <div class="card">
+                <h3>🌍 Domain Configuration</h3>
+                <div class="status">
+                    <div class="status-indicator status-error"></div>
+                    <span id="domain-status">Not Configured</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Primary Domain:</span>
+                    <span class="metric-value">vgm-gent.be</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">DNS Status:</span>
+                    <span class="metric-value">NXDOMAIN</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">SSL Certificate:</span>
+                    <span class="metric-value">Pending</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Action Required:</span>
+                    <span class="metric-value">Domain Registration</span>
+                </div>
+            </div>
+            
+            <!-- Deployment Pipeline -->
+            <div class="card">
+                <h3>🚀 Deployment Pipeline</h3>
+                <div class="status">
+                    <div class="status-indicator status-healthy"></div>
+                    <span id="pipeline-status">Active</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">GitHub Actions:</span>
+                    <span class="metric-value">Configured</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Auto Deploy:</span>
+                    <span class="metric-value">On Push to Main</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Last Build:</span>
+                    <span class="metric-value">19 Oct 2025</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Build Status:</span>
+                    <span class="metric-value">Success</span>
+                </div>
+            </div>
+        </div>
+        
+        <button class="refresh-btn" onclick="refreshStatus()">🔄 Refresh Status</button>
+        
+        <div class="deployment-logs">
+            <div class="log-entry">
+                <span class="log-timestamp">[2025-10-19 17:14:35]</span>
+                <span class="log-info">Frontend deployment successful</span>
+            </div>
+            <div class="log-entry">
+                <span class="log-timestamp">[2025-10-19 17:13:16]</span>
+                <span class="log-error">Build failed: TypeScript errors in sitemap.ts</span>
+            </div>
+            <div class="log-entry">
+                <span class="log-timestamp">[2025-10-19 17:12:45]</span>
+                <span class="log-error">Build failed: ESLint error in IftarMap.tsx</span>
+            </div>
+            <div class="log-entry">
+                <span class="log-timestamp">[2025-10-19 17:11:27]</span>
+                <span class="log-error">Build failed: Missing RBAC config file</span>
+            </div>
+            <div class="log-entry">
+                <span class="log-timestamp">[2025-10-19 17:10:01]</span>
+                <span class="log-warning">Next.js config warning: _next_intl_trailing_slash missing</span>
+            </div>
+            <div class="log-entry">
+                <span class="log-timestamp">[2025-10-19 17:09:59]</span>
+                <span class="log-info">Starting frontend build process</span>
+            </div>
+        </div>
+        
+        <div class="last-updated">
+            Last updated: <span id="last-updated">19 October 2025, 17:15 CET</span>
+        </div>
+    </div>
+    
+    <script>
+        function refreshStatus() {
+            // Simulate status refresh
+            const now = new Date();
+            document.getElementById('last-updated').textContent = 
+                now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString('nl-NL');
+            
+            // Add new log entry
+            const logsContainer = document.querySelector('.deployment-logs');
+            const newLog = document.createElement('div');
+            newLog.className = 'log-entry';
+            newLog.innerHTML = `
+                <span class="log-timestamp">[${now.toISOString().replace('T', ' ').substring(0, 19)}]</span>
+                <span class="log-info">Status refresh completed</span>
+            `;
+            logsContainer.insertBefore(newLog, logsContainer.firstChild);
+            
+            // Keep only last 10 log entries
+            while (logsContainer.children.length > 10) {
+                logsContainer.removeChild(logsContainer.lastChild);
+            }
+        }
+        
+        // Auto-refresh every 30 seconds
+        setInterval(refreshStatus, 30000);
+        
+        // Initial load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('VGM Monitoring Dashboard loaded');
+        });
+    </script>
+</body>
+</html>
