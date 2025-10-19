@@ -23,7 +23,6 @@ export function Footer() {
                 className="mr-3"
                 style={{ height: "auto" }}
               />
-              <span className="text-xl font-bold">VGM</span>
             </div>
             <p className="text-gray-300 mb-6 leading-relaxed">
               Welkom bij de Vereniging van Gentse Moskeeën - uw centrale platform voor moskee-informatie, evenementen en gemeenschapsdiensten.

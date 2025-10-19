@@ -65,7 +65,7 @@ export function Navigation() {
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <Link href={`/${locale}`} className="flex items-center space-x-3">
+              <Link href={`/${locale}`} className="flex items-center">
                 <Image
                   src="/images/LogoVGM.jpg"
                   alt="VGM Logo"
@@ -74,14 +74,6 @@ export function Navigation() {
                   priority
                   style={{ height: "auto" }}
                 />
-                <div>
-                  <div className="text-lg font-semibold text-gray-900">
-                    VGM
-                  </div>
-                  <div className="text-xs text-gray-500 -mt-1">
-                    Vereniging van Gentse Moskeeën
-                  </div>
-                </div>
               </Link>
             </div>
             <div className="hidden sm:ml-8 sm:flex sm:space-x-8 sm:items-center">
