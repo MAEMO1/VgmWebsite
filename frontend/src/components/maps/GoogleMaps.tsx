@@ -28,8 +28,12 @@ export default function GoogleMaps({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
+    
     const initMap = async () => {
       try {
+        if (!isMounted) return;
+        
         setLoading(true);
         setError(null);
 
@@ -38,8 +42,10 @@ export default function GoogleMaps({
         console.log('Google Maps API Key:', apiKey ? `${apiKey.substring(0, 10)}...` : 'Not found');
         
         if (!apiKey || apiKey === 'AIzaSyB...' || apiKey.length < 20) {
-          setError('Google Maps API key not configured');
-          setLoading(false);
+          if (isMounted) {
+            setError('Google Maps API key not configured');
+            setLoading(false);
+          }
           return;
         }
 
@@ -141,16 +147,26 @@ export default function GoogleMaps({
           });
         }
 
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       } catch (error) {
         console.error('Error initializing Google Maps:', error);
         console.error('Error details:', error);
-        setError(`Failed to load Google Maps: ${error instanceof Error ? error.message : 'Unknown error'}`);
-        setLoading(false);
+        if (isMounted) {
+          setError(`Failed to load Google Maps: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          setLoading(false);
+        }
       }
     };
 
     initMap();
+
+    // Cleanup function
+    return () => {
+      isMounted = false;
+      markers.forEach(marker => marker.setMap(null));
+    };
   }, [mosques, onMosqueSelect, showSearch]);
 
   // Update selected mosque marker
