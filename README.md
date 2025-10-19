@@ -118,3 +118,4 @@ NEXT_PUBLIC_SUPPORTED_LOCALES=nl,en,fr,tr,ar,ps
 ## Licentie
 
 © VGM. Interne bedrijfssoftware; niet bedoeld voor publieke distributie.
+# Logo update deployment
