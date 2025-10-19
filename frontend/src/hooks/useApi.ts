@@ -77,7 +77,14 @@ export function useRegister() {
 export function useMosques() {
   return useQuery({
     queryKey: queryKeys.mosques.all,
-    queryFn: () => apiClient.getMosques(),
+    queryFn: async () => {
+      const response = await fetch('/api/mosques');
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      const data = await response.json();
+      return data.data || data;
+    },
     staleTime: 10 * 60 * 1000, // 10 minutes
   });
 }
@@ -85,7 +92,14 @@ export function useMosques() {
 export function useMosque(id: number) {
   return useQuery({
     queryKey: queryKeys.mosques.detail(id),
-    queryFn: () => apiClient.getMosque(id),
+    queryFn: async () => {
+      const response = await fetch(`/api/mosques/${id}`);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      const data = await response.json();
+      return data.data || data;
+    },
     staleTime: 10 * 60 * 1000, // 10 minutes
     enabled: !!id,
   });

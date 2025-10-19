@@ -1,7 +1,8 @@
 {
-  "HomePage": {
-    "title": "Welkom bij VGM",
-    "description": "Vereniging van Gentse Moskeeën"
+  "Metadata": {
+    "title": "VGM Gent - Vereniging van Gentse Moskeeën",
+    "description": "Ontdek alle moskeeën in Gent, gebedstijden, evenementen en gemeenschapsdiensten. Uw centrale platform voor de moslimgemeenschap in Gent.",
+    "keywords": "moskeeën Gent, gebedstijden, islamitische gemeenschap, VGM, moslims Gent, vrijdaggebed"
   },
   "Navigation": {
     "home": "Home",
