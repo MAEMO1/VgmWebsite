@@ -35,7 +35,9 @@ export default function GoogleMaps({
 
         // Check if API key is available
         const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-        if (!apiKey || apiKey === 'AIzaSyB...') {
+        console.log('Google Maps API Key:', apiKey ? `${apiKey.substring(0, 10)}...` : 'Not found');
+        
+        if (!apiKey || apiKey === 'AIzaSyB...' || apiKey.length < 20) {
           setError('Google Maps API key not configured');
           setLoading(false);
           return;
@@ -142,7 +144,8 @@ export default function GoogleMaps({
         setLoading(false);
       } catch (error) {
         console.error('Error initializing Google Maps:', error);
-        setError('Failed to load Google Maps');
+        console.error('Error details:', error);
+        setError(`Failed to load Google Maps: ${error instanceof Error ? error.message : 'Unknown error'}`);
         setLoading(false);
       }
     };
