@@ -1,33 +1,30 @@
 <svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <!-- Define the eight-pointed star shape with better proportions -->
-    <path id="star" d="M150,25 L185,70 L250,70 L200,105 L220,170 L150,140 L80,170 L100,105 L50,70 L115,70 Z"/>
-  </defs>
-  
   <!-- Background -->
   <rect width="300" height="300" fill="white"/>
   
-  <!-- Outer golden yellow star border (thicker) -->
-  <use href="#star" fill="none" stroke="#D4AF37" stroke-width="10"/>
+  <!-- Eight-pointed star frame - cleaner design -->
+  <g transform="translate(150,150)">
+    <!-- Outer golden border -->
+    <path d="M0,-110 L38,-38 L110,-38 L38,38 L38,110 L0,38 L-38,110 L-38,38 L-110,-38 L-38,-38 Z" 
+          fill="none" stroke="#D4AF37" stroke-width="6"/>
+    <!-- Inner teal border -->
+    <path d="M0,-110 L38,-38 L110,-38 L38,38 L38,110 L0,38 L-38,110 L-38,38 L-110,-38 L-38,-38 Z" 
+          fill="none" stroke="#41B7AC" stroke-width="3"/>
+  </g>
   
-  <!-- Inner teal star border (thinner) -->
-  <use href="#star" fill="none" stroke="#41B7AC" stroke-width="5"/>
+  <!-- Mosque dome - cleaner ellipse -->
+  <ellipse cx="150" cy="85" rx="30" ry="20" fill="#41B7AC"/>
   
-  <!-- Mosque dome (teal, more refined shape) -->
-  <path d="M130,85 Q150,55 170,85 L170,105 L130,105 Z" fill="#41B7AC"/>
+  <!-- Crescent moon - better positioned -->
+  <path d="M162,80 Q167,85 162,90 Q157,85 162,80" fill="#41B7AC"/>
   
-  <!-- Crescent moon (teal, positioned on dome peak) -->
-  <path d="M160,80 Q165,85 160,90 Q155,85 160,80" fill="#41B7AC"/>
+  <!-- VGM text - better typography -->
+  <text x="150" y="140" text-anchor="middle" font-family="serif" font-size="44" font-weight="bold" fill="black">VGM</text>
   
-  <!-- VGM text (black, serif, larger and bolder) -->
-  <text x="150" y="155" text-anchor="middle" font-family="serif" font-size="42" font-weight="bold" fill="black">VGM</text>
+  <!-- Horizontal lines - cleaner -->
+  <line x1="90" y1="160" x2="210" y2="160" stroke="black" stroke-width="1.5"/>
+  <line x1="90" y1="180" x2="210" y2="180" stroke="black" stroke-width="1.5"/>
   
-  <!-- Top horizontal line -->
-  <line x1="90" y1="175" x2="210" y2="175" stroke="black" stroke-width="2"/>
-  
-  <!-- Bottom horizontal line -->
-  <line x1="90" y1="200" x2="210" y2="200" stroke="black" stroke-width="2"/>
-  
-  <!-- Full name text (lighter teal, sans-serif, better positioned) -->
-  <text x="150" y="190" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#41B7AC">VERENIGING VAN GENTSE MOSKEEËN</text>
+  <!-- Full name - better positioned -->
+  <text x="150" y="175" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#41B7AC">VERENIGING VAN GENTSE MOSKEEËN</text>
 </svg>
