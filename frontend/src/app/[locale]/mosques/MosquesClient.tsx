@@ -23,7 +23,6 @@ export default function MosquesClient() {
   const [selectedMosque, setSelectedMosque] = useState<Mosque | null>(null);
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterCapacity, setFilterCapacity] = useState<number | null>(null);
 
   useEffect(() => {
     loadMosques();
@@ -58,9 +57,7 @@ export default function MosquesClient() {
       mosque.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (mosque.description && mosque.description.toLowerCase().includes(searchTerm.toLowerCase()));
     
-    const matchesCapacity = !filterCapacity || (mosque.capacity && mosque.capacity >= filterCapacity);
-    
-    return matchesSearch && matchesCapacity;
+    return matchesSearch;
   });
 
   if (loading) {
@@ -119,23 +116,6 @@ export default function MosquesClient() {
               />
             </div>
 
-            {/* Capacity Filter */}
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-700">
-                Min. capaciteit:
-              </label>
-              <select
-                value={filterCapacity || ''}
-                onChange={(e) => setFilterCapacity(e.target.value ? parseInt(e.target.value) : null)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-              >
-                <option value="">Alle</option>
-                <option value="50">50+</option>
-                <option value="100">100+</option>
-                <option value="200">200+</option>
-                <option value="500">500+</option>
-              </select>
-            </div>
 
             {/* View Toggle */}
             <div className="flex bg-gray-100 rounded-lg p-1">
